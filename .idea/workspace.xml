@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="62a714f2-e50c-447f-b4aa-e3d2ecc538de" name="Default" comment="" />
+=======
+    <list default="true" id="62a714f2-e50c-447f-b4aa-e3d2ecc538de" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fabfile.py" afterPath="$PROJECT_DIR$/fabfile.py" />
+    </list>
+>>>>>>> 4e0fe426ff3d70e0b968a3ad25421397720ad3fe
     <ignored path="hbgj_statistics.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -124,8 +131,13 @@
       <file leaf-file-name="fabfile.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fabfile.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="425">
               <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+=======
+            <state relative-caret-position="575">
+              <caret line="23" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+>>>>>>> 4e0fe426ff3d70e0b968a3ad25421397720ad3fe
               <folding>
                 <element signature="e#14#25#0" expanded="true" />
               </folding>
@@ -600,9 +612,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1168" y="69" width="1670" height="1306" extended-state="0" />
+<<<<<<< HEAD
     <editor active="false" />
     <layout>
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28325123" sideWeight="0.6350068" order="0" side_tool="false" content_ui="combo" />
+=======
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28325123" sideWeight="0.6350068" order="0" side_tool="false" content_ui="combo" />
+>>>>>>> 4e0fe426ff3d70e0b968a3ad25421397720ad3fe
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33456904" sideWeight="0.54130703" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32314816" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -1091,8 +1109,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fabfile.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="425">
           <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+=======
+        <state relative-caret-position="575">
+          <caret line="23" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+>>>>>>> 4e0fe426ff3d70e0b968a3ad25421397720ad3fe
           <folding>
             <element signature="e#14#25#0" expanded="true" />
           </folding>

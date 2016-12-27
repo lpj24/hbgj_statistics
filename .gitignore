@@ -1,3 +1,4 @@
 dbClient/conf.py
 *.pyc
 main_service/tmp_task/*
+*.gz

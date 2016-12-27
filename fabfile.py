@@ -15,7 +15,7 @@ def git_file():
     with cd("/home/lpj/Public/hbgj_statistics"):
         run("git pull origin master")
         time.sleep(3)
-        result = run("pychecker time_job_excute/*.py")
+        result = run("pychecker *.py")
 
         green(result)
 

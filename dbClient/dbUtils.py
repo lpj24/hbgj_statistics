@@ -1,0 +1,94 @@
+import pymysql as MySQLdb
+from DBUtils.PooledDB import PooledDB
+import logging
+import time
+import cx_Oracle
+import redis
+
+
+class DButils(object):
+
+    def __init__(self, dbtype=None, conf=None):
+        if dbtype.lower() == "mysql":
+            self._pool = PooledDB(MySQLdb, host=conf["host"], user=conf["user"], passwd=conf["password"],
+                                  port=conf["port"], db=conf["database"],  mincached=1, maxcached=20, charset="utf8", blocking=True)
+        elif dbtype.lower() == "oracle":
+            self._pool = PooledDB(cx_Oracle, user=conf["user"], password=conf["password"],
+                                  dsn=cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"]),
+                                  mincached=0, maxcached=50, maxshared=10, maxusage=0)
+        self._conn = self._pool.connection()
+
+    @staticmethod
+    def log_str(sql, params):
+        sql = sql.strip()
+        if sql.find("update") == 0:
+            func = sql.split(' ')[1]
+        else:
+            func = sql.split(' ')[2]
+        return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + " update " + func + " :" + str(params)
+
+    def batchInsert(self, sql, params):
+        cursor = self._conn.cursor()
+        try:
+            print self.log_str(sql, params)
+            cursor.executemany(sql, params)
+            self._conn.commit()
+        except MySQLdb.Error, e:
+            warningTime = time.strftime('%Y-%m-%d %H:%M', time.localtime())
+            logging.warning(warningTime + ":" + str(sql)+"--"+str(e.args[1]))
+        finally:
+            cursor.close()
+
+    def insert(self, sql, params):
+        cursor = self._conn.cursor()
+        try:
+            print self.log_str(sql, params)
+            cursor.execute(sql, params)
+            self._conn.commit()
+        except MySQLdb.Error, e:
+            warningTime = time.strftime('%Y-%m-%d %H:%M', time.localtime())
+            logging.warning(warningTime + ":" + str(sql) + "--" + str(e.args[1]))
+        finally:
+            cursor.close()
+
+    def queryAll(self, sql, params=None):
+        cursor = self._conn.cursor()
+        if params is None:
+            cursor.execute(sql)
+        else:
+            if sql.count("tablename") > 0:
+                for i in xrange(sql.count("tablename")):
+                    sql = sql.replace("tablename", params.pop(), 1)
+            cursor.execute(sql, params)
+
+        data = cursor.fetchall()
+        cursor.close()
+        return data
+
+    def queryOne(self, sql, params=None):
+        cursor = self._conn.cursor()
+        try:
+            if params is None:
+                cursor.execute(sql)
+            else:
+                if sql.count("tablename") > 0:
+                    for i in xrange(sql.count("tablename")):
+                        sql = sql.replace("tablename", params.pop(), 1)
+                cursor.execute(sql, params)
+
+            data = cursor.fetchone()
+        except MySQLdb.OperationalError:
+            print "error"
+        return data
+
+    def queryTableOne(self, sql, params):
+        cursor = self._conn.cursor()
+        sql = ""
+        if sql.count("tablename") > 0:
+            for i in xrange(sql.count("tablename")):
+                sql = sql.replace("tablename", params.pop(), i+1)
+
+        cursor.execute(sql, params)
+        data = cursor.fetchone()
+        cursor.close()
+        return data

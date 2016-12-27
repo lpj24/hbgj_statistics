@@ -4,14 +4,6 @@
     <list default="true" id="62a714f2-e50c-447f-b4aa-e3d2ecc538de" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fabfile.py" afterPath="$PROJECT_DIR$/fabfile.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/gt/gt_newconsumers.py" afterPath="$PROJECT_DIR$/main_service/gt/gt_newconsumers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/hb/hb_activeusers.py" afterPath="$PROJECT_DIR$/main_service/hb/hb_activeusers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/hb/hb_flight_details.py" afterPath="$PROJECT_DIR$/main_service/hb/hb_flight_details.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/huoli/car_consumers.py" afterPath="$PROJECT_DIR$/main_service/huoli/car_consumers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/huoli/hotel_activeusers.py" afterPath="$PROJECT_DIR$/main_service/huoli/hotel_activeusers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/huoli/hotel_consumers.py" afterPath="$PROJECT_DIR$/main_service/huoli/hotel_consumers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/huoli/hotel_newusers.py" afterPath="$PROJECT_DIR$/main_service/huoli/hotel_newusers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main_service/huoli/hotel_order.py" afterPath="$PROJECT_DIR$/main_service/huoli/hotel_order.py" />
     </list>
     <ignored path="hbgj_statistics.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -135,8 +127,8 @@
       <file leaf-file-name="fabfile.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fabfile.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="18" column="54" selection-start-line="18" selection-start-column="54" selection-end-line="18" selection-end-column="54" />
+            <state relative-caret-position="575">
+              <caret line="23" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding>
                 <element signature="e#14#25#0" expanded="true" />
               </folding>
@@ -215,8 +207,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="929" />
-    <option name="y" value="59" />
+    <option name="x" value="1168" />
+    <option name="y" value="69" />
     <option name="width" value="1670" />
     <option name="height" value="1306" />
   </component>
@@ -610,7 +602,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="929" y="59" width="1670" height="1306" extended-state="0" />
+    <frame x="1168" y="69" width="1670" height="1306" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28325123" sideWeight="0.6350068" order="0" side_tool="false" content_ui="combo" />
@@ -1102,8 +1094,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fabfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="18" column="54" selection-start-line="18" selection-start-column="54" selection-end-line="18" selection-end-column="54" />
+        <state relative-caret-position="575">
+          <caret line="23" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding>
             <element signature="e#14#25#0" expanded="true" />
           </folding>

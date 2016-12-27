@@ -1,5 +1,5 @@
 #coding: utf8
-import tarfile, os
+import time
 from fabric.api import *
 from fabric.colors import *
 
@@ -14,7 +14,9 @@ def git_file():
     local("git push origin master")
     with cd("/home/lpj/Public/hbgj_statistics"):
         run("git pull origin master")
-        run("pychecker time_job_excute/*.py")
+        result = run("pychecker time_job_excute/*.py")
+        time.sleep(3)
+        green(result)
 
 
 

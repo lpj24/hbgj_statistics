@@ -4,7 +4,6 @@ from dbClient.db_client import DBCli
 
 def update_hotel_activeusers_daily(days=0):
     s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y%m%d")
-    print s_day
     uid_key = s_day + "_activeusers"
     activeusers_num = DBCli().redis_cli.scard(uid_key)
 
@@ -25,7 +24,6 @@ def update_hotel_activeusers_weekly(days=0):
     s_day = start_week
     week_activeusers_num = 0
     today = DateUtil.getDateBeforeDays(days)
-    print start_week, end_week, today
     while start_week <= today:
         week_uid_key = DateUtil.date2str(s_day, "%Y%m%d") + "_week_activeusers"
         week_activeusers_num = DBCli().redis_cli.sunionstore(week_uid_key, DateUtil.date2str(start_week, '%Y%m%d')+"_activeusers",

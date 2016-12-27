@@ -16,7 +16,6 @@ def update_hbgj_activeusers_weekly():
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"start_date": start_date, "end_date": end_date}
-    print dto
     query_data = DBCli().oracle_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_weekly"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_weekly"], query_data)
 
@@ -27,7 +26,6 @@ def update_hbgj_activeusers_monthly():
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"start_date": start_date, "end_date": end_date}
     query_data = DBCli().oracle_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_monthly"], dto)
-    print query_data
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_monthly"], query_data)
 
 if __name__ == "__main__":

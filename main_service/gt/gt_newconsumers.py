@@ -6,8 +6,8 @@ import datetime
 
 
 def gt_newconsumers_history():
-    file_list = os.walk("C:\Users\Administrator\PycharmProjects\gt_newconsumers_hourly\data")
-    # file_list = os.walk("/home/huolibi/task/gt_newconsumers_hourly/data")
+    # file_list = os.walk("C:\Users\Administrator\PycharmProjects\gt_newconsumers_hourly\data")
+    file_list = os.walk("/home/huolibi/task/gt_newconsumers_hourly/data")
     for dirpath, dirnames, filenames in file_list:
         for f_uid in filenames:
             filename = os.path.join(dirpath, f_uid)

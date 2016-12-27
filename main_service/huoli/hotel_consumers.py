@@ -8,9 +8,7 @@ def update_hotel_consumers_daily(days=0):
     end_date = DateUtil.getDateAfterDays(1 - int(days))
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    print dto
     query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_daily"], dto)
-    print query_data
     DBCli().targetdb_cli.insert(hotel_consumers_sql["update_hotel_consumers_daily"], query_data)
 
 

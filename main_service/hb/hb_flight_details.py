@@ -23,7 +23,6 @@ def localytics_cli(app_id, event, metrics, start_date):
     data_params["conditions"] = json.dumps(conditions)
 
     r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
-    print r
     result = r.json()
     return (result["results"])[0][metrics]
 
@@ -35,7 +34,6 @@ def update_flight_detail_user_daily(days=0):
     s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(int(days)), '%Y-%m-%d')
     tablename = DateUtil.getTable(DateUtil.getDateBeforeDays(int(days)))
     dto = [s_day, today, tomorrow_date, tablename]
-    print dto
     pv_check_dto = [str(s_day), ]
     pv_check_sql = """
         select pv from (
@@ -50,7 +48,6 @@ def update_flight_detail_user_daily(days=0):
     pv_check_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
     pv_check = pv_check_data[0]
     query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
-    print query_data
     pv = query_data[2]
     if float(int(pv_check) - int(pv))/float(pv) > 0.2:
         utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
@@ -169,7 +166,6 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
                     update_check_pv_his(start_date)
         insert_data.append(localytics_check["users"])
         insert_data.append(localytics_check["sessions"])
-        print insert_data
         DBCli().targetdb_cli.insert(update_pv_check_sql, insert_data)
         start_date = DateUtil.add_days(start_date, -1)
 

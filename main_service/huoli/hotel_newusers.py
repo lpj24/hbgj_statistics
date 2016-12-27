@@ -9,16 +9,14 @@ import tarfile
 def update_hotel_newusers_daily(days=0):
     regex = re.compile(r"uid=([0-9]*)")
     s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y%m%d")
-    print s_day
-    # file_list = [os.path.join("/home/huolibi/external_data/hotel_log", "access.log_207_" + s_day + ".tar.gz"),
-    #              os.path.join("/home/huolibi/external_data/hotel_log", "access.log_209_" + s_day + ".tar.gz")]
-    file_list = [os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_207_" + s_day + ".tar.gz"),
-                 os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_209_" + s_day + ".tar.gz")]
+    file_list = [os.path.join("/home/huolibi/external_data/hotel_log", "access.log_207_" + s_day + ".tar.gz"),
+                 os.path.join("/home/huolibi/external_data/hotel_log", "access.log_209_" + s_day + ".tar.gz")]
+    # file_list = [os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_207_" + s_day + ".tar.gz"),
+    #              os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_209_" + s_day + ".tar.gz")]
 
     if os.path.isfile(file_list[0]) and os.path.isfile(file_list[1]):
         uid_key = s_day + "_log_uid"
         for tar_file in file_list:
-            print tar_file
             tar = tarfile.open(tar_file)
             filename = (tar.getnames())[0]
             log_file = "access.log_" + s_day

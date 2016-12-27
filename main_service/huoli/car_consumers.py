@@ -21,7 +21,6 @@ def update_car_consumers_daily(days=0):
         dto.append(DateUtil.date2str(tomorrow))
 
     query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_daily"], dto)
-    print query_data
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_daily"], query_data)
 
 

@@ -23,8 +23,7 @@ def update_flight_focus_user_daily(days=0):
     query_his_pv = DBCli().oracle_cli.queryOne(pv_his_sql, {"start_date": DateUtil.date2str(today, '%Y-%m-%d'), "end_date": DateUtil.date2str(tomorrow, '%Y-%m-%d')})
     query_date = (query_date[0], query_date[1], int(query_pv[0]) + int(query_his_pv[0]))
 
-    print query_date
-    # DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_date)
+    DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_date)
 
 
 def update_flight_focus_user_weekly():

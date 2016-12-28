@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # TimeService.add_day_service(hb_consumers.update_hb_newconsumers_daily)
     # TimeService.add_day_service(hb_consumers.update_hb_consumers_weekly)
     # TimeService.add_day_service(hb_consumers.update_hb_consumers_monthly)
-    # TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
+    TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
 
     TimeService.add_day_service(hbgj_users.hbgj_user)
     TimeService.add_day_service(gt_fromHb.update_gtgj_from_hb)

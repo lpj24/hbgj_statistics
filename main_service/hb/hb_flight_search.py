@@ -72,7 +72,7 @@ def update_flight_search_user_daily(days=0):
             localytics_check[i] += localytics_result
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])
-
+    print query_data
     DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_daily'], query_data)
 
 
@@ -177,9 +177,9 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
     # start_date = datetime.date(2016, 1, 31)
-    # update_flight_search_user_daily(1)
+    update_flight_search_user_daily(1)
     # s = dict()
     # s.update()
     # update_check_pv_his(start_date)
-    update_flight_search_user_weekly()
+    # update_flight_search_user_weekly()
     # update_flight_search_user_monthly()

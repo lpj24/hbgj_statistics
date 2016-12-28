@@ -79,6 +79,8 @@ class DButils(object):
             data = cursor.fetchone()
         except MySQLdb.OperationalError:
             print "error"
+        finally:
+            cursor.close()
         return data
 
     def queryTableOne(self, sql, params):

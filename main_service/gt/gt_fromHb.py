@@ -23,14 +23,9 @@ def update_gtgj_from_hb_his():
         dto = [DateUtil.date2str(start_date), DateUtil.date2str(query_end)]
         query_data_order = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_order_from_hb"], dto)
         query_data_ticket = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_ticket_from_hb"], dto)
-        if not query_data_order:
-            order_num = 0
-        else:
-            order_num = query_data_order[1]
-        if not query_data_ticket:
-            ticket_num = 0
-        else:
-            ticket_num = query_data_ticket[1]
+
+        order_num = query_data_order[1] if query_data_order else 0
+        ticket_num = query_data_ticket[1] if query_data_ticket else 0
 
         query_data = [DateUtil.date2str(start_date, '%Y-%m-%d'), order_num, ticket_num]
         DBCli().targetdb_cli.insert(gt_order_sql["insert_gtgj_from_hb"], query_data)

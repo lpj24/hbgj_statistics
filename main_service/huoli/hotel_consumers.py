@@ -28,6 +28,6 @@ def update_hotel_consumers_monthly():
     DBCli().targetdb_cli.insert(hotel_consumers_sql["update_hotel_consumers_monthly"], query_data)
 
 if __name__ == "__main__":
-    # update_hotel_consumers_daily(4)
-    update_hotel_consumers_weekly()
+    update_hotel_consumers_daily(1)
+    # update_hotel_consumers_weekly()
     # update_hotel_consumers_monthly()

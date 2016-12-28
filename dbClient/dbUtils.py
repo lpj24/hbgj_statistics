@@ -3,7 +3,6 @@ from DBUtils.PooledDB import PooledDB
 import logging
 import time
 import cx_Oracle
-import redis
 
 
 class DButils(object):
@@ -21,10 +20,7 @@ class DButils(object):
     @staticmethod
     def log_str(sql, params):
         sql = sql.strip()
-        if sql.find("update") == 0:
-            func = sql.split(' ')[1]
-        else:
-            func = sql.split(' ')[2]
+        func = sql.split(' ')[1] if sql.find("update") == 0 else sql.split(' ')[2]
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + " update " + func + " :" + str(params)
 
     def batchInsert(self, sql, params):

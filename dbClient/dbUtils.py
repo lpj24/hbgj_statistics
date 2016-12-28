@@ -78,15 +78,3 @@ class DButils(object):
         finally:
             cursor.close()
         return data
-
-    def queryTableOne(self, sql, params):
-        cursor = self._conn.cursor()
-        sql = ""
-        if sql.count("tablename") > 0:
-            for i in xrange(sql.count("tablename")):
-                sql = sql.replace("tablename", params.pop(), i+1)
-
-        cursor.execute(sql, params)
-        data = cursor.fetchone()
-        cursor.close()
-        return data

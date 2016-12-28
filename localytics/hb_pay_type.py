@@ -51,7 +51,6 @@ def hb_pay_type(days=0):
 
     start_date = DateUtil.getDateBeforeDays(days)
     end_date = start_date
-    print start_date, end_date
     sql = """
         insert into hbgj_event_orderpay_paytype_ios_android_daily (s_day, pay_type, android_paystart_o, android_paystart_s,
         android_paystart_u, android_paysucc_o, android_paysucc_s, android_paysucc_u, android_payfail_o ,android_payfail_s, android_payfail_u,
@@ -130,7 +129,6 @@ def hb_pay_type(days=0):
                     r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
                     result = r.json()
                     data = result["results"]
-                    print data
                 except Exception:
                     time.sleep(60*30)
                     hb_pay_type(1)
@@ -145,7 +143,7 @@ def hb_pay_type(days=0):
                            v["ios_paystart_s"], v["ios_paystart_u"], v["ios_paysucc_o"], v["ios_paysucc_s"], v["ios_paysucc_u"],
                            v["ios_payfail_o"
                              ""], v["ios_payfail_s"], v["ios_payfail_u"]]
-            # DBCli().targetdb_cli.insert(sql, insert_data)
+            DBCli().targetdb_cli.insert(sql, insert_data)
         time.sleep(100*2)
         start_date = DateUtil.add_days(start_date, 1)
 

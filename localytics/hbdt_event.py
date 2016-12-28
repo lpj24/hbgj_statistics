@@ -22,7 +22,6 @@ def hbdt_event(days=0):
     # start_date = str(datetime.date(2016, 1, 1))
     # end_date = DateUtil.date2str(DateUtil.getDateBeforeDays(1), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.getDateBeforeDays(days), '%Y-%m-%d')
-    print start_date
 
     for event in event_list:
         hbdt_event.append("ios." + event)
@@ -82,6 +81,6 @@ def hbdt_event(days=0):
         DBCli().targetdb_cli.insert(sql, sql_data)
 
 if __name__ == "__main__":
-    hbdt_event(3)
+    hbdt_event(1)
 
 

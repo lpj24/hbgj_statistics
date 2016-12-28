@@ -102,7 +102,7 @@ def hb_ticket_book(days=0):
         DBCli().targetdb_cli.insert(sql, sql_data)
 
 if __name__ == "__main__":
-    hb_ticket_book(3)
+    hb_ticket_book(1)
 
 
 

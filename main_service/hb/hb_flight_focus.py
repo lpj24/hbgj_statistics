@@ -55,4 +55,4 @@ def update_flight_focus_user_quarterly():
 
 
 if __name__ == "__main__":
-    update_flight_focus_user_daily(2)
+    update_flight_focus_user_daily(1)

@@ -72,7 +72,6 @@ def update_flight_search_user_daily(days=0):
             localytics_check[i] += localytics_result
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])
-    print query_data
     DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_daily'], query_data)
 
 
@@ -82,7 +81,6 @@ def update_flight_search_user_weekly():
     start_table = DateUtil.getTable(start_week)
     start_week = DateUtil.date2str(start_week)
     end_week = DateUtil.date2str(end_week)
-    print start_week, end_week
     if end_table != start_table:
         dto = [start_week, end_week, start_week, end_week, start_week,
                start_table, end_table]

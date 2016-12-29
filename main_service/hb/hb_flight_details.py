@@ -172,9 +172,9 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    # update_flight_detail_user_daily(2)
+    update_flight_detail_user_daily(1)
     # start_date = datetime.date(2016, 1, 31)
     # update_check_pv_his(start_date)
-    update_flight_detail_user_weekly()
+    # update_flight_detail_user_weekly()
     # update_flight_detail_user_daily(3)
     # update_flight_detail_user_monthly()

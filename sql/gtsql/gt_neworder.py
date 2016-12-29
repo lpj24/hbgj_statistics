@@ -1,68 +1,6 @@
 #coding:utf8
 
 gt_neworder_daily = """
-    select
-    AA.s_day, AA.ticket_count ticket_num, AA_O.order_count order_num, AA.amount gmv,
-    CC.ticket_count_ios ticket_num_ios, CC_O.order_count order_num_ios, CC.amount_ios gmv_ios,
-    BB.ticket_count_android ticket_num_android, BB_O.order_count order_num_android, BB.amount_android gmv_android
-     from (
-    select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day, count(*) ticket_count,
-    sum(price) amount
-    from user_sub_order
-    where  create_time>=%s
-    and create_time<%s
-    and status not in ('取消订单','取消改签')
-    GROUP BY s_day) AA
-    left JOIN (
-    select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day, count(*) ticket_count_android,
-    sum(price) amount_android
-    from user_sub_order
-    where  create_time>=%s
-    and create_time<%s
-    and status not in ('取消订单','取消改签')
-    and p_info like '%%android%%'
-    GROUP BY s_day) BB on AA.s_day = BB.s_day
-    LEFT JOIN (
-    select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day, count(*) ticket_count_ios,
-    sum(price) amount_ios
-    from user_sub_order
-    where  create_time>=%s
-    and create_time<%s
-    and status not in ('取消订单','取消改签')
-    and p_info like '%%ios%%'
-    GROUP BY s_day) CC on BB.s_day = CC.s_day
-LEFT JOIN  (
-	select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
-    count(distinct order_id) order_count
-    from user_order
-    where  create_time>=%s
-    and create_time<%s
-    and i_status!=2
-    GROUP BY s_day) AA_O on CC.s_day=AA_O.s_day
-left join (
-select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
-    count(distinct order_id) order_count
-    from user_order
-    where  create_time>=%s
-    and create_time<%s
-    and i_status!=2
-	and p_info like '%%android%%'
-    GROUP BY s_day
-) BB_O on AA_O.s_day = BB_O.s_day
-left join (
-	select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
-    count(distinct order_id) order_count
-    from user_order
-    where  create_time>=%s
-    and create_time<%s
-    and i_status!=2
-	and p_info like '%%ios%%'
-    GROUP BY s_day
-) CC_O on BB_O.s_day = CC_O.s_day
-
-"""
-
-'''
 select
 A.s_day, A.ticket_num, B.order_num, A.gmv,
 A.ticket_num_ios, B.order_num_ios, A.gmv_ios,
@@ -88,7 +26,9 @@ LEFT JOIN (select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
     and create_time<%s
     and i_status!=2
     GROUP BY s_day) B ON A.s_day = B.s_day
-'''
+
+"""
+
 
 update_gtgj_new_order_daily = """
     insert into gtgj_new_order_daily

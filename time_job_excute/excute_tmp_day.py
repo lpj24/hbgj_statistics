@@ -10,11 +10,11 @@ from main_service.huoli import hotel_consumers
 if __name__ == "__main__":
     days = sys.argv[1]
 
-    TimeService.add_hard_service(hb_search_focus.write_day)
-    TimeService.add_hard_service(hb_consumers.update_hb_consumers_daily)
-    TimeService.add_hard_service(hb_consumers.update_hb_newconsumers_daily)
-    TimeService.add_hard_service(hb_consumers.update_hb_consumers_weekly)
-    TimeService.add_hard_service(hb_consumers.update_hb_consumers_monthly)
+    # TimeService.add_hard_service(hb_search_focus.write_day)
+    # TimeService.add_hard_service(hb_consumers.update_hb_consumers_daily)
+    # TimeService.add_hard_service(hb_consumers.update_hb_newconsumers_daily)
+    # TimeService.add_hard_service(hb_consumers.update_hb_consumers_weekly)
+    # TimeService.add_hard_service(hb_consumers.update_hb_consumers_monthly)
 
     TimeService.add_hard_service(hb_ticket_book.hb_ticket_book)
     TimeService.add_hard_service(hb_pay_type.hb_pay_type)

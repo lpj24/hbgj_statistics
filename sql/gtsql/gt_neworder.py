@@ -62,6 +62,34 @@ left join (
 
 """
 
+'''
+select
+A.s_day, A.ticket_num, B.order_num, A.gmv,
+A.ticket_num_ios, B.order_num_ios, A.gmv_ios,
+A.ticket_num_android, B.order_num_android, A.gmv_android
+ from (
+   select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day, count(*) ticket_num,
+    sum(price) gmv,
+    count(case when p_info like '%%android%%' then order_id end) ticket_num_android ,
+    sum(case when p_info like '%%android%%' then price end) gmv_android,
+    count(case when p_info like '%%ios%%' then order_id end) ticket_num_ios,
+    sum(case when p_info like '%%ios%%' then price end) gmv_ios
+    from user_sub_order
+    where  create_time>=%s
+    and create_time<%s
+    and status not in ('取消订单','取消改签')
+    GROUP BY s_day) A
+LEFT JOIN (select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
+    count(distinct order_id) order_num,
+    count(case when p_info like '%%android%%' then order_id end) order_num_android,
+    count(case when p_info like '%%android%%' then order_id end) order_num_ios
+    from user_order
+    where  create_time>=%s
+    and create_time<%s
+    and i_status!=2
+    GROUP BY s_day) B ON A.s_day = B.s_day
+'''
+
 update_gtgj_new_order_daily = """
     insert into gtgj_new_order_daily
     (s_day,ticket_num,order_num,gmv,

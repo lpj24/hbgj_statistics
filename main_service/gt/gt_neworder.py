@@ -11,7 +11,7 @@ def update_gt_order_daily(days=0):
         start_date = DateUtil.getDateBeforeDays(days)
         end_date = DateUtil.add_days(start_date, 1)
     dto = []
-    for x in xrange(6):
+    for x in xrange(2):
         dto.append(DateUtil.date2str(start_date))
         dto.append(DateUtil.date2str(end_date))
 

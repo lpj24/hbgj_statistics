@@ -85,6 +85,7 @@ def hb_ticket_book(days=0):
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
                 result = r.json()
                 data = result["results"]
+                print data
             except Exception:
                 time.sleep(60*30)
                 hb_ticket_book(1)

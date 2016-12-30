@@ -64,7 +64,6 @@ def hbdt_event(days=0):
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, verify=False)
                 result = r.json()
                 data = result["results"]
-                print data
             except Exception:
                 time.sleep(60*30)
                 hbdt_event(1)

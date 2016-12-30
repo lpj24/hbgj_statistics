@@ -23,7 +23,6 @@ def hb_ticket_book(days=0):
     # start_date = str(datetime.date(2016, 1, 1))
     # end_date = DateUtil.date2str(DateUtil.getDateBeforeDays(1), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.getDateBeforeDays(days), '%Y-%m-%d')
-    print start_date
 
     for event in event_list:
         hbdt_event.append("ios." + event)
@@ -68,7 +67,6 @@ def hb_ticket_book(days=0):
     """
 
     for event in hbdt_event:
-        print event
         if event.startswith("ios"):
             app_id = app_id_ios
         elif event.startswith("android"):
@@ -85,7 +83,6 @@ def hb_ticket_book(days=0):
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
                 result = r.json()
                 data = result["results"]
-                print data
             except Exception:
                 time.sleep(60*30)
                 hb_ticket_book(1)

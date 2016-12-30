@@ -14,6 +14,7 @@ def update_hotel_newusers_daily(days=0):
     # file_list = [os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_207_" + s_day + ".tar.gz"),
     #              os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_209_" + s_day + ".tar.gz")]
 
+    #uid=(([0-9]|[a-z])*)
     if os.path.isfile(file_list[0]) and os.path.isfile(file_list[1]):
         uid_key = s_day + "_log_uid"
         for tar_file in file_list:

@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from pymongo import Connection
 from dbClient.dateutil import DateUtil
 import datetime

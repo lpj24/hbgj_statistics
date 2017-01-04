@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from sql.huoli_sqlHandlersHistory import car_history
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil

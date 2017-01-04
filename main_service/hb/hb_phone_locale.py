@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from dbClient.db_client import DBCli
 import re
 

@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from sql.hb_sqlHandlersHistory import hb_flight_focus_user_history_sql
 from dbClient.db_client import oracle_cli, targetdb_cli
 from dbClient.dateutil import DateUtil

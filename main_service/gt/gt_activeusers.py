@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from sql.gt_sqlHandlers import gtgj_activeusers_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil

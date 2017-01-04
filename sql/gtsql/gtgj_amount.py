@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 gtgj_change_oids = """
     select distinct(order_id) oid from user_sub_order where create_time >=%s and
     create_time < %s and ( status='改签票' or

@@ -13,7 +13,7 @@ def update_hotel_newusers_daily(days=0):
                  os.path.join("/home/huolibi/external_data/hotel_log", "access.log_209_" + s_day + ".tar.gz")]
     # file_list = [os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_207_" + s_day + ".tar.gz"),
     #              os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_209_" + s_day + ".tar.gz")]
-
+    # regex = re.compile(regex)
     #uid=(([0-9]|[a-z])*)
     if os.path.isfile(file_list[0]) and os.path.isfile(file_list[1]):
         uid_key = s_day + "_log_uid"
@@ -36,7 +36,6 @@ def update_hotel_newusers_daily(days=0):
         DBCli().redis_cli.sunionstore(s_day + "_activeusers", s_day + "_activeusers", uid_key)
         today_uid_num = DBCli().redis_cli.sdiffstore(uid_key, uid_key, "total_log_uids")
         DBCli().redis_cli.sunionstore("total_log_uids", "total_log_uids", uid_key)
-
         insert_sql = """
                 insert into hotel_newusers_daily values (%s, %s, now(), now())
                 on duplicate key update updatetime = now(),

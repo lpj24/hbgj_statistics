@@ -6,7 +6,6 @@ def update_hotel_activeusers_daily(days=0):
     s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y%m%d")
     uid_key = s_day + "_activeusers"
     activeusers_num = DBCli().redis_cli.scard(uid_key)
-
     activeusers_daily_sql = """
         insert into hotel_activeusers_daily values (%s, %s, now(), now())
         on duplicate key update updatetime = now(),

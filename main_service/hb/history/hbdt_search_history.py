@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from sql.hb_sqlHandlersHistory import hb_flight_search_user_history_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil

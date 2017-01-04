@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from sql.huoli_sqlHandlersHistory import eat_activeusers_daily_history_sql
 from dbClient.db_client import targetdb_cli, huoli_cli
 from dbClient.dateutil import DateUtil

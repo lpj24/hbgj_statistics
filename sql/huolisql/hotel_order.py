@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 # hotel_orders_daily = """
 # SELECT  %s  s_day,
 # sum(1) order_count,

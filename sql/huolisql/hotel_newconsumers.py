@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 
 # hotel_newconsumers_daily = """
 # SELECT %s s_day, count(DISTINCT phoneid) new_consumers

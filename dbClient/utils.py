@@ -1,7 +1,8 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 import conf
 import web
-import requests, json
+import requests
+import signal
 
 
 def getMailServer():
@@ -20,6 +21,18 @@ def sendMail(mail, msgText, subject):
     mailSer.sendmail(send_address, mail, subject, msgText,
                      headers=({'Content-Type': 'text/html;charset=utf-8', 'User-Agent': 'webpy.sendmail',
                                'X-Mailer': 'webpy.sendmail'}))
+
+
+def handler_timeout():
+    raise Exception
+
+
+def time_out(fun):
+    def wrapper():
+        signal.signal(signal.SIGALRM, handler_timeout)
+        signal.alarm(1*60*60*1.5)
+        return fun()
+    return wrapper
 
 
 def get_airplane_info(flightno, date, depcode, arrcode):

@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 from dbClient.dateutil import DateUtil
 from dbClient.db_client import sky_hotel_cli, targetdb_cli, sourcedb_cli, redis_cli
 from sql.huoli_sqlHandlers import hotel_newconsumers_sql

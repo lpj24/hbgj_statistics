@@ -1,4 +1,4 @@
-#coding:utf8
+# -*- coding: utf-8 -*-
 hotel_consumers_daily_his = """
 select B.s_day,
 if(B.consumers is null, 0, B.consumers) consumers,

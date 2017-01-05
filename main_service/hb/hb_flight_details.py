@@ -96,8 +96,8 @@ def update_flight_detail_user_monthly():
     dto = [last_month_start]
     for i in table_list:
         dto.append(i)
-    query_date = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_monthly'], dto)
-    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_monthly'], query_date)
+    query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_monthly'], dto)
+    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_monthly'], query_data)
 
 
 def update_flight_detail_user_quarterly():
@@ -111,8 +111,8 @@ def update_flight_detail_user_quarterly():
     for tablelist in xrange(start_index, end_index):
         table_list = DateUtil.getAllTable(last_month_start.year, tablelist)
         dto.extend(table_list)
-    query_date = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_quarterly'], dto)
-    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_quarterly'], query_date)
+    query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_quarterly'], dto)
+    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_quarterly'], query_data)
 
 
 def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):

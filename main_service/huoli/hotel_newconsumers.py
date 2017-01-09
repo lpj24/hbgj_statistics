@@ -4,8 +4,8 @@ from sql.huoli_sqlHandlers import hotel_newconsumers_sql
 
 
 def update_hotel_newconsumers_daily(days=0):
-    start_date = DateUtil.getDateBeforeDays(days)
-    end_date = DateUtil.getDateAfterDays(1 - int(days))
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [DateUtil.date2str(start_date),
            DateUtil.date2str(end_date), DateUtil.date2str(start_date)]
     query_data = DBCli().sky_hotel_cli.queryAll(hotel_newconsumers_sql["hotel_newconsumers_daily"], dto)

@@ -3,7 +3,7 @@ from dbClient.db_client import DBCli
 
 
 def update_hotel_activeusers_daily(days=0):
-    s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y%m%d")
+    s_day = DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y%m%d")
     uid_key = s_day + "_activeusers"
     activeusers_num = DBCli().redis_cli.scard(uid_key)
     activeusers_daily_sql = """
@@ -13,16 +13,16 @@ def update_hotel_activeusers_daily(days=0):
         activeusers = VALUES(activeusers)
     """
     if activeusers_num > 0:
-        dto = [DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y-%m-%d"), activeusers_num]
+        dto = [DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y-%m-%d"), activeusers_num]
         DBCli().targetdb_cli.insert(activeusers_daily_sql, dto)
 
 
 def update_hotel_activeusers_weekly(days=0):
-    start_week, end_week = DateUtil.getLastWeekDate(DateUtil.getDateBeforeDays(days))
+    start_week, end_week = DateUtil.get_last_week_date(DateUtil.get_date_before_days(days))
     start_week = DateUtil.add_days(start_week, 7)
     s_day = start_week
     week_activeusers_num = 0
-    today = DateUtil.getDateBeforeDays(days)
+    today = DateUtil.get_date_before_days(days)
     while start_week <= today:
         week_uid_key = DateUtil.date2str(s_day, "%Y%m%d") + "_week_activeusers"
         week_activeusers_num = DBCli().redis_cli.sunionstore(week_uid_key, DateUtil.date2str(start_week, '%Y%m%d')+"_activeusers",
@@ -42,7 +42,7 @@ def update_hotel_activeusers_weekly(days=0):
 
 
 def update_hotel_activeusers_monthly():
-    start_month, end_month = DateUtil.getLastMonthDate()
+    start_month, end_month = DateUtil.get_last_month_date()
     s_day = start_month
     month_activeusers_num = 0
     while start_month < end_month:

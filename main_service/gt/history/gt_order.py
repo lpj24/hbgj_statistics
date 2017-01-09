@@ -14,8 +14,8 @@ def mongo_his():
     coll = db["sub_order"]
     coll_order = db["order"]
     # coll_order_his = db["order_history"]
-    # start_date = DateUtil.date2str(DateUtil.getDateBeforeDays(1), '%Y%m%d')
-    # end_date = DateUtil.date2str(DateUtil.getDateBeforeDays(0), '%Y%m%d')
+    # start_date = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y%m%d')
+    # end_date = DateUtil.date2str(DateUtil.get_date_before_days(0), '%Y%m%d')
     start_date = datetime.date(2016, 7, 11)
 
     last_date = datetime.date(2013, 6, 6)

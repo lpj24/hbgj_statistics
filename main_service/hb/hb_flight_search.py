@@ -28,11 +28,11 @@ def localytics_cli(app_id, event, metrics, start_date):
 
 
 def update_flight_search_user_daily(days=0):
-    tomorrow = DateUtil.getDateAfterDays(1-int(days))
+    tomorrow = DateUtil.get_date_after_days(1-int(days))
     tomorrow_date = DateUtil.date2str(tomorrow)
-    today = DateUtil.getDateBeforeDays(int(days))
-    s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(int(days)), '%Y-%m-%d')
-    tablename = DateUtil.getTable(today)
+    today = DateUtil.get_date_before_days(int(days))
+    s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
+    tablename = DateUtil.get_table(today)
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), tomorrow_date, tablename]
 
     pv_check_dto = [DateUtil.date2str(today, '%Y-%m-%d'), ]
@@ -76,9 +76,9 @@ def update_flight_search_user_daily(days=0):
 
 
 def update_flight_search_user_weekly():
-    start_week, end_week = DateUtil.getLastWeekDate()
-    end_table = DateUtil.getTable(DateUtil.add_days(end_week, -1))
-    start_table = DateUtil.getTable(start_week)
+    start_week, end_week = DateUtil.get_last_week_date()
+    end_table = DateUtil.get_table(DateUtil.add_days(end_week, -1))
+    start_table = DateUtil.get_table(start_week)
     start_week = DateUtil.date2str(start_week)
     end_week = DateUtil.date2str(end_week)
     if end_table != start_table:
@@ -93,8 +93,8 @@ def update_flight_search_user_weekly():
 
 
 def update_flight_search_user_monthly():
-    last_month_start, last_month_end = DateUtil.getLastMonthDate()
-    table_list = DateUtil.getAllTable(last_month_start.year, last_month_start.month)
+    last_month_start, last_month_end = DateUtil.get_last_month_date()
+    table_list = DateUtil.get_all_table(last_month_start.year, last_month_start.month)
     dto = [last_month_start]
     for i in table_list:
         dto.append(i)
@@ -103,7 +103,7 @@ def update_flight_search_user_monthly():
 
 
 def update_flight_search_user_quarterly():
-    last_month_start, last_month_end = DateUtil.getLastQuarterDate()
+    last_month_start, last_month_end = DateUtil.get_last_quarter_date()
     dto = [last_month_start, last_month_start]
     start_index = last_month_start.month
     if last_month_end.month < start_index:
@@ -111,14 +111,14 @@ def update_flight_search_user_quarterly():
     else:
         end_index = last_month_end.month
     for tablelist in xrange(start_index, end_index):
-        table_list = DateUtil.getAllTable(last_month_start.year, tablelist)
+        table_list = DateUtil.get_all_table(last_month_start.year, tablelist)
         dto.extend(table_list)
     query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_quarterly'], dto)
     DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_quarterly'], query_data)
 
 
 def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
-    # s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(int(days)), '%Y-%m-%d')
+    # s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     pv_check_sql = """
         select pv from (
             select time,sum(access) pv

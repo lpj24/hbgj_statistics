@@ -30,8 +30,8 @@ class DButils(object):
             cursor.executemany(sql, params)
             self._conn.commit()
         except MySQLdb.Error, e:
-            warningTime = time.strftime('%Y-%m-%d %H:%M', time.localtime())
-            logging.warning(warningTime + ":" + str(sql)+"--"+str(e.args[1]))
+            warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
+            logging.warning(warning_time + ":" + str(sql)+"--"+str(e.args[1]))
         finally:
             cursor.close()
 
@@ -42,8 +42,8 @@ class DButils(object):
             cursor.execute(sql, params)
             self._conn.commit()
         except MySQLdb.Error, e:
-            warningTime = time.strftime('%Y-%m-%d %H:%M', time.localtime())
-            logging.warning(warningTime + ":" + str(sql) + "--" + str(e.args[1]))
+            warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
+            logging.warning(warning_time + ":" + str(sql) + "--" + str(e.args[1]))
         finally:
             cursor.close()
 

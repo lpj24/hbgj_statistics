@@ -6,7 +6,7 @@ import datetime
 
 def update_hotel_orders_daily():
     start_date = datetime.date(2016, 4, 21)
-    # end_date = DateUtil.getDateAfterDays(1 - int(days))
+    # end_date = DateUtil.get_date_after_days(1 - int(days))
     end_date = datetime.date(2016, 7, 14)
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
@@ -18,7 +18,7 @@ def update_hotel_orders_daily():
 
 def update_hotel_consumers_daily_his():
     start_date = datetime.date(2016, 4, 21)
-    # end_date = DateUtil.getDateAfterDays(1 - int(days))
+    # end_date = DateUtil.get_date_after_days(1 - int(days))
     end_date = datetime.date(2016, 7, 14)
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
@@ -30,7 +30,7 @@ def update_hotel_consumers_daily_his():
 
 def update_hotel_consumers_weekly_his():
     start_date = datetime.date(2016, 4, 18)
-    # end_date = DateUtil.getDateAfterDays(1 - int(days))
+    # end_date = DateUtil.get_date_after_days(1 - int(days))
     end_date = datetime.date(2016, 7, 11)
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
@@ -42,7 +42,7 @@ def update_hotel_consumers_weekly_his():
 
 def update_hotel_consumers_monthly_his():
     start_date = datetime.date(2016, 4, 1)
-    # end_date = DateUtil.getDateAfterDays(1 - int(days))
+    # end_date = DateUtil.get_date_after_days(1 - int(days))
     end_date = datetime.date(2016, 7, 1)
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),

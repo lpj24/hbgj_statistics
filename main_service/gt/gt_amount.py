@@ -65,13 +65,13 @@ def getGtAmountChange(start_date, end_date):
 
 def update_gtgj_amount_daily(days=0):
     if days > 0:
-        query_date = DateUtil.getDateBeforeDays(3)
-        today = DateUtil.getDateBeforeDays(3)
-        tomorrow = DateUtil.getDateAfterDays(0)
+        query_date = DateUtil.get_date_before_days(3)
+        today = DateUtil.get_date_before_days(3)
+        tomorrow = DateUtil.get_date_after_days(0)
     else:
-        query_date = DateUtil.getDateBeforeDays(days)
-        today = DateUtil.getDateBeforeDays(days)
-        tomorrow = DateUtil.getDateAfterDays(1)
+        query_date = DateUtil.get_date_before_days(days)
+        today = DateUtil.get_date_before_days(days)
+        tomorrow = DateUtil.get_date_after_days(1)
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(tomorrow, '%Y-%m-%d')]
     amount_sucess = getGtAmountSuccess(dto, days)
     amount_create = getGtAmountCreate(dto)

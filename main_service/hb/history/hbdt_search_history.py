@@ -6,12 +6,12 @@ import datetime
 
 
 def insert_hbdt_search_history():
-    today = DateUtil.getDateAfterDays(0)
+    today = DateUtil.get_date_after_days(0)
     table_start = datetime.date(2015, 12, 1)
     total_days = (today - table_start).days
     for i in xrange(total_days):
         yes_date = DateUtil.add_days(today, -1)
-        tablename = DateUtil.getTable(yes_date)
+        tablename = DateUtil.get_table(yes_date)
         dto = [DateUtil.date2str(yes_date, '%Y-%m-%d'), DateUtil.date2str(yes_date), DateUtil.date2str(today), tablename]
         query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_history_sql['hb_filght_search_user_daily_history'], dto)
         print query_data
@@ -20,11 +20,11 @@ def insert_hbdt_search_history():
 
 
 def insert_hbdt_search_weekly_history():
-    last_mon, this_mon = DateUtil.getLastWeekDate()
+    last_mon, this_mon = DateUtil.get_last_week_date()
     table_start_date = datetime.date(2015, 12, 1)
     while last_mon >= table_start_date:
-        start_table = DateUtil.getTable(DateUtil.add_days(last_mon, -1))
-        end_table = DateUtil.getTable(this_mon)
+        start_table = DateUtil.get_table(DateUtil.add_days(last_mon, -1))
+        end_table = DateUtil.get_table(this_mon)
         if start_table != end_table:
             dto = [DateUtil.date2str(last_mon, '%Y-%m-%d'), DateUtil.date2str(last_mon), DateUtil.date2str(this_mon),
                    DateUtil.date2str(last_mon), DateUtil.date2str(this_mon), start_table, end_table]
@@ -39,22 +39,22 @@ def insert_hbdt_search_weekly_history():
                 hb_flight_search_user_history_sql['hb_filght_search_user_weeky_history'], dto)
             DBCli().targetdb_cli.insert(hb_flight_search_user_history_sql["update_flight_search_user_pv_weekly_history"],
                                 query_data)
-        last_mon, this_mon = DateUtil.getLastWeekDate(last_mon)
+        last_mon, this_mon = DateUtil.get_last_week_date(last_mon)
 
 
 def insert_hbdt_search_monthly_history():
-    start_date, end_date = DateUtil.getLastMonthDate()
+    start_date, end_date = DateUtil.get_last_month_date()
     table_start_date = datetime.date(2015, 12, 1)
     while start_date >= table_start_date:
-        table_list = DateUtil.getAllTable(start_date.year, start_date.month)
+        table_list = DateUtil.get_all_table(start_date.year, start_date.month)
         dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), table_list[0], table_list[1], table_list[2]]
         query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_history_sql['hb_filght_search_user_monthly_history'], dto)
         DBCli().targetdb_cli.insert(hb_flight_search_user_history_sql["update_flight_search_user_pv_monthly_history"], query_data)
-        start_date, end_date = DateUtil.getLastMonthDate(start_date)
+        start_date, end_date = DateUtil.get_last_month_date(start_date)
 
 
 def insert_hbdt_search_quarterly_history():
-    start_date, end_date = DateUtil.getLastQuarterDate()
+    start_date, end_date = DateUtil.get_last_quarter_date()
     table_start_date = datetime.date(2015, 10, 1)
     while start_date >= table_start_date:
         dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(start_date, '%Y-%m-%d')]
@@ -64,11 +64,11 @@ def insert_hbdt_search_quarterly_history():
         else:
             end_index = end_date.month
         for tablelist in xrange(start_index, end_index):
-            table_list = DateUtil.getAllTable(start_date.year, tablelist)
+            table_list = DateUtil.get_all_table(start_date.year, tablelist)
             dto.extend(table_list)
         query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_history_sql['hb_filght_search_user_quarterly_history'], dto)
         DBCli().targetdb_cli.insert(hb_flight_search_user_history_sql["update_flight_search_user_pv_quarterly_history"], query_data)
-        start_date, end_date = DateUtil.getLastQuarterDate(start_date)
+        start_date, end_date = DateUtil.get_last_quarter_date(start_date)
 
 if __name__ == "__main__":
     insert_hbdt_search_history()

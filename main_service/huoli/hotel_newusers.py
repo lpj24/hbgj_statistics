@@ -8,7 +8,7 @@ import tarfile
 
 def update_hotel_newusers_daily(days=0):
     regex = re.compile(r"uid=([0-9]*)")
-    s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y%m%d")
+    s_day = DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y%m%d")
     file_list = [os.path.join("/home/huolibi/external_data/hotel_log", "access.log_207_" + s_day + ".tar.gz"),
                  os.path.join("/home/huolibi/external_data/hotel_log", "access.log_209_" + s_day + ".tar.gz")]
     # file_list = [os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_207_" + s_day + ".tar.gz"),
@@ -43,7 +43,7 @@ def update_hotel_newusers_daily(days=0):
                 new_users = VALUES(new_users)
             """
 
-        dto = [DateUtil.date2str(DateUtil.getDateBeforeDays(days), "%Y-%m-%d"), today_uid_num]
+        dto = [DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y-%m-%d"), today_uid_num]
         DBCli().targetdb_cli.insert(insert_sql, dto)
 
     else:

@@ -4,15 +4,15 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hbgj_activeusers_daily(days=0):
-    today = DateUtil.date2str(DateUtil.getDateBeforeDays(int(days)), '%Y-%m-%d')
-    tomorrow = DateUtil.date2str(DateUtil.getDateAfterDays(1 - int(days)), '%Y-%m-%d')
+    today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
+    tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = {"s_day": today, "start_date": today, "end_date": tomorrow}
     query_data = DBCli().oracle_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_daily"], query_data)
 
 
 def update_hbgj_activeusers_weekly():
-    start_date, end_date = DateUtil.getLastWeekDate()
+    start_date, end_date = DateUtil.get_last_week_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"start_date": start_date, "end_date": end_date}
@@ -21,7 +21,7 @@ def update_hbgj_activeusers_weekly():
 
 
 def update_hbgj_activeusers_monthly():
-    start_date, end_date = DateUtil.getThisMonthDate()
+    start_date, end_date = DateUtil.get_this_month_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"start_date": start_date, "end_date": end_date}

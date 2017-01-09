@@ -21,8 +21,8 @@ def hb_ticket_book(days=0):
     pv_uv = ["sessions", "users"]
 
     # start_date = str(datetime.date(2016, 1, 1))
-    # end_date = DateUtil.date2str(DateUtil.getDateBeforeDays(1), '%Y-%m-%d')
-    start_date = DateUtil.date2str(DateUtil.getDateBeforeDays(days), '%Y-%m-%d')
+    # end_date = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
 
     for event in event_list:
         hbdt_event.append("ios." + event)

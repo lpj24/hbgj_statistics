@@ -5,12 +5,12 @@ import datetime
 
 
 def gt_newconsumers_hourly():
-    s_day = DateUtil.getToday("%Y-%m-%d")
+    s_day = DateUtil.get_today("%Y-%m-%d")
     s_hour = int(datetime.datetime.now().strftime("%H"))
     s_day = '2016-07-01'
     s_hour = 0
     if s_hour == 0:
-        # s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(1), '%Y-%m-%d')
+        # s_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
         s_hour = 23
     else:
         s_hour -= 1

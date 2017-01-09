@@ -6,7 +6,7 @@ from dbClient import utils
 
 
 def check_day_data():
-    query_date = DateUtil.getDateBeforeDays(1)
+    query_date = DateUtil.get_date_before_days(1)
     query_date = DateUtil.date2str(query_date, '%Y-%m-%d')
     msg = ""
     for execute_sql in sql:

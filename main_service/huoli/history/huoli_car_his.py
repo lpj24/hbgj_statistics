@@ -6,7 +6,7 @@ import datetime
 
 
 def insert_car_orders_daily_history():
-    today = DateUtil.getDateAfterDays(0)
+    today = DateUtil.get_date_after_days(0)
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(today))
@@ -22,7 +22,7 @@ def insert_car_orders_daily_history():
 
 
 def insert_car_consumers_daily_history():
-    today = DateUtil.getDateAfterDays(0)
+    today = DateUtil.get_date_after_days(0)
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(today))
@@ -37,7 +37,7 @@ def insert_car_consumers_daily_history():
 
 
 def insert_car_newconsumers_daily_history():
-    # today = DateUtil.getDateAfterDays(0)
+    # today = DateUtil.get_date_after_days(0)
     today = datetime.date(2014, 6, 2)
     min_date = datetime.date(2014, 1, 1)
     while today >= min_date:
@@ -53,7 +53,7 @@ def insert_car_newconsumers_daily_history():
 
 
 def insert_car_consumers_weekly_history():
-    start_week, end_week = DateUtil.getLastWeekDate()
+    start_week, end_week = DateUtil.get_last_week_date()
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(DateUtil.add_days(end_week, -1)))
@@ -67,7 +67,7 @@ def insert_car_consumers_weekly_history():
 
 
 def insert_car_consumers_monthly_history():
-    start_month, end_month = DateUtil.getLastMonthDate()
+    start_month, end_month = DateUtil.get_last_month_date()
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(end_month))

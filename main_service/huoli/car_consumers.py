@@ -4,8 +4,8 @@ from dbClient.dateutil import DateUtil
 
 
 def update_car_consumers_daily(days=0):
-    today = DateUtil.getDateBeforeDays(int(days))
-    tomorrow = DateUtil.getDateAfterDays(1-int(days))
+    today = DateUtil.get_date_before_days(int(days))
+    tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
@@ -25,7 +25,7 @@ def update_car_consumers_daily(days=0):
 
 
 def update_car_consumers_weekly():
-    start_date, end_date = DateUtil.getLastWeekDate()
+    start_date, end_date = DateUtil.get_last_week_date()
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
@@ -45,7 +45,7 @@ def update_car_consumers_weekly():
 
 
 def update_car_consumers_monthly():
-    start_date, end_date = DateUtil.getLastMonthDate()
+    start_date, end_date = DateUtil.get_last_month_date()
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
@@ -63,7 +63,7 @@ def update_car_consumers_monthly():
 
 
 def update_car_consumers_quarterly():
-    start_date, end_date = DateUtil.getLastQuarterDate()
+    start_date, end_date = DateUtil.get_last_quarter_date()
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
@@ -83,7 +83,7 @@ def update_car_consumers_quarterly():
 
 
 def update_car_newconsumers_daily(days=0):
-    today = DateUtil.getDateBeforeDays(int(days))
+    today = DateUtil.get_date_before_days(int(days))
     dto = []
     for i in xrange(3):
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))

@@ -5,10 +5,10 @@ from dbClient.dateutil import DateUtil
 
 def update_gt_order_daily(days=0):
     if days > 0:
-        start_date = DateUtil.getDateBeforeDays(3)
-        end_date = DateUtil.getDateAfterDays(0)
+        start_date = DateUtil.get_date_before_days(3)
+        end_date = DateUtil.get_date_after_days(0)
     else:
-        start_date = DateUtil.getDateBeforeDays(days)
+        start_date = DateUtil.get_date_before_days(days)
         end_date = DateUtil.add_days(start_date, 1)
     dto = []
     for x in xrange(2):

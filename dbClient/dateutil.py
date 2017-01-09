@@ -1,10 +1,13 @@
-#encoding=utf-8
+# -*- encoding=utf-8 -*-
 import datetime
 import time
 import calendar
 
 
 class DateUtil:
+
+    def __init__(self):
+        pass
 
     @staticmethod
     def add_months(dt, months):
@@ -15,44 +18,44 @@ class DateUtil:
         return dt.replace(year=year, month=month, day=day)
 
     @staticmethod
-    def getToday(fmt_str='%Y%m%d'):
+    def get_today(fmt_str='%Y%m%d'):
         now_time = datetime.datetime.now()
         return now_time.strftime(fmt_str)
 
     @staticmethod
-    def getDateAfterDays(days):
-        afterdate = datetime.date.today() + datetime.timedelta(days)
-        return afterdate
+    def get_date_after_days(days):
+        after_date = datetime.date.today() + datetime.timedelta(days)
+        return after_date
 
     @staticmethod
-    def getDateBeforeDays(days):
-        beforedate = datetime.date.today() - datetime.timedelta(days)
-        return beforedate
+    def get_date_before_days(days):
+        before_date = datetime.date.today() - datetime.timedelta(days)
+        return before_date
 
     @staticmethod
     def add_days(date, num):
         return date + datetime.timedelta(num)
 
     @staticmethod
-    def dateToMilliseconds(d_date):
+    def date_to_milli_seconds(d_date):
         str_date = d_date.strftime('%Y-%m-%d %H:%M:%S')
         fmt_date = time.strptime(str_date, '%Y-%m-%d %H:%M:%S')
         return str(int(time.mktime(fmt_date))*1000)
 
     @staticmethod
-    def getBeforeDays(days):
+    def get_before_days(days):
         now_time = datetime.datetime.now()
         yes_time = now_time - datetime.timedelta(days=days)
         return yes_time.strftime('%Y%m%d')
 
     @staticmethod
-    def getAfterDays(days):
+    def get_after_days(days):
         now_time = datetime.datetime.now()
         yes_time = now_time + datetime.timedelta(days=days)
         return yes_time.strftime('%Y%m%d')
 
     @staticmethod
-    def getTable(date_time=datetime.datetime.now()):
+    def get_table(date_time=datetime.datetime.now()):
         today = date_time
         month = today.month
         day = today.day
@@ -65,7 +68,7 @@ class DateUtil:
             return 'flightApiLog_' + str(year)  + str(month) + str(day / 10)
 
     @staticmethod
-    def getAllTable(year, month):
+    def get_all_table(year, month):
         table_list = []
         for i in xrange(3):
             if month < 10:
@@ -75,29 +78,28 @@ class DateUtil:
         return table_list
 
     @staticmethod
-    def getLastWeekDate(currentTime=datetime.date.today()):
-        #currentTime = datetime.date.today()
-        end_weekdate = currentTime - datetime.timedelta(days=currentTime.weekday())
+    def get_last_week_date(current_time=datetime.date.today()):
+        end_weekdate = current_time - datetime.timedelta(days=current_time.weekday())
         start_weekdate = end_weekdate - datetime.timedelta(days=7)
         return start_weekdate, end_weekdate
 
     @staticmethod
-    def getThisWeekDate():
-        currentTime = datetime.date.today()
-        start_weekdate = currentTime - datetime.timedelta(days=currentTime.weekday())
+    def get_this_week_date():
+        current_time = datetime.date.today()
+        start_weekdate = current_time - datetime.timedelta(days=current_time.weekday())
         end_weekdate = start_weekdate + datetime.timedelta(days=7)
         return start_weekdate, end_weekdate
 
     @staticmethod
-    def getLastMonthDate(currentTime = datetime.date.today()):
-        end_monthdate = datetime.date(currentTime.year, currentTime.month, 1)
+    def get_last_month_date(current_time=datetime.date.today()):
+        end_monthdate = datetime.date(current_time.year, current_time.month, 1)
         # start_monthdate = datetime.date(currentTime.year, currentTime.month - 1, 1)
         start_monthdate = end_monthdate - datetime.timedelta(days=end_monthdate.day)
         start_monthdate = datetime.date(start_monthdate.year, start_monthdate.month, 1)
         return start_monthdate, end_monthdate
 
     @staticmethod
-    def getThisMonthDate():
+    def get_this_month_date():
         currentTime = datetime.date.today()
         start_monthdate = datetime.date(currentTime.year, currentTime.month, 1)
         # end_monthdate = datetime.date(currentTime.year, currentTime.month + 1, 1)
@@ -105,26 +107,26 @@ class DateUtil:
         return start_monthdate, end_monthdate
 
     @staticmethod
-    def getLastQuarterDate(currentTime = datetime.date.today()):
+    def get_last_quarter_date(current_time=datetime.date.today()):
         quarter_startmonth = [1, 4, 7, 10]
-        if currentTime.month < 3:
+        if current_time.month < 3:
             start_quartermonth = quarter_startmonth[3]
-            start_quarterdate = datetime.date(currentTime.year - 1, start_quartermonth, 1)
-            end_quarterdate = datetime.date(currentTime.year, 1, 1)
+            start_quarterdate = datetime.date(current_time.year - 1, start_quartermonth, 1)
+            end_quarterdate = datetime.date(current_time.year, 1, 1)
         else:
-            start_quartermonth = quarter_startmonth[currentTime.month/3 - 1]
-            start_quarterdate = datetime.date(currentTime.year, start_quartermonth, 1)
-            end_quarterdate = datetime.date(currentTime.year, quarter_startmonth[currentTime.month/3], 1)
+            start_quartermonth = quarter_startmonth[current_time.month/3 - 1]
+            start_quarterdate = datetime.date(current_time.year, start_quartermonth, 1)
+            end_quarterdate = datetime.date(current_time.year, quarter_startmonth[current_time.month/3], 1)
         return start_quarterdate, end_quarterdate
 
     @staticmethod
-    def getTomorrowday():
+    def get_tomorrow_day():
         now_time = datetime.datetime.now()
         yes_time = now_time + datetime.timedelta(days=1)
         return yes_time.strftime('%Y%m%d')
 
     @staticmethod
-    def getQuarterByMonth(month):
+    def get_quarter_by_month(month):
         if (month >= 1) and (month <= 3):
             return 1
         elif (month >= 4) and (month <= 6):
@@ -133,7 +135,6 @@ class DateUtil:
             return 3
         elif (month >= 10) and (month <= 12):
             return 4
-
 
     @staticmethod
     def str2str(date_str, fmt_src, fmt_dst):
@@ -284,20 +285,3 @@ class DateUtil:
         days = DateUtil.minus_days(date_str_from, date_str_to, fmt)
         for i in range(days):
             yield DateUtil.plus_days(date_str_from, i, fmt)
-
-
-if __name__ == "__main__":
-    # start = datetime.date(2016,5,1)
-    # end = datetime.date(2016,4,11)
-    # print DateUtil.getTable(start), DateUtil.getTable(DateUtil.add_days(end, -1))
-    # print DateUtil.getDateBeforeDays(3)
-    # currentTime = datetime.date.today()
-    # start_weekdate = currentTime - datetime.timedelta(days=currentTime.weekday())
-    # end_weekdate = start_weekdate + datetime.timedelta(days=7)
-    # # print DateUtil.getThisWeekDate()
-    # # print DateUtil.getThisMonthDate()
-    # print DateUtil.getThisMonthDate()
-    # date = datetime.date(2016, 7, 7)
-    # print DateUtil.getTable(date)
-    # print DateUtil.getThisMonthDate()
-    print DateUtil.getLastMonthDate(datetime.date(2017, 1, 1))

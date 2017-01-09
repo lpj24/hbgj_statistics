@@ -4,8 +4,8 @@ from dbClient.dateutil import DateUtil
 
 
 def update_car_orders_daily(days=0):
-    today = DateUtil.getDateBeforeDays(int(days))
-    tomorrow = DateUtil.getDateAfterDays(1-int(days))
+    today = DateUtil.get_date_before_days(int(days))
+    tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = []
     # for i in xrange(4):
     #     dto.append(DateUtil.date2str(today, '%Y-%m-%d'))

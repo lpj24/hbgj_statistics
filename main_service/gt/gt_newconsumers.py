@@ -48,7 +48,7 @@ def gt_newconsumers_daily(days=0):
                   and pay_time>=%s
                   and pay_time<%s
         """
-    start_date = DateUtil.getDateBeforeDays(days)
+    start_date = DateUtil.get_date_before_days(days)
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
 
     query_data_ios = gt_cli.queryAll(new_consumers_daily_ios, dto)
@@ -93,11 +93,11 @@ def gt_newconsumers_hourly():
     redis_cli = DBCli().redis_cli
     gt_cli = DBCli().gt_cli
     targetdb_cli = DBCli().targetdb_cli
-    s_day = DateUtil.getToday("%Y-%m-%d")
+    s_day = DateUtil.get_today("%Y-%m-%d")
     s_hour = int(datetime.datetime.now().strftime("%H"))
 
     if s_hour == 0:
-        s_day = DateUtil.date2str(DateUtil.getDateBeforeDays(1), '%Y-%m-%d')
+        s_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
         s_hour = 23
     else:
         s_hour -= 1

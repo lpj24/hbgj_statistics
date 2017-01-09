@@ -4,8 +4,8 @@ from sql.huoli_sqlHandlers import hotel_consumers_sql
 
 
 def update_hotel_consumers_daily(days=0):
-    start_date = DateUtil.getDateBeforeDays(days)
-    end_date = DateUtil.getDateAfterDays(1 - int(days))
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
     query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_daily"], dto)
@@ -13,7 +13,7 @@ def update_hotel_consumers_daily(days=0):
 
 
 def update_hotel_consumers_weekly():
-    start_date, end_date = DateUtil.getLastWeekDate()
+    start_date, end_date = DateUtil.get_last_week_date()
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
     query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_weekly"], dto)
@@ -21,7 +21,7 @@ def update_hotel_consumers_weekly():
 
 
 def update_hotel_consumers_monthly():
-    start_date, end_date = DateUtil.getLastMonthDate()
+    start_date, end_date = DateUtil.get_last_month_date()
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
     query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_monthly"], dto)

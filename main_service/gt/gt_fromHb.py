@@ -5,8 +5,8 @@ import datetime
 
 
 def update_gtgj_from_hb(days=0):
-    today = DateUtil.date2str(DateUtil.getDateBeforeDays(int(days)))
-    tomorrow = DateUtil.date2str(DateUtil.getDateAfterDays(1 - int(days)))
+    today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
+    tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [today, tomorrow]
     query_data_order = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_order_from_hb"], dto)
     query_data_ticket = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_ticket_from_hb"], dto)

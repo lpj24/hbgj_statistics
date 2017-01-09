@@ -6,15 +6,15 @@ from dbClient.dateutil import DateUtil
 def update_gt_order_daily(days=0):
     dto = []
     if days > 0:
-        today = DateUtil.date2str(DateUtil.getDateBeforeDays(3))
-        tomorrow = DateUtil.date2str(DateUtil.getDateAfterDays(0))
+        today = DateUtil.date2str(DateUtil.get_date_before_days(3))
+        tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(0))
         for i in xrange(0, 4):
             dto.append(today)
             dto.append(tomorrow)
         query_data = DBCli().gt_cli.queryAll(gt_order_sql["gtgj_order_daily_his"], dto)
     else:
-        today = DateUtil.date2str(DateUtil.getDateBeforeDays(days))
-        tomorrow = DateUtil.date2str(DateUtil.getDateAfterDays(1))
+        today = DateUtil.date2str(DateUtil.get_date_before_days(days))
+        tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1))
         for i in xrange(0, 6):
             dto.append(today)
             dto.append(tomorrow)
@@ -24,8 +24,8 @@ def update_gt_order_daily(days=0):
 
 
 def update_gt_order_hourly(days=0):
-    today = DateUtil.date2str(DateUtil.getDateBeforeDays(days))
-    tomorrow = DateUtil.date2str(DateUtil.getDateAfterDays(1-int(days)))
+    today = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1-int(days)))
     dto = [today, tomorrow]
     query_data = DBCli().gt_cli.queryAll(gt_order_sql["gtgj_order_hourly"], dto)
     for hour_data in query_data:

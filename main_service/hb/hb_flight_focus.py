@@ -4,8 +4,8 @@ from dbClient.dateutil import DateUtil
 
 
 def update_flight_focus_user_daily(days=0):
-    today = DateUtil.getDateBeforeDays(int(days))
-    tomorrow = DateUtil.getDateAfterDays(1-int(days))
+    today = DateUtil.get_date_before_days(int(days))
+    tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = {"s_day": DateUtil.date2str(today, '%Y-%m-%d'), "start_date": DateUtil.date2str(today, '%Y-%m-%d'),
            "end_date":  DateUtil.date2str(tomorrow, '%Y-%m-%d')}
     query_data = DBCli().oracle_cli.queryOne(hb_flight_focus_user_sql['hb_flight_focus_users_daily'], dto)
@@ -27,7 +27,7 @@ def update_flight_focus_user_daily(days=0):
 
 
 def update_flight_focus_user_weekly():
-    start_date, end_date = DateUtil.getLastWeekDate()
+    start_date, end_date = DateUtil.get_last_week_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"s_day": start_date, "start_date": start_date, "end_date": end_date}
@@ -36,7 +36,7 @@ def update_flight_focus_user_weekly():
 
 
 def update_flight_focus_user_monthly():
-    start_date, end_date = DateUtil.getLastMonthDate()
+    start_date, end_date = DateUtil.get_last_month_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"s_day": start_date, "start_date": start_date, "end_date": end_date}
@@ -45,7 +45,7 @@ def update_flight_focus_user_monthly():
 
 
 def update_flight_focus_user_quarterly():
-    start_date, end_date = DateUtil.getLastQuarterDate()
+    start_date, end_date = DateUtil.get_last_quarter_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"s_day": start_date, "start_date": start_date, "end_date": end_date}

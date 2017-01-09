@@ -49,7 +49,7 @@ def hb_pay_type(days=0):
     # start_date = datetime.date(2016, 8, 24)
     # end_date = datetime.date(2016, 9, 1)
 
-    start_date = DateUtil.getDateBeforeDays(days)
+    start_date = DateUtil.get_date_before_days(days)
     end_date = start_date
     sql = """
         insert into hbgj_event_orderpay_paytype_ios_android_daily (s_day, pay_type, android_paystart_o, android_paystart_s,

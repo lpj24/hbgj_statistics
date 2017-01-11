@@ -4,7 +4,7 @@ import conf
 
 class DBCli:
 
-    def __init__(self):
+    def __init__(self, *args):
         self._source_db = conf.source_db
         self._target_db = conf.target_db
         self._ApiLog_db = conf.ApiLog_db
@@ -15,7 +15,8 @@ class DBCli:
         self._redis_db = conf.redis_db
         self._sky_hotel = conf.sky_hotel
         self._target_db_test = conf.target_db_test
-        self._hb_fly = conf.hb_fly
+        self._hb_fly = conf.hb_fly,
+        self.args = args if args else (list, )
 
     @property
     def sourcedb_cli(self):
@@ -43,7 +44,7 @@ class DBCli:
 
     @property
     def gt_cli(self):
-        return DButils("mysql", self._gt_db)
+        return DButils("mysql", self._gt_db, self.args[0])
 
     @property
     def redis_cli(self):

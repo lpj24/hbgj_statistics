@@ -13,7 +13,7 @@ def update_gt_income_cost(days):
 
     update_income_sql = """
         insert into profit_gt_income (s_day, type, amount, createtime, updatetime)
-        values (%s, %s, %s, %s, %s)
+        values (%s, %s, %s, now(), now())
     """
 
     update_cost_sql = """

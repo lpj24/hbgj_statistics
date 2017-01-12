@@ -5,30 +5,9 @@ import datetime
 
 
 def collect_income_cost():
-    collect_mysql_columns = """
-        select COLUMN_NAME from information_schema.COLUMNS where table_name = 'income_and_cost';
-    """
-
-    # mysql_columns = DBCli().gt_cli.queryAll(collect_mysql_columns)
-    # in_come_column = []
-    # in_cost_column = []
-    # print mysql_columns
-    # for column in mysql_columns:
-    #     if column[0].startswith("in"):
-    #         in_come_column.append(column[0])
-    #     elif column[0].startswith("cost"):
-    #         in_cost_column.append(column[0])
-    #
-    # start_date = datetime.date(2016, 12, 1)
-    # end_date = datetime.date(2017, 1, 10)
-
     sql = """
         select * from income_and_cost
     """
-
-    # insert_income_sql = """
-    #     insert into profit_gt_income (s_day, type, amount) values (%s, %s, %s)
-    # """
 
     insert_income_sql = """
         insert into profit_gt_income (s_day, type, amount) values (%s, %s, %s)

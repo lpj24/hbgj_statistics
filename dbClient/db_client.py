@@ -16,6 +16,7 @@ class DBCli:
         self._sky_hotel = conf.sky_hotel
         self._target_db_test = conf.target_db_test
         self._hb_fly = conf.hb_fly,
+        self._pay_cost = conf.pay_cost
         self.args = args if args else (list, )
 
     @property
@@ -61,4 +62,8 @@ class DBCli:
     @property
     def hb_fly_cli(self):
         return DButils("oracle", self._hb_fly)
+
+    @property
+    def pay_cost_cli(self):
+        return DButils("mysql", self._pay_cost)
 

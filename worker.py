@@ -43,7 +43,7 @@ if __name__ == "__main__":
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            %s, %s, %s, %s, %s, %s, %s, %s, now(), now()
         )
     """
     DBCli().targetdb_cli.batchInsert(sql, result)

@@ -73,8 +73,8 @@ if __name__ == "__main__":
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='1' and TRADE_CHANNEL not like '%coupon%') then amount else 0 end) paycost_in,
         sum(case when (AMOUNT_TYPE=3 and PRODUCT='1' and TRADE_CHANNEL not like '%coupon%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and PRODUCT='7' and TRADE_CHANNEL like '%coupon%') then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and PRODUCT='7' and TRADE_CHANNEL like '%coupon%') then amount else 0 end) coupon_return,
+        sum(case when (AMOUNT_TYPE=1 and PRODUCT='1' and TRADE_CHANNEL like '%coupon%') then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE=4 and PRODUCT='1' and TRADE_CHANNEL like '%coupon%') then amount else 0 end) coupon_return,
         sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('8')) then amount else 0 end) point_give_amount,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('9','10')) then amount else 0 end) balance_give_amount
         from pay_cost_info

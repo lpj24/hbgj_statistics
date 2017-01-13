@@ -21,7 +21,7 @@ def update_hbgj_activeusers_weekly():
 
 
 def update_hbgj_activeusers_monthly():
-    start_date, end_date = DateUtil.get_this_month_date()
+    start_date, end_date = DateUtil.get_last_month_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"start_date": start_date, "end_date": end_date}
@@ -30,6 +30,6 @@ def update_hbgj_activeusers_monthly():
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    update_hbgj_activeusers_daily(1)
+    # update_hbgj_activeusers_daily(1)
     # update_hbgj_activeusers_weekly()
-    # update_hbgj_activeusers_monthly()
+    update_hbgj_activeusers_monthly()

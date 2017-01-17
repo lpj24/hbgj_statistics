@@ -45,6 +45,15 @@ class DBCli:
 
     @property
     def gt_cli(self):
+        """
+        Usage::
+            >>> return_data = DBCli(dict).gt_cli.queryOne(sql, dto)
+            >>> print type(return_data)
+            <type 'dict'>
+            >>> return_data = DBCli().gt_cli.queryOne(sql, dto)
+            >>> print type(return_data)
+              <type 'list'>
+        """
         return DButils("mysql", self._gt_db, self.args[0])
 
     @property

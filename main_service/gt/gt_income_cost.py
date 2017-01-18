@@ -44,17 +44,5 @@ def update_gt_income_cost(days):
             elif i_c_type.startswith("cost") and not exists_cost:
                 DBCli().targetdb_cli.insert(update_cost_sql, dto)
 
-        # for k, v in result.items():
-        #     if k.startswith("in") and not exists_income:
-        #         if not v:
-        #             v = 0
-        #         dto = [s_day, k, v]
-        #         DBCli().targetdb_cli.insert(update_income_sql, dto)
-        #     elif k.startswith("cost") and not exists_cost:
-        #         if not v:
-        #             v = 0
-        #         dto = [s_day, k, v]
-        #         DBCli().targetdb_cli.insert(update_cost_sql, dto)
-
 if __name__ == "__main__":
     update_gt_income_cost(1)

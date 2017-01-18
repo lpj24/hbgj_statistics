@@ -1,4 +1,4 @@
-from main_service.hb import hb_activeusers
+from main_service.hb import hb_activeusers, hb_profit_cost
 from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_activeusers, \
     hotel_newconsumers, hotel_order, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
@@ -36,6 +36,7 @@ if __name__ == "__main__":
     TimeService.add_day_service(hbgj_users.hbgj_user)
     TimeService.add_day_service(gt_fromHb.update_gtgj_from_hb)
     TimeService.add_day_service(gt_income_cost.update_gt_income_cost)
+    TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
 
     for fun in TimeService.get_day_service():
         try:

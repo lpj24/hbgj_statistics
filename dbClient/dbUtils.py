@@ -8,11 +8,11 @@ import cx_Oracle
 class DButils(object):
 
     def __init__(self, dbtype=None, conf=None, *args):
-        return_cursor = MySQLdb.cursors.DictCursor if dict in args else MySQLdb.cursors.Cursor
+        _return_cursor = MySQLdb.cursors.DictCursor if dict in args else MySQLdb.cursors.Cursor
         if dbtype.lower() == "mysql":
             self._pool = PooledDB(MySQLdb, host=conf["host"], user=conf["user"], passwd=conf["password"],
                                   port=conf["port"], db=conf["database"],  mincached=1, maxcached=20, charset="utf8", blocking=True
-                                  , cursorclass=return_cursor)
+                                  , cursorclass=_return_cursor)
         elif dbtype.lower() == "oracle":
             self._pool = PooledDB(cx_Oracle, user=conf["user"], password=conf["password"],
                                   dsn=cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"]),

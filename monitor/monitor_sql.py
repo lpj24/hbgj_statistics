@@ -27,4 +27,8 @@ sql = [
     "select count(1) from gtgj_ticket_from_hb where s_day=%s",
     "select count(1) from profit_gt_cost where s_day=%s",
     "select count(1) from profit_gt_income where s_day=%s",
+
+    "select count(1) from profit_hb_cost where s_day=%s",
+    "select count(1) from profit_huoli_car_cost where s_day=%s",
+    "select count(1) from profit_huoli_hotel_cost where s_day=%s",
 ]

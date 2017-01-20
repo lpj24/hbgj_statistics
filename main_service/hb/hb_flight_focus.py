@@ -361,7 +361,7 @@ def update_focus_platform(days):
         import datetime
         start_date = datetime.date(2015, 4, 14)
         end_date = datetime.date(2017, 1, 1)
-        focus = open("new_focus.dat", "a")
+        focus = open("new_focus_jieji_duanxin.dat", "a")
         while start_date < end_date:
             next_day = DateUtil.date2str(DateUtil.add_days(start_date, 1), '%Y-%m-%d')
             dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": next_day}

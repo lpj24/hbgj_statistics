@@ -145,77 +145,84 @@ def update_flight_focus_user_quarterly():
 #         start_date = DateUtil.add_days(start_date, 1)
 
 
-# def update_platform_focus():
-#     from collections import defaultdict
-#     import ast
-#     focus_file = open("focus.dat", "a")
-#     every_day_data = defaultdict(dict)
-#     every_day_data["jieji"] = []
-#     platform_uv = {'android': 0, 'iphone': 0, 'jieji': 0, 'gtgj': 0, 'weixin': 0}
-#     platform_pv = {'android': 0, 'iphone': 0, 'jieji': 0, 'gtgj': 0, 'weixin': 0}
-#     with open("hbdt_focus.dat") as hbdt_focus_data:
-#
-#         for hbdt_data in hbdt_focus_data:
-#             (userid, phoneid, flyid, focusdate, focusflydate, createtime, platform) = hbdt_data.strip().split("\t")
-#             if not ast.literal_eval(phoneid) or platform == "jieji":
-#                 continue
-#             create_time = createtime.split(" ")[0] if createtime else focusflydate.split(" ")[0]
-#             print create_time
-#             phone_id = phoneid if phoneid > 0 else userid
-#             if not ast.literal_eval(phone_id):
-#                 continue
-#             if platform in platform_uv:
-#                 platform = platform
-#             elif platform.lower().find("iphone") >= 0:
-#                 platform = "iphone"
-#
-#             try:
-#                 (every_day_data[create_time])[platform].append(phone_id)
-#             except KeyError:
-#                 (every_day_data[create_time])[platform] = []
-#
-#     with open("hbdt_focus.dat") as hbdt_focus_data:
-#
-#         for hbdt_data in hbdt_focus_data:
-#             (userid, phoneid, flyid, focusdate, focusflydate, createtime, platform) = hbdt_data.strip().split("\t")
-#             if not ast.literal_eval(phoneid) or platform == "jieji":
-#                 continue
-#             create_time = createtime.split(" ")[0] if createtime else focusflydate.split(" ")[0]
-#             print create_time
-#             phone_id = phoneid if phoneid > 0 else userid
-#             if not ast.literal_eval(phone_id):
-#                 continue
-#             if platform in platform_uv:
-#                 platform = platform
-#             elif platform.lower().find("iphone") >= 0:
-#                 platform = "iphone"
-#
-#             try:
-#                 (every_day_data[create_time])[platform].append(phone_id)
-#             except KeyError:
-#                 (every_day_data[create_time])[platform] = []
-#
-#     # for k, v in every_day_data.items():
-#     #
-#     #     android_uv = iphone_uv = gtgj_uv = weixin_uv = jieji_uv = 0
-#     #     print k
-#     #     for platform_k, platform_v in v.items():
-#     #         if platform_k == "jieji":
-#     #             continue
-#     #         if platform_k == "android":
-#     #             android_uv = len(set(platform_v))
-#     #         if platform_k == "iphone":
-#     #             iphone_uv = len(set(platform_v))
-#     #         if platform_k == "gtgj":
-#     #             gtgj_uv = len(set(platform_v))
-#     #         if platform_k == "weixin":
-#     #             weixin_uv = len(set(platform_v))
-#     #
-#     #     out_str = k + "\t" + str(android_uv) + "\t" + str(iphone_uv) + "\t" + str(jieji_uv) + "\t" + str(gtgj_uv) \
-#     #               + "\t" + str(weixin_uv)
-#     #     focus_file.write(out_str + "\n")
-#     #
-#     # focus_file.close()
+def update_platform_focus_by_file():
+    from collections import defaultdict
+    import ast
+    focus_file = open("focus.dat", "a")
+    every_day_data = defaultdict(dict)
+    platform_uv = {'android': 0, 'iphone': 0, 'gtgj': 0, "jieji": 0, 'weixin': 0}
+
+    with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/result/hbdt_focus.dat") as hbdt_focus_data:
+
+        for hbdt_data in hbdt_focus_data:
+
+            (userid, phoneid, flyid, focusdate, focusflydate, createtime, platform) = hbdt_data.strip().split("\t")
+            if ast.literal_eval(phoneid) is None and platform == "jieji":
+                phone_id = -1
+            else:
+                phone_id = phoneid if int(phoneid) > 0 else userid
+
+            create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
+
+            if platform in platform_uv:
+                platform = platform
+            elif platform.lower().find("iphone") >= 0:
+                platform = "iphone"
+
+            try:
+                (every_day_data[create_time])[platform].append(phone_id)
+            except KeyError:
+                (every_day_data[create_time])[platform] = [phone_id]
+
+    with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/result/hbdt_focus_his.dat") as hbdt_focus_data:
+
+        for hbdt_data in hbdt_focus_data:
+            (userid, phoneid, flyid, focusdate, focusflydate, createtime, platform) = hbdt_data.strip().split("\t")
+            if ast.literal_eval(phoneid) is None and platform == "jieji":
+                phone_id = -1
+            else:
+                phone_id = phoneid if int(phoneid) > 0 else userid
+            create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
+
+            if platform in platform_uv:
+                platform = platform
+            elif platform.lower().find("iphone") >= 0:
+                platform = "iphone"
+
+            try:
+                (every_day_data[create_time])[platform].append(phone_id)
+            except KeyError:
+                (every_day_data[create_time])[platform] = [phone_id]
+
+    for k, v in every_day_data.items():
+        total_phone = []
+        android_uv = iphone_uv = gtgj_uv = weixin_uv = total_uv = 0
+        android_pv = iphone_pv = gtgj_pv = weixin_pv = jieji_pv = total_pv = 0
+        for platform_k, platform_v in v.items():
+            total_phone.extend(platform_v)
+            if platform_k == "android":
+                android_uv = len(set(platform_v))
+                android_pv = len(platform_v)
+            if platform_k == "iphone":
+                iphone_uv = len(set(platform_v))
+                iphone_pv = len(platform_v)
+            if platform_k == "gtgj":
+                gtgj_uv = len(set(platform_v))
+                gtgj_pv = len(platform_v)
+            if platform_k == "weixin":
+                weixin_uv = len(set(platform_v))
+                weixin_pv = len(platform_v)
+            if platform_k == "jieji":
+                jieji_pv = len(platform_v)
+        total_uv = len(set(total_phone))
+        total_pv = len(total_phone)
+        out_str = k + "\t" + str(android_uv) + "\t" + str(iphone_uv) + "\t" + str(weixin_uv) + "\t" \
+                  + str(gtgj_uv) + "\t" + str(0) + "\t" + str(total_uv) + "\t" + str(android_pv) + "\t" + \
+                  str(iphone_pv) + "\t" + str(weixin_pv) + "\t" + str(gtgj_pv) + "\t" + str(jieji_pv) + "\t" + str(total_pv)
+        focus_file.write(out_str + "\n")
+
+    focus_file.close()
+
 
 def update_focus_platform(days):
         app_sql = """
@@ -246,10 +253,13 @@ def update_focus_platform(days):
         gtgj_sql = """
         select count(distinct userid) from (
             select distinct userid from fly_userfocus_tbl where createtime
-            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%'
+            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and
+            (userid like 'gt%' or (ordertype = 0 and platform = 'gtgj'))
             union
             select distinct userid from FLY_USERFOCUS_TBL_HIS where createtime
-            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%'
+            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and
+            (userid like 'gt%' or (ordertype = 0 and platform = 'gtgj'))
+
         )
         """
 
@@ -294,67 +304,68 @@ def update_focus_platform(days):
                 select userid, platform  from fly_userfocus_tbl where createtime between to_date(:start_date, 'yyyy-mm-dd') and
                             to_date(:end_date, 'yyyy-mm-dd') and ordertype = 0
                             and (platform = 'android' or platform = 'iphone' or platform = 'iphonepro')
-                            union
-                            select userid, platform from FLY_USERFOCUS_TBL_HIS where createtime
-                            between to_date(:start_date, 'yyyy-mm-dd') and
-                            to_date(:end_date, 'yyyy-mm-dd') and ordertype = 0
-                            and (platform = 'android' or platform = 'iphone' or platform = 'iphonepro')
+                            union all
+                    select userid, platform from FLY_USERFOCUS_TBL_HIS where createtime
+                    between to_date(:start_date, 'yyyy-mm-dd') and
+                    to_date(:end_date, 'yyyy-mm-dd') and ordertype = 0
+                    and (platform = 'android' or platform = 'iphone' or platform = 'iphonepro')
                 ) GROUP BY platform
         """
 
         weixin_sql_pv = """
-        select count(userid) from (
-            select userid from fly_userfocus_tbl where createtime
+        select sum(pv) from (
+            select count(*) pv from fly_userfocus_tbl where createtime
             between to_date(:start_date, 'yyyy-mm-dd') and
             to_date(:end_date, 'yyyy-mm-dd') and ordertype = 0 and platform = 'weixin'
             union
-            select userid from FLY_USERFOCUS_TBL_HIS where createtime
+            select count(*) pv from FLY_USERFOCUS_TBL_HIS where createtime
             between to_date(:start_date, 'yyyy-mm-dd') and
             to_date(:end_date, 'yyyy-mm-dd') and ordertype = 0 and platform = 'weixin')
         """
 
         gtgj_sql_pv = """
-        select count(userid) from (
-            select userid from fly_userfocus_tbl where createtime
-            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%'
+        select sum(pv) from (
+            select count(*) pv from fly_userfocus_tbl where createtime
+            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and
+            (userid like 'gt%' or (ordertype = 0 and platform = 'gtgj'))
             union
-            select userid from FLY_USERFOCUS_TBL_HIS where createtime
-            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%'
+            select count(*) pv from FLY_USERFOCUS_TBL_HIS where createtime
+            between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and
+            (userid like 'gt%' or (ordertype = 0 and platform = 'gtgj'))
         )
         """
 
         jieji_sql_pv = """
-        select count(token) from (
-            select token from fly_userfocus_tbl where createtime
+        select sum(pv) from (
+            select count(*) pv from fly_userfocus_tbl where createtime
             between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd')
             and ordertype = 0 and platform = 'jieji'
             union
-            select token from FLY_USERFOCUS_TBL_HIS where createtime
+            select count(*) pv from FLY_USERFOCUS_TBL_HIS where createtime
             between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd')
             and ordertype = 0 and platform = 'jieji'
         )
         """
 
         duanxin_sql_pv = """
-        select count(phone) from (
-            select phone from fly_userfocus_tbl
+        select sum(pv) from (
+            select count(*) pv from fly_userfocus_tbl
             where createtime between to_date(:start_date, 'yyyy-mm-dd')
             and to_date(:end_date, 'yyyy-mm-dd') and ordertype = 1
             union
-            select phone from FLY_USERFOCUS_TBL_HIS
+            select count(*) pv from FLY_USERFOCUS_TBL_HIS
             where createtime between to_date(:start_date, 'yyyy-mm-dd')
             and to_date(:end_date, 'yyyy-mm-dd') and ordertype = 1)
         """
 
         import datetime
-        start_date = datetime.date(2017, 1, 1)
-        end_date = datetime.date(2017, 1, 20)
+        start_date = datetime.date(2017, 1, 5)
+        end_date = datetime.date(2017, 1, 6)
         focus = open("new_focus.dat", "a")
         while start_date < end_date:
             next_day = DateUtil.date2str(DateUtil.add_days(start_date, 1), '%Y-%m-%d')
             dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": next_day}
             app_data = DBCli().oracle_cli.queryAll(app_sql, dto)
-            print app_data
             iphone_num = 0
             android_num = 0
             for app in app_data:
@@ -398,5 +409,5 @@ def update_focus_platform(days):
 
 if __name__ == "__main__":
     # update_flight_focus_user_daily(4)
-    update_focus_platform(1)
-    # update_platform_focus()
+    # update_focus_platform(1)
+    update_platform_focus_by_file()

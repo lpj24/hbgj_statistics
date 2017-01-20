@@ -6,7 +6,7 @@ hb_flight_focus_users_daily = """
         and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
         and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
         union
-        SELECT phoneid focus_users FROM FLY_USERFOCUS_TBL_HIS
+        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
         where PHONEID>0
         and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
         and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')

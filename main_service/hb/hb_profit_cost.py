@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_car_hotel_profit(days=0):
-    query_date = DateUtil.get_date_before_days(days * 3)
+    query_date = DateUtil.get_date_before_days(days * 5)
     today = DateUtil.get_today()
     sql = """
         select distinct TRADE_TIME s_day,
@@ -14,7 +14,7 @@ def update_hb_car_hotel_profit(days=0):
         sum(case when (AMOUNT_TYPE=1 and PRODUCT='0' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
         sum(case when (AMOUNT_TYPE=4 and PRODUCT='0' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
-        sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1','2','3','4','9','10','12','14')) then amount else 0 end) point_give_amount,
+        sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('6','8','24','25')) then amount else 0 end) balance_give_amount
         from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
         group by TRADE_TIME

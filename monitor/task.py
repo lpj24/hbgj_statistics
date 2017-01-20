@@ -3,6 +3,7 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 from monitor_sql import sql
 from dbClient import utils
+from main_service.gt import gt_income_cost
 
 
 def check_day_data():
@@ -22,5 +23,10 @@ def check_day_data():
         utils.sendMail("lipenju24@163.com", msg, "数据查询异常")
         print msg
 
+
+def update_gt_cost_income():
+    gt_income_cost.update_gt_income_cost(1)
+
 if __name__ == "__main__":
     check_day_data()
+    update_gt_cost_income()

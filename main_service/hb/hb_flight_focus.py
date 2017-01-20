@@ -157,8 +157,11 @@ def update_platform_focus_by_file():
         for hbdt_data in hbdt_focus_data:
 
             (userid, phoneid, flyid, focusdate, focusflydate, createtime, platform) = hbdt_data.strip().split("\t")
-            if ast.literal_eval(phoneid) is None and platform == "jieji":
-                phone_id = -1
+            if ast.literal_eval(phoneid) is None:
+                if platform == "jieji":
+                    phone_id = -1
+                else:
+                    continue
             else:
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
@@ -178,8 +181,11 @@ def update_platform_focus_by_file():
 
         for hbdt_data in hbdt_focus_data:
             (userid, phoneid, flyid, focusdate, focusflydate, createtime, platform) = hbdt_data.strip().split("\t")
-            if ast.literal_eval(phoneid) is None and platform == "jieji":
-                phone_id = -1
+            if ast.literal_eval(phoneid) is None:
+                if platform == "jieji":
+                    phone_id = -1
+                else:
+                    continue
             else:
                 phone_id = phoneid if int(phoneid) > 0 else userid
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
@@ -410,5 +416,5 @@ def update_focus_platform(days):
 
 if __name__ == "__main__":
     # update_flight_focus_user_daily(4)
-    update_focus_platform(1)
-    # update_platform_focus_by_file()
+    # update_focus_platform(1)
+    update_platform_focus_by_file()

@@ -359,55 +359,56 @@ def update_focus_platform(days):
         """
 
         import datetime
-        start_date = datetime.date(2017, 1, 5)
-        end_date = datetime.date(2017, 1, 6)
+        start_date = datetime.date(2015, 4, 14)
+        end_date = datetime.date(2017, 1, 1)
         focus = open("new_focus.dat", "a")
         while start_date < end_date:
             next_day = DateUtil.date2str(DateUtil.add_days(start_date, 1), '%Y-%m-%d')
             dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": next_day}
-            app_data = DBCli().oracle_cli.queryAll(app_sql, dto)
-            iphone_num = 0
-            android_num = 0
-            for app in app_data:
-                app_num, platform = app[0], app[1]
-                if platform in ["iphone", "iphonepro"]:
-                    iphone_num += app_num
-                else:
-                    android_num = app_num
-            weixin_data = DBCli().oracle_cli.queryOne(weixin_sql, dto)
-            gtgj_data = DBCli().oracle_cli.queryOne(gtgj_sql, dto)
+            # app_data = DBCli().oracle_cli.queryAll(app_sql, dto)
+            # iphone_num = 0
+            # android_num = 0
+            # for app in app_data:
+            #     app_num, platform = app[0], app[1]
+            #     if platform in ["iphone", "iphonepro"]:
+            #         iphone_num += app_num
+            #     else:
+            #         android_num = app_num
+            # weixin_data = DBCli().oracle_cli.queryOne(weixin_sql, dto)
+            # gtgj_data = DBCli().oracle_cli.queryOne(gtgj_sql, dto)
             jieji_data = DBCli().oracle_cli.queryOne(jieji_sql, dto)
-            total_data = DBCli().oracle_cli.queryOne(total_sql, dto)
+            # total_data = DBCli().oracle_cli.queryOne(total_sql, dto)
             duanxin_data = DBCli().oracle_cli.queryOne(duanxin_sql, dto)
 
-            app_data_pv = DBCli().oracle_cli.queryAll(app_sql_pv, dto)
-            iphone_num_pv = 0
-            android_num_pv = 0
-            for app in app_data_pv:
-                app_num, platform = app[0], app[1]
-                if platform in ["iphone", "iphonepro"]:
-                    iphone_num_pv += app_num
-                else:
-                    android_num_pv = app_num
-            weixin_data_pv = DBCli().oracle_cli.queryOne(weixin_sql_pv, dto)
-            gtgj_data_pv = DBCli().oracle_cli.queryOne(gtgj_sql_pv, dto)
+            # app_data_pv = DBCli().oracle_cli.queryAll(app_sql_pv, dto)
+            # iphone_num_pv = 0
+            # android_num_pv = 0
+            # for app in app_data_pv:
+            #     app_num, platform = app[0], app[1]
+            #     if platform in ["iphone", "iphonepro"]:
+            #         iphone_num_pv += app_num
+            #     else:
+            #         android_num_pv = app_num
+            # weixin_data_pv = DBCli().oracle_cli.queryOne(weixin_sql_pv, dto)
+            # gtgj_data_pv = DBCli().oracle_cli.queryOne(gtgj_sql_pv, dto)
             jieji_data_pv = DBCli().oracle_cli.queryOne(jieji_sql_pv, dto)
             duanxin_data_pv = DBCli().oracle_cli.queryOne(duanxin_sql_pv, dto)
 
-            out_str = DateUtil.date2str(start_date, '%Y-%m-%d') + "\t" + str(android_num) + \
-                      "\t" + str(iphone_num)+ "\t" + str(weixin_data[0]) + "\t" + \
-                      str(gtgj_data[0]) + "\t" + str(jieji_data[0]) + "\t" + str(duanxin_data[0]) \
-                      + "\t" + str(android_num_pv) + \
-                      "\t" + str(iphone_num_pv)+ "\t" + str(weixin_data_pv[0]) + "\t" + \
-                      str(gtgj_data_pv[0]) + "\t" + str(jieji_data_pv[0]) + "\t" + str(duanxin_data_pv[0]) + \
-                      "\t" + str(total_data[0])
-            print out_str
+            # out_str = DateUtil.date2str(start_date, '%Y-%m-%d') + "\t" + str(android_num) + \
+            #           "\t" + str(iphone_num)+ "\t" + str(weixin_data[0]) + "\t" + \
+            #           str(gtgj_data[0]) + "\t" + str(jieji_data[0]) + "\t" + str(duanxin_data[0]) \
+            #           + "\t" + str(android_num_pv) + \
+            #           "\t" + str(iphone_num_pv)+ "\t" + str(weixin_data_pv[0]) + "\t" + \
+            #           str(gtgj_data_pv[0]) + "\t" + str(jieji_data_pv[0]) + "\t" + str(duanxin_data_pv[0]) + \
+            #           "\t" + str(total_data[0])
+            out_str = DateUtil.date2str(start_date, '%Y-%m-%d') + "\t" + str(jieji_data[0]) + "\t" + str(duanxin_data[0]) + \
+                      "\t" + str(jieji_data_pv[0]) + "\t" + str(duanxin_data_pv[0])
             focus.write(out_str + "\n")
 
             start_date = DateUtil.add_days(start_date, 1)
-
+        focus.close()
 
 if __name__ == "__main__":
     # update_flight_focus_user_daily(4)
-    # update_focus_platform(1)
-    update_platform_focus_by_file()
+    update_focus_platform(1)
+    # update_platform_focus_by_file()

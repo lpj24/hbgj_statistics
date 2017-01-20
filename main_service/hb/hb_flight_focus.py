@@ -416,5 +416,5 @@ def update_focus_platform(days):
 
 if __name__ == "__main__":
     # update_flight_focus_user_daily(4)
-    # update_focus_platform(1)
-    update_platform_focus_by_file()
+    update_focus_platform(1)
+    # update_platform_focus_by_file()

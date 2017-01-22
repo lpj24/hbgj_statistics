@@ -49,6 +49,7 @@ def update_flight_detail_user_daily(days=0):
     pv_check_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
     pv_check = pv_check_data[0]
     query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
+    print query_data
     pv = query_data[2]
     if float(int(pv_check) - int(pv))/float(pv) > 0.2:
         utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
@@ -173,8 +174,9 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    for i in xrange(11, -1, 1):
-        update_flight_detail_user_daily(11)
+    update_flight_detail_user_daily(1)
+    # for i in xrange(10, 0, -1):
+    #     update_flight_detail_user_daily(i)
     # start_date = datetime.date(2016, 1, 31)
     # update_check_pv_his(start_date)
     # update_flight_detail_user_weekly()

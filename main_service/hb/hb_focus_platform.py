@@ -100,7 +100,7 @@ def update_focus_platform(start_date, end_date):
         between to_date(:start_date, 'yyyy-mm-dd') and to_date
         (:end_date, 'yyyy-mm-dd') and userid like 'gt%'
         union
-        select count(distinct(token)) uv from fly_userfocus_tbl
+        select count(distinct(token)) uv from fly_userfocus_tbl_his
         where createtime
         between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj')
     """
@@ -112,7 +112,7 @@ def update_focus_platform(start_date, end_date):
         between to_date(:start_date, 'yyyy-mm-dd') and to_date
         (:end_date, 'yyyy-mm-dd') and userid like 'gt%'
         union
-        select count(*) pv from fly_userfocus_tbl
+        select count(*) pv from fly_userfocus_tbl_his
         where createtime
         between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj')
     """
@@ -222,12 +222,12 @@ def update_focus_platform(start_date, end_date):
               "\t" + str(jieji_uv) + "\t" + str(duanxin_uv) + "\t" + str(total_uv) + "\t" +  \
               "\t" + str(android_pv) + "\t" + str(iphone_pv) + "\t" + str(weixin_pv) + "\t" + str(gtgj_pv) + \
               "\t" + str(jieji_pv) + "\t" + str(duanxin_pv) + "\t" + str(total_pv)
-
+    print out_str
     return out_str
 
 
 if __name__ == "__main__":
-    one_focus = open("one_focus.dat", 'a')
+    one_focus = open("new_one_focus.dat", 'a')
     import datetime
     start_date = datetime.date(2017, 1, 1)
     end_date = datetime.date(2017, 1, 22)

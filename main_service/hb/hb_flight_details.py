@@ -34,6 +34,7 @@ def update_flight_detail_user_daily(days=0):
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
     dto = [s_day, today, tomorrow_date, tablename]
+    print dto
     pv_check_dto = [str(s_day), ]
     pv_check_sql = """
         select pv from (
@@ -172,7 +173,8 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    update_flight_detail_user_daily(6)
+    for i in xrange(11, -1, 1):
+        update_flight_detail_user_daily(11)
     # start_date = datetime.date(2016, 1, 31)
     # update_check_pv_his(start_date)
     # update_flight_detail_user_weekly()

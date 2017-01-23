@@ -2,7 +2,7 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
-def update_focus_platform(start_date, end_date):
+def update_focus_platform(days=0):
     all_platform_sql_uv = """
         select platform, sum(focus_users) from (
         select count(DISTINCT phoneid) focus_users, platform from (
@@ -81,40 +81,58 @@ def update_focus_platform(start_date, end_date):
             and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
         ) )
     """
-    # all_other_sql_pv = """
-    #         SELECT count(*) FROM FLY_USERFOCUS_TBL
-    #         where CREATETIME<to_date(:end_date, 'yyyy-mm-dd')
-    #         and CREATETIME>=to_date(:start_date, 'yyyy-mm-dd')
-    #     """
-    #
-    # all_other_sql_pv_his = """
-    #     SELECT count(*) FROM FLY_USERFOCUS_TBL_HIS
-    #     where CREATETIME<to_date(:end_date, 'yyyy-mm-dd')
-    #     and CREATETIME>=to_date(:start_date, 'yyyy-mm-dd')
-    # """
 
     gtgj_sql = """
-        select sum(uv) from (
-        select count(distinct(userid)) uv
+        select count(DISTINCT uv) from (
+		select uv from (
+        select distinct(userid) uv
         from fly_userfocus_tbl where createtime
         between to_date(:start_date, 'yyyy-mm-dd') and to_date
         (:end_date, 'yyyy-mm-dd') and userid like 'gt%'
+		union
+		select distinct(userid) uv
+        from fly_userfocus_tbl_his where createtime
+        between to_date(:start_date, 'yyyy-mm-dd') and to_date
+        (:end_date, 'yyyy-mm-dd') and userid like 'gt%')
         union
-        select count(distinct(token)) uv from fly_userfocus_tbl_his
+		select uv from (
+        select distinct(token) uv from fly_userfocus_tbl
         where createtime
-        between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj')
+        between to_date(:start_date, 'yyyy-mm-dd')
+		and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
+		UNION
+        select distinct(token) uv from fly_userfocus_tbl_his
+        where createtime
+        between to_date(:start_date, 'yyyy-mm-dd')
+	    and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
+
+	    ))
     """
 
     gtgj_sql_pv = """
         select sum(pv) from (
+        select sum(pv) pv from (
         select count(*) pv
         from fly_userfocus_tbl where createtime
         between to_date(:start_date, 'yyyy-mm-dd') and to_date
         (:end_date, 'yyyy-mm-dd') and userid like 'gt%'
+		union
+		select count(*) pv
+        from fly_userfocus_tbl_his where createtime
+        between to_date(:start_date, 'yyyy-mm-dd') and to_date
+        (:end_date, 'yyyy-mm-dd') and userid like 'gt%')
         union
+        select sum(pv) pv from (
+        select count(*) pv from fly_userfocus_tbl
+        where createtime
+        between to_date(:start_date, 'yyyy-mm-dd')
+	    and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
+	    UNION
         select count(*) pv from fly_userfocus_tbl_his
         where createtime
-        between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj')
+        between to_date(:start_date, 'yyyy-mm-dd')
+        and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
+        ))
     """
 
     jieji_sql = """
@@ -165,7 +183,10 @@ def update_focus_platform(start_date, end_date):
 
     android_uv = iphone_uv = weixin_uv = jieji_uv = duanxin_uv = gtgj_uv = total_uv = total_uv_all = 0
     android_pv = iphone_pv = weixin_pv = jieji_pv = duanxin_pv = gtgj_pv = total_pv = 0
+    start_date = DateUtil.get_date_before_days(int(days))
+    end_date = DateUtil.get_date_after_days(1-int(days))
     dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": DateUtil.date2str(end_date, '%Y-%m-%d')}
+    print dto
     app_data_uv = DBCli().oracle_cli.queryAll(all_platform_sql_uv, dto)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
@@ -213,27 +234,50 @@ def update_focus_platform(start_date, end_date):
     gtgj_pv = gtgj_data_pv[0]
     total_pv = iphone_pv + android_pv + weixin_pv + gtgj_pv + jieji_pv + duanxin_pv
 
-    # check_data_uv = DBCli().oracle_cli.queryOne(all_other_sql_pv, dto)
-    # check_data_his_uv = DBCli().oracle_cli.queryOne(all_other_sql_pv_his, dto)
-    # total_uv_all = check_data_uv[0] + check_data_his_uv[0]
-
-    out_str = DateUtil.date2str(start_date, '%Y-%m-%d') + "\t" + str(android_uv) + "\t" \
-              + str(iphone_uv) + "\t" + str(weixin_uv) + "\t" + str(gtgj_uv) + \
-              "\t" + str(jieji_uv) + "\t" + str(duanxin_uv) + "\t" + str(total_uv) + "\t" +  \
-              "\t" + str(android_pv) + "\t" + str(iphone_pv) + "\t" + str(weixin_pv) + "\t" + str(gtgj_pv) + \
-              "\t" + str(jieji_pv) + "\t" + str(duanxin_pv) + "\t" + str(total_pv)
-    print out_str
-    return out_str
+    insert_sql = """
+        insert into hbdt_focus_platform_daily (s_day, android_uv, iphone_uv, weixin_uv, gtgj_uv,
+        jieji_uv, sms_uv, uv, android_pv, iphone_pv, weixin_pv, gtgj_pv, jieji_pv, sms_pv, pv,
+        createtime, updatetime) values
+        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now() ,
+        s_day = VALUES(s_day),
+        android_uv = VALUES(android_uv),
+        iphone_uv = VALUES(iphone_uv),
+        weixin_uv = VALUES(weixin_uv),
+        gtgj_uv = VALUES(gtgj_uv),
+        jieji_uv = VALUES(jieji_uv),
+        sms_uv = VALUES(sms_uv),
+        uv = VALUES(uv),
+        android_pv = VALUES(android_pv),
+        iphone_pv = VALUES(iphone_pv),
+        weixin_pv = VALUES(weixin_pv),
+        gtgj_pv = VALUES(gtgj_pv),
+        jieji_pv = VALUES(jieji_pv),
+        sms_pv = VALUES(sms_pv),
+        pv = VALUES(pv)
+    """
+    # out_str = DateUtil.date2str(start_date, '%Y-%m-%d') + "\t" + str(android_uv) + "\t" \
+    #           + str(iphone_uv) + "\t" + str(weixin_uv) + "\t" + str(gtgj_uv) + \
+    #           "\t" + str(jieji_uv) + "\t" + str(duanxin_uv) + "\t" + str(total_uv) + "\t" +  \
+    #           "\t" + str(android_pv) + "\t" + str(iphone_pv) + "\t" + str(weixin_pv) + "\t" + str(gtgj_pv) + \
+    #           "\t" + str(jieji_pv) + "\t" + str(duanxin_pv) + "\t" + str(total_pv)
+    # print out_str
+    # return out_str
+    result_data = [ DateUtil.date2str(start_date, '%Y-%m-%d'), str(android_uv), str(iphone_uv), str(weixin_uv),
+                    str(gtgj_uv), str(jieji_uv), str(duanxin_uv), str(total_uv), str(android_pv), str(iphone_pv),
+                    str(weixin_pv), str(gtgj_pv), str(jieji_pv), str(duanxin_pv), str(total_pv)]
+    DBCli().targetdb_cli.insert(insert_sql, result_data)
 
 
 if __name__ == "__main__":
-    one_focus = open("new_one_focus.dat", 'a')
-    import datetime
-    start_date = datetime.date(2017, 1, 1)
-    end_date = datetime.date(2017, 1, 22)
-    while start_date < end_date:
-        next_day = DateUtil.add_days(start_date, 1)
-        out_str = update_focus_platform(start_date, next_day)
-        start_date = DateUtil.add_days(start_date, 1)
-        one_focus.write(out_str + "\n")
-    one_focus.close()
+    # one_focus = open("new_one_focus.dat", 'a')
+    # import datetime
+    # start_date = datetime.date(2017, 1, 1)
+    # end_date = datetime.date(2017, 1, 22)
+    # while start_date < end_date:
+    #     next_day = DateUtil.add_days(start_date, 1)
+    #     out_str = update_focus_platform(start_date, next_day)
+    #     start_date = DateUtil.add_days(start_date, 1)
+    #     one_focus.write(out_str + "\n")
+    # one_focus.close()
+    update_focus_platform(1)

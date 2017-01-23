@@ -3,6 +3,7 @@ import conf
 import web
 import requests
 import signal
+import time, logging
 
 
 def getMailServer():
@@ -35,6 +36,16 @@ def time_out(fun):
     return wrapper
 
 
+def exeTime(func):
+    def newFunc(*args, **kwargs):
+        start = time.time()
+        back = func(*args, **kwargs)
+        logging.warning("run time " + str(time.time() - start) + "s")
+        return back
+    return newFunc
+
+
+@exeTime
 def get_airplane_info(flightno, date, depcode, arrcode):
     url = "http://58.83.130.92:7070/pysrv/flightservice/airplane_by_flightno/"
 
@@ -52,7 +63,7 @@ if __name__ == "__main__":
     # flight_info = get_airplane_info('3U8020', '2016-12-11', 'NGB', 'CTU')
     # #A320-214(SL)
     # print flight_info["data"]["aptype"]
-    flight_info = get_airplane_info('HU7662', '2016-12-16')
+    flight_info = get_airplane_info('HU7662', '2016-12-16', 'NGB', 'CTU')
     print flight_info["data"]
     # import datetime
     # from dbClient.dateutil import DateUtil

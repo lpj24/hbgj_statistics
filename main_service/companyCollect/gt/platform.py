@@ -20,6 +20,8 @@ def update_platform_focus_by_file():
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
+            if not create_time:
+                continue
 
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
                 platform = platform
@@ -56,7 +58,8 @@ def update_platform_focus_by_file():
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
-
+            if not create_time:
+                continue
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
                 platform = platform
             elif platform.lower() == 'iphonepro' and ordertype == '0' and userid.find('gt') < 0:
@@ -108,7 +111,7 @@ def update_platform_focus_by_file():
                   str(total_pv)
         focus_file.write(out_str + "\n")
 
-    focus_file.close()
+    # focus_file.close()
 
 if __name__ == "__main__":
     update_platform_focus_by_file()

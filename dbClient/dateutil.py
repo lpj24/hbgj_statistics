@@ -100,9 +100,11 @@ class DateUtil:
         return start_monthdate, end_monthdate
 
     @staticmethod
-    def get_this_month_date():
-        currentTime = datetime.date.today()
-        start_monthdate = datetime.date(currentTime.year, currentTime.month, 1)
+    def get_this_month_date(current_time=datetime.date.today()):
+
+        if not isinstance(current_time, datetime.date):
+            current_time = DateUtil.str2date(current_time, '%Y-%m-%d')
+        start_monthdate = datetime.date(current_time.year, current_time.month, 1)
         # end_monthdate = datetime.date(currentTime.year, currentTime.month + 1, 1)
         end_monthdate = DateUtil.add_months(start_monthdate, 1)
         return start_monthdate, end_monthdate
@@ -291,6 +293,6 @@ class DateUtil:
 if __name__ == "__main__":
     s = datetime.date(2017, 1, 1)
     print isinstance(s, datetime.date)
-    s = '2017-1-1'
-    start_date = (DateUtil.get_this_week_date(s))[0]
-    print DateUtil.date2str(start_date, '%Y-%m-%d')
+    s = '2017-1-22'
+    # start_date = (DateUtil.get_this_week_date(s))[0]
+    print DateUtil.get_this_month_date(s)

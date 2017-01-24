@@ -5,7 +5,8 @@ from dbClient.dateutil import DateUtil
 def update_platform_focus_by_file():
     from collections import defaultdict
     import ast
-    focus_file = open("focus.dat", "a")
+    # focus_file = open("focus.dat", "a")
+    focus_file = open("focus_month.dat", "a")
     every_day_data = defaultdict(dict)
 
     with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/data/hbdt_focus_platform.dat") as hbdt_focus_data:
@@ -28,7 +29,10 @@ def update_platform_focus_by_file():
                 continue
 
             #按周更新
-            create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
+            # create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
+
+            #按月更新
+            create_time = DateUtil.date2str((DateUtil.get_this_month_date(create_time))[0], '%Y-%m-%d')
 
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
                 platform = platform
@@ -67,8 +71,12 @@ def update_platform_focus_by_file():
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
             if create_time == "None":
                 continue
+            #按周更新
+            #create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
 
-            create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
+            #按月更新
+            create_time = DateUtil.date2str((DateUtil.get_this_month_date(create_time))[0], '%Y-%m-%d')
+
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
                 platform = platform
             elif platform.lower() == 'iphonepro' and ordertype == '0' and userid.find('gt') < 0:

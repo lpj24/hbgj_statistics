@@ -38,39 +38,39 @@ def update_platform_focus_by_file():
             except KeyError:
                 (every_day_data[create_time])[platform] = [phone_id]
 
-    with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/data/hbdt_focus_platform_his.dat") as hbdt_focus_data:
-
-        for hbdt_data in hbdt_focus_data:
-
-            (userid, phoneid, phone, token, flyid, focusdate, flydate
-             , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
-
-            if ast.literal_eval(phoneid) is None:
-                if platform == "jieji":
-                    phone_id = token
-                else:
-                    continue
-            else:
-                phone_id = phoneid if int(phoneid) > 0 else userid
-
-            create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
-
-            if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
-                platform = platform
-            elif platform.lower() == 'iphonepro' and ordertype == '0' and userid.find('gt') < 0:
-                platform = "iphone"
-            elif platform == 'weixin' and ordertype == '0':
-                platform = 'weixin'
-            elif platform == 'jieji' and ordertype == '0':
-                platform = "jieji"
-                phone_id = token
-            elif platform == 'gtgj' and ordertype == '0' and userid.find('gt') >= 0:
-                platform = 'gtgj'
-
-            try:
-                (every_day_data[create_time])[platform].append(phone_id)
-            except KeyError:
-                (every_day_data[create_time])[platform] = [phone_id]
+    # with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/data/hbdt_focus_platform_his.dat") as hbdt_focus_data:
+    #
+    #     for hbdt_data in hbdt_focus_data:
+    #
+    #         (userid, phoneid, phone, token, flyid, focusdate, flydate
+    #          , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
+    #
+    #         if ast.literal_eval(phoneid) is None:
+    #             if platform == "jieji":
+    #                 phone_id = token
+    #             else:
+    #                 continue
+    #         else:
+    #             phone_id = phoneid if int(phoneid) > 0 else userid
+    #
+    #         create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
+    #
+    #         if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
+    #             platform = platform
+    #         elif platform.lower() == 'iphonepro' and ordertype == '0' and userid.find('gt') < 0:
+    #             platform = "iphone"
+    #         elif platform == 'weixin' and ordertype == '0':
+    #             platform = 'weixin'
+    #         elif platform == 'jieji' and ordertype == '0':
+    #             platform = "jieji"
+    #             phone_id = token
+    #         elif platform == 'gtgj' and ordertype == '0' and userid.find('gt') >= 0:
+    #             platform = 'gtgj'
+    #
+    #         try:
+    #             (every_day_data[create_time])[platform].append(phone_id)
+    #         except KeyError:
+    #             (every_day_data[create_time])[platform] = [phone_id]
 
     for k, v in every_day_data.items():
         s_day = k

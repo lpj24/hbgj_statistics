@@ -1,3 +1,7 @@
+# -*- coding: utf8 -*-
+from dbClient.dateutil import DateUtil
+
+
 def update_platform_focus_by_file():
     from collections import defaultdict
     import ast
@@ -20,8 +24,11 @@ def update_platform_focus_by_file():
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
-            if not create_time:
+            if ast.literal_eval(create_time) is None:
                 continue
+
+            #按周更新
+            create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
 
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
                 platform = platform
@@ -58,8 +65,10 @@ def update_platform_focus_by_file():
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
-            if not create_time:
+            if ast.literal_eval(create_time) is None:
                 continue
+
+            create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
                 platform = platform
             elif platform.lower() == 'iphonepro' and ordertype == '0' and userid.find('gt') < 0:
@@ -103,12 +112,11 @@ def update_platform_focus_by_file():
         total_uv = len(set(total_phone))
         total_pv = len(total_phone)
 
-        if s_day == '2015-10-16':
-            print total_phone
         out_str = s_day + "\t" + str(android_uv) + "\t" + str(iphone_uv) + "\t" + str(weixin_uv) + "\t" \
                   + str(gtgj_uv) + "\t" + str(jieji_uv) + "\t" + "0" + "\t" + str(total_uv) + "\t" + str(android_pv) + "\t" + \
                   str(iphone_pv) + "\t" + str(weixin_pv) + "\t" + str(gtgj_pv) + "\t" + str(jieji_pv) + "\t" + "0" + "\t" + \
                   str(total_pv)
+
         focus_file.write(out_str + "\n")
 
     # focus_file.close()

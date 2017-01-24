@@ -3,44 +3,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_focus_platform(days=0):
-    # all_platform_sql_uv = """
-    #     select platform, sum(focus_users) from (
-    #     select count(DISTINCT phoneid) focus_users, platform from (
-    #         SELECT phoneid, platform FROM FLY_USERFOCUS_TBL
-    #         where PHONEID>0
-    #         and CREATETIME<to_date(:end_date, 'yyyy-mm-dd')
-    #         and CREATETIME>=to_date(:start_date, 'yyyy-mm-dd')
-    #         and ordertype = 0
-    #         and platform in ('android', 'weixin', 'iphone', 'iphonepro')
-    #         and userid not like 'gt%'
-    #         union
-    #         SELECT phoneid, platform FROM FLY_USERFOCUS_TBL_HIS
-    #         where PHONEID>0
-    #         and ordertype = 0
-    #         and platform in ('android', 'weixin', 'iphone', 'iphonepro')
-    #         and userid not like 'gt%'
-    #         and CREATETIME<to_date(:end_date, 'yyyy-mm-dd')
-    #         and CREATETIME>=to_date(:start_date, 'yyyy-mm-dd')
-    #     ) GROUP BY platform
-    #     UNION
-    #     select count(DISTINCT userid) focus_users, platform from (
-    #         SELECT userid, platform from FLY_USERFOCUS_TBL
-    #         where PHONEID=0
-    #         and CREATETIME<to_date(:end_date, 'yyyy-mm-dd')
-    #         and CREATETIME>=to_date(:start_date, 'yyyy-mm-dd')
-    #         and ordertype = 0
-    #         and platform in ('android', 'weixin', 'iphone', 'iphonepro')
-    #         and userid not like 'gt%'
-    #         UNION
-    #         SELECT USERID, platform from FLY_USERFOCUS_TBL_HIS
-    #         where PHONEID=0
-    #         and ordertype = 0
-    #         and userid not like 'gt%'
-    #         and platform in ('android', 'weixin', 'iphone', 'iphonepro')
-    #         and CREATETIME<to_date(:end_date, 'yyyy-mm-dd')
-    #         and CREATETIME>=to_date(:start_date, 'yyyy-mm-dd')
-    #     ) GROUP BY platform ) GROUP BY platform
-    # """
+
     all_platform_sql_uv = """
         select platform, count(distinct userid) from (
             select distinct(userid) userid, platform from fly_userfocus_tbl
@@ -101,32 +64,6 @@ def update_focus_platform(days=0):
         ) )
     """
 
-    # gtgj_sql = """
-    #     select count(DISTINCT uv) from (
-		# select uv from (
-    #     select distinct(userid) uv
-    #     from fly_userfocus_tbl where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd') and to_date
-    #     (:end_date, 'yyyy-mm-dd') and userid like 'gt%'
-		# union
-		# select distinct(userid) uv
-    #     from fly_userfocus_tbl_his where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd') and to_date
-    #     (:end_date, 'yyyy-mm-dd') and userid like 'gt%')
-    #     union
-		# select uv from (
-    #     select distinct(token) uv from fly_userfocus_tbl
-    #     where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd')
-		# and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
-		# UNION
-    #     select distinct(token) uv from fly_userfocus_tbl_his
-    #     where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd')
-	 #    and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
-	 #    ))
-    # """
-
     gtgj_sql = """
     select count(distinct userid) from (
         select distinct(userid) userid from fly_userfocus_tbl
@@ -148,43 +85,6 @@ def update_focus_platform(days=0):
         where createtime between to_date(:start_date, 'yyyy-mm-dd')
         and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
     """
-    # gtgj_sql_pv = """
-    #     select sum(pv) from (
-    #     select sum(pv) pv from (
-    #     select count(*) pv
-    #     from fly_userfocus_tbl where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd') and to_date
-    #     (:end_date, 'yyyy-mm-dd') and userid like 'gt%'
-		# union
-		# select count(*) pv
-    #     from fly_userfocus_tbl_his where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd') and to_date
-    #     (:end_date, 'yyyy-mm-dd') and userid like 'gt%')
-    #     union
-    #     select sum(pv) pv from (
-    #     select count(*) pv from fly_userfocus_tbl
-    #     where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd')
-	 #    and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
-	 #    UNION
-    #     select count(*) pv from fly_userfocus_tbl_his
-    #     where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
-    #     ))
-    # """
-
-    # jieji_sql = """
-    # select count(distinct token) from (
-    #     select distinct token from fly_userfocus_tbl where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd')
-    #     and ordertype = 0 and platform = 'jieji'
-    #     union
-    #     select distinct token from FLY_USERFOCUS_TBL_HIS where createtime
-    #     between to_date(:start_date, 'yyyy-mm-dd') and to_date(:end_date, 'yyyy-mm-dd')
-    #     and ordertype = 0 and platform = 'jieji'
-    # )
-    # """
 
     jieji_sql = """
     select count(distinct uv) from (
@@ -231,31 +131,6 @@ def update_focus_platform(days=0):
         and to_date(:end_date, 'yyyy-mm-dd') and ordertype = 1)
     """
 
-    # weixin_applate_sql = """
-    # select count(distinct uv) from (
-    #     select distinct(userid) as uv from fly_userfocus_tbl
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and platform = 'web'
-    #     and userid not like 'gt%'
-    #     union
-    #     select distinct(userid) as uv from fly_userfocus_tbl_his
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and platform = 'web'
-    #     and userid not like 'gt%')
-    # """
-    #
-    # weixin_applate_sql_pv = """
-    #     select sum(pv) from (
-    #     select count(*) as pv from fly_userfocus_tbl
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and platform = 'web'
-    #     and userid not like 'gt%'
-    #     union
-    #     select count(*) as pv from fly_userfocus_tbl_his
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and platform = 'web'
-    #     and userid not like 'gt%')
-    # """
     android_uv = iphone_uv = weixin_uv = jieji_uv = duanxin_uv = gtgj_uv = total_uv = weixin_applate_uv = 0
     android_pv = iphone_pv = weixin_pv = jieji_pv = duanxin_pv = gtgj_pv = total_pv = weixin_applate_pv = 0
     start_date = DateUtil.get_date_before_days(int(days))

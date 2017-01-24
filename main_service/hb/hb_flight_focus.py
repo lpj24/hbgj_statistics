@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from sql.hb_sqlHandlers import hb_flight_focus_user_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil

@@ -41,7 +41,7 @@ def update_platform_focus_by_file():
     with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/data/hbdt_focus_platform_his.dat") as hbdt_focus_data:
 
         for hbdt_data in hbdt_focus_data:
-
+            print hbdt_data.strip().split("\t")
             (userid, phoneid, phone, token, flyid, focusdate, flydate
              , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
 

@@ -87,7 +87,6 @@ class DateUtil:
     def get_this_week_date(current_time=datetime.date.today()):
         if not isinstance(current_time, datetime.date):
             current_time = DateUtil.str2date(current_time, '%Y-%m-%d')
-        print current_time
         start_weekdate = current_time - datetime.timedelta(days=current_time.weekday())
         end_weekdate = start_weekdate + datetime.timedelta(days=7)
         return start_weekdate, end_weekdate

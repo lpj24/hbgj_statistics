@@ -79,6 +79,7 @@ def update_platform_focus_by_file():
         total_phone = []
         android_uv = iphone_uv = gtgj_uv = weixin_uv = jieji_uv = total_uv = 0
         android_pv = iphone_pv = gtgj_pv = weixin_pv = jieji_pv = total_pv = 0
+
         for platform_k, platform_v in v.items():
             total_phone.extend(platform_v)
             if platform_k == "android":
@@ -98,6 +99,9 @@ def update_platform_focus_by_file():
                 jieji_pv = len(platform_v)
         total_uv = len(set(total_phone))
         total_pv = len(total_phone)
+
+        if s_day == '2015-10-16':
+            print total_phone
         out_str = s_day + "\t" + str(android_uv) + "\t" + str(iphone_uv) + "\t" + str(weixin_uv) + "\t" \
                   + str(gtgj_uv) + "\t" + str(jieji_uv) + "\t" + "0" + "\t" + str(total_uv) + "\t" + str(android_pv) + "\t" + \
                   str(iphone_pv) + "\t" + str(weixin_pv) + "\t" + str(gtgj_pv) + "\t" + str(jieji_pv) + "\t" + "0" + "\t" + \

@@ -24,7 +24,7 @@ def update_platform_focus_by_file():
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
-            if ast.literal_eval(create_time) is None:
+            if create_time == "None":
                 continue
 
             #按周更新
@@ -65,7 +65,7 @@ def update_platform_focus_by_file():
                 phone_id = phoneid if int(phoneid) > 0 else userid
 
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
-            if ast.literal_eval(create_time) is None:
+            if create_time == "None":
                 continue
 
             create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')

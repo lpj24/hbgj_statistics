@@ -5,8 +5,8 @@ from dbClient.dateutil import DateUtil
 def update_platform_focus_by_file():
     from collections import defaultdict
     import ast
-    # focus_file = open("focus.dat", "a")
-    focus_file = open("focus_month.dat", "a")
+    focus_file = open("focus_week.dat", "a")
+    # focus_file = open("focus_month.dat", "a")
     every_day_data = defaultdict(dict)
 
     with open("/home/huolibi/code/cal2017/cal0118_hbdt_focus/data/hbdt_focus_platform.dat") as hbdt_focus_data:

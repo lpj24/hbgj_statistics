@@ -27,7 +27,8 @@ class DBCli(object):
 
     @property
     def sourcedb_cli(self):
-        return DButils("mysql", self._source_db)
+        return DButils("mysql", self._source_db, self.args[0])
+        # return DButils("mysql", self._source_db)
 
     @property
     def targetdb_cli(self):

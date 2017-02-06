@@ -39,6 +39,7 @@ if __name__ == "__main__":
     TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
     TimeService.add_day_service(hb_focus_platform.update_focus_platform)
     TimeService.add_day_service(hb_delay_insure.update_hb_deplay_insure)
+    TimeService.add_day_service(hb_delay_insure.update_compensate_detail)
 
     for fun in TimeService.get_day_service():
         try:

@@ -82,10 +82,36 @@ def update_hb_deplay_insure(days=0):
 
 def update_compensate_detail(days=0):
     compensate_detail_sql = """
-        SELECT chargecount,count(*) FROM `TICKET_DELAY_CARE`
+        SELECT chargecount,count(*) order_num FROM TICKET_DELAY_CARE
         WHERE flydate = %s and state='1'
         and chargetime<>0 and chargenum!=0 GROUP BY chargecount
     """
 
+    compensate_detail_insert_sql = """
+        insert into compensate_detail_daily (s_day, compensate_type, compensate_order_num, createtime, updatetime)
+        values (%s, %s, %s, now(), now())
+    """
+    from collections import OrderedDict
+    compensate_type = OrderedDict()
+    compensate_type[10] = 0
+    compensate_type[30] = 0
+    compensate_type[60] = 0
+    compensate_type[120] = 0
+    compensate_type[200] = 0
+
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
+    compensate_detail = DBCli(dict).sourcedb_cli.queryAll(compensate_detail_sql, [query_date])
+    for i in compensate_detail:
+        if i["chargecount"] in compensate_type:
+            compensate_type[i["chargecount"]] = i["order_num"]
+
+    for k, v in compensate_type.items():
+        DBCli().targetdb_cli.insert(compensate_detail_insert_sql, [query_date, str(k), v])
+
 if __name__ == "__main__":
-    update_hb_deplay_insure(1)
+    # update_hb_deplay_insure(1)
+    # update_compensate_detail(1)
+    i = 538
+    while i >= 1:
+        update_compensate_detail(i)
+        i -= 1

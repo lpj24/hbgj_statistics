@@ -1,0 +1,75 @@
+# -*- coding: utf-8 -*-
+
+from dbClient.db_client import DBCli
+from dbClient.dateutil import DateUtil
+
+
+def update_hb_deplay_insure(days=0):
+    fly_order_num_sql = """
+        SELECT count(DISTINCT(O.ORDERID)) FROM TICKET_ORDERDETAIL O
+        LEFT JOIN TICKET_ORDER T ON O.ORDERID=T.ORDERID
+        WHERE O.FLYDATE =  %s
+        AND (ORDERSTATUE='5' or ORDERSTATUE='52')
+        AND (O.LINKTYPE IS NULL OR O.LINKTYPE='0' or O.LINKTYPE ='1')
+        AND O.STATE!='12'
+    """
+
+    activity_order_num_sql = """
+        SELECT count(*) FROM TICKET_DELAY_CARE WHERE flydate=%s and state='1'
+    """
+
+    compensate_order_num_sql = """
+        SELECT count(*) FROM TICKET_DELAY_CARE WHERE flydate=%s
+        and state='1' and chargetime<>0 and chargenum!=0
+    """
+
+    compensate_refund_order_num_sql = """
+        SELECT count(*) FROM TICKET_DELAY_CARE c join
+        TICKET_ORDERDETAIL d on c.passcardno=d.PASSENGERIDCARDNO and c.orderid=d.ORDERID
+        WHERE d.flydate=%s and c.chargecount<>0  and c.chargenum!=0
+        and  IFNULL(d.REFUNDID, 0) != 0
+    """
+
+    compensate_amount_one_sql = """
+        SELECT sum(chargecount) FROM TICKET_DELAY_CARE WHERE
+        flydate=%s and state='1'
+        and chargetime<>0 and chargenum!=0 and remark!='刷延误宝嫌疑'
+    """
+
+    compensate_amount_two_sql = """
+        SELECT sum(chargecount) FROM TICKET_DELAY_CARE WHERE flydate=%s
+        and state='1' and chargetime<>0
+        and multiple=2 and chargenum!=0 and remark!='刷延误宝嫌疑'
+    """
+
+    compensate_exception_sql = """
+        select count(*) from (
+        SELECT count(*) order_num FROM TICKET_DELAY_CARE WHERE flydate=%s
+        and state='1' and chargetime<>0 and chargenum!=0 GROUP BY uid HAVING order_num >=2) as A
+    """
+    query_date = DateUtil.get_date_before_days(int(days))
+    dto = [query_date]
+
+    fly_order_num = DBCli().sourcedb_cli.queryOne(fly_order_num_sql, dto)
+    activity_order_num = DBCli().sourcedb_cli.queryOne(activity_order_num_sql, dto)
+    compensate_order_num = DBCli().sourcedb_cli.queryOne(compensate_order_num_sql, dto)
+    compensate_refund_num = DBCli().sourcedb_cli.queryOne(compensate_refund_order_num_sql, dto)
+    compensate_amount_one = DBCli().sourcedb_cli.queryOne(compensate_amount_one_sql, dto)
+    compensate_amount_two = DBCli().sourcedb_cli.queryOne(compensate_amount_two_sql, dto)
+    compensate_exception_num = DBCli().sourcedb_cli.queryOne(compensate_exception_sql, dto)
+
+    insert_sql = """
+        insert into hbgj_delay_treasure_daily (s_day, fly_order_num, activity_order_num, compensate_order_num,
+        compensate_refund_order_num, compensate_amount, compensate_execption_num, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        fly_order_num = values(fly_order_num),
+        activity_order_num = values(activity_order_num),
+        compensate_order_num = values(compensate_order_num),
+        compensate_refund_order_num = values(compensate_refund_order_num),
+        compensate_amount = values(compensate_amount),
+        compensate_execption_num = values(compensate_execption_num)
+
+    """
+
+

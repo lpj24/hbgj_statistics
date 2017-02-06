@@ -47,7 +47,7 @@ def update_hb_deplay_insure(days=0):
         SELECT count(*) order_num FROM TICKET_DELAY_CARE WHERE flydate=%s
         and state='1' and chargetime<>0 and chargenum!=0 GROUP BY uid HAVING order_num >=2) as A
     """
-    query_date = DateUtil.get_date_before_days(int(days))
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     dto = [query_date]
 
     fly_order_num = DBCli().sourcedb_cli.queryOne(fly_order_num_sql, dto)
@@ -71,5 +71,21 @@ def update_hb_deplay_insure(days=0):
         compensate_execption_num = values(compensate_execption_num)
 
     """
+    compensate_amount_one = int(compensate_amount_one[0]) if compensate_amount_one[0] else 0
+    compensate_amount_two = int(compensate_amount_two[0]) if compensate_amount_two[0] else 0
+    insert_data = [query_date, fly_order_num[0], activity_order_num[0], compensate_order_num[0],
+                   compensate_refund_num[0], compensate_amount_one + compensate_amount_two,
+                   compensate_exception_num[0]]
+
+    DBCli().targetdb_cli.insert(insert_sql, insert_data)
 
 
+def update_compensate_detail(days=0):
+    compensate_detail_sql = """
+        SELECT chargecount,count(*) FROM `TICKET_DELAY_CARE`
+        WHERE flydate = %s and state='1'
+        and chargetime<>0 and chargenum!=0 GROUP BY chargecount
+    """
+
+if __name__ == "__main__":
+    update_hb_deplay_insure(1)

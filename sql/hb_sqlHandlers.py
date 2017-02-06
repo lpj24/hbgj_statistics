@@ -1,5 +1,5 @@
 from hbsql import ticket_order_num4, hb_orders_date_sql, hb_consumers, hb_flight_details, \
-    hb_flight_search, hb_flight_focus, hb_activeusers
+    hb_flight_search, hb_flight_focus, hb_activeusers, hb_order
 handler_sql = {
     'ticket_order_num_sql': ticket_order_num4.ticket_order_num_sql,
     'hb_ticket_test_sql': ticket_order_num4.hb_ticket_test_sql,
@@ -9,6 +9,9 @@ handler_sql = {
 hb_orders_date_sql = {
     'hb_orders_daily_sql': hb_orders_date_sql.hb_orders_daily,
     'update_hb_orders_daily_sql': hb_orders_date_sql.update_hb_orders_daily,
+
+    'hb_gt_order_daily_sql': hb_order.hb_order_ticket_sql,
+    'update_hb_gt_order_daily_sql': hb_order.update_hb_order_ticket_sql
 }
 
 hb_consumers_sql = {

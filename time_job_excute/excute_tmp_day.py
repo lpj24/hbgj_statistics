@@ -19,6 +19,8 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_pay_type.hb_pay_type)
     TimeService.add_hard_service(hbdt_event.hbdt_event)
 
+    TimeService.add_hard_service(hb_flight_details.update_dt_detail_uid)
+    TimeService.add_hard_service(hb_flight_search.update_dt_search_uid)
     TimeService.add_hard_service(hb_flight_focus.update_flight_focus_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)

@@ -35,7 +35,7 @@ def update_flight_search_user_daily(days=0):
     # tablename = DateUtil.get_table(today)
     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), tomorrow_date, tablename]
-
+    print dto
     pv_check_dto = [DateUtil.date2str(today, '%Y-%m-%d'), ]
     pv_check_sql = """
         select pv from (
@@ -51,10 +51,10 @@ def update_flight_search_user_daily(days=0):
     pv_check = pv_check_data[0]
     query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_daily'], dto)
     pv = query_data[2]
-
-    if float(int(pv_check) - int(pv)) / float(pv) > 0.2:
-        utils.sendMail("lipenju24@163.com", str(pv_check) + ":" + str(pv), "航班搜索数据错误")
-        query_data = [query_data[0], query_data[1], int(pv)]
+    if pv > 0:
+        if float(int(pv_check) - int(pv)) / float(pv) > 0.2:
+            utils.sendMail("lipenju24@163.com", str(pv_check) + ":" + str(pv), "航班搜索数据错误")
+            query_data = [query_data[0], query_data[1], int(pv)]
 
     query_data = list(query_data)
     query_data.append(int(pv_check))
@@ -192,9 +192,15 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
     # start_date = datetime.date(2016, 1, 31)
-    i = 6
-    while i >= 1:
-        update_dt_search_uid(i)
+    # i = 6
+    # while i >= 1:
+    #     update_dt_search_uid(i)
+    #     i -= 1
+    update_flight_search_user_daily(42)
+    update_flight_search_user_daily(41)
+    i = 25
+    while i >= 19:
+        update_flight_search_user_daily(i)
         i -= 1
     # s = dict()
     # s.update()

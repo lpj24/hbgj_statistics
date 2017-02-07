@@ -50,9 +50,10 @@ def update_flight_detail_user_daily(days=0):
     pv_check = pv_check_data[0]
     query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
     pv = query_data[2]
-    if float(int(pv_check) - int(pv))/float(pv) > 0.2:
-        utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
-        query_data = [query_data[0], query_data[1], int(pv)]
+    if int(pv) > 0:
+        if float(int(pv_check) - int(pv))/float(pv) > 0.2:
+            utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
+            query_data = [query_data[0], query_data[1], int(pv)]
     query_data = list(query_data)
     query_data.append(int(pv_check))
 
@@ -189,12 +190,12 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    i = 6
-    while i >= 1:
-        # update_flight_detail_user_daily(i)
-        update_dt_detail_uid(i)
-        i -= 1
-
+    # i = 6
+    # while i >= 1:
+    #     # update_flight_detail_user_daily(i)
+    #     update_dt_detail_uid(i)
+    #     i -= 1
+    update_flight_detail_user_daily(7)
     # update_dt_detail_uid(2)
     # for i in xrange(10, 0, -1):
     #     update_flight_detail_user_daily(i)

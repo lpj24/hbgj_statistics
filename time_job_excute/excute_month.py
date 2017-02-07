@@ -1,4 +1,4 @@
-from main_service.hb import hb_flight_details, hb_consumers, hb_flight_search, hb_flight_focus, hb_activeusers
+from main_service.hb import hb_flight_details, hb_consumers, hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform
 from main_service.huoli import eat_activeusers, car_consumers, hotel_activeusers, hotel_consumers
 from main_service.gt import gt_consumers, gt_activeusers
 from time_job_excute.timeServiceList import TimeService
@@ -22,6 +22,7 @@ if __name__ == "__main__":
     # TimeService.add_month_first_service(hb_consumers.update_hb_consumers_monthly)
     TimeService.add_month_first_service(hb_flight_search.update_flight_search_user_monthly)
     TimeService.add_month_first_service(hb_flight_focus.update_flight_focus_user_monthly)
+    TimeService.add_month_first_service(hb_focus_platform.update_focus_platform_monthly)
 
     for fun in TimeService.get_month_first_service():
         try:

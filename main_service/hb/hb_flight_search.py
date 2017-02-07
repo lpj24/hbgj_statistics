@@ -32,7 +32,8 @@ def update_flight_search_user_daily(days=0):
     tomorrow_date = DateUtil.date2str(tomorrow)
     today = DateUtil.get_date_before_days(int(days))
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
-    tablename = DateUtil.get_table(today)
+    # tablename = DateUtil.get_table(today)
+    tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), tomorrow_date, tablename]
 
     pv_check_dto = [DateUtil.date2str(today, '%Y-%m-%d'), ]
@@ -73,6 +74,22 @@ def update_flight_search_user_daily(days=0):
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])
     DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_daily'], query_data)
+
+
+def update_dt_search_uid(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    sql = """
+        SELECT distinct uid FROM tablename where logTime>=%s
+        and logTime<%s
+        and (pid = '4312' or pid = '4313')
+    """
+
+    tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
+    dto = [start_date, end_date, tablename]
+    uids = DBCli().Apilog_cli.queryAll(sql, dto)
+    for uid in uids:
+        DBCli().redis_dt_cli.sadd(start_date + "_hbdt_search", uid[0])
 
 
 def update_flight_search_user_weekly():
@@ -175,7 +192,10 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
     # start_date = datetime.date(2016, 1, 31)
-    update_flight_search_user_daily(1)
+    i = 6
+    while i >= 1:
+        update_dt_search_uid(i)
+        i -= 1
     # s = dict()
     # s.update()
     # update_check_pv_his(start_date)

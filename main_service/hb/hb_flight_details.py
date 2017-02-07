@@ -32,9 +32,9 @@ def update_flight_detail_user_daily(days=0):
     tomorrow_date = DateUtil.date2str(tomorrow)
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
-    tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
+    # tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
+    tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [s_day, today, tomorrow_date, tablename]
-    print dto
     pv_check_dto = [str(s_day), ]
     pv_check_sql = """
         select pv from (
@@ -49,7 +49,6 @@ def update_flight_detail_user_daily(days=0):
     pv_check_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
     pv_check = pv_check_data[0]
     query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
-    print query_data
     pv = query_data[2]
     if float(int(pv_check) - int(pv))/float(pv) > 0.2:
         utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
@@ -73,6 +72,22 @@ def update_flight_detail_user_daily(days=0):
     query_data.append(localytics_check["sessions"])
 
     DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_daily'], query_data)
+
+
+def update_dt_detail_uid(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    sql = """
+        SELECT distinct uid FROM tablename where logTime>=%s
+        and logTime<%s
+        and pid='4314'
+    """
+
+    tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
+    dto = [start_date, end_date, tablename]
+    uids = DBCli().Apilog_cli.queryAll(sql, dto)
+    for uid in uids:
+        DBCli().redis_dt_cli.sadd(start_date + "_hbdt_detail", uid[0])
 
 
 def update_flight_detail_user_weekly():
@@ -174,7 +189,13 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    update_flight_detail_user_daily(1)
+    i = 6
+    while i >= 1:
+        # update_flight_detail_user_daily(i)
+        update_dt_detail_uid(i)
+        i -= 1
+
+    # update_dt_detail_uid(2)
     # for i in xrange(10, 0, -1):
     #     update_flight_detail_user_daily(i)
     # start_date = datetime.date(2016, 1, 31)

@@ -1,5 +1,5 @@
 from main_service.hb import hb_flight_details, hb_consumers, \
-    hb_flight_search, hb_flight_focus, hb_activeusers
+    hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform
 from main_service.huoli import eat_activeusers, car_consumers, \
     hotel_activeusers, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers
@@ -20,6 +20,7 @@ if __name__ == "__main__":
 
     TimeService.add_week_mon_service(hotel_consumers.update_hotel_consumers_weekly)
 
+    TimeService.add_week_mon_service(hb_focus_platform.update_focus_platform_weekly)
     TimeService.add_week_mon_service(hb_flight_focus.update_flight_focus_user_weekly)
     TimeService.add_week_mon_service(hb_flight_details.update_flight_detail_user_weekly)
     #TimeService.add_week_mon_service(hb_consumers.update_hb_consumers_weekly)

@@ -223,7 +223,7 @@ def update_focus_platform(days=0):
     DBCli().targetdb_cli.insert(insert_sql, result_data)
 
 
-def update_focus_platform_weekly(start_date, end_date):
+def update_focus_platform_weekly():
 
     all_platform_sql_uv = """
         select platform, count(distinct userid) from (
@@ -298,12 +298,12 @@ def update_focus_platform_weekly(start_date, end_date):
                 select distinct phone from FLY_USERFOCUS_TBL_HIS
                 where createtime between to_date(:start_date, 'yyyy-mm-dd')
                 and to_date(:end_date, 'yyyy-mm-dd') and ordertype = 1)
-			"""
+                """
 
     android_uv = iphone_uv = weixin_uv = jieji_uv \
         = gtgj_uv = total_uv = weixin_applate_uv = sms_uv = 0
 
-    # start_date, end_date = DateUtil.get_last_week_date()
+    start_date, end_date = DateUtil.get_last_week_date()
 
     dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": DateUtil.date2str(end_date, '%Y-%m-%d')}
     app_data_uv = DBCli().oracle_cli.queryAll(all_platform_sql_uv, dto)
@@ -349,7 +349,7 @@ def update_focus_platform_weekly(start_date, end_date):
     DBCli().targetdb_cli.insert(insert_sql, result_data)
 
 
-def update_focus_platform_monthly(start_date, end_date):
+def update_focus_platform_monthly():
 
     all_platform_sql_uv = """
         select platform, count(distinct userid) from (
@@ -396,13 +396,12 @@ def update_focus_platform_monthly(start_date, end_date):
                 union
                 select distinct phone from FLY_USERFOCUS_TBL_HIS
                 where createtime between to_date(:start_date, 'yyyy-mm-dd')
-                and to_date(:end_date, 'yyyy-mm-dd') and ordertype = 1)
-			"""
+                and to_date(:end_date, 'yyyy-mm-dd') and ordertype = 1) """
 
     android_uv = iphone_uv = weixin_uv = jieji_uv \
         = gtgj_uv = total_uv = weixin_applate_uv = sms_uv = 0
 
-    # start_date, end_date = DateUtil.get_last_week_date()
+    start_date, end_date = DateUtil.get_last_week_date()
 
     dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": DateUtil.date2str(end_date, '%Y-%m-%d')}
     app_data_uv = DBCli().oracle_cli.queryAll(all_platform_sql_uv, dto)
@@ -460,8 +459,10 @@ if __name__ == "__main__":
     # one_focus.close()
     # update_focus_platform(1)
     import datetime
-    end = datetime.date(2017, 1, 1)
-    start_date, end_date = DateUtil.get_last_week_date()
-    while start_date > end:
-        update_focus_platform_weekly(start_date, end_date)
-        start_date, end_date = DateUtil.get_last_week_date(start_date)
+    end = datetime.date(2017, 2, 6)
+    # start_date, end_date = DateUtil.get_last_week_date(end)
+    # print start_date, end_date
+    # update_focus_platform_weekly(start_date, end_date)
+    start_date, end_date = DateUtil.get_last_month_date()
+    print start_date, end_date
+    update_focus_platform_monthly(start_date, end_date)

@@ -9,8 +9,8 @@ def update_hb_gt_order_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
-    query_data = DBCli().sourcedb_cli.queryOne(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
-    DBCli().targetdb_cli.insert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
+    query_data = DBCli().sourcedb_cli.queryAll(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
+    DBCli().targetdb_cli.batchInsert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
 
 
 def update_hb_gt_order_daily_his():

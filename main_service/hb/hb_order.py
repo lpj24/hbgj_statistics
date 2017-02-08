@@ -6,7 +6,7 @@ from sql.hb_sqlHandlers import hb_orders_date_sql
 
 
 def update_hb_gt_order_daily(days=0):
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
     query_data = DBCli().sourcedb_cli.queryOne(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
@@ -23,4 +23,4 @@ def update_hb_gt_order_daily_his():
 
 if __name__ == "__main__":
     update_hb_gt_order_daily(1)
-    update_hb_gt_order_daily_his()
+    # update_hb_gt_order_daily_his()

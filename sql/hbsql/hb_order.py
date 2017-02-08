@@ -20,7 +20,7 @@ hb_order_ticket_sql = """
 """
 
 update_hb_order_ticket_sql = """
-    insert into hb_gt_order_daily (s_day, order_num, ticket_num, order_num_gt, ticket_num_gt
+    insert into hbgj_order_detail_daily (s_day, order_num, ticket_num, order_num_gt, ticket_num_gt
         ,inland_order_num, inland_ticket_num, inter_order_num, inter_ticket_num,
         createtime, updatetime
     ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())

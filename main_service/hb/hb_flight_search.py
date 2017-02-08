@@ -94,29 +94,66 @@ def update_dt_search_uid(days=0):
 
 def update_flight_search_user_weekly():
     start_week, end_week = DateUtil.get_last_week_date()
-    end_table = DateUtil.get_table(DateUtil.add_days(end_week, -1))
-    start_table = DateUtil.get_table(start_week)
-    start_week = DateUtil.date2str(start_week)
-    end_week = DateUtil.date2str(end_week)
-    if end_table != start_table:
-        dto = [start_week, end_week, start_week, end_week, start_week,
-               start_table, end_table]
-        sql = hb_flight_search_user_sql['hb_filght_search_user_table_weekly']
-    else:
-        dto = [start_week, end_week, start_week, end_table]
-        sql = hb_flight_search_user_sql['hb_filght_search_user_weekly']
-    query_data = DBCli().Apilog_cli.queryOne(sql, dto)
-    DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_weekly'], query_data)
+    s_day = DateUtil.date2str(start_week, '%Y-%m-%d')
+    dto = [start_week, end_week]
+    query_key = []
+    while end_week > start_week:
+        query_key.append(DateUtil.date2str(start_week, '%Y-%m-%d') + "_hbdt_search")
+        start_week = DateUtil.add_days(start_week, 1)
+    week_uv = len(DBCli().redis_dt_cli.sunion(query_key))
+
+    pv_sql = """
+            select pv from hbdt_search_daily where s_day>=%s and s_day<%s
+        """
+
+    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_sum = 0
+    for pv in pv_data:
+        pv_sum += pv[0]
+    DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_weekly'], [s_day, week_uv, pv_sum])
+    # start_week, end_week = DateUtil.get_last_week_date()
+    # end_table = DateUtil.get_table(DateUtil.add_days(end_week, -1))
+    # start_table = DateUtil.get_table(start_week)
+    # start_week = DateUtil.date2str(start_week)
+    # end_week = DateUtil.date2str(end_week)
+    # if end_table != start_table:
+    #     dto = [start_week, end_week, start_week, end_week, start_week,
+    #            start_table, end_table]
+    #     sql = hb_flight_search_user_sql['hb_filght_search_user_table_weekly']
+    # else:
+    #     dto = [start_week, end_week, start_week, end_table]
+    #     sql = hb_flight_search_user_sql['hb_filght_search_user_weekly']
+    # query_data = DBCli().Apilog_cli.queryOne(sql, dto)
+    # DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_weekly'], query_data)
 
 
 def update_flight_search_user_monthly():
-    last_month_start, last_month_end = DateUtil.get_last_month_date()
-    table_list = DateUtil.get_all_table(last_month_start.year, last_month_start.month)
-    dto = [last_month_start]
-    for i in table_list:
-        dto.append(i)
-    query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_monthly'], dto)
-    DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_monthly'], query_data)
+    start_month, end_month = DateUtil.get_last_week_date()
+    s_day = DateUtil.date2str(start_month, '%Y-%m-%d')
+    dto = [start_month, end_month]
+    query_key = []
+    while end_month > start_month:
+        query_key.append(DateUtil.date2str(start_week, '%Y-%m-%d') + "_hbdt_search")
+        start_week = DateUtil.add_days(start_week, 1)
+    week_uv = len(DBCli().redis_dt_cli.sunion(query_key))
+
+    pv_sql = """
+            select pv from hbdt_search_daily where s_day>=%s and s_day<%s
+        """
+
+    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_sum = 0
+    for pv in pv_data:
+        pv_sum += pv[0]
+    DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_monthly'], [s_day, week_uv, pv_sum])
+
+    # last_month_start, last_month_end = DateUtil.get_last_month_date()
+    # table_list = DateUtil.get_all_table(last_month_start.year, last_month_start.month)
+    # dto = [last_month_start]
+    # for i in table_list:
+    #     dto.append(i)
+    # query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_monthly'], dto)
+    # DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_monthly'], query_data)
 
 
 def update_flight_search_user_quarterly():

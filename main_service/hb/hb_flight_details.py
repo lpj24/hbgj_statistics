@@ -126,13 +126,31 @@ def update_flight_detail_user_weekly():
 
 
 def update_flight_detail_user_monthly():
-    last_month_start, last_month_end = DateUtil.get_last_month_date()
-    table_list = DateUtil.get_all_table(last_month_start.year, last_month_start.month)
-    dto = [last_month_start]
-    for i in table_list:
-        dto.append(i)
-    query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_monthly'], dto)
-    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_monthly'], query_data)
+    start_month, end_month = DateUtil.get_last_month_date()
+    s_day = DateUtil.date2str(start_month, '%Y-%m-%d')
+    dto = [start_month, end_month]
+    query_key = []
+    while end_month > start_month:
+        query_key.append(DateUtil.date2str(start_month, '%Y-%m-%d') + "_hbdt_detail")
+        start_month = DateUtil.add_days(start_month, 1)
+    month_uv = len(DBCli().redis_dt_cli.sunion(query_key))
+
+    pv_sql = """
+        select pv from hbdt_details_daily where s_day>=%s and s_day<%s
+    """
+
+    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_sum = 0
+    for pv in pv_data:
+        pv_sum += pv[0]
+    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_monthly'], [s_day, month_uv, pv_sum])
+    # last_month_start, last_month_end = DateUtil.get_last_month_date()
+    # table_list = DateUtil.get_all_table(last_month_start.year, last_month_start.month)
+    # dto = [last_month_start]
+    # for i in table_list:
+    #     dto.append(i)
+    # query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_monthly'], dto)
+    # DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_monthly'], query_data)
 
 
 def update_flight_detail_user_quarterly():
@@ -175,7 +193,6 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
     end_date = datetime.date(2013, 1, 1)
 
     while start_date >= end_date:
-        print start_date
         insert_data = []
         s_day = DateUtil.date2str(start_date, '%Y-%m-%d')
         pv_check_dto = [str(s_day), ]

@@ -35,7 +35,6 @@ def update_flight_search_user_daily(days=0):
     # tablename = DateUtil.get_table(today)
     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), tomorrow_date, tablename]
-    print dto
     pv_check_dto = [DateUtil.date2str(today, '%Y-%m-%d'), ]
     pv_check_sql = """
         select pv from (
@@ -135,7 +134,7 @@ def update_flight_search_user_monthly():
     while end_month > start_month:
         query_key.append(DateUtil.date2str(start_week, '%Y-%m-%d') + "_hbdt_search")
         start_week = DateUtil.add_days(start_week, 1)
-    week_uv = len(DBCli().redis_dt_cli.sunion(query_key))
+    month_uv = len(DBCli().redis_dt_cli.sunion(query_key))
 
     pv_sql = """
             select pv from hbdt_search_daily where s_day>=%s and s_day<%s
@@ -145,7 +144,7 @@ def update_flight_search_user_monthly():
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
-    DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_monthly'], [s_day, week_uv, pv_sum])
+    DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_monthly'], [s_day, month_uv, pv_sum])
 
     # last_month_start, last_month_end = DateUtil.get_last_month_date()
     # table_list = DateUtil.get_all_table(last_month_start.year, last_month_start.month)
@@ -196,7 +195,6 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
     end_date = datetime.date(2013, 1, 1)
 
     while start_date >= end_date:
-        print start_date
         insert_data = []
         s_day = DateUtil.date2str(start_date, '%Y-%m-%d')
         pv_check_dto = [str(s_day), ]
@@ -222,7 +220,6 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
                     update_check_pv_his(start_date)
         insert_data.append(localytics_check["users"])
         insert_data.append(localytics_check["sessions"])
-        print insert_data
         DBCli().targetdb_cli.insert(update_pv_check_sql, insert_data)
         start_date = DateUtil.add_days(start_date, -1)
 

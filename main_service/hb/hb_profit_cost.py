@@ -99,7 +99,7 @@ def update_hb_car_hotel_profit(days=0):
 
 
 def update_huoli_car_income_daily(days=0):
-    query_date = DateUtil.get_date_before_days(days * 15)
+    query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
         insert into profit_huoli_car_income (s_day, income, createtime, updatetime) values (

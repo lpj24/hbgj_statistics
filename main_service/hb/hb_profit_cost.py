@@ -98,5 +98,28 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
 
 
+def update_huoli_car_income_daily(days=0):
+    query_date = DateUtil.get_date_before_days(days * 15)
+    today = DateUtil.get_date_after_days(1 - days)
+    insert_car_sql = """
+        insert into profit_huoli_car_income (s_day, income, createtime, updatetime) values (
+            %s, %s, now(), now()
+        )
+        on duplicate key update updatetime = now(),
+        s_day = VALUES(s_day),
+        income = VALUES(income)
+    """
+    import requests
+    url = "http://58.83.139.232:8070/mall/bi/income"
+    params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
+    car_result = requests.get(url, params=params).json()
+    car_result = car_result["result"][0]
+    DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
+
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    # update_hb_car_hotel_profit(1)
+    i = 20
+    while i >= 1:
+        print i
+        update_huoli_car_income_daily(i)
+        i -= 1

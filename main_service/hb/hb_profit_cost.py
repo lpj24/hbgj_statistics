@@ -5,8 +5,8 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_car_hotel_profit(days=0):
-    query_date = DateUtil.get_date_before_days(days * 5)
-    today = DateUtil.get_today()
+    query_date = DateUtil.get_date_before_days(days * 15)
+    today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,

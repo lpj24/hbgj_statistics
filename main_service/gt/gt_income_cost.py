@@ -4,7 +4,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gt_income_cost(days):
-    start_date = DateUtil.get_date_before_days(3 * int(days))
+    start_date = DateUtil.get_date_before_days(7 * int(days))
     end_date = DateUtil.get_date_before_days(0)
 
     query_sql = """
@@ -12,15 +12,24 @@ def update_gt_income_cost(days):
         from income_and_cost where s_date >= %s and s_date < %s
     """
 
-    update_income_sql = """
+    insert_income_sql = """
         insert into profit_gt_income (s_day, type, amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
     """
 
-    update_cost_sql = """
+    insert_cost_sql = """
         insert into profit_gt_cost (s_day, type, amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
     """
+
+    update_income_sql = """
+        update profit_gt_income set amount=%s, updatetime=now() where s_day = %s and type=%s
+    """
+
+    update_cost_sql = """
+        update profit_gt_cost set amount=%s, updatetime=now() where s_day = %s and type=%s
+    """
+
     query_dto = [start_date, end_date]
     result_income_cost = DBCli(dict).gt_cli.queryAll(query_sql, query_dto)
 
@@ -39,10 +48,18 @@ def update_gt_income_cost(days):
         for i_c_type in income_cost_type:
             v = result[i_c_type] if result.get(i_c_type, None) else 0
             dto = [s_day, i_c_type, v]
-            if i_c_type.startswith("in") and not exists_income:
-                DBCli().targetdb_cli.insert(update_income_sql, dto)
-            elif i_c_type.startswith("cost") and not exists_cost:
-                DBCli().targetdb_cli.insert(update_cost_sql, dto)
+            if i_c_type.startswith("in"):
+                if not exists_income:
+                    DBCli().targetdb_cli.insert(insert_income_sql, dto)
+                else:
+                    dto = [v, s_day, i_c_type]
+                    DBCli().targetdb_cli.insert(update_income_sql, dto)
+            elif i_c_type.startswith("cost"):
+                if not exists_cost:
+                    DBCli().targetdb_cli.insert(insert_cost_sql, dto)
+                else:
+                    dto = [v, s_day, i_c_type]
+                    DBCli().targetdb_cli.insert(update_cost_sql, dto)
 
 if __name__ == "__main__":
     update_gt_income_cost(1)

@@ -21,6 +21,7 @@ if __name__ == "__main__":
     TimeService.add_week_mon_service(hotel_consumers.update_hotel_consumers_weekly)
     TimeService.add_week_mon_service(hb_channel_ticket.update_hb_channel_ticket_weekly)
     TimeService.add_week_mon_service(hb_channel_ticket.update_hb_company_ticket_weekly)
+    TimeService.add_week_mon_service(hb_channel_ticket.update_unable_ticket)
 
     TimeService.add_week_mon_service(hb_focus_platform.update_focus_platform_weekly)
     TimeService.add_week_mon_service(hb_flight_focus.update_flight_focus_user_weekly)

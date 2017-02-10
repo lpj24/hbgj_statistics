@@ -105,24 +105,107 @@ def update_hb_company_ticket_weekly():
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
+
+def update_unable_ticket():
+    start_week, end_week = DateUtil.get_last_week_date()
+    unable_ticket_sql = """
+        select A.oldsource, PNRSOURCE_CONFIG.NAME, sum(A.ticket_num) from (
+        SELECT count(*) ticket_num,o.oldsource FROM RECHARGE_RECORD
+        as r INNER JOIN TICKET_ORDER AS o ON r.orderid=o.ORDERID
+           where r.RECHARGE_TYPE=8
+           AND r.REMARK LIKE '无法出票补偿%%'
+           and r.RECHARGE_TIME >= %s
+           and r.RECHARGE_TIME < %s
+           GROUP BY o.oldsource,r.AMOUNT) as A
+           INNER join PNRSOURCE_CONFIG ON
+           A.oldsource=PNRSOURCE_CONFIG.PNRSOURCE GROUP BY A.oldsource, PNRSOURCE_CONFIG.NAME
+    """
+
+    human_intervention_sql = """
+            SELECT t.PNRSOURCE, PNRSOURCE_CONFIG.NAME , COUNT(DISTINCT t.ORDERID) FROM
+            FLIGHT_TASK f
+            LEFT JOIN TICKET_ORDER t ON f.ORDERID = t.ORDERID
+            left join PNRSOURCE_CONFIG ON t.PNRSOURCE=
+            PNRSOURCE_CONFIG.PNRSOURCE
+            WHERE
+            f.CREATE_TIME >= %s
+            AND f.CREATE_TIME < %s
+            AND f.TASKTYPE = 4
+            AND f.DISABLED != 1
+            AND f.DONE_USERID !=1
+            AND f.DONE_USERID is not NULL
+            GROUP BY t.PNRSOURCE, PNRSOURCE_CONFIG.NAME
+
+    """
+
+    total_ticket_sql = """
+        SELECT O.PNRSOURCE, count( DISTINCT O.ORDERID) ticket_num FROM
+        TICKET_ORDERDETAIL OD
+        LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
+        WHERE
+        O.ORDERSTATUE  NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(OD.`LINKTYPE`, 0) != 2
+        AND OD.CREATETIME >= %s
+        AND OD.CREATETIME < %s
+        GROUP BY O.PNRSOURCE
+    """
+
+    insert_sql = """
+        insert into hbgj_unable_ticket_weekly (s_day, pn_resouce, channel_name, unable_ticket_num, total_num, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
+    """
+
+    insert_intervention_sql = """
+        insert into hbgj_human_intervention_ticket_weekly (s_day, pn_resouce, channel_name, intervention_ticket_num,
+        total_num, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
+    """
+    insert_data = []
+    insert_intervention_data = []
+    while start_week < end_week:
+        start_date = DateUtil.date2str(start_week)
+        next_date = DateUtil.date2str(DateUtil.add_days(start_week, 1))
+        dto = [start_date, next_date]
+        unable_ticket_data = DBCli().sourcedb_cli.queryAll(unable_ticket_sql, dto)
+
+        human_intervention_data = DBCli().sourcedb_cli.queryAll(human_intervention_sql, dto)
+        total_ticket_data = DBCli().sourcedb_cli.queryAll(total_ticket_sql, dto)
+        total_ticket_data = dict(list(total_ticket_data))
+
+        for unable_ticket in unable_ticket_data:
+            tmp_data = list(unable_ticket)
+            pn_resource, pn_name, ticket_num = tmp_data
+            try:
+                total_num = total_ticket_data[pn_resource]
+            except KeyError:
+                continue
+            tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
+            tmp_data.append(total_num)
+            insert_data.append(tmp_data)
+
+        for intervention_ticket in human_intervention_data:
+            tmp_data = list(intervention_ticket)
+            pn_resource, pn_name, ticket_num = tmp_data
+            try:
+                total_num = total_ticket_data[pn_resource]
+            except KeyError:
+                continue
+            tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
+            tmp_data.append(total_num)
+            insert_intervention_data.append(tmp_data)
+
+        start_week = DateUtil.add_days(start_week, 1)
+    DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
+    DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
+
+
 # if __name__ == "__main__":
-#     # update_hb_channel_ticket_weekly()
-#
-#     #his
+#     # update_unable_ticket()
 #     import datetime
-#     # end_date = datetime.date(2012, 11, 22)
-#     # start_date = datetime.date(2017, 2, 6)
-#     # while start_date > end_date:
-#     #     start_week, end_week = DateUtil.get_this_week_date(end_date)
-#     #     update_hb_channel_ticket_weekly(start_week, end_week)
-#     #     # print start_week, end_week
-#     #     end_date = end_week
-#
-#     end_date = datetime.date(2012, 11, 22)
+#     end_date = datetime.date(2013, 11, 22)
 #     start_date = datetime.date(2017, 2, 6)
 #     while start_date > end_date:
 #         start_week, end_week = DateUtil.get_this_week_date(end_date)
-#         update_hb_company_ticket_weekly(start_week, end_week)
+#         update_unable_ticket(start_week, end_week)
 #         # print start_week, end_week
 #         end_date = end_week
-#     # update_hb_company_ticket_weekly()

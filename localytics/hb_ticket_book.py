@@ -199,7 +199,7 @@ def update_booke_ticket_event_hourly(days=0):
 
 if __name__ == "__main__":
     # hb_ticket_book(1)
-    i = 24
+    i = 14
     import time
     while i >= 1:
         print i

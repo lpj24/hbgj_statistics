@@ -17,7 +17,7 @@ def hbdt_event(days=0):
     app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
     event_list = ["status.query.open", "status.flyno.query", "status.list.attention.click"]
     hbdt_event = []
-    pv_uv = ["sessions", "users"]
+    pv_uv = ["sessions_per_event", "users"]
 
     # start_date = str(datetime.date(2016, 1, 1))
     # end_date = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
@@ -80,6 +80,10 @@ def hbdt_event(days=0):
         DBCli().targetdb_cli.insert(sql, sql_data)
 
 if __name__ == "__main__":
-    hbdt_event(1)
+    i = 409
+    while i >= 1:
+        hbdt_event(i)
+        i -= 1
+
 
 

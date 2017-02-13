@@ -25,7 +25,7 @@ def hb_pay_type(days=0):
 
     event_list = [android_ticket_order_pay_start, android_ticket_order_pay_succ, android_ticket_order_pay_fail, ios_ticket_order_pay_start,
                   ios_ticket_order_pay_succ, ios_ticket_order_pay_fail]
-    dimensions = ["occurrences", "sessions", "users"]
+    dimensions = ["occurrences", "sessions_per_event", "users"]
 
     # pay_type_list = {
     #     "flypay.creditcard": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},

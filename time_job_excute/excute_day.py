@@ -23,7 +23,7 @@ if __name__ == "__main__":
     TimeService.add_day_service(gt_order.update_gt_order_daily)
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 
-    TimeService.add_day_service(hb_ticket_book.update_booke_ticket_event_hourly)
+    # TimeService.add_day_service(hb_ticket_book.update_booke_ticket_event_hourly)
 
     TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)

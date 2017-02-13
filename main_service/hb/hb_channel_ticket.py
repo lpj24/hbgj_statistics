@@ -106,8 +106,8 @@ def update_hb_company_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
 
-def update_unable_ticket(start_week, end_week):
-    # start_week, end_week = DateUtil.get_last_week_date()
+def update_unable_ticket():
+    start_week, end_week = DateUtil.get_last_week_date()
     unable_ticket_sql = """
         select A.oldsource, PNRSOURCE_CONFIG.NAME, sum(A.ticket_num) from (
         SELECT count(*) ticket_num,o.oldsource FROM RECHARGE_RECORD
@@ -199,13 +199,35 @@ def update_unable_ticket(start_week, end_week):
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
 
 
-if __name__ == "__main__":
-    # update_unable_ticket()
-    import datetime
-    end_date = datetime.date(2013, 9, 5)
-    start_date = datetime.date(2017, 2, 6)
-    while start_date > end_date:
-        start_week, end_week = DateUtil.get_this_week_date(end_date)
-        update_unable_ticket(start_week, end_week)
-        # print start_week, end_week
-        end_date = end_week
+def update_refused_order_weekly():
+    start_week, end_week = DateUtil.get_last_week_date()
+    week_sql = """
+        SELECT agentid,count( DISTINCT t.ORDERID )
+        FROM
+        FLIGHT_TASK f
+        LEFT JOIN TICKET_ORDER t ON f.ORDERID = t.ORDERID
+        WHERE
+        f.CREATE_TIME >= %s
+        AND f.CREATE_TIME < %s
+        AND f.TASKTYPE = 4
+        AND f.DISABLED != 1
+        AND f.DONE_USERID !=1
+        AND f.DONE_USERID is not NULL
+        and f.DESCRIPTION like '%拒单%'
+        and t.PNRSOURCE='supply'
+        GROUP BY agentid
+    """
+    dto = [start_week, end_week]
+    query_data = DBCli().sourcedb_cli.queryAll(week_sql, dto)
+
+
+# if __name__ == "__main__":
+#     # update_unable_ticket()
+#     import datetime
+#     end_date = datetime.date(2017, 2, 6)
+#     start_date = datetime.date(2017, 2, 13)
+#     while start_date > end_date:
+#         start_week, end_week = DateUtil.get_this_week_date(end_date)
+#         update_unable_ticket(start_week, end_week)
+#         # print start_week, end_week
+#         end_date = end_week

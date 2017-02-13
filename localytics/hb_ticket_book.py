@@ -101,10 +101,10 @@ def hb_ticket_book(days=0):
 
 
 def update_booke_ticket_event_hourly(days=0):
-    # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
-    # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
-    api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
-    api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
+    api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
+    api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
+    # api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
+    # api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
     api_root = "https://api.localytics.com/v1/query"
     # app_id = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
     app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
@@ -199,14 +199,14 @@ def update_booke_ticket_event_hourly(days=0):
 
 if __name__ == "__main__":
     # hb_ticket_book(1)
-    i = 4
-    import time
-    while i >= 1:
-        print i
-        update_booke_ticket_event_hourly(i)
-        # time.sleep(60)
-        i -= 1
-
+    # i = 4
+    # import time
+    # while i >= 1:
+    #     print i
+    #     update_booke_ticket_event_hourly(i)
+    #     # time.sleep(60)
+    #     i -= 1
+    update_booke_ticket_event_hourly(3)
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     # api_root = "https://api.localytics.com/v1/query"
@@ -215,11 +215,11 @@ if __name__ == "__main__":
     # app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
     # event_list = ["ios.ticket.open"]
     # hbdt_event = []
-    # start_date = DateUtil.date2str(datetime.datetime(2017, 2, 1, 12, 0, 0))
-    # end_date = DateUtil.date2str(datetime.datetime(2017, 2, 1, 12, 59, 59))
-    # start_date = DateUtil.date2str(datetime.date(2017, 2, 1), '%Y-%m-%d')
-    # data_params = {"app_id": app_id_ios, "dimensions": "hour_of_day", "metrics": "users"}
-    # conditions = {"event_name": "ios.ticket.open", "day": ["between", start_date, start_date]}
+    # # start_date = DateUtil.date2str(datetime.datetime(2017, 2, 1, 12, 0, 0))
+    # # end_date = DateUtil.date2str(datetime.datetime(2017, 2, 1, 12, 59, 59))
+    # start_date = DateUtil.date2str(datetime.date(2017, 2, 12), '%Y-%m-%d')
+    # data_params = {"app_id": app_id_ios, "dimensions": "hour_of_day", "metrics": "sessions"}
+    # conditions = {"event_name": "ios.open", "day": ["between", start_date, start_date]}
     #
     # data_params["conditions"] = json.dumps(conditions)
     # r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)

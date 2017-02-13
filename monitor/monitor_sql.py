@@ -35,4 +35,6 @@ sql = [
     "select count(1) from delaycare_detail_daily where s_day=%s",
     "select count(1) from hbgj_order_detail_daily where s_day=%s",
     "select count(1) from profit_huoli_car_income where s_day=%s",
+    "select count(1) from ticket_book_event_hourly where s_day=%s",
+    "select count(1) from hbdt_flight_partnerapi where s_day=%s",
 ]

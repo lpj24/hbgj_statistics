@@ -106,8 +106,8 @@ def update_hb_company_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
 
-def update_unable_ticket():
-    start_week, end_week = DateUtil.get_last_week_date()
+def update_unable_ticket(start_week, end_week):
+    # start_week, end_week = DateUtil.get_last_week_date()
     unable_ticket_sql = """
         select A.oldsource, PNRSOURCE_CONFIG.NAME, sum(A.ticket_num) from (
         SELECT count(*) ticket_num,o.oldsource FROM RECHARGE_RECORD
@@ -199,13 +199,13 @@ def update_unable_ticket():
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
 
 
-# if __name__ == "__main__":
-#     # update_unable_ticket()
-#     import datetime
-#     end_date = datetime.date(2013, 11, 22)
-#     start_date = datetime.date(2017, 2, 6)
-#     while start_date > end_date:
-#         start_week, end_week = DateUtil.get_this_week_date(end_date)
-#         update_unable_ticket(start_week, end_week)
-#         # print start_week, end_week
-#         end_date = end_week
+if __name__ == "__main__":
+    # update_unable_ticket()
+    import datetime
+    end_date = datetime.date(2013, 9, 5)
+    start_date = datetime.date(2017, 2, 6)
+    while start_date > end_date:
+        start_week, end_week = DateUtil.get_this_week_date(end_date)
+        update_unable_ticket(start_week, end_week)
+        # print start_week, end_week
+        end_date = end_week

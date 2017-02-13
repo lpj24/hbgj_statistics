@@ -20,11 +20,18 @@ def update_his():
 
 def update_hb_partner_daily(days=0):
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    print s_day
     sql = """
         select sday, partner, pv, uv from flight_partnerapi_srv_day where sday=%s
     """
+
+    insert_sql = """
+        insert into hbdt_flight_partnerapi (s_day, partner, pv, uv, createtime, updatetime)
+        values (%s, %s, %s, %s, now(), now())
+    """
     query_data = DBCli().hb_partner_cli.queryAll(sql, [s_day])
-    DBCli().targetdb_cli.batchInsert(sql, query_data)
+    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
 
 if __name__ == "__main__":
-    update_his()
+    # update_his()
+    update_hb_partner_daily(1)

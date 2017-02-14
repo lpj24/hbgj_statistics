@@ -87,12 +87,14 @@ def hbdt_event(days=0):
         DBCli().targetdb_cli.insert(sql, sql_data)
 
 if __name__ == "__main__":
+    # import time
+    # time.sleep(1 * 60 * 60)
+    i = 31
     import time
-    time.sleep(1 * 60 * 60)
-    i = 350
-    while i >= 1:
+    time.sleep(1 * 60 * 60 * 7)
+    while i < 100:
         hbdt_event(i)
-        i -= 1
+        i += 1
 
 
 

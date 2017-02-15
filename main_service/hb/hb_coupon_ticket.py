@@ -189,6 +189,6 @@ if __name__ == "__main__":
     ) )
     """
 
-    # result = DBCli().oracle_cli.queryOne(sql)
+    result = DBCli().oracle_cli.queryOne(sql)
     import logging
-    logging.warning("hehhwehew")
+    logging.warning(result)

@@ -141,4 +141,54 @@ if __name__ == "__main__":
     # update_gt_coupon_daily(1)
     # update_gt_coupon_daily_his()
     # update_huoli_car_coupon_daily(1)
-    update_huoli_car_coupon_his()
+    # update_huoli_car_coupon_his()
+    sql = """
+            select '2017-01-01' s_day,sum(focus_users) from (
+    select count(DISTINCT phoneid) focus_users from (
+			select A_a.phoneid from (
+        SELECT phoneid FROM FLY_USERFOCUS_TBL
+        where PHONEID>0
+        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        union
+        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
+        where PHONEID>0
+        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			) A_a where A_a.phoneid not in (
+        SELECT phoneid FROM FLY_USERFOCUS_TBL
+        where PHONEID>0
+        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        union
+        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
+        where PHONEID>0
+        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+
+			)
+    )
+    UNION
+    select count(DISTINCT userid) focus_users from (
+			select B_b.userid from (
+        SELECT userid from FLY_USERFOCUS_TBL
+        where PHONEID=0
+        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        UNION
+        SELECT USERID from FLY_USERFOCUS_TBL_HIS
+        where PHONEID=0
+        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			) B_b where B_b.userid not in (SELECT userid from FLY_USERFOCUS_TBL
+        where PHONEID=0
+        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+        UNION
+        SELECT USERID from FLY_USERFOCUS_TBL_HIS
+        where PHONEID=0
+        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			)
+    ) )
+    """
+
+    # result = DBCli().oracle_cli.queryOne(sql)
+    import logging
+    logging.warning("hehhwehew")

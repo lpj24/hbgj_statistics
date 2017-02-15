@@ -1,5 +1,5 @@
 from hbsql import ticket_order_num4, hb_orders_date_sql, hb_consumers, hb_flight_details, \
-    hb_flight_search, hb_flight_focus, hb_activeusers, hb_order
+    hb_flight_search, hb_flight_focus, hb_activeusers, hb_order, coupon_ticket
 handler_sql = {
     'ticket_order_num_sql': ticket_order_num4.ticket_order_num_sql,
     'hb_ticket_test_sql': ticket_order_num4.hb_ticket_test_sql,
@@ -86,5 +86,17 @@ hb_activeusers_sql = {
     "update_hbgj_activeusers_weekly": hb_activeusers.update_hbgj_activeusers_weekly,
     "hbgj_activeusers_monthly": hb_activeusers.hbgj_activeusers_monthly,
     "update_hbgj_activeusers_monthly": hb_activeusers.update_hbgj_activeusers_monthly,
+
+}
+
+coupon_sql = {
+    "hbgj_use_coupon_sql": coupon_ticket.hbgj_use_coupon_sql,
+    "hbgj_issue_coupon_sql": coupon_ticket.hbgj_issue_coupon_sql,
+    "insert_hbgj_coupon_sql": coupon_ticket.insert_hbgj_coupon_sql,
+    "gtgj_use_issue_coupon_sql": coupon_ticket.gtgj_use_issue_coupon_sql,
+    "insert_gtgj_coupon_sql": coupon_ticket.insert_gtgj_coupon_sql,
+    "huoli_car_issue_coupon_sql": coupon_ticket.huoli_car_issue_coupon_sql,
+    "huoli_car_use_coupon_sql": coupon_ticket.huoli_car_use_coupon_sql,
+    "insert_huoli_car_sql": coupon_ticket.insert_huoli_car_sql,
 
 }

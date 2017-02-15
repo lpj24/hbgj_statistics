@@ -1,0 +1,92 @@
+hbgj_use_coupon_sql = """
+        select
+        sum(case when TRADE_TYPE=1 THEN 1 ELSE 0 END) use_coupon_count_in,
+        sum(case when TRADE_TYPE=1 THEN price ELSE 0 END) use_coupon_amount_in,
+        sum(case when TRADE_TYPE=4 THEN 1 ELSE 0 END) use_coupon_count_return,
+        sum(case when TRADE_TYPE=4 THEN price ELSE 0 END) use_coupon_amount_return
+        from TRADE_RECORD
+        where productid=0
+        and PAYSOURCE LIKE '%%coupon%%'
+        and createtime>=%s
+        and createtime<%s
+"""
+
+hbgj_issue_coupon_sql = """
+        select DATE_FORMAT(C.createtime,'%%Y-%%m-%%d') s_day,
+        sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
+        sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
+        sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
+        from coupon C
+        left join coupon_list CL on C.coupon_id = CL.id
+        where C.bindtype=1
+        and C.createtime>=%s
+        and C.createtime<%s
+        group by s_day
+        order by s_day
+"""
+
+
+insert_hbgj_coupon_sql = """
+    insert into coupon_hbgj_ticket (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
+    use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+"""
+
+gtgj_use_issue_coupon_sql = """
+        SELECT A.s_day, B.issue_coupon_count, B.issue_coupon_amount, A.use_coupon_count,
+        A.use_coupon_amount FROM (
+        select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
+        sum(1) use_coupon_count,
+        sum(amount) use_coupon_amount
+        from return_cash_coupon
+        where create_time>=%s
+        and create_time<%s
+        and use_type=2
+        GROUP BY s_day) A
+        left join (select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
+        sum(1) issue_coupon_count,
+        sum(amount) issue_coupon_amount
+        from return_cash_coupon
+        where create_time>=%s
+        and create_time<%s
+        GROUP BY s_day) B ON A.s_day = B.s_day
+"""
+
+insert_gtgj_coupon_sql = """
+    insert into coupon_gtgj_ticket (s_day, issue_coupon_count, issue_coupon_amount, use_coupon_count
+        ,use_coupon_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
+"""
+
+huoli_car_use_coupon_sql = """
+    select
+    sum(case when TRADE_TYPE=1 THEN 1 ELSE 0 END) use_coupon_count_in,
+    sum(case when TRADE_TYPE=1 THEN price ELSE 0 END) use_coupon_amount_in,
+    sum(case when TRADE_TYPE=4 THEN 1 ELSE 0 END) use_coupon_count_return,
+    sum(case when TRADE_TYPE=4 THEN price ELSE 0 END) use_coupon_amount_return
+    from TRADE_RECORD
+    where productid=7
+    and PAYSOURCE LIKE '%%coupon%%'
+    and createtime>=%s
+    and createtime<%s
+"""
+
+huoli_car_issue_coupon_sql = """
+    select DATE_FORMAT(C.createtime, '%%Y-%%m-%%d') s_day,
+    sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
+    sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
+    sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
+    from coupon C
+    left join coupon_list CL on C.coupon_id = CL.id
+    where C.bindtype=3
+    and C.createtime>=%s
+    and C.createtime<%s
+    group by s_day
+    order by s_day
+"""
+
+insert_huoli_car_sql = """
+    insert into coupon_huoli_car (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
+    use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+"""

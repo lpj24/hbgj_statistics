@@ -216,7 +216,9 @@ if __name__ == "__main__":
     #     i -= 1
 
     # hb_ticket_book(56)
-    i = 72
+    import time
+    time.sleep(60*30)
+    i = 79
     while i < 300:
         print i
         hb_ticket_book(i)

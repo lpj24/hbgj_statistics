@@ -99,4 +99,11 @@ coupon_sql = {
     "huoli_car_use_coupon_sql": coupon_ticket.huoli_car_use_coupon_sql,
     "insert_huoli_car_sql": coupon_ticket.insert_huoli_car_sql,
 
+    "huoli_hotel_issue_coupon_sql": coupon_ticket.huoli_hotel_issue_coupon_sql,
+    "huoli_hotel_use_coupon_sql": coupon_ticket.huoli_hotel_use_coupon_sql,
+    "insert_huoli_hotel_sql": coupon_ticket.insert_huoli_hotel_sql,
+
+    "common_coupon_sql": coupon_ticket.common_coupon_sql,
+    "insert_common_coupon_sql": coupon_ticket.insert_common_coupon_sql,
+
 }

@@ -90,3 +90,53 @@ insert_huoli_car_sql = """
     use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
 """
+
+huoli_hotel_use_coupon_sql = """
+    select
+    sum(case when TRADE_TYPE=1 THEN 1 ELSE 0 END) use_coupon_count_in,
+    sum(case when TRADE_TYPE=1 THEN price ELSE 0 END) use_coupon_amount_in,
+    sum(case when TRADE_TYPE=4 THEN 1 ELSE 0 END) use_coupon_count_return,
+    sum(case when TRADE_TYPE=4 THEN price ELSE 0 END) use_coupon_amount_return
+    from TRADE_RECORD
+    where productid=36
+    and PAYSOURCE LIKE '%%coupon%%'
+    and createtime>=%s
+    and createtime<%s
+"""
+
+huoli_hotel_issue_coupon_sql = """
+    select
+    sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
+    sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
+    sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
+    from coupon C
+    left join coupon_list CL on C.coupon_id = CL.id
+    where C.bindtype=9
+    and C.createtime>=%s
+    and C.createtime<%s
+"""
+
+insert_huoli_hotel_sql = """
+    insert into coupon_huoli_hotel (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
+    use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+"""
+
+common_coupon_sql = """
+    select DATE_FORMAT(C.createtime,'%%Y-%%m-%%d') s_day,
+    sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
+    sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
+    sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
+    from coupon C
+    left join coupon_list CL on C.coupon_id = CL.id
+    where C.bindtype=0
+
+    and C.createtime<%s
+    group by s_day
+    order by s_day
+"""
+
+insert_common_coupon_sql = """
+    insert into coupon_common (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
+    createtime, updatetime) values (%s, %s, %s, %s, now(), now())
+"""

@@ -130,7 +130,7 @@ common_coupon_sql = """
     from coupon C
     left join coupon_list CL on C.coupon_id = CL.id
     where C.bindtype=0
-
+    and C.createtime>=%s
     and C.createtime<%s
     group by s_day
     order by s_day

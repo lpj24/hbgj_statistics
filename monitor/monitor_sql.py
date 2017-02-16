@@ -37,4 +37,10 @@ sql = [
     "select count(1) from profit_huoli_car_income where s_day=%s",
     "select count(1) from ticket_book_event_hourly where s_day=%s",
     "select count(1) from hbdt_flight_partnerapi where s_day=%s",
+
+    "select count(1) from coupon_huoli_car where s_day=%s",
+    "select count(1) from coupon_hbgj_ticket where s_day=%s",
+    "select count(1) from coupon_huoli_hotel where s_day=%s",
+    "select count(1) from coupon_common where s_day=%s",
+    "select count(1) from coupon_gtgj_ticket where s_day=%s",
 ]

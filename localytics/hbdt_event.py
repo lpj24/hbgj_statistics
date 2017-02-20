@@ -66,9 +66,10 @@ def hbdt_event(days=0):
 
             try:
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+                result = r.json()
                 if r.status_code == 429:
                     raise AssertionError
-                result = r.json()
+
                 data = result["results"]
             except Exception:
                 raise AssertionError
@@ -89,12 +90,13 @@ if __name__ == "__main__":
     # time.sleep(1 * 60 * 60)
     # hbdt_event(34)
 
-    i = 122
+    i = 133
     while i < 300:
         print i
         try:
             hbdt_event(i)
         except AssertionError:
+            time.sleep(1 * 60 * 60)
             continue
         i += 1
 

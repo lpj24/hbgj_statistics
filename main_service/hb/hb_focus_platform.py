@@ -458,11 +458,12 @@ if __name__ == "__main__":
     #     one_focus.write(out_str + "\n")
     # one_focus.close()
     # update_focus_platform(1)
-    import datetime
-    end = datetime.date(2017, 2, 6)
-    # start_date, end_date = DateUtil.get_last_week_date(end)
+    # import datetime
+    # end = datetime.date(2017, 2, 6)
+    # # start_date, end_date = DateUtil.get_last_week_date(end)
+    # # print start_date, end_date
+    # # update_focus_platform_weekly(start_date, end_date)
+    # start_date, end_date = DateUtil.get_last_month_date()
     # print start_date, end_date
-    # update_focus_platform_weekly(start_date, end_date)
-    start_date, end_date = DateUtil.get_last_month_date()
-    print start_date, end_date
-    update_focus_platform_monthly(start_date, end_date)
+    # update_focus_platform_monthly(start_date, end_date)
+    update_focus_platform(1)

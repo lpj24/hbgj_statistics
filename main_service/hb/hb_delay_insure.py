@@ -111,9 +111,9 @@ def update_compensate_detail(days=0):
     #     DBCli().targetdb_cli.insert(compensate_detail_insert_sql, [query_date, str(k), v])
 
 if __name__ == "__main__":
-    # update_hb_deplay_insure(1)
-    # update_compensate_detail(1)
-    i = 539
-    while i >= 1:
-        update_compensate_detail(i)
-        i -= 1
+    update_hb_deplay_insure(1)
+    update_compensate_detail(1)
+    # i = 539
+    # while i >= 1:
+    #     update_compensate_detail(i)
+    #     i -= 1

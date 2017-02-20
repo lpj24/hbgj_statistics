@@ -1,7 +1,7 @@
 import sys, logging
 from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus
-from localytics import hbdt_event, hb_ticket_book, hb_pay_type
+from excute_localytics import hbdt_event, hb_ticket_book, hb_pay_type
 from main_service.hb import hb_consumers
 from main_service.tmp_task.hb_search_focus import hb_search_focus
 from main_service.huoli import hotel_consumers

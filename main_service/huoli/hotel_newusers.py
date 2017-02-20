@@ -50,4 +50,4 @@ def update_hotel_newusers_daily(days=0):
         logging.warn("no file" + s_day + "log")
 
 if __name__ == "__main__":
-    update_hotel_newusers_daily(2)
+    update_hotel_newusers_daily(1)

@@ -30,6 +30,6 @@ def update_hbgj_activeusers_monthly():
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
-    # update_hbgj_activeusers_daily(1)
+    update_hbgj_activeusers_daily(1)
     # update_hbgj_activeusers_weekly()
-    update_hbgj_activeusers_monthly()
+    # update_hbgj_activeusers_monthly()

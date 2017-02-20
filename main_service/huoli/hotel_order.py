@@ -19,4 +19,4 @@ def update_hotel_orders_daily(days=0):
     DBCli().targetdb_cli.batchInsert(hotel_orders_sql["update_hotel_orders_daily"], query_data)
 
 if __name__ == "__main__":
-    update_hotel_orders_daily(2)
+    update_hotel_orders_daily(1)

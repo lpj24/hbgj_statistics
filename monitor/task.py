@@ -4,6 +4,7 @@ from dbClient.dateutil import DateUtil
 from monitor_sql import sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 def check_day_data():
@@ -29,4 +30,8 @@ def update_gt_cost_income():
 
 if __name__ == "__main__":
     # update_gt_cost_income()
-    check_day_data()
+    # check_day_data()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(check_day_data, hour='10')
+    scheduler.add_job(update_gt_cost_income, hour='10')
+    scheduler.start()

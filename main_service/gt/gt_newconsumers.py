@@ -70,7 +70,6 @@ def gt_newconsumers_daily(days=0):
     redis_cli.sdiffstore("today_uid_android", "today_uid_android", "total_uids_ios")
     today_uids_android = redis_cli.sdiffstore("today_uid_android", "today_uid_android", "total_uids")
 
-
     sql = """ insert into gtgj_newconsumers_daily values (%s, %s, %s , %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = VALUES(s_day),
@@ -163,6 +162,6 @@ def gt_newconsumers_hourly():
 
 
 if __name__ == "__main__":
-    # gt_newconsumers_daily(3)
+    gt_newconsumers_daily(1)
     # gt_newconsumers_history()
-    gt_newconsumers_hourly()
+    # gt_newconsumers_hourly()

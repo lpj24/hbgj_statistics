@@ -126,12 +126,13 @@ def hb_pay_type(days=0):
                 data_params["metrics"] = dim
                 data_params["order"] = dim
                 try:
-                    r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
+                    r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
                     result = r.json()
                     data = result["results"]
                 except Exception:
-                    time.sleep(60*30)
-                    hb_pay_type(1)
+                    return
+                    # time.sleep(60*30)
+                    # hb_pay_type(1)
                 for d in data:
                     if pay_type_list.get(d["a:paytype"]):
                         pay_type_list.get(d["a:paytype"])[query_field] = d[dim]

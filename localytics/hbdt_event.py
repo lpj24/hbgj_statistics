@@ -65,21 +65,19 @@ def hbdt_event(days=0):
             data_params["conditions"] = json.dumps(conditions)
 
             try:
-                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, verify=False)
+                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+                if r.status_code == 429:
+                    raise AssertionError
                 result = r.json()
-                print result
                 data = result["results"]
             except Exception:
-                return
-                pass
-                # time.sleep(60*30)
-                # hbdt_event(1)
+                raise AssertionError
 
             for d in data:
                 insert_data[d["day"]].append(d[dim])
 
     for sql_data_k, sql_data_v in insert_data.items():
-        sql_data = []
+        sql_data = list()
         sql_data.append(sql_data_k)
         for num in sql_data_v:
             sql_data.append(num)
@@ -90,9 +88,14 @@ if __name__ == "__main__":
     # import time
     # time.sleep(1 * 60 * 60)
     # hbdt_event(34)
-    i = 100
+
+    i = 122
     while i < 300:
-        hbdt_event(i)
+        print i
+        try:
+            hbdt_event(i)
+        except AssertionError:
+            continue
         i += 1
 
     # hbdt_event(1)

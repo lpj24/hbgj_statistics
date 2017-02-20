@@ -3,7 +3,7 @@ from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_
     hotel_newconsumers, hotel_order, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
     gt_income_cost
-from main_service.tmp_task import hbgj_users
+from main_service.tmp_task import hbgj_users, hb_focus_newphoneid
 from time_job_excute.timeServiceList import TimeService
 import sys
 import logging
@@ -51,6 +51,9 @@ if __name__ == "__main__":
     TimeService.add_day_service(hb_coupon_ticket.update_common_coupon_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_hb_coupon_use_detail_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_coupon_use_detail_daily)
+    TimeService.add_day_service(hb_coupon_ticket.update_car_use_detail_daily)
+    TimeService.add_day_service(hb_coupon_ticket.update_hotel_use_detail_daily)
+    TimeService.add_day_service(hb_focus_newphoneid.update_fouces_dat_daily)
 
     for fun in TimeService.get_day_service():
         try:

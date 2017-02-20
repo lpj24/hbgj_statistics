@@ -231,7 +231,7 @@ def update_platform_focus_by_file():
     focus_file.close()
 
 
-def update_focus_platform(days):
+def update_focus_platform(days=0):
         app_sql = """
 
                 select count(DISTINCT userid), platform from (

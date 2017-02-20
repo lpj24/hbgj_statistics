@@ -12,7 +12,7 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(hbdt_event.hbdt_event)
     TimeService.add_localytics_service(hb_pay_type.hb_pay_type)
 
-    for fun in TimeService.get_day_service():
+    for fun in TimeService.get_localytics_service():
         try:
             fun(int(days))
             time.sleep(1 * 60 * 60)

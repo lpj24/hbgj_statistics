@@ -9,11 +9,11 @@ import time
 
 
 def hb_ticket_book(days=0):
-    # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
-    # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
+    api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
+    api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
 
-    api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
-    api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
+    # api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
+    # api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
     api_root = "https://api.localytics.com/v1/query"
     # app_id = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
     app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
@@ -85,10 +85,11 @@ def hb_ticket_book(days=0):
             try:
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
                 result = r.json()
-                print result
+                if r.status_code == 429:
+                    raise AssertionError
                 data = result["results"]
             except Exception:
-                pass
+                raise AssertionError
                 # time.sleep(60*30)
                 # hb_ticket_book(1)
 
@@ -182,13 +183,11 @@ def update_booke_ticket_event_hourly(days=0):
             try:
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
                 result = r.json()
-                print result
+                if r.status_code == 429:
+                    raise AssertionError
                 data = result["results"]
             except Exception:
-                # time.sleep(60 * 30)
-                # hb_ticket_book(1)
-                return
-                pass
+                raise AssertionError
 
             for d in data:
                 insert_data[d["hour_of_day"]].append(d[dim])
@@ -213,13 +212,17 @@ if __name__ == "__main__":
     #     print i
     #     hb_ticket_book(i)
     #     i += 1
-    hb_ticket_book(1)
-    update_booke_ticket_event_hourly(2)
-    # i = 23
-    # while i < 300:
-    #     print i
-    #     update_booke_ticket_event_hourly(i)
-    #     i += 1
+    # hb_ticket_book(1)
+    # update_booke_ticket_event_hourly(2)
+    i = 102
+    while i < 300:
+        print i
+        try:
+            hb_ticket_book(i)
+        except AssertionError:
+            time.sleep(1 * 60 * 60)
+            continue
+        i += 1
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     # api_root = "https://api.localytics.com/v1/query"

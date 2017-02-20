@@ -140,3 +140,50 @@ insert_common_coupon_sql = """
     insert into coupon_common (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
     createtime, updatetime) values (%s, %s, %s, %s, now(), now())
 """
+
+hbdj_use_detail_sql = """
+    select s_day, coupon_id,
+    sum(case when TRADE_TYPE=1 then 1 else 0 END) use_coupon_count_in,
+    sum(case when TRADE_TYPE=1 then price ELSE 0 END) use_coupon_amount_in,
+    sum(case when TRADE_TYPE=4 then 1 ELSE 0 END) use_coupon_count_return,
+    sum(case when TRADE_TYPE=4 then price ELSE 0 END) use_coupon_amount_return
+    from
+    (select DATE_FORMAT(TR.createtime, '%%Y-%%m-%%d') s_day,
+    price, TRADE_TYPE,coupon_id
+    from skyhotel.TRADE_RECORD TR
+    left join account.coupon C on TR.COUPONID = C.cid
+    where productid=0
+    and PAYSOURCE LIKE '%%coupon%%'
+    and TR.createtime>=%s
+    and TR.createtime<%s
+    and (TRADE_TYPE = 1 or TRADE_TYPE=4)
+    ) as A
+    group by s_day, coupon_id
+    order by s_day, use_coupon_count_in desc
+"""
+
+insert_hbgj_use_detail_sql = """
+    insert into coupon_hbgj_ticket_use_detail (s_day, coupon_id, use_coupon_count_in,
+    use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+"""
+
+coupon_issue_detail_sql = """
+    select DATE_FORMAT(C.createtime, '%%Y-%%m-%%d') s_day,
+    C.bindtype,coupon_id,
+    sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
+    sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
+    sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
+    from coupon C
+    left join coupon_list CL on C.coupon_id = CL.id
+    where C.createtime>=%s
+    and C.createtime<%s
+    group by s_day, bindtype,coupon_id
+    order by s_day,bindtype, issue_coupon_count desc
+"""
+
+insert_coupon_issue_detail_sql = """
+    insert into coupon_issue_detail (s_day, bindtype, coupon_id, issue_coupon_count,
+    issue_coupon_amount, issue_discount_coupon_count,
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+"""

@@ -106,4 +106,10 @@ coupon_sql = {
     "common_coupon_sql": coupon_ticket.common_coupon_sql,
     "insert_common_coupon_sql": coupon_ticket.insert_common_coupon_sql,
 
+    "hbdj_use_detail_sql": coupon_ticket.hbdj_use_detail_sql,
+    "insert_hbgj_use_detail_sql": coupon_ticket.insert_hbgj_use_detail_sql,
+
+    "coupon_issue_detail_sql": coupon_ticket.coupon_issue_detail_sql,
+    "insert_coupon_issue_detail_sql": coupon_ticket.insert_coupon_issue_detail_sql,
+
 }

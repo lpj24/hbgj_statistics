@@ -49,6 +49,8 @@ if __name__ == "__main__":
     TimeService.add_day_service(hb_coupon_ticket.update_huoli_car_coupon_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_huoli_hotel_coupon_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_common_coupon_daily)
+    TimeService.add_day_service(hb_coupon_ticket.update_hb_coupon_use_detail_daily)
+    TimeService.add_day_service(hb_coupon_ticket.update_coupon_use_detail_daily)
 
     for fun in TimeService.get_day_service():
         try:

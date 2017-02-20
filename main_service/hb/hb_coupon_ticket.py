@@ -58,6 +58,40 @@ def update_common_coupon_daily(days=0):
     DBCli().targetdb_cli.insert(coupon_sql["insert_common_coupon_sql"], common_coupon_data)
 
 
+def update_hb_coupon_use_detail_daily(days=0):
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - days)
+
+    dto = [start_date, end_date]
+    use_detail_coupon_data = DBCli().sourcedb_cli.queryOne(coupon_sql["hbdj_use_detail_sql"], dto)
+    DBCli().targetdb_cli.insert(coupon_sql["insert_hbgj_use_detail_sql"], use_detail_coupon_data)
+
+
+def update_coupon_use_detail_daily(days=0):
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - days)
+    dto = [start_date, end_date]
+    use_detail_coupon_data = DBCli().hb_source_account_cli.queryOne(coupon_sql["coupon_issue_detail_sql"], dto)
+    DBCli().targetdb_cli.insert(coupon_sql["insert_coupon_issue_detail_sql"], use_detail_coupon_data)
+
+
+def update_coupon_use_detail_daily_his(days=0):
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - days)
+    dto = [start_date]
+    use_detail_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["coupon_issue_detail_sql"], dto)
+    DBCli().targetdb_cli.batchInsert(coupon_sql["insert_coupon_issue_detail_sql"], use_detail_coupon_data)
+
+
+def update_hb_coupon_use_detail_daily_his(days=0):
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - days)
+
+    dto = [start_date]
+    use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["hbdj_use_detail_sql"], dto)
+    DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_sql"], use_detail_coupon_data)
+
+
 def update_common_coupon_his():
     end_date = DateUtil.get_date_after_days(0)
     dto = [end_date]
@@ -218,53 +252,6 @@ if __name__ == "__main__":
     # update_gt_coupon_daily_his()
     # update_huoli_car_coupon_daily(1)
     # update_huoli_car_coupon_his()
-    sql = """
-            select '2017-01-01' s_day,sum(focus_users) from (
-    select count(DISTINCT phoneid) focus_users from (
-			select A_a.phoneid from (
-        SELECT phoneid FROM FLY_USERFOCUS_TBL
-        where PHONEID>0
-        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        union
-        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
-        where PHONEID>0
-        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-			) A_a where A_a.phoneid not in (
-        SELECT phoneid FROM FLY_USERFOCUS_TBL
-        where PHONEID>0
-        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        union
-        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
-        where PHONEID>0
-        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-
-			)
-    )
-    UNION
-    select count(DISTINCT userid) focus_users from (
-			select B_b.userid from (
-        SELECT userid from FLY_USERFOCUS_TBL
-        where PHONEID=0
-        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        UNION
-        SELECT USERID from FLY_USERFOCUS_TBL_HIS
-        where PHONEID=0
-        and CREATETIME<to_date('2017-02-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-			) B_b where B_b.userid not in (SELECT userid from FLY_USERFOCUS_TBL
-        where PHONEID=0
-        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-        UNION
-        SELECT USERID from FLY_USERFOCUS_TBL_HIS
-        where PHONEID=0
-        and CREATETIME<to_date('2017-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
-			)
-    ) )
-    """
-
     # result = DBCli().oracle_cli.queryOne(sql)
     # import logging
     # logging.warning(result)
@@ -272,8 +259,12 @@ if __name__ == "__main__":
     # update_huoli_hotel_coupon_his()
     # update_common_coupon_daily(1)
     # update_common_coupon_his()
-    update_gt_coupon_daily(1)
-    update_hbgj_coupon_tickt(1)
-    update_huoli_car_coupon_daily(1)
-    update_huoli_hotel_coupon_daily(1)
-    update_common_coupon_daily(1)
+    # update_gt_coupon_daily(1)
+    # update_hbgj_coupon_tickt(1)
+    # update_huoli_car_coupon_daily(1)
+    # update_huoli_hotel_coupon_daily(1)
+    # update_common_coupon_daily(1)
+    # update_hb_coupon_use_detail_daily(1)
+    # update_hb_coupon_use_detail_daily_his()
+    # update_coupon_use_detail_daily(1)
+    update_coupon_use_detail_daily_his(1)

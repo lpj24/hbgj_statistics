@@ -4,7 +4,6 @@ from dbClient.dateutil import DateUtil
 from monitor_sql import sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
-from apscheduler.schedulers.background import BackgroundScheduler
 
 
 def check_day_data():
@@ -22,16 +21,15 @@ def check_day_data():
             pass
     if len(msg) > 0:
         utils.sendMail("lipenju24@163.com", msg, "数据查询异常")
-        print msg
+
+
+def check_week_data():
+    pass
 
 
 def update_gt_cost_income():
     gt_income_cost.update_gt_income_cost(1)
 
 if __name__ == "__main__":
-    # update_gt_cost_income()
-    # check_day_data()
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(check_day_data, hour='10')
-    scheduler.add_job(update_gt_cost_income, hour='10')
-    scheduler.start()
+    update_gt_cost_income()
+    check_day_data()

@@ -213,12 +213,13 @@ if __name__ == "__main__":
     #     print i
     #     hb_ticket_book(i)
     #     i += 1
-
-    i = 23
-    while i < 300:
-        print i
-        update_booke_ticket_event_hourly(i)
-        i += 1
+    hb_ticket_book(1)
+    update_booke_ticket_event_hourly(2)
+    # i = 23
+    # while i < 300:
+    #     print i
+    #     update_booke_ticket_event_hourly(i)
+    #     i += 1
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     # api_root = "https://api.localytics.com/v1/query"

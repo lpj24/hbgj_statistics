@@ -1,0 +1,21 @@
+from time_job_excute.timeServiceList import TimeService
+import sys
+import logging
+import time
+from localytics import hb_ticket_book, hbdt_event, hb_pay_type
+
+
+if __name__ == "__main__":
+    days = sys.argv[1]
+    TimeService.add_localytics_service(hb_ticket_book.update_booke_ticket_event_hourly)
+    TimeService.add_localytics_service(hb_ticket_book.hb_ticket_book)
+    TimeService.add_localytics_service(hbdt_event.hbdt_event)
+    TimeService.add_localytics_service(hb_pay_type.hb_pay_type)
+
+    for fun in TimeService.get_day_service():
+        try:
+            fun(int(days))
+            time.sleep(1 * 60 * 60)
+        except Exception as e:
+            logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
+            continue

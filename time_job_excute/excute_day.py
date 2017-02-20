@@ -3,7 +3,6 @@ from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_
     hotel_newconsumers, hotel_order, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
     gt_income_cost
-from localytics import hb_ticket_book
 from main_service.tmp_task import hbgj_users
 from time_job_excute.timeServiceList import TimeService
 import sys
@@ -22,8 +21,6 @@ if __name__ == "__main__":
     TimeService.add_day_service(gt_consumers.update_gtgj_consumers_daily)
     TimeService.add_day_service(gt_order.update_gt_order_daily)
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
-
-    TimeService.add_day_service(hb_ticket_book.update_booke_ticket_event_hourly)
 
     TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)

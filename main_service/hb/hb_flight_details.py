@@ -22,7 +22,7 @@ def localytics_cli(app_id, event, metrics, start_date):
 
     data_params["conditions"] = json.dumps(conditions)
 
-    r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
+    r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
     result = r.json()
     return (result["results"])[0][metrics]
 

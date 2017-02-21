@@ -12,15 +12,15 @@ import logging
 if __name__ == "__main__":
     days = sys.argv[1]
     # TimeService.add_day_service(eat_activeusers.update_eat_active_user_daily)
-    TimeService.add_day_service(car_orders.update_car_orders_daily)
-    TimeService.add_day_service(car_consumers.update_car_consumers_daily)
-    TimeService.add_day_service(car_consumers.update_car_newconsumers_daily)
-
-    TimeService.add_day_service(gt_activeusers.update_gtgj_newusers_daily)
-    TimeService.add_day_service(gt_activeusers.update_gtgj_activeusers_daily)
-    TimeService.add_day_service(gt_consumers.update_gtgj_consumers_daily)
-    TimeService.add_day_service(gt_order.update_gt_order_daily)
-    TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
+    # TimeService.add_day_service(car_orders.update_car_orders_daily)
+    # TimeService.add_day_service(car_consumers.update_car_consumers_daily)
+    # TimeService.add_day_service(car_consumers.update_car_newconsumers_daily)
+    #
+    # TimeService.add_day_service(gt_activeusers.update_gtgj_newusers_daily)
+    # TimeService.add_day_service(gt_activeusers.update_gtgj_activeusers_daily)
+    # TimeService.add_day_service(gt_consumers.update_gtgj_consumers_daily)
+    # TimeService.add_day_service(gt_order.update_gt_order_daily)
+    # TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 
     TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)

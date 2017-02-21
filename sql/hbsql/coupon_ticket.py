@@ -30,6 +30,15 @@ insert_hbgj_coupon_sql = """
     insert into coupon_hbgj_ticket (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
     use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+    on duplicate key update updatetime = now(),
+    issue_coupon_count = values(issue_coupon_count),
+    issue_coupon_amount = values(issue_coupon_amount),
+    issue_discount_coupon_count = values(issue_discount_coupon_count),
+    use_coupon_count_in = values(use_coupon_count_in),
+    use_coupon_amount_in = values(use_coupon_amount_in),
+    use_coupon_count_return = values(use_coupon_count_return),
+    use_coupon_amount_return = values(use_coupon_amount_return)
+
 """
 
 gtgj_use_issue_coupon_sql = """
@@ -56,6 +65,11 @@ insert_gtgj_coupon_sql = """
     insert into coupon_gtgj_ticket (s_day, issue_coupon_count, issue_coupon_amount, use_coupon_count
         ,use_coupon_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
+    on duplicate key update updatetime = now(),
+    issue_coupon_count = values(issue_coupon_count),
+    issue_coupon_amount = values(issue_coupon_amount),
+    use_coupon_count = values(use_coupon_count),
+    use_coupon_amount = values(use_coupon_amount)
 """
 
 huoli_car_use_coupon_sql = """
@@ -89,6 +103,14 @@ insert_huoli_car_sql = """
     insert into coupon_huoli_car (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
     use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+    on duplicate key update updatetime = now(),
+    issue_coupon_count = values(issue_coupon_count),
+    issue_coupon_amount = values(issue_coupon_amount),
+    issue_discount_coupon_count = values(issue_discount_coupon_count),
+    use_coupon_count_in = values(use_coupon_count_in),
+    use_coupon_amount_in = values(use_coupon_amount_in),
+    use_coupon_count_return = values(use_coupon_count_return),
+    use_coupon_amount_return = values(use_coupon_amount_return)
 """
 
 huoli_hotel_use_coupon_sql = """
@@ -120,6 +142,14 @@ insert_huoli_hotel_sql = """
     insert into coupon_huoli_hotel (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
     use_coupon_count_in, use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+    on duplicate key update updatetime = now(),
+    issue_coupon_count = values(issue_coupon_count),
+    issue_coupon_amount = values(issue_coupon_amount),
+    issue_discount_coupon_count = values(issue_discount_coupon_count),
+    use_coupon_count_in = values(use_coupon_count_in),
+    use_coupon_amount_in = values(use_coupon_amount_in),
+    use_coupon_count_return = values(use_coupon_count_return),
+    use_coupon_amount_return = values(use_coupon_amount_return)
 """
 
 common_coupon_sql = """
@@ -139,6 +169,10 @@ common_coupon_sql = """
 insert_common_coupon_sql = """
     insert into coupon_common (s_day, issue_coupon_count, issue_coupon_amount, issue_discount_coupon_count,
     createtime, updatetime) values (%s, %s, %s, %s, now(), now())
+    on duplicate key update updatetime = now(),
+    issue_coupon_count = values(issue_coupon_count),
+    issue_coupon_amount = values(issue_coupon_amount),
+    issue_discount_coupon_count = values(issue_discount_coupon_count)
 """
 
 hbdj_use_detail_sql = """
@@ -186,6 +220,7 @@ insert_coupon_issue_detail_sql = """
     insert into coupon_issue_detail (s_day, bindtype, coupon_id, issue_coupon_count,
     issue_coupon_amount, issue_discount_coupon_count,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+
 """
 
 

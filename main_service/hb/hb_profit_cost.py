@@ -117,8 +117,8 @@ def update_huoli_car_income_daily(days=0):
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
 
 if __name__ == "__main__":
-    # update_hb_car_hotel_profit(1)
-    update_huoli_car_income_daily(1)
+    update_hb_car_hotel_profit(1)
+    # update_huoli_car_income_daily(1)
     # update_hb_car_hotel_profit(1)
     # i = 20
     # while i >= 1:

@@ -2,6 +2,7 @@
 from sql.hb_sqlHandlers import hb_flight_focus_user_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
+import ast
 
 
 def update_flight_focus_user_daily(days=0):
@@ -25,6 +26,24 @@ def update_flight_focus_user_daily(days=0):
     query_data = (query_data[0], query_data[1], int(query_pv[0]) + int(query_his_pv[0]))
 
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_data)
+
+
+def get_focus_new_user(days=0):
+    start_date = DateUtil.get_date_before_days(int(days))
+    end_date = DateUtil.get_date_after_days(1-int(days))
+    hbdt_focus_file = DateUtil.date2str(start_date, "%Y-%m-%d") + "_hbdt_focus.dat"
+    with open("/home/huolibi/data/hbdt/hbdt_focus/" + hbdt_focus_file) as hbdt_file:
+        for hbdt_data in hbdt_file:
+            try:
+                (userid, phoneid, phone, token, flyid, focusdate, flydate
+                 , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
+            except Exception:
+                continue
+
+            if ast.literal_eval(phoneid) is None:
+                continue
+            else:
+                phone_id = str(userid) + '_' + str(phoneid)
 
 
 def update_flight_focus_user_weekly():

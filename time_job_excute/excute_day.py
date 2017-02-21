@@ -53,6 +53,7 @@ if __name__ == "__main__":
     TimeService.add_day_service(hb_coupon_ticket.update_car_use_detail_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_hotel_use_detail_daily)
     TimeService.add_day_service(hb_focus_newphoneid.update_fouces_dat_daily)
+    TimeService.add_day_service(hb_coupon_ticket.update_gtgj_use_detail_daily)
 
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 

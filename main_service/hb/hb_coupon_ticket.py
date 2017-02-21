@@ -91,6 +91,14 @@ def update_hotel_use_detail_daily(days=0):
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_huoli_hotel_use_detail_sql"], use_detail_coupon_data)
 
 
+def update_gtgj_use_detail_daily(days=0):
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1 - days)
+    dto = [start_date, end_date]
+    use_detail_coupon_data = DBCli().gt_cli.queryAll(coupon_sql["gtgj_coupon_use_detail_sql"], dto)
+    DBCli().targetdb_cli.batchInsert(coupon_sql["insert_gtgj_coupon_use_detail_sql"], use_detail_coupon_data)
+
+
 def update_coupon_use_detail_daily_his(days=0):
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
@@ -277,8 +285,10 @@ if __name__ == "__main__":
     # # update_common_coupon_his()
     # update_gt_coupon_daily(1)
 
-    update_common_coupon_daily(1)
-    update_hb_coupon_use_detail_daily(1)
-    update_coupon_use_detail_daily(1)
-    update_car_use_detail_daily(1)
-    update_hotel_use_detail_daily(1)
+    # update_common_coupon_daily(1)
+    # update_hb_coupon_use_detail_daily(1)
+    # update_coupon_use_detail_daily(1)
+    # update_car_use_detail_daily(1)
+    # update_hotel_use_detail_daily(1)
+
+    update_gtgj_use_detail_daily(1)

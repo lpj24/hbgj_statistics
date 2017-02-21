@@ -278,3 +278,23 @@ insert_huoli_hotel_use_detail_sql = """
     use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
 """
+
+gtgj_coupon_use_detail_sql = """
+    select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
+    title,
+    sum(1) issue_coupon_count,
+    sum(amount) issue_coupon_amount,
+    sum(case when use_type=2 then 1 else 0 end) use_coupon_count,
+    sum(case when use_type=2 then amount else 0 end) use_coupon_amount
+    from return_cash_coupon
+    where create_time>=%s
+    and create_time<%s
+    GROUP BY s_day, title
+    order by s_day, issue_coupon_count desc
+"""
+
+insert_gtgj_coupon_use_detail_sql = """
+    insert into coupon_gtgj_ticket_detail (s_day, title, issue_coupon_count,
+    issue_coupon_amount, use_coupon_count, use_coupon_amount,
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+"""

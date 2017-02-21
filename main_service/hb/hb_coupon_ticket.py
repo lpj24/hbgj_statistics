@@ -102,7 +102,7 @@ def update_gtgj_use_detail_daily(days=0):
 def update_coupon_use_detail_daily_his(days=0):
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
-    dto = [start_date]
+    dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["coupon_issue_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_coupon_issue_detail_sql"], use_detail_coupon_data)
 
@@ -111,7 +111,7 @@ def update_hb_coupon_use_detail_daily_his(days=0):
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
-    dto = [start_date]
+    dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["hbdj_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_sql"], use_detail_coupon_data)
 

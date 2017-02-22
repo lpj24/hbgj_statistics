@@ -128,6 +128,7 @@ def hb_pay_type(days=0):
                 try:
                     r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
                     result = r.json()
+                    print result
                     data = result["results"]
                 except Exception:
                     return

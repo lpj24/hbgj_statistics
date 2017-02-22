@@ -31,8 +31,10 @@ if __name__ == "__main__":
     TimeService.add_day_service(hotel_order.update_hotel_orders_daily)
 
     TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
-
     TimeService.add_day_service(hbgj_users.hbgj_user)
+
+    TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
+
     TimeService.add_day_service(gt_fromHb.update_gtgj_from_hb)
     TimeService.add_day_service(gt_income_cost.update_gt_income_cost)
     TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
@@ -54,8 +56,6 @@ if __name__ == "__main__":
     TimeService.add_day_service(hb_coupon_ticket.update_hotel_use_detail_daily)
     TimeService.add_day_service(hb_focus_newphoneid.update_fouces_dat_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_gtgj_use_detail_daily)
-
-    TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 
     for fun in TimeService.get_day_service():
         try:

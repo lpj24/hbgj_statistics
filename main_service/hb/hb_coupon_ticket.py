@@ -271,6 +271,7 @@ def update_hb_coupon_his():
 
 if __name__ == "__main__":
     # update_hbgj_coupon_tickt(1)
+    # update_hb_coupon_use_detail_daily(1)
     # # update_hb_coupon_his()
     # update_gt_coupon_daily(1)
     # # update_gt_coupon_daily_his()
@@ -285,10 +286,14 @@ if __name__ == "__main__":
     # # update_common_coupon_his()
     # update_gt_coupon_daily(1)
 
+    # update_huoli_car_coupon_daily(1)
+    # update_car_use_detail_daily(1)
     # update_common_coupon_daily(1)
     # update_hb_coupon_use_detail_daily(1)
     # update_coupon_use_detail_daily(1)
     # update_car_use_detail_daily(1)
-    # update_hotel_use_detail_daily(1)
 
-    update_gtgj_use_detail_daily(1)
+    update_huoli_hotel_coupon_daily(1)
+    update_hotel_use_detail_daily(1)
+
+    # update_gtgj_use_detail_daily(1)

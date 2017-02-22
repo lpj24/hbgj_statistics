@@ -59,7 +59,7 @@ def update_hb_deplay_insure(days=0):
     compensate_exception_num = DBCli().sourcedb_cli.queryOne(compensate_exception_sql, dto)
 
     insert_sql = """
-        insert into hbgj_delay_treasure_daily (s_day, fly_order_num, activity_order_num, compensate_order_num,
+        insert into operation_hbgj_delay_treasure_daily (s_day, fly_order_num, activity_order_num, compensate_order_num,
         compensate_refund_order_num, compensate_amount, compensate_execption_num, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
@@ -88,7 +88,7 @@ def update_compensate_detail(days=0):
     """
 
     compensate_detail_insert_sql = """
-        insert into delaycare_detail_daily (s_day, delaycare_type, delaycare_count, createtime, updatetime)
+        insert into operation_delaycare_detail_daily (s_day, delaycare_type, delaycare_count, createtime, updatetime)
         values (%s, %s, %s, now(), now())
     """
     # from collections import OrderedDict

@@ -18,7 +18,7 @@ def update_hb_channel_ticket_weekly():
     """
 
     insert_sql = """
-        insert into hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
+        insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
         createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, now(), now())
     """
 
@@ -100,7 +100,7 @@ def update_hb_company_ticket_weekly():
             insert_hb_company.append(hb_data)
 
     insert_sql = """
-        insert into hbgj_company_ticket_weekly (s_day, hb_comany, hb_code, ticket_num, amount, createtime, updatetime)
+        insert into operation_hbgj_company_ticket_weekly (s_day, hb_comany, hb_code, ticket_num, amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
@@ -151,12 +151,12 @@ def update_unable_ticket():
     """
 
     insert_sql = """
-        insert into hbgj_unable_ticket_weekly (s_day, pn_resouce, channel_name, unable_ticket_num, total_num, createtime, updatetime)
+        insert into operation_hbgj_unable_ticket_weekly (s_day, pn_resouce, channel_name, unable_ticket_num, total_num, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
     """
 
     insert_intervention_sql = """
-        insert into hbgj_human_intervention_ticket_weekly (s_day, pn_resouce, channel_name, intervention_ticket_num,
+        insert into operation_hbgj_human_intervention_ticket_weekly (s_day, pn_resouce, channel_name, intervention_ticket_num,
         total_num, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
     """

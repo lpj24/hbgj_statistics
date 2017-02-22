@@ -118,6 +118,8 @@ coupon_sql = {
     "huoli_hotel_use_detail_sql": coupon_ticket.huoli_hotel_use_detail_sql,
     "insert_huoli_hotel_use_detail_sql": coupon_ticket.insert_huoli_hotel_use_detail_sql,
 
+    "gtgj_coupon_issue_detail_sql": coupon_ticket.gtgj_coupon_issue_detail_sql,
+    "insert_gtgj_coupon_issue_detail_sql": coupon_ticket.insert_gtgj_coupon_issue_detail_sql,
     "gtgj_coupon_use_detail_sql": coupon_ticket.gtgj_coupon_use_detail_sql,
     "insert_gtgj_coupon_use_detail_sql": coupon_ticket.insert_gtgj_coupon_use_detail_sql,
 

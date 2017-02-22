@@ -91,10 +91,13 @@ def update_hotel_use_detail_daily(days=0):
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_huoli_hotel_use_detail_sql"], use_detail_coupon_data)
 
 
-def update_gtgj_use_detail_daily(days=0):
+def update_gtgj_use_issue_detail_daily(days=0):
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
     dto = [start_date, end_date]
+    issue_detail_coupon_data = DBCli().gt_cli.queryAll(coupon_sql["gtgj_coupon_issue_detail_sql"], dto)
+    DBCli().targetdb_cli.batchInsert(coupon_sql["insert_gtgj_coupon_issue_detail_sql"], issue_detail_coupon_data)
+
     use_detail_coupon_data = DBCli().gt_cli.queryAll(coupon_sql["gtgj_coupon_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_gtgj_coupon_use_detail_sql"], use_detail_coupon_data)
 
@@ -219,7 +222,7 @@ def update_huoli_car_coupon_his():
 
 def update_gt_coupon_daily_his():
     import datetime
-    his_date = datetime.date(2017, 2, 15)
+    his_date = datetime.date(2017, 2, 22)
     his_data = DBCli().gt_cli.queryAll(coupon_sql["gtgj_use_issue_coupon_sql"], [his_date, his_date])
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_gtgj_coupon_sql"], his_data)
 
@@ -270,30 +273,10 @@ def update_hb_coupon_his():
     DBCli().targetdb_cli.batchInsert(update_sql, use_coupon_data)
 
 if __name__ == "__main__":
-    # update_hbgj_coupon_tickt(1)
-    # update_hb_coupon_use_detail_daily(1)
-    # # update_hb_coupon_his()
+    # update_gt_coupon_daily_his()
     # update_gt_coupon_daily(1)
-    # # update_gt_coupon_daily_his()
-    # update_huoli_car_coupon_daily(1)
-    # update_huoli_car_coupon_his()
-    # result = DBCli().oracle_cli.queryOne(sql)
-    # import logging
-    # logging.warning(result)
+    update_gtgj_use_issue_detail_daily(1)
     # update_huoli_hotel_coupon_daily(1)
-    # # update_huoli_hotel_coupon_his()
-    # update_common_coupon_daily(1)
-    # # update_common_coupon_his()
-    # update_gt_coupon_daily(1)
-
-    # update_huoli_car_coupon_daily(1)
-    # update_car_use_detail_daily(1)
-    # update_common_coupon_daily(1)
-    # update_hb_coupon_use_detail_daily(1)
-    # update_coupon_use_detail_daily(1)
-    # update_car_use_detail_daily(1)
-
-    update_huoli_hotel_coupon_daily(1)
-    update_hotel_use_detail_daily(1)
+    # update_hotel_use_detail_daily(1)
 
     # update_gtgj_use_detail_daily(1)

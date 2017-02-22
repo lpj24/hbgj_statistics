@@ -44,12 +44,12 @@ insert_hbgj_coupon_sql = """
 gtgj_use_issue_coupon_sql = """
         SELECT A.s_day, B.issue_coupon_count, B.issue_coupon_amount, A.use_coupon_count,
         A.use_coupon_amount FROM (
-        select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
+        select DATE_FORMAT(use_time, '%%Y-%%m-%%d') s_day,
         sum(1) use_coupon_count,
         sum(amount) use_coupon_amount
         from return_cash_coupon
-        where create_time>=%s
-        and create_time<%s
+        where use_time>=%s
+        and use_time<%s
         and use_type=2
         GROUP BY s_day) A
         left join (select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
@@ -279,13 +279,11 @@ insert_huoli_hotel_use_detail_sql = """
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
 """
 
-gtgj_coupon_use_detail_sql = """
+gtgj_coupon_issue_detail_sql = """
     select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
     title,
     sum(1) issue_coupon_count,
-    sum(amount) issue_coupon_amount,
-    sum(case when use_type=2 then 1 else 0 end) use_coupon_count,
-    sum(case when use_type=2 then amount else 0 end) use_coupon_amount
+    sum(amount) issue_coupon_amount
     from return_cash_coupon
     where create_time>=%s
     and create_time<%s
@@ -293,8 +291,28 @@ gtgj_coupon_use_detail_sql = """
     order by s_day, issue_coupon_count desc
 """
 
+gtgj_coupon_use_detail_sql = """
+    select
+    DATE_FORMAT(use_time, '%%Y-%%m-%%d') s_day,
+    title,
+    sum(case when use_type=2 then 1 else 0 end) use_coupon_count,
+    sum(case when use_type=2 then amount else 0 end) use_coupon_amount
+    from return_cash_coupon
+    where use_time>=%s
+    and use_time<%s
+    GROUP BY s_day, title
+    order by s_day, use_coupon_count desc
+"""
+
+insert_gtgj_coupon_issue_detail_sql = """
+    insert into coupon_gtgj_ticket_issue_detail (s_day, title, issue_coupon_count,
+    issue_coupon_amount,
+    createtime, updatetime) values (%s, %s, %s, %s, now(), now())
+"""
+
 insert_gtgj_coupon_use_detail_sql = """
-    insert into coupon_gtgj_ticket_detail (s_day, title, issue_coupon_count,
-    issue_coupon_amount, use_coupon_count, use_coupon_amount,
-    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+    insert into coupon_gtgj_ticket_use_detail (s_day, title, use_coupon_count,
+    use_coupon_amount,
+    createtime, updatetime) values (%s, %s, %s, %s, now(), now())
+
 """

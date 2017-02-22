@@ -67,6 +67,41 @@ def update_hb_insure_daily(start_date, end_date):
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(update_delay_sql, delay_data)
 
+
+def update_insure_class_daily(days=0):
+    hbgj_platform_sql = """
+        SELECT left(i.createtime,10),count(*),sum(i.PRICE) FROM skyhotel.`INSURE_ORDERDETAIL` i
+        join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
+        where i.createtime BETWEEN '2017-01-01' and '2017-02-01'
+        and i.insurecode in
+        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS','PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
+        and o.intflag=1 and o.p like '%hbgj%'
+        GROUP BY left(i.createtime,10)
+    """
+
+    gtgj_platform_sql = """
+        SELECT left(i.createtime,10),count(*),sum(i.PRICE) FROM skyhotel.`INSURE_ORDERDETAIL` i
+        join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
+        where i.createtime BETWEEN '2017-01-01'
+        and '2017-02-01'  and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS','PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
+        and o.intflag=1 and o.p like '%gtgj%'
+        GROUP BY left(i.createtime,10);
+    """
+
+    other_platform_sql = """
+        SELECT left(i.createtime,10),count(*),sum(i.PRICE) FROM skyhotel.`INSURE_ORDERDETAIL` i
+        join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
+        where i.createtime BETWEEN '2017-01-01'
+        and '2017-02-01'  and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS','PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
+        and o.intflag=1 and o.p not like '%gtgj%' and o.p not like '%hbgj%'
+        GROUP BY left(i.createtime,10);
+    """
+
+    inter_hb_sql = """
+
+    """
+
+
 if __name__ == "__main__":
     import datetime
     min_date = datetime.date(2013, 4, 26)

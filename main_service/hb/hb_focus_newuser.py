@@ -32,8 +32,8 @@ def update_focus_newuser(days=0):
             query_id.append(phone_id)
     focus_pv = len(query_id)
     focus_uv = len(set(query_id))
-    his_focus_id = DBCli().redis_dt_cli.scard("hbdt_focus_his_uid")
-    focus_newuser = len(set(query_id).difference(set(his_focus_id)))
+    his_focus_id = DBCli().redis_dt_cli.smembers("hbdt_focus_his_uid")
+    focus_newuser = len(set(query_id).difference(his_focus_id))
 
     DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
     for focus_id in query_id:

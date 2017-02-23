@@ -45,9 +45,9 @@ def update_gt_cost_income():
     gt_income_cost.update_gt_income_cost(1)
 
 
-def check_excute_job():
+def check_execute_job():
     from time_job_excute import excute_day, excute_mon_week
-    day_service = excute_day.add_excute_job()
+    day_service = excute_day.add_execute_job()
     for job in day_service.get_day_service():
         print job
 

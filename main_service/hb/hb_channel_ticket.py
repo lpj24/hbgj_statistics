@@ -22,11 +22,17 @@ def update_hb_channel_ticket_weekly():
         createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, now(), now())
     """
 
+    do_sale_exception_sql = """
+        insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
+        createtime, updatetime) values (%s, null, null, null, 0, 0, 5, now(), now())
+    """
+
     while start_week < end_week:
         query_end_date = DateUtil.add_days(start_week, 1)
         channel_all_data = DBCli().sourcedb_cli.queryAll(channel_sql, [start_week, start_week, query_end_date])
         # new_channel_data = [list(channel_data).insert(0, s_day) for channel_data in channel_all_data]
         insert_channel_data = []
+        sale_data = 0
         for channel_data in channel_all_data:
             saletype, pn_resouce = channel_data[1], channel_data[3]
             new_channel_data = list(channel_data)
@@ -39,12 +45,17 @@ def update_hb_channel_ticket_weekly():
             elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
                 new_channel_data.append(4)
             elif saletype == 13 or pn_resouce == 'hlth':
+                sale_data += 1
                 new_channel_data.append(5)
             else:
                 continue
             insert_channel_data.append(new_channel_data)
+
         DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
+        if sale_data == 0:
+            DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week])
         start_week = DateUtil.add_days(start_week, 1)
+
 
     # total_week_sql = """
     #     select

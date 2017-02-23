@@ -1,7 +1,6 @@
 from time_job_excute.timeServiceList import TimeService
 import sys
 import logging
-import time
 from localytics import hb_ticket_book, hbdt_event, hb_pay_type
 
 

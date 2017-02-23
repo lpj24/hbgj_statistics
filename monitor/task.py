@@ -45,5 +45,5 @@ def update_gt_cost_income():
     gt_income_cost.update_gt_income_cost(1)
 
 if __name__ == "__main__":
-    update_gt_cost_income()
+    # update_gt_cost_income()
     check_day_data()

@@ -69,47 +69,86 @@ def update_hb_insure_daily(start_date, end_date):
 
 
 def update_insure_class_daily(days=0):
-    hbgj_platform_sql = """
-        SELECT left(i.createtime,10),count(*),sum(i.PRICE) FROM skyhotel.`INSURE_ORDERDETAIL` i
+    start_date = DateUtil.get_date_before_days(days)
+    end_date = DateUtil.get_date_after_days(1-days)
+    hbgj_insure_sql = """
+        SELECT
+        left(i.createtime,10), "hbgj",
+        i.insurecode,
+        count(case when o.intflag=1 then 1 end) inter_count,
+        sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
+        count(case when o.intflag=0 then 1 end) inland_count,
+        sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
+        FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
-        where i.createtime BETWEEN '2017-01-01' and '2017-02-01'
+        where i.createtime BETWEEN %s and %s
         and i.insurecode in
-        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS','PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
-        and o.intflag=1 and o.p like '%hbgj%'
-        GROUP BY left(i.createtime,10)
+        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS',
+        'PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30') and o.p like '%%hbgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode
     """
 
-    gtgj_platform_sql = """
-        SELECT left(i.createtime,10),count(*),sum(i.PRICE) FROM skyhotel.`INSURE_ORDERDETAIL` i
+    gtgj_insure_sql = """
+        SELECT
+        left(i.createtime,10), "gtgj",
+        i.insurecode,
+        count(case when o.intflag=1 then 1 end) inter_count,
+        sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
+        count(case when o.intflag=0 then 1 end) inland_count,
+        sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
+        FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
-        where i.createtime BETWEEN '2017-01-01'
-        and '2017-02-01'  and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS','PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
-        and o.intflag=1 and o.p like '%gtgj%'
-        GROUP BY left(i.createtime,10);
+        where i.createtime BETWEEN %s and %s
+        and i.insurecode in
+        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS',
+        'PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30') and o.p like '%%gtgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode
     """
 
-    other_platform_sql = """
-        SELECT left(i.createtime,10),count(*),sum(i.PRICE) FROM skyhotel.`INSURE_ORDERDETAIL` i
+    other_insure_sql = """
+        SELECT
+        left(i.createtime,10), "other_platform",
+        i.insurecode,
+        count(case when o.intflag=1 then 1 end) inter_count,
+        sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
+        count(case when o.intflag=0 then 1 end) inland_count,
+        sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
+        FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
-        where i.createtime BETWEEN '2017-01-01'
-        and '2017-02-01'  and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS','PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
-        and o.intflag=1 and o.p not like '%gtgj%' and o.p not like '%hbgj%'
-        GROUP BY left(i.createtime,10);
+        where i.createtime BETWEEN %s and %s
+        and i.insurecode in
+        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS',
+        'PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
+        and o.p not like '%%gtgj%%' and o.p not like '%%hbgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode
     """
 
-    inter_hb_sql = """
-
+    insert_sql = """
+        insert into operation_hbgj_insure_platform_daily (s_day, platform, insure_code, inter_insure_num,
+        inter_insure_amount, inland_insure_num, inland_insure_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, now(), now())
     """
+
+    dto = [start_date, end_date]
+    hbgj_data = DBCli().sourcedb_cli.queryAll(hbgj_insure_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, hbgj_data)
+
+    gtgj_data = DBCli().sourcedb_cli.queryAll(gtgj_insure_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, gtgj_data)
+
+    other_data = DBCli().sourcedb_cli.queryAll(other_insure_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, other_data)
 
 
 if __name__ == "__main__":
-    import datetime
-    min_date = datetime.date(2013, 4, 26)
-    start_date, end_date = DateUtil.get_last_week_date()
-    while start_date >= min_date:
-        start_date, end_date = DateUtil.get_last_week_date(start_date)
-        update_hb_insure_daily(start_date, end_date)
-        print start_date, end_date
+    # import datetime
+    # min_date = datetime.date(2013, 4, 26)
+    # start_date, end_date = DateUtil.get_last_week_date()
+    # while start_date >= min_date:
+    #     start_date, end_date = DateUtil.get_last_week_date(start_date)
+    #     update_hb_insure_daily(start_date, end_date)
+    #     print start_date, end_date
     # update_hb_insure_daily()
+    update_insure_class_daily(2)
 
 

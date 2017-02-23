@@ -176,30 +176,39 @@ insert_common_coupon_sql = """
 """
 
 hbdj_use_detail_sql = """
+    select B_A.s_day,  B_A.platform_type, B_A.coupon_id,
+    sum(use_coupon_count_in) use_coupon_count_in,
+    sum(use_coupon_amount_in) use_coupon_amount_in,
+    sum(use_coupon_count_return) use_coupon_count_return,
+    sum(use_coupon_amount_return) use_coupon_amount_return
+     from (
     select s_day, coupon_id,
+    case when platform like '%%gtgj%%'
+    then 'gtgj' else 'hbgj' end platform_type,
     sum(case when TRADE_TYPE=1 then 1 else 0 END) use_coupon_count_in,
     sum(case when TRADE_TYPE=1 then price ELSE 0 END) use_coupon_amount_in,
     sum(case when TRADE_TYPE=4 then 1 ELSE 0 END) use_coupon_count_return,
     sum(case when TRADE_TYPE=4 then price ELSE 0 END) use_coupon_amount_return
     from
     (select DATE_FORMAT(TR.createtime, '%%Y-%%m-%%d') s_day,
-    price, TRADE_TYPE,coupon_id
+    price, TRADE_TYPE,coupon_id, TOR.P platform
     from skyhotel.TRADE_RECORD TR
     left join account.coupon C on TR.COUPONID = C.cid
+    left join skyhotel.TICKET_ORDER TOR on TR.ORDERID = TOR.ORDERID
     where productid=0
-    and PAYSOURCE LIKE '%%coupon%%'
+    and TR.PAYSOURCE LIKE '%%coupon%%'
     and TR.createtime>=%s
     and TR.createtime<%s
     and (TRADE_TYPE = 1 or TRADE_TYPE=4)
     ) as A
-    group by s_day, coupon_id
-    order by s_day, use_coupon_count_in desc
+    group by s_day, coupon_id, platform
+    order by s_day, use_coupon_count_in desc) B_A GROUP by B_A.s_day, B_A.coupon_id, B_A.platform_type
 """
 
 insert_hbgj_use_detail_sql = """
-    insert into coupon_hbgj_ticket_use_detail (s_day, coupon_id, use_coupon_count_in,
+    insert into coupon_hbgj_ticket_use_detail_client (s_day, client, coupon_id, use_coupon_count_in,
     use_coupon_amount_in, use_coupon_count_return, use_coupon_amount_return,
-    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+    createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, now(), now())
 """
 
 coupon_issue_detail_sql = """

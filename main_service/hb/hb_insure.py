@@ -4,10 +4,9 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
-def update_hb_insure_daily(start_date, end_date):
-    # start_date, end_date = DateUtil.get_last_week_date()
-    start_date, end_date = DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')
-
+def update_hb_insure_daily(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     platform_sql = """
         SELECT left(od.CREATETIME,10),count(*),sum(od.OUTPAYPRICE)
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o
@@ -140,6 +139,86 @@ def update_insure_class_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, other_data)
 
 
+def update_insure_type_daily(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
+    dto = [start_date, end_date]
+    boat_sql = """
+        SELECT left(i.createtime,10), i.insurecode, count(*),sum(i.price)
+        FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
+        on i.outorderid=o.orderid where i.createtime
+        BETWEEN %s and %s
+        and i.insurecode in
+        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS')
+        GROUP BY left(i.createtime,10), i.insurecode
+    """
+    insert_boat_sql = """
+        insert into operation_hbgj_insure_type_daily (s_day, insure_code, insure_order_num,
+        insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, 0, 0, now(), now())
+    """
+    boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_boat_sql, boat_data)
+
+    refund_order_amount_sql = """
+        SELECT A.s_day,
+        ifnull(A.insurecode, 0),
+        ifnull(A.insure_order_num, 0),
+        ifnull(A.insure_amount, 0),
+        ifnull(B.claim_num, 0),
+        ifnull(B.claim_amount, 0)
+        from (
+        SELECT left(flydatetime,10) s_day, insurecode, count(*) insure_order_num,sum(price) insure_amount FROM
+        `INSURE_ORDERDETAIL` where createtime
+        BETWEEN %s and %s
+        and insurecode in ('PA_G','HT_G','PA35_G') and flydatetime BETWEEN
+        %s and %s group BY left(flydatetime,10), insurecode
+        ) A left join (
+        SELECT left(flydatetime,10) s_day, insurecode, count(*) claim_num,
+        sum(claim_price) claim_amount FROM `INSURE_ORDERDETAIL`
+        where createtime BETWEEN %s and %s
+        and insurecode in ('PA_G','HT_G','PA35_G') and flydatetime
+        BETWEEN %s and %s
+        and `claim_price` is not null group BY left(flydatetime,10), insurecode
+    ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode
+
+    """
+
+    insert_refund_sql = """
+        insert into operation_hbgj_insure_type_daily (s_day, insure_code, insure_order_num,
+        insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, now(), now())
+    """
+    dto = [start_date, end_date, start_date, end_date, start_date, end_date, start_date, end_date]
+    refund_data = DBCli().sourcedb_cli.queryAll(refund_order_amount_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_refund_sql, refund_data)
+
+    delay_sql = """
+        select A.s_day, A.insurecode,
+        ifnull(A.insure_num, 0),
+        ifnull(B.insure_claim_num, 0) from (
+        SELECT left(CREATETIME,10) s_day, insurecode, count(*) insure_num FROM
+        `INSURE_ORDERDETAIL` where createtime BETWEEN %s and %s
+        and insurecode in ('PICC_D20','PICC_D25','PICC_D30','PA_D')
+        and `STATUS`='7' group BY left(CREATETIME,10), insurecode)
+        A left join (
+        SELECT left(CREATETIME,10) s_day,insurecode ,count(*) insure_claim_num
+        FROM `INSURE_ORDERDETAIL` where
+        createtime BETWEEN %s and %s
+        and insurecode in ('PICC_D20','PICC_D25','PICC_D30','PA_D')
+        group BY left(CREATETIME,10), insurecode) B
+        on A.s_day = B.s_day and A.insurecode = B.insurecode
+    """
+
+    insert_delay_sql = """
+        insert into operation_hbgj_insure_type_daily (s_day, insure_code, insure_order_num,
+        insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
+        values (%s, %s, %s, 0, %s, 0, now(), now())
+    """
+    dto = [start_date, end_date, start_date, end_date]
+    delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
+
 if __name__ == "__main__":
     # import datetime
     # min_date = datetime.date(2013, 4, 26)
@@ -149,6 +228,5 @@ if __name__ == "__main__":
     #     update_hb_insure_daily(start_date, end_date)
     #     print start_date, end_date
     # update_hb_insure_daily()
-    update_insure_class_daily(2)
-
-
+    # update_insure_class_daily(2)
+    update_insure_type_daily(1)

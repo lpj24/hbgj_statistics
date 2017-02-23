@@ -6,7 +6,7 @@ from dbClient.dateutil import DateUtil
 def update_focus_newuser(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
-
+    print query_file
     insert_sql = """
         insert into hbdt_focus_newusers_daily (s_day, uv, pv, new_users, createtime, updatetime)
         values (%s, %s, %s, %s, now(), now())
@@ -56,5 +56,8 @@ def collect_his_phone_uid():
             DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", phone_id)
 
 if __name__ == "__main__":
-    collect_his_phone_uid()
+    # collect_his_phone_uid()
+
+    for x in xrange(22, 0, -1):
+        update_focus_newuser(x)
 

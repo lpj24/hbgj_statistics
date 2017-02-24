@@ -4,6 +4,7 @@ from dbClient.dateutil import DateUtil
 from monitor_sql import sql, week_sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
+from main_service.hb import hb_profit_cost
 
 
 def check_day_data():
@@ -41,8 +42,9 @@ def check_week_data():
         utils.sendMail("lipenju24@163.com", msg, "数据查询异常")
 
 
-def update_gt_cost_income():
+def execute_later_job():
     gt_income_cost.update_gt_income_cost(1)
+    hb_profit_cost.update_hb_car_hotel_profit(1)
 
 
 def check_execute_job():
@@ -52,5 +54,5 @@ def check_execute_job():
         print job
 
 if __name__ == "__main__":
-    # update_gt_cost_income()
+    execute_later_job()
     check_day_data()

@@ -232,6 +232,30 @@ def update_refused_order_weekly():
     query_data = DBCli().sourcedb_cli.queryAll(week_sql, dto)
 
 
+def do_exception_sale():
+    do_sale_exception_sql = """
+        insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
+        createtime, updatetime) values (%s, null, null, null, 0, 0, 5, now(), now())
+    """
+
+    check_sql = """
+        select count(*)
+        from operation_hbgj_channel_ticket_daily
+        where s_day=%s
+        and pid=5
+    """
+    import datetime
+    min_date = datetime.date(2013, 9, 30)
+    end_date = datetime.date(2017, 2, 20)
+    while min_date < end_date:
+        query_data = DBCli().targetdb_cli.queryOne(check_sql, [min_date])
+        if query_data[0] == 0:
+            DBCli().targetdb_cli.insert(do_sale_exception_sql, [DateUtil.date2str(min_date, '%Y-%m-%d')])
+        min_date = DateUtil.add_days(min_date, 1)
+
+if __name__ == "__main__":
+    do_exception_sale()
+
 # if __name__ == "__main__":
 #     # update_unable_ticket()
 #     import datetime

@@ -35,7 +35,7 @@ def add_execute_job():
 
     TimeService.add_day_service(gt_fromHb.update_gtgj_from_hb)
     TimeService.add_day_service(gt_income_cost.update_gt_income_cost)
-    TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
+
     TimeService.add_day_service(hb_focus_platform.update_focus_platform)
     TimeService.add_day_service(hb_delay_insure.update_hb_deplay_insure)
     TimeService.add_day_service(hb_delay_insure.update_compensate_detail)
@@ -54,7 +54,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_coupon_ticket.update_hotel_use_detail_daily)
     TimeService.add_day_service(hb_focus_newphoneid.update_fouces_dat_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_gtgj_use_issue_detail_daily)
-
+    # TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
     return TimeService
 
 

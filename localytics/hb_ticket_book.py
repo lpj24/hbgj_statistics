@@ -222,7 +222,7 @@ if __name__ == "__main__":
             hb_ticket_book(i)
         except AssertionError:
             print "error"
-            # time.sleep(1 * 60 * 60)
+            time.sleep(1 * 60 * 60)
             continue
         i += 1
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"

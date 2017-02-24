@@ -213,7 +213,7 @@ if __name__ == "__main__":
     #     hb_ticket_book(i)
     #     i += 1
     # hb_ticket_book(1)
-    update_booke_ticket_event_hourly(1)
+    # update_booke_ticket_event_hourly(1)
     i = 187
     while i < 300:
         print i

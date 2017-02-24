@@ -66,6 +66,9 @@ def update_hb_coupon_use_detail_daily(days=0):
     use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["hbdj_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_sql"], use_detail_coupon_data)
 
+    use_detail_noclient_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["hbdj_use_detail_noclient_sql"], dto)
+    DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_noclient_sql"], use_detail_noclient_coupon_data)
+
 
 def update_coupon_use_detail_daily(days=0):
     start_date = DateUtil.get_date_before_days(days)

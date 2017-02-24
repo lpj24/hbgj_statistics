@@ -43,6 +43,16 @@ sql = [
     "select count(1) from coupon_huoli_hotel where s_day=%s",
     "select count(1) from coupon_common where s_day=%s",
     "select count(1) from coupon_gtgj_ticket where s_day=%s",
+
+    "select count(1) from hbdt_focus_newusers_daily where s_day=%s",
+    "select count(1) from coupon_hbgj_ticket_use_detail_client where s_day=%s",
+    "select count(1) from coupon_hbgj_ticket_use_detail where s_day=%s",
+
+    "select count(1) from coupon_gtgj_ticket_use_detail where s_day=%s",
+    "select count(1) from coupon_huoli_car_use_detail where s_day=%s",
+    "select count(1) from coupon_huoli_hotel_use_detail where s_day=%s",
+    "select count(1) from coupon_gtgj_ticket_issue_detail where s_day=%s",
+    "select count(1) from coupon_issue_detail where s_day=%s",
 ]
 
 week_sql = [

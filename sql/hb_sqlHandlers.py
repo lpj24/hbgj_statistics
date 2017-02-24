@@ -123,4 +123,7 @@ coupon_sql = {
     "gtgj_coupon_use_detail_sql": coupon_ticket.gtgj_coupon_use_detail_sql,
     "insert_gtgj_coupon_use_detail_sql": coupon_ticket.insert_gtgj_coupon_use_detail_sql,
 
+    "hbdj_use_detail_noclient_sql": coupon_ticket.hbdj_use_detail_noclient_sql,
+    "insert_hbgj_use_detail_noclient_sql": coupon_ticket.insert_hbgj_use_detail_noclient_sql,
+
 }

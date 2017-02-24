@@ -17,7 +17,7 @@ def check_day_data():
 
         if data[0] < 1:
             #error
-            msg += execute_sql.split(" ")[3] + "\n"
+            msg += execute_sql.split(" ")[3] + "<br/>"
         else:
             pass
     if len(msg) > 0:
@@ -35,7 +35,7 @@ def check_week_data():
 
         if data[0] < 1:
             # error
-            msg += execute_sql.split(" ")[3] + "\n"
+            msg += execute_sql.split(" ")[3] + "<br/>"
         else:
             pass
     if len(msg) > 0:

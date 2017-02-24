@@ -220,13 +220,13 @@ def update_insure_type_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
 
 if __name__ == "__main__":
-    # import datetime
-    # min_date = datetime.date(2013, 4, 26)
-    # start_date, end_date = DateUtil.get_last_week_date()
-    # while start_date >= min_date:
-    #     start_date, end_date = DateUtil.get_last_week_date(start_date)
-    #     update_hb_insure_daily(start_date, end_date)
-    #     print start_date, end_date
+    import datetime
+    min_date = datetime.date(2013, 4, 26)
+    start_date, end_date = DateUtil.get_last_week_date()
+    while start_date >= min_date:
+        start_date, end_date = DateUtil.get_last_week_date(start_date)
+        update_hb_insure_daily(start_date, end_date)
+        print start_date, end_date
     # update_hb_insure_daily()
     # update_insure_class_daily(2)
-    update_insure_type_daily(1)
+    # update_insure_type_daily(1)

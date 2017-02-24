@@ -4,9 +4,7 @@ from main_service.gt import gt_consumers, gt_activeusers
 from time_job_excute.timeServiceList import TimeService
 import logging
 
-if __name__ == "__main__":
-    print "excute month"
-    # TimeService.add_month_first_service(eat_activeusers.update_eat_active_user_monthly)
+def add_execute_job():
     TimeService.add_month_first_service(car_consumers.update_car_consumers_monthly)
 
     TimeService.add_month_first_service(gt_consumers.update_gtgj_consumers_monthly)
@@ -23,8 +21,14 @@ if __name__ == "__main__":
     TimeService.add_month_first_service(hb_flight_search.update_flight_search_user_monthly)
     TimeService.add_month_first_service(hb_flight_focus.update_flight_focus_user_monthly)
     TimeService.add_month_first_service(hb_focus_platform.update_focus_platform_monthly)
+    return TimeService
 
-    for fun in TimeService.get_month_first_service():
+if __name__ == "__main__":
+    print "excute month"
+    # TimeService.add_month_first_service(eat_activeusers.update_eat_active_user_monthly)
+
+    service = add_execute_job()
+    for fun in service.get_month_first_service():
         try:
             fun()
         except Exception as e:

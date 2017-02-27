@@ -58,5 +58,6 @@ def check_execute_job():
         print week_job
 
 if __name__ == "__main__":
-    execute_later_job()
-    check_day_data()
+    # execute_later_job()
+    # check_day_data()
+    check_week_data()

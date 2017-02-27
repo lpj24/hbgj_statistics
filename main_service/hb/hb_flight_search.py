@@ -230,12 +230,12 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_dt_search_uid(i)
     #     i -= 1
-    update_flight_search_user_daily(42)
-    update_flight_search_user_daily(41)
-    i = 25
-    while i >= 19:
-        update_flight_search_user_daily(i)
-        i -= 1
+    update_flight_search_user_daily(3)
+    # update_flight_search_user_daily(41)
+    # i = 25
+    # while i >= 19:
+    #     update_flight_search_user_daily(i)
+    #     i -= 1
     # s = dict()
     # s.update()
     # update_check_pv_his(start_date)

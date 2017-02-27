@@ -141,18 +141,19 @@ def update_insure_type_daily(days=0):
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     dto = [start_date, end_date]
     boat_sql = """
-        SELECT left(i.createtime,10), i.insurecode, count(*),sum(i.price)
+        SELECT left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype,
+        count(*),sum(i.price)
         FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
-        on i.outorderid=o.orderid where i.createtime
-        BETWEEN %s and %s
-        and i.insurecode in
-        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS')
-        GROUP BY left(i.createtime,10), i.insurecode
+        on i.outorderid=o.orderid
+        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
+        where i.createtime BETWEEN %s and %s
+        and INSURE_DATA.bigtype in (2, 1, 3, 5)
+        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
     """
     insert_boat_sql = """
-        insert into operation_hbgj_insure_type_daily (s_day, insure_code, insure_order_num,
+        insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
-        values (%s, %s, %s, %s, 0, 0, now(), now())
+        values (%s, %s, %s, %s, %s, 0, 0, now(), now())
     """
     boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_boat_sql, boat_data)
@@ -160,57 +161,64 @@ def update_insure_type_daily(days=0):
     refund_order_amount_sql = """
         SELECT A.s_day,
         ifnull(A.insurecode, 0),
+        A.bigtype,
         ifnull(A.insure_order_num, 0),
         ifnull(A.insure_amount, 0),
         ifnull(B.claim_num, 0),
         ifnull(B.claim_amount, 0)
         from (
-        SELECT left(flydatetime,10) s_day, insurecode, count(*) insure_order_num,sum(price) insure_amount FROM
-        `INSURE_ORDERDETAIL` where createtime
+        SELECT left(flydatetime,10) s_day, insurecode, INSURE_DATA.bigtype bigtype,
+        count(*) insure_order_num,sum(INSURE_ORDERDETAIL.price) insure_amount FROM
+        `INSURE_ORDERDETAIL`
+        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type where createtime
         BETWEEN %s and %s
-        and insurecode in ('PA_G','HT_G','PA35_G') and flydatetime BETWEEN
-        %s and %s group BY left(flydatetime,10), insurecode
+        and INSURE_DATA.bigtype=3 and flydatetime BETWEEN
+        %s and %s group BY left(flydatetime,10), insurecode, INSURE_DATA.bigtype
         ) A left join (
-        SELECT left(flydatetime,10) s_day, insurecode, count(*) claim_num,
+        SELECT left(flydatetime,10) s_day, insurecode, INSURE_DATA.bigtype bigtype, count(*) claim_num,
         sum(claim_price) claim_amount FROM `INSURE_ORDERDETAIL`
+        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type
         where createtime BETWEEN %s and %s
-        and insurecode in ('PA_G','HT_G','PA35_G') and flydatetime
+        and INSURE_DATA.bigtype=3 and flydatetime
         BETWEEN %s and %s
-        and `claim_price` is not null group BY left(flydatetime,10), insurecode
-    ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode
+        and `claim_price` is not null group BY left(flydatetime,10), insurecode, INSURE_DATA.bigtype
+    ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode and A.bigtype = B.bigtype
 
     """
 
     insert_refund_sql = """
-        insert into operation_hbgj_insure_type_daily (s_day, insure_code, insure_order_num,
+        insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, %s, now(), now())
+        values (%s, %s, %s, %s, %s, %s, %s, now(), now())
     """
     dto = [start_date, end_date, start_date, end_date, start_date, end_date, start_date, end_date]
     refund_data = DBCli().sourcedb_cli.queryAll(refund_order_amount_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_refund_sql, refund_data)
 
     delay_sql = """
-        select A.s_day, A.insurecode,
+        select A.s_day, A.insurecode, A.bigtype,
         ifnull(A.insure_num, 0),
         ifnull(B.insure_claim_num, 0) from (
-        SELECT left(CREATETIME,10) s_day, insurecode, count(*) insure_num FROM
-        `INSURE_ORDERDETAIL` where createtime BETWEEN %s and %s
-        and insurecode in ('PICC_D20','PICC_D25','PICC_D30','PA_D')
-        and `STATUS`='7' group BY left(CREATETIME,10), insurecode)
+        SELECT left(CREATETIME,10) s_day, insurecode, INSURE_DATA.bigtype bigtype, count(*) insure_num FROM
+        `INSURE_ORDERDETAIL`
+        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type
+        where createtime BETWEEN %s and %s
+        and INSURE_DATA.bigtype = 1
+        and `STATUS`='7' group BY left(CREATETIME,10), insurecode, INSURE_DATA.bigtype)
         A left join (
-        SELECT left(CREATETIME,10) s_day,insurecode ,count(*) insure_claim_num
-        FROM `INSURE_ORDERDETAIL` where
+        SELECT left(CREATETIME,10) s_day,insurecode ,INSURE_DATA.bigtype bigtype,count(*) insure_claim_num
+        FROM `INSURE_ORDERDETAIL`
+        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type where
         createtime BETWEEN %s and %s
-        and insurecode in ('PICC_D20','PICC_D25','PICC_D30','PA_D')
-        group BY left(CREATETIME,10), insurecode) B
-        on A.s_day = B.s_day and A.insurecode = B.insurecode
+        and INSURE_DATA.bigtype = 1
+        group BY left(CREATETIME,10), insurecode, INSURE_DATA.bigtype) B
+        on A.s_day = B.s_day and A.insurecode = B.insurecode and A.bigtype=B.bigtype
     """
 
     insert_delay_sql = """
-        insert into operation_hbgj_insure_type_daily (s_day, insure_code, insure_order_num,
+        insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
-        values (%s, %s, %s, 0, %s, 0, now(), now())
+        values (%s, %s, %s, %s, 0, %s, 0, now(), now())
     """
     dto = [start_date, end_date, start_date, end_date]
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
@@ -226,4 +234,9 @@ if __name__ == "__main__":
     #     print start_date, end_date
     # update_hb_insure_daily()
     # update_insure_class_daily(2)
-    update_insure_class_daily(5)
+    i = 26
+    while i >= 1:
+        update_hb_insure_daily(i)
+        update_insure_class_daily(i)
+        update_insure_type_daily(i)
+        i -= 1

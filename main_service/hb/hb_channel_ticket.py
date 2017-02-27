@@ -24,7 +24,7 @@ def update_hb_channel_ticket_weekly():
 
     do_sale_exception_sql = """
         insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
-        createtime, updatetime) values (%s, null, null, null, 0, 0, 5, now(), now())
+        createtime, updatetime) values (%s, 13, %s, %s, 0, 0, 5, now(), now())
     """
 
     while start_week < end_week:
@@ -53,7 +53,7 @@ def update_hb_channel_ticket_weekly():
 
         DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
         if sale_data == 0:
-            DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week])
+            DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week,  u'航班管家', 'HBGJ'])
         start_week = DateUtil.add_days(start_week, 1)
 
 
@@ -245,8 +245,8 @@ def do_exception_sale():
         and pid=5
     """
     import datetime
-    min_date = datetime.date(2013, 9, 30)
-    end_date = datetime.date(2017, 2, 20)
+    min_date = datetime.date(2013, 2, 19)
+    end_date = datetime.date(2017, 2, 27)
     while min_date < end_date:
         query_data = DBCli().targetdb_cli.queryOne(check_sql, [min_date])
         if query_data[0] == 0:

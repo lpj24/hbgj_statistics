@@ -73,59 +73,56 @@ def update_insure_class_daily(days=0):
     hbgj_insure_sql = """
         SELECT
         left(i.createtime,10), "hbgj",
-        i.insurecode,
+        i.insurecode, INSURE_DATA.bigtype,
         count(case when o.intflag=1 then 1 end) inter_count,
         sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
         count(case when o.intflag=0 then 1 end) inland_count,
         sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
         FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
+        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and i.insurecode in
-        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS',
-        'PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30') and o.p like '%%hbgj%%'
-        GROUP BY left(i.createtime,10), i.insurecode
+        and INSURE_DATA.bigtype in (2, 1, 3, 5)  and o.p like '%%hbgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
     """
 
     gtgj_insure_sql = """
         SELECT
         left(i.createtime,10), "gtgj",
-        i.insurecode,
+        i.insurecode, INSURE_DATA.bigtype,
         count(case when o.intflag=1 then 1 end) inter_count,
         sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
         count(case when o.intflag=0 then 1 end) inland_count,
         sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
         FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
+        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and i.insurecode in
-        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS',
-        'PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30') and o.p like '%%gtgj%%'
-        GROUP BY left(i.createtime,10), i.insurecode
+        and INSURE_DATA.bigtype in (2, 1, 3, 5) and o.p like '%%gtgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
     """
 
     other_insure_sql = """
         SELECT
-        left(i.createtime,10), "other_platform",
-        i.insurecode,
+        left(i.createtime,10), "else",
+        i.insurecode, INSURE_DATA.bigtype,
         count(case when o.intflag=1 then 1 end) inter_count,
         sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
         count(case when o.intflag=0 then 1 end) inland_count,
         sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
         FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
+        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and i.insurecode in
-        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS',
-        'PA_G','HT_G','PA35_G','PICC_D20','PICC_D25','PICC_D30')
+        and INSURE_DATA.bigtype in (2, 1, 3, 5)
         and o.p not like '%%gtgj%%' and o.p not like '%%hbgj%%'
-        GROUP BY left(i.createtime,10), i.insurecode
+        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
     """
 
     insert_sql = """
-        insert into operation_hbgj_insure_platform_daily (s_day, platform, insure_code, inter_insure_num,
+        insert into operation_hbgj_insure_platform_daily (s_day, platform, insure_code, pid, inter_insure_num,
         inter_insure_amount, inland_insure_num, inland_insure_amount, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, %s, %s, now(), now())
+        values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
     """
 
     dto = [start_date, end_date]
@@ -220,13 +217,13 @@ def update_insure_type_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
 
 if __name__ == "__main__":
-    import datetime
-    min_date = datetime.date(2013, 4, 26)
-    start_date, end_date = DateUtil.get_last_week_date()
-    while start_date >= min_date:
-        start_date, end_date = DateUtil.get_last_week_date(start_date)
-        update_hb_insure_daily(start_date, end_date)
-        print start_date, end_date
+    # import datetime
+    # min_date = datetime.date(2013, 4, 26)
+    # start_date, end_date = DateUtil.get_last_week_date()
+    # while start_date >= min_date:
+    #     start_date, end_date = DateUtil.get_last_week_date(start_date)
+    #     update_hb_insure_daily(start_date, end_date)
+    #     print start_date, end_date
     # update_hb_insure_daily()
     # update_insure_class_daily(2)
-    # update_insure_type_daily(1)
+    update_insure_class_daily(5)

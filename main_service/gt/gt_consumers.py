@@ -42,6 +42,6 @@ def update_gtgj_consumers_quarterly():
 
 if __name__ == "__main__":
     #每小时更新当天数据  凌晨更新前三天
-    update_gtgj_consumers_daily()
-    update_gtgj_consumers_weekly()
+    update_gtgj_consumers_daily(1)
+    # update_gtgj_consumers_weekly()
     # update_gtgj_consumers_quarterly()

@@ -76,50 +76,47 @@ def update_insure_class_daily(days=0):
     hbgj_insure_sql = """
         SELECT
         left(i.createtime,10), "hbgj",
-        i.insurecode, INSURE_DATA.bigtype,
+        i.insurecode, (SELECT DISTINCT bigtype from INSURE_DATA where type=i.insurecode) bigtype,
         count(case when o.intflag=1 then 1 end) inter_count,
         sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
         count(case when o.intflag=0 then 1 end) inland_count,
         sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
         FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
-        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype in (2, 1, 3, 5)  and o.p like '%%hbgj%%'
-        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
+        and i.insurecode in (select DISTINCT type from INSURE_DATA where bigtype in (2, 1, 3, 5))  and o.p like '%%hbgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode order by bigtype;
     """
 
     gtgj_insure_sql = """
         SELECT
         left(i.createtime,10), "gtgj",
-        i.insurecode, INSURE_DATA.bigtype,
+        i.insurecode, (SELECT DISTINCT bigtype from INSURE_DATA where type=i.insurecode) bigtype,
         count(case when o.intflag=1 then 1 end) inter_count,
         sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
         count(case when o.intflag=0 then 1 end) inland_count,
         sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
         FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
-        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype in (2, 1, 3, 5) and o.p like '%%gtgj%%'
-        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
+        and i.insurecode in (select DISTINCT type from INSURE_DATA where bigtype in (2, 1, 3, 5))  and o.p like '%%gtgj%%'
+        GROUP BY left(i.createtime,10), i.insurecode order by bigtype;
     """
 
     other_insure_sql = """
         SELECT
         left(i.createtime,10), "else",
-        i.insurecode, INSURE_DATA.bigtype,
+        i.insurecode, (SELECT DISTINCT bigtype from INSURE_DATA where type=i.insurecode) bigtype,
         count(case when o.intflag=1 then 1 end) inter_count,
         sum(case when o.intflag=1 then i.PRICE else 0 end) inter_price,
         count(case when o.intflag=0 then 1 end) inland_count,
         sum(case when o.intflag=0 then i.PRICE else 0 end) inland_price
         FROM skyhotel.`INSURE_ORDERDETAIL` i
         join skyhotel.`TICKET_ORDER` o on i.outorderid=o.orderid
-        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype in (2, 1, 3, 5)
+        and i.insurecode in (select DISTINCT type from INSURE_DATA where bigtype in (2, 1, 3, 5))
         and o.p not like '%%gtgj%%' and o.p not like '%%hbgj%%'
-        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
+        GROUP BY left(i.createtime,10), i.insurecode order by bigtype;
     """
 
     insert_sql = """
@@ -144,14 +141,14 @@ def update_insure_type_daily(days=0):
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     dto = [start_date, end_date]
     boat_sql = """
-        SELECT left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype,
+        SELECT left(i.createtime,10), i.insurecode,
+        (SELECT DISTINCT bigtype from INSURE_DATA where type=i.insurecode) bigtype,
         count(*),sum(i.price)
         FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
         on i.outorderid=o.orderid
-        left join INSURE_DATA ON i.insurecode = INSURE_DATA.type
         where i.createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype in (2, 1, 3, 5)
-        GROUP BY left(i.createtime,10), i.insurecode, INSURE_DATA.bigtype order by INSURE_DATA.bigtype
+        and i.insurecode in (select DISTINCT type from INSURE_DATA where bigtype in (2))
+        GROUP BY left(i.createtime,10), i.insurecode
     """
     insert_boat_sql = """
         insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
@@ -164,28 +161,27 @@ def update_insure_type_daily(days=0):
     refund_order_amount_sql = """
         SELECT A.s_day,
         ifnull(A.insurecode, 0),
-        A.bigtype,
+       (SELECT DISTINCT bigtype from INSURE_DATA where type=A.insurecode) bigtype,
         ifnull(A.insure_order_num, 0),
         ifnull(A.insure_amount, 0),
         ifnull(B.claim_num, 0),
         ifnull(B.claim_amount, 0)
         from (
-        SELECT left(flydatetime,10) s_day, insurecode, INSURE_DATA.bigtype bigtype,
+        SELECT left(flydatetime,10) s_day, insurecode,
         count(*) insure_order_num,sum(INSURE_ORDERDETAIL.price) insure_amount FROM
         `INSURE_ORDERDETAIL`
-        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type where createtime
+        where createtime
         BETWEEN %s and %s
-        and INSURE_DATA.bigtype=3 and flydatetime BETWEEN
-        %s and %s group BY left(flydatetime,10), insurecode, INSURE_DATA.bigtype
+        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT type from INSURE_DATA where bigtype in (3)) and flydatetime
+        BETWEEN %s and %s group BY left(flydatetime,10), insurecode
         ) A left join (
-        SELECT left(flydatetime,10) s_day, insurecode, INSURE_DATA.bigtype bigtype, count(*) claim_num,
+        SELECT left(flydatetime,10) s_day, insurecode, count(*) claim_num,
         sum(claim_price) claim_amount FROM `INSURE_ORDERDETAIL`
-        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type
         where createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype=3 and flydatetime
+        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT type from INSURE_DATA where bigtype in (3)) and flydatetime
         BETWEEN %s and %s
-        and `claim_price` is not null group BY left(flydatetime,10), insurecode, INSURE_DATA.bigtype
-    ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode and A.bigtype = B.bigtype
+        and `claim_price` is not null group BY left(flydatetime,10), insurecode
+    ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode
 
     """
 
@@ -194,28 +190,32 @@ def update_insure_type_daily(days=0):
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, %s, now(), now())
     """
-    dto = [start_date, end_date, start_date, end_date, start_date, end_date, start_date, end_date]
+    import datetime
+    refund_start_date = datetime.date(2016, 8, 15)
+    refund_start_date = DateUtil.date2str(refund_start_date, '%Y-%m-%d')
+    dto = [refund_start_date, end_date, start_date, end_date, refund_start_date, end_date, start_date, end_date]
+    print dto
     refund_data = DBCli().sourcedb_cli.queryAll(refund_order_amount_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_refund_sql, refund_data)
 
     delay_sql = """
-        select A.s_day, A.insurecode, A.bigtype,
-        ifnull(A.insure_num, 0),
-        ifnull(B.insure_claim_num, 0) from (
-        SELECT left(CREATETIME,10) s_day, insurecode, INSURE_DATA.bigtype bigtype, count(*) insure_num FROM
+        select A.s_day, A.insurecode,(SELECT DISTINCT bigtype from INSURE_DATA where type=A.insurecode) bigtype,
+        ifnull(B.insure_num, 0),
+        ifnull(A.insure_claim_num, 0)
+        from (
+        SELECT left(CREATETIME,10) s_day, insurecode, count(*) insure_claim_num FROM
         `INSURE_ORDERDETAIL`
-        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type
         where createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype = 1
-        and `STATUS`='7' group BY left(CREATETIME,10), insurecode, INSURE_DATA.bigtype)
+        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT type from INSURE_DATA where bigtype=1)
+        and `STATUS`='7' group BY left(CREATETIME,10), insurecode)
         A left join (
-        SELECT left(CREATETIME,10) s_day,insurecode ,INSURE_DATA.bigtype bigtype,count(*) insure_claim_num
+        SELECT left(CREATETIME,10) s_day,insurecode , count(*) insure_num
         FROM `INSURE_ORDERDETAIL`
-        left join INSURE_DATA ON INSURE_ORDERDETAIL.insurecode = INSURE_DATA.type where
+        where
         createtime BETWEEN %s and %s
-        and INSURE_DATA.bigtype = 1
-        group BY left(CREATETIME,10), insurecode, INSURE_DATA.bigtype) B
-        on A.s_day = B.s_day and A.insurecode = B.insurecode and A.bigtype=B.bigtype
+        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT type from INSURE_DATA where bigtype=1)
+        group BY left(CREATETIME,10), insurecode) B
+        on A.s_day = B.s_day and A.insurecode = B.insurecode
     """
 
     insert_delay_sql = """
@@ -240,7 +240,7 @@ if __name__ == "__main__":
     # update_hb_insure_daily(5)
     i = 26
     while i >= 1:
-        update_hb_insure_daily(i)
+        # update_hb_insure_daily(i)
         # update_insure_class_daily(i)
-        # update_insure_type_daily(i)
+        update_insure_type_daily(i)
         i -= 1

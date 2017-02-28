@@ -116,8 +116,39 @@ def update_huoli_car_income_daily(days=0):
     car_result = car_result["result"][0]
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
 
+
+def update_profit_hb_income(days=0):
+    query_date = DateUtil.get_date_before_days(days)
+    today = DateUtil.get_date_after_days(1 - days)
+    sql = """
+        SELECT INCOMEDATE,
+        sum(case when TYPE=0 AND INTFLAG=0 THEN INCOME else 0 END) inland_ticket_income,
+        sum(case when TYPE=0 AND INTFLAG=1 THEN INCOME else 0 END) inter_ticket_income,
+        sum(case when TYPE=1 AND INTFLAG=0 THEN INCOME else 0 END) inland_insure_income,
+        sum(case when TYPE=1 AND INTFLAG=1 THEN INCOME else 0 END) inter_insure_income
+        FROM TICKET_ORDER_INCOME
+        WHERE INCOMEDATE>=%s
+        and INCOMEDATE<%s
+        GROUP BY INCOMEDATE
+        ORDER BY INCOMEDATE
+    """
+    insert_sql = """
+        insert into profit_hb_income (s_day, inland_ticket_income, inter_ticket_income,
+        inland_insure_income, inter_insure_income, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = VALUES(s_day),
+        inland_ticket_income = VALUES(inland_ticket_income),
+        inter_ticket_income = VALUES(inter_ticket_income),
+        inland_insure_income = VALUES(inland_insure_income),
+        inter_insure_income = VALUES(inter_insure_income)
+    """
+
+    hb_profit = DBCli().sourcedb_cli.queryOne(sql, [query_date, today])
+    DBCli().targetdb_cli.insert(insert_sql, hb_profit)
+
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    # update_hb_car_hotel_profit(1)
     # update_huoli_car_income_daily(1)
     # update_hb_car_hotel_profit(1)
     # i = 20
@@ -125,3 +156,4 @@ if __name__ == "__main__":
     #     print i
     #     update_huoli_car_income_daily(i)
     #     i -= 1
+    update_profit_hb_income(1)

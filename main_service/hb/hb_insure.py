@@ -57,8 +57,8 @@ def update_hb_insure_daily(days=0):
         update operation_hbgj_insure set delay_order_num=%s where s_day=%s
     """
     dto = [start_date, end_date]
-    platform_data = DBCli().sourcedb_cli.queryAll(platform_sql, dto)
-    DBCli().targetdb_cli.batchInsert(update_platform_sql, platform_data)
+    platform_data = DBCli().sourcedb_cli.queryOne(platform_sql, dto)
+    DBCli().targetdb_cli.insert(update_platform_sql, platform_data)
 
     boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
     DBCli().targetdb_cli.batchInsert(update_boat_sql, boat_data)
@@ -240,7 +240,7 @@ if __name__ == "__main__":
     # update_hb_insure_daily(5)
     i = 26
     while i >= 1:
-        # update_hb_insure_daily(i)
+        update_hb_insure_daily(i)
         # update_insure_class_daily(i)
-        update_insure_type_daily(i)
+        # update_insure_type_daily(i)
         i -= 1

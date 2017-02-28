@@ -214,17 +214,17 @@ if __name__ == "__main__":
     #     hb_ticket_book(i)
     #     i += 1
     # hb_ticket_book(1)
-    # update_booke_ticket_event_hourly(1)
-    i = 283
-    while i < 400:
-        print i
-        try:
-            hb_ticket_book(i)
-        except AssertionError:
-            print "error"
-            time.sleep(1 * 60 * 60)
-            continue
-        i += 1
+    update_booke_ticket_event_hourly(1)
+    # i = 283
+    # while i < 400:
+    #     print i
+    #     try:
+    #         hb_ticket_book(i)
+    #     except AssertionError:
+    #         print "error"
+    #         time.sleep(1 * 60 * 60)
+    #         continue
+    #     i += 1
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     # api_root = "https://api.localytics.com/v1/query"

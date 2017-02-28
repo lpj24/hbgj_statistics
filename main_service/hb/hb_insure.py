@@ -21,11 +21,12 @@ def update_hb_insure_daily(days=0):
     """
 
     boat_sql = """
-        SELECT count(*),left(CREATETIME,10) FROM
-        `INSURE_ORDERDETAIL` where createtime
-        BETWEEN %s and %s and insurecode in
-        ('PA_A','A','ABE','ABE30','ABE_HZ','PA_D','ABE_YG','A_QUNAYSFYJHS')
-        GROUP BY left(CREATETIME,10)
+        SELECT DISTINCT count(*),left(INSURE_ORDERDETAIL.CREATETIME,10) FROM
+        INSURE_ORDERDETAIL
+         where createtime
+        BETWEEN %s and %s and
+        INSURE_ORDERDETAIL.insurecode in (select DISTINCT type from INSURE_DATA where bigtype=2)
+        GROUP BY left(INSURE_ORDERDETAIL.CREATETIME,10);
     """
 
     update_boat_sql = """
@@ -34,9 +35,10 @@ def update_hb_insure_daily(days=0):
 
     refund_sql = """
         SELECT count(*), left(CREATETIME,10) FROM
-        `INSURE_ORDERDETAIL` where createtime BETWEEN
-        %s and %s and
-        insurecode in ('PA_G','HT_G','PA35_G')  GROUP BY left(CREATETIME,10)
+        `INSURE_ORDERDETAIL`
+        where createtime BETWEEN %s and %s and
+        INSURE_ORDERDETAIL.insurecode in
+        (select DISTINCT type from INSURE_DATA where bigtype=3)  GROUP BY left(CREATETIME,10);
     """
 
     update_refund_ticket_sql = """
@@ -45,9 +47,10 @@ def update_hb_insure_daily(days=0):
 
     delay_sql = """
         SELECT count(*), left(CREATETIME,10) FROM
-        `INSURE_ORDERDETAIL` where createtime BETWEEN
-        %s and %s and insurecode in
-        ('PICC_D20','PICC_D25','PICC_D30','PA_D')  GROUP BY left(CREATETIME,10)
+        `INSURE_ORDERDETAIL`
+         where createtime BETWEEN
+        %s and %s and INSURE_ORDERDETAIL.insurecode in
+        (select DISTINCT type from INSURE_DATA where bigtype=1) GROUP BY left(CREATETIME,10)
     """
 
     update_delay_sql = """
@@ -234,9 +237,10 @@ if __name__ == "__main__":
     #     print start_date, end_date
     # update_hb_insure_daily()
     # update_insure_class_daily(2)
+    # update_hb_insure_daily(5)
     i = 26
     while i >= 1:
         update_hb_insure_daily(i)
-        update_insure_class_daily(i)
-        update_insure_type_daily(i)
+        # update_insure_class_daily(i)
+        # update_insure_type_daily(i)
         i -= 1

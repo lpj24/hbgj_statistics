@@ -22,6 +22,8 @@ def check_day_data():
             pass
     if len(msg) > 0:
         utils.sendMail("lipenju24@163.com", msg, "数据查询异常")
+    else:
+        utils.sendMail("lipenju24@163.com", "数据查询正常", "数据查询正常")
 
 
 def check_week_data():
@@ -58,6 +60,5 @@ def check_execute_job():
         print week_job
 
 if __name__ == "__main__":
-    # execute_later_job()
-    # check_day_data()
-    check_week_data()
+    execute_later_job()
+    check_day_data()

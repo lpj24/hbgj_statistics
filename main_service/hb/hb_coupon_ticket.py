@@ -283,4 +283,7 @@ if __name__ == "__main__":
     # update_hotel_use_detail_daily(1)
 
     # update_gtgj_use_detail_daily(1)
-    update_hb_coupon_use_detail_daily(1)
+    # update_hb_coupon_use_detail_daily(1)
+
+    update_gt_coupon_daily(1)
+    update_gtgj_use_issue_detail_daily(1)

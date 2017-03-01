@@ -513,7 +513,7 @@ if __name__ == "__main__":
     # start_date, end_date = DateUtil.get_last_month_date()
     # print start_date, end_date
     # update_focus_platform_monthly(start_date, end_date)
-    i = 59
+    i = 9
     while i >= 1:
         update_focus_platform(i)
         i -= 1

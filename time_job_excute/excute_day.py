@@ -1,5 +1,5 @@
 from main_service.hb import hb_activeusers, hb_profit_cost, hb_focus_platform, hb_delay_insure, hb_order, hb_partner, hb_coupon_ticket, \
-    hb_focus_newuser
+    hb_focus_newuser, hb_insure
 from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_activeusers, \
     hotel_newconsumers, hotel_order, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
@@ -57,6 +57,10 @@ def add_execute_job():
     TimeService.add_day_service(hb_focus_newphoneid.update_fouces_dat_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_gtgj_use_issue_detail_daily)
     TimeService.add_day_service(hb_focus_newuser.update_focus_newuser)
+
+    TimeService.add_day_service(hb_insure.update_hb_insure_daily)
+    TimeService.add_day_service(hb_insure.update_insure_type_daily)
+    TimeService.add_day_service(hb_insure.update_insure_class_daily)
     # TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
     return TimeService
 

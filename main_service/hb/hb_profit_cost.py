@@ -117,6 +117,22 @@ def update_huoli_car_income_daily(days=0):
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
 
 
+def update_huoli_car_income_type_daily(days=0):
+    query_date = DateUtil.get_date_before_days(days)
+    today = DateUtil.get_date_after_days(1 - days)
+    insert_car_sql = """
+        insert into profit_huoli_car_income_type_daily (s_day, type, income, createtime, updatetime) values (
+            %s, %s, %s,  now(), now()
+        )
+    """
+    import requests
+    url = "http://api.car.huoli.local/mall/bi/incomedetail"
+    params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
+    car_result = requests.get(url, params=params).json()
+    car_result = car_result["result"]
+    DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
+
+
 def update_profit_hb_income(days=0):
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)

@@ -2,6 +2,7 @@ from time_job_excute.timeServiceList import TimeService
 import sys
 import logging
 from localytics import hb_ticket_book, hbdt_event, hb_pay_type
+import time
 
 
 if __name__ == "__main__":
@@ -14,7 +15,7 @@ if __name__ == "__main__":
     for fun in TimeService.get_localytics_service():
         try:
             fun(int(days))
-            # time.sleep(1 * 60 * 60)
+            time.sleep(1 * 60 * 60)
         except Exception as e:
             logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
             continue

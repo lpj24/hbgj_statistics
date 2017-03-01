@@ -64,26 +64,73 @@ def update_focus_platform(days=0):
         ) )
     """
 
+    # gtgj_sql = """
+    # select count(distinct userid) from (
+    #     select distinct(userid) userid from fly_userfocus_tbl
+    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
+    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
+    #     union
+    #     select distinct(userid) userid from fly_userfocus_tbl_his
+    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
+    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
+    # """
+
     gtgj_sql = """
-    select count(distinct userid) from (
+        select count(distinct userid) from (
+        select A_table.userid from (
         select distinct(userid) userid from fly_userfocus_tbl
         where createtime between to_date(:start_date, 'yyyy-mm-dd')
         and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
+        UNION
+        select distinct(token) as userid from fly_userfocus_tbl where createtime
+        between to_date(:start_date, 'yyyy-mm-dd')
+        and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj')
+        A_table
         union
+        select B_table.userid  from (
         select distinct(userid) userid from fly_userfocus_tbl_his
         where createtime between to_date(:start_date, 'yyyy-mm-dd')
-        and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
+        and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
+        UNION
+        select distinct(token) as userid from FLY_USERFOCUS_TBL_HIS where createtime
+        between to_date(:start_date, 'yyyy-mm-dd')
+        and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
+        ) B_table
+        )
     """
 
+    # gtgj_sql_pv = """
+    # select sum(pv) from (
+    #     select count(*) pv from fly_userfocus_tbl
+    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
+    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
+    #     union
+    #     select count(*) pv from fly_userfocus_tbl_his
+    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
+    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
+    # """
+
     gtgj_sql_pv = """
-    select sum(pv) from (
+        select sum(count_pv) from (
+        select sum(a_table.pv) count_pv from (
         select count(*) pv from fly_userfocus_tbl
         where createtime between to_date(:start_date, 'yyyy-mm-dd')
         and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
-        union
-        select count(*) pv from fly_userfocus_tbl_his
-        where createtime between to_date(:start_date, 'yyyy-mm-dd')
-        and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
+        union ALL
+        select count(*) as pv from fly_userfocus_tbl where createtime
+        between to_date(:start_date, 'yyyy-mm-dd')
+        and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj') a_table
+        union all
+        select sum(b_table.pv) count_pv from (
+                select count(*) pv from fly_userfocus_tbl_his
+                where createtime between to_date(:start_date, 'yyyy-mm-dd')
+                and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
+                union ALL
+                select count(*) as pv from fly_userfocus_tbl_his where createtime
+                between to_date(:start_date, 'yyyy-mm-dd')
+                and to_date(:end_date, 'yyyy-mm-dd') and platform = 'gtgj'
+        ) b_table
+        )
     """
 
     jieji_sql = """
@@ -466,4 +513,8 @@ if __name__ == "__main__":
     # start_date, end_date = DateUtil.get_last_month_date()
     # print start_date, end_date
     # update_focus_platform_monthly(start_date, end_date)
-    update_focus_platform(1)
+    i = 59
+    while i >= 1:
+        update_focus_platform(i)
+        i -= 1
+

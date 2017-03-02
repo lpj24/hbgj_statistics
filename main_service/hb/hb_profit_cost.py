@@ -100,7 +100,7 @@ def update_hb_car_hotel_profit(days=0):
 
 
 def update_car_cost_detail(days=0):
-    query_date = DateUtil.get_date_before_days(days * 1)
+    query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
     car_sql = """
@@ -170,20 +170,30 @@ def update_huoli_car_income_daily(days=0):
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
 
 
-def update_huoli_car_income_type_daily(days=0):
+def update_huoli_car_income_type(days=0):
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
         insert into profit_huoli_car_income_type_daily (s_day, type, income, createtime, updatetime) values (
             %s, %s, %s,  now(), now()
         )
+        on duplicate key update updatetime = now(),
+        s_day = VALUES(s_day),
+        type = VALUES(type),
+        income = VALUES(income)
     """
     import requests
     url = "http://58.83.139.232:8070/mall/bi/incomedetail"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"]
-    DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
+    insert_car_income = []
+    for car_income_data in car_result:
+        car_date = car_income_data["date"]
+        income_type = car_income_data["type"]
+        income_amount = car_income_data["amount"]
+        insert_car_income.append((car_date, income_type, income_amount))
+    DBCli().targetdb_cli.batchInsert(insert_car_sql, insert_car_income)
 
 
 def update_profit_hb_income(days=0):
@@ -227,6 +237,5 @@ if __name__ == "__main__":
     #     i -= 1
     i = 60
     while i >= 1:
-
-        update_car_cost_detail(i)
+        update_huoli_car_income_type(i)
         i -= 1

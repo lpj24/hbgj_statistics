@@ -143,8 +143,8 @@ def update_car_cost_detail(days=0):
         for car_cost_data in car_result:
             car_date = car_cost_data["date"]
             cost_type = car_cost_data["type"]
-            cost_amount = car_cost_data["cost_amount"]
-            insert_car_cost((car_date, cost_type, cost_amount))
+            cost_amount = car_cost_data["amount"]
+            insert_car_cost.append((car_date, cost_type, cost_amount))
     print insert_car_cost
 
 

@@ -49,7 +49,7 @@ def collect_his_phone_uid():
                 continue
 
             phone_id = str(userid) + '_' + str(phoneid)
-            query_date = focusdate.split(" ")[0] if focusdate.split(" ")[0] != "None" else createtime.split(" ")[0]
+            query_date = createtime.split(" ")[0] if createtime.split(" ")[0] != "None" else focusdate.split(" ")[0]
             if query_date == "None":
                 continue
             DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", phone_id)

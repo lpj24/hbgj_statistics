@@ -127,7 +127,7 @@ def update_flight_search_user_weekly():
 
 
 def update_flight_search_user_monthly():
-    start_month, end_month = DateUtil.get_last_week_date()
+    start_month, end_month = DateUtil.get_last_month_date()
     s_day = DateUtil.date2str(start_month, '%Y-%m-%d')
     dto = [start_month, end_month]
     query_key = []

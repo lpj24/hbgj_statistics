@@ -100,7 +100,7 @@ def update_hb_car_hotel_profit(days=0):
 
 
 def update_car_cost_detail(days=0):
-    query_date = DateUtil.get_date_before_days(days * 2)
+    query_date = DateUtil.get_date_before_days(days * 1)
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
     car_sql = """
@@ -141,10 +141,13 @@ def update_car_cost_detail(days=0):
         car_result = requests.get(url, params=params).json()
         car_result = car_result["result"]
         for car_cost_data in car_result:
-            car_date = car_cost_data["date"]
-            cost_type = car_cost_data["type"]
-            cost_amount = car_cost_data["amount"]
-            insert_car_cost.append((car_date, cost_type, cost_amount))
+            try:
+                car_date = car_cost_data["date"]
+                cost_type = car_cost_data["type"]
+                cost_amount = car_cost_data["amount"]
+                insert_car_cost.append((car_date, cost_type, cost_amount))
+            except Exception:
+                continue
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_car_cost)
 
 
@@ -222,4 +225,7 @@ if __name__ == "__main__":
     #     print i
     #     update_huoli_car_income_daily(i)
     #     i -= 1
-    update_car_cost_detail(1)
+    i = 60
+    while i >= 1:
+        update_car_cost_detail(i)
+        i -= 1

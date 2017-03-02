@@ -39,8 +39,14 @@ def update_focus_newuser(days=0):
         DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", focus_id)
 
 
-def collect_his_phone_uid():
-    with open("/home/huolibi/data/hbdt/hbdt_focus/hbdt_platform_his.dat") as hbdt_focus_data:
+def collect_his_phone_uid(days=0):
+    import os
+    status = os.call("cat /home/huolibi/data/hbdt/"
+                             "hbdt_focus/focus_jan.dat >>/home/huolibi/data/hbdt/hbdt_focus/new_hbdt_platform_his.dat",
+                             shell=True)
+    if int(status) != 0:
+        return
+    with open("/home/huolibi/data/hbdt/hbdt_focus/new_hbdt_platform_his.dat") as hbdt_focus_data:
         for hbdt_data in hbdt_focus_data:
             try:
                 (userid, phoneid, phone, token, flyid, focusdate, flydate

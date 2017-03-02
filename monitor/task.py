@@ -52,13 +52,17 @@ def execute_later_job():
 
 
 def check_execute_job():
-    from time_job_excute import excute_day, excute_mon_week
+    from time_job_excute import excute_day, excute_mon_week, excute_month
     day_service = excute_day.add_execute_job()
     week_service = excute_mon_week.add_execute_job()
+    month_service = excute_month.add_execute_job()
     for job in day_service.get_day_service():
         print job
 
     for week_job in week_service.get_week_mon_service():
+        print week_job
+
+    for week_job in month_service.get_month_first_service():
         print week_job
 
 if __name__ == "__main__":

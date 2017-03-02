@@ -53,6 +53,11 @@ sql = [
     "select count(1) from coupon_huoli_hotel_use_detail where s_day=%s",
     "select count(1) from coupon_gtgj_ticket_issue_detail where s_day=%s",
     "select count(1) from coupon_issue_detail where s_day=%s",
+
+    "select count(1) from operation_hbgj_insure_type_daily where s_day=%s",
+    "select count(1) from operation_hbgj_insure_platform_daily where s_day=%s",
+    "select count(1) from operation_hbgj_insure where s_day=%s",
+    "select count(1) from profit_hb_income where s_day=%s",
 ]
 
 week_sql = [

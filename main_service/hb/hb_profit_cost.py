@@ -2,10 +2,11 @@
 
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
+import requests
 
 
 def update_hb_car_hotel_profit(days=0):
-    query_date = DateUtil.get_date_before_days(days * 15)
+    query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -98,6 +99,55 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
 
 
+def update_car_cost_detail(days=0):
+    query_date = DateUtil.get_date_before_days(days * 2)
+    today = DateUtil.get_date_after_days(1 - days)
+    dto = [query_date, today]
+    car_sql = """
+        select distinct TRADE_TIME s_day,
+        sum(case when (AMOUNT_TYPE=2 and PRODUCT='7' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
+        sum(case when (AMOUNT_TYPE=3 and PRODUCT='7' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
+        sum(case when (AMOUNT_TYPE=1 and PRODUCT='7' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE=4 and PRODUCT='7' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
+        sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('5','13')) then amount else 0 end) point_give_amount,
+        sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('12','29')) then amount else 0 end) balance_give_amount
+        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+        group by s_day
+    """
+
+    insert_sql = """
+        insert into profit_huoli_car_cost_type (s_day, cost_type, amount, createtime, updatetime)
+        values (%s, %s, %s, now(), now())
+        ON DUPLICATE KEY UPDATE updatetime = now(),
+        s_day = values(s_day),
+        cost_type = values(cost_type),
+        amount = values(amount)
+    """
+    insert_car_cost = []
+    result = DBCli(dict).pay_cost_cli.queryAll(car_sql, dto)
+    for cost_data in result:
+        pay_cost_in = float(cost_data["paycost_in"]) - float(cost_data["paycost_return"])
+        coupon_in = cost_data["coupon_in"] - cost_data["coupon_return"]
+        point_give_amount = cost_data["point_give_amount"]
+        balance_give_amount = cost_data["balance_give_amount"]
+        s_day = DateUtil.date2str(cost_data["s_day"], '%Y-%m-%d')
+        insert_car_cost.append((s_day, "pay_cost_in", pay_cost_in))
+        insert_car_cost.append((s_day, "coupon_in", coupon_in))
+        insert_car_cost.append((s_day, "point_give_amount", point_give_amount))
+        insert_car_cost.append((s_day, "balance_give_amount", balance_give_amount))
+        url = "http://58.83.139.232:8070/mall/bi/costdetail"
+        params = {"beginDate": s_day,
+                  "endDate": DateUtil.date2str(DateUtil.add_days(cost_data["s_day"], 1), '%Y-%m-%d')}
+        car_result = requests.get(url, params=params).json()
+        car_result = car_result["result"]
+        for car_cost_data in car_result:
+            car_date = car_cost_data["date"]
+            cost_type = car_cost_data["type"]
+            cost_amount = car_cost_data["cost_amount"]
+            insert_car_cost((car_date, cost_type, cost_amount))
+    print insert_car_cost
+
+
 def update_huoli_car_income_daily(days=0):
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
@@ -126,7 +176,7 @@ def update_huoli_car_income_type_daily(days=0):
         )
     """
     import requests
-    url = "http://api.car.huoli.local/mall/bi/incomedetail"
+    url = "http://58.83.139.232:8070/mall/bi/incomedetail"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"]
@@ -172,4 +222,4 @@ if __name__ == "__main__":
     #     print i
     #     update_huoli_car_income_daily(i)
     #     i -= 1
-    update_profit_hb_income(1)
+    update_car_cost_detail(1)

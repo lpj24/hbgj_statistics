@@ -87,7 +87,8 @@ class DBCli(object):
 
     @property
     def pay_cost_cli(self):
-        return DButils("mysql", self._pay_cost)
+        # return DButils("mysql", self._pay_cost)
+        return DButils("mysql", self._pay_cost, self.args[0])
 
     @property
     def hb_partner_cli(self):

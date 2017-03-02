@@ -145,7 +145,7 @@ def update_car_cost_detail(days=0):
             cost_type = car_cost_data["type"]
             cost_amount = car_cost_data["amount"]
             insert_car_cost.append((car_date, cost_type, cost_amount))
-    print insert_car_cost
+    DBCli().targetdb_cli.batchInsert(insert_sql, insert_car_cost)
 
 
 def update_huoli_car_income_daily(days=0):

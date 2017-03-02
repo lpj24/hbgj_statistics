@@ -47,6 +47,8 @@ def check_week_data():
 def execute_later_job():
     gt_income_cost.update_gt_income_cost(1)
     hb_profit_cost.update_hb_car_hotel_profit(1)
+    hb_profit_cost.update_car_cost_detail(1)
+    hb_profit_cost.update_huoli_car_income_type(1)
 
 
 def check_execute_job():

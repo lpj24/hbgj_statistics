@@ -87,6 +87,8 @@ def update_hb_channel_ticket_weekly():
 
 
 def update_hb_company_ticket_weekly():
+    import os
+    os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_week, end_week = DateUtil.get_last_week_date()
     hb_sql = """
         SELECT %s, SUBSTR(`flyno`,1,2),count(*),sum(od.OUTPAYPRICE)
@@ -97,9 +99,10 @@ def update_hb_company_ticket_weekly():
     """
 
     hb_code_sql = """
-        select code, name from airline_code
+        select code,FOUR_NAME
+        from AIRLINES_NORMAl
     """
-    hb_info = DBCli().targetdb_cli.queryAll(hb_code_sql)
+    hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
     hb_info = dict(hb_info)
 
     hb_company_data = DBCli().sourcedb_cli.queryAll(hb_sql, [start_week, start_week, end_week])
@@ -108,6 +111,10 @@ def update_hb_company_ticket_weekly():
         if hb_data[1] in hb_info:
             hb_data = list(hb_data)
             hb_data.insert(1, hb_info[hb_data[1]])
+            insert_hb_company.append(hb_data)
+        else:
+            hb_data = list(hb_data)
+            hb_data.insert(1, None)
             insert_hb_company.append(hb_data)
 
     insert_sql = """
@@ -254,15 +261,21 @@ def do_exception_sale():
         min_date = DateUtil.add_days(min_date, 1)
 
 if __name__ == "__main__":
-    do_exception_sale()
+    update_unable_ticket()
 
-# if __name__ == "__main__":
-#     # update_unable_ticket()
-#     import datetime
-#     end_date = datetime.date(2017, 2, 6)
-#     start_date = datetime.date(2017, 2, 13)
-#     while start_date > end_date:
-#         start_week, end_week = DateUtil.get_this_week_date(end_date)
-#         update_unable_ticket(start_week, end_week)
-#         # print start_week, end_week
-#         end_date = end_week
+
+      # import datetime
+    #
+    # hb_code_sql = """
+    #         select code,FOUR_NAME
+    #         from AIRLINES_NORMAl
+    #     """
+    # hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
+    # hb_info = dict(hb_info)
+    # end_date = datetime.date(2016, 6, 27)
+    # start_date = datetime.date(2017, 2, 27)
+    # while start_date > end_date:
+    #     start_week, end_week = DateUtil.get_this_week_date(end_date)
+    #     update_hb_company_ticket_weekly(start_week, end_week, hb_info)
+    #     print start_week, end_week
+    #     end_date = end_week

@@ -132,8 +132,8 @@ def update_flight_search_user_monthly():
     dto = [start_month, end_month]
     query_key = []
     while end_month > start_month:
-        query_key.append(DateUtil.date2str(start_week, '%Y-%m-%d') + "_hbdt_search")
-        start_week = DateUtil.add_days(start_week, 1)
+        query_key.append(DateUtil.date2str(start_month, '%Y-%m-%d') + "_hbdt_search")
+        start_month = DateUtil.add_days(start_month, 1)
     month_uv = len(DBCli().redis_dt_cli.sunion(query_key))
 
     pv_sql = """
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_dt_search_uid(i)
     #     i -= 1
-    update_flight_search_user_daily(3)
+    # update_flight_search_user_daily(3)
     # update_flight_search_user_daily(41)
     # i = 25
     # while i >= 19:
@@ -240,4 +240,4 @@ if __name__ == "__main__":
     # s.update()
     # update_check_pv_his(start_date)
     # update_flight_search_user_weekly()
-    # update_flight_search_user_monthly()
+    update_flight_search_user_monthly()

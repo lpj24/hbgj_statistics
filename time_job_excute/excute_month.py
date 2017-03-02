@@ -4,6 +4,7 @@ from main_service.gt import gt_consumers, gt_activeusers
 from time_job_excute.timeServiceList import TimeService
 import logging
 
+
 def add_execute_job():
     TimeService.add_month_first_service(car_consumers.update_car_consumers_monthly)
 

@@ -174,7 +174,7 @@ def update_huoli_car_income_type(days=0):
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
-        insert into profit_huoli_car_income_type_daily (s_day, type, income, createtime, updatetime) values (
+        insert into profit_huoli_car_income_type (s_day, type, income, createtime, updatetime) values (
             %s, %s, %s,  now(), now()
         )
         on duplicate key update updatetime = now(),

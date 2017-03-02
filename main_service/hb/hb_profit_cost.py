@@ -227,5 +227,6 @@ if __name__ == "__main__":
     #     i -= 1
     i = 60
     while i >= 1:
+
         update_car_cost_detail(i)
         i -= 1

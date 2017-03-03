@@ -23,7 +23,7 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_search_focus.write_day)
 
     #tmp task
-    TimeService.add_day_service(hb_focus_newuser.collect_his_phone_uid)
+    # TimeService.add_day_service(hb_focus_newuser.collect_his_phone_uid)
 
     for fun in TimeService.get_hard_service():
         try:

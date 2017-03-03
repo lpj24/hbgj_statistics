@@ -101,6 +101,7 @@ def update_hb_car_hotel_profit(days=0):
 
 def update_car_cost_detail(days=0):
     query_date = DateUtil.get_date_before_days(days * 7)
+    print query_date
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
     car_sql = """
@@ -134,7 +135,7 @@ def update_car_cost_detail(days=0):
         insert_car_cost.append((s_day, u"支付成本", pay_cost_in))
         insert_car_cost.append((s_day, u"优惠券使用金额", coupon_in))
         insert_car_cost.append((s_day, u"返还积分金额", point_give_amount))
-        insert_car_cost.append((s_day, u"赠送的余额", balance_give_amount))
+        insert_car_cost.append((s_day, u"赠送余额", balance_give_amount))
         url = "http://58.83.139.232:8070/mall/bi/costdetail"
         params = {"beginDate": s_day,
                   "endDate": DateUtil.date2str(DateUtil.add_days(cost_data["s_day"], 1), '%Y-%m-%d')}
@@ -146,7 +147,7 @@ def update_car_cost_detail(days=0):
                 cost_type = car_cost_data["type"]
                 cost_amount = car_cost_data["amount"]
                 insert_car_cost.append((car_date, cost_type, cost_amount))
-            except Exception:
+            except KeyError:
                 continue
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_car_cost)
 
@@ -235,7 +236,8 @@ if __name__ == "__main__":
     #     print i
     #     update_huoli_car_income_daily(i)
     #     i -= 1
-    i = 60
-    while i >= 1:
-        update_huoli_car_income_type(i)
-        i -= 1
+    # i = 60
+    # while i >= 1:
+    #     update_huoli_car_income_type(i)
+    #     i -= 1
+    update_car_cost_detail(1)

@@ -6,7 +6,6 @@ from dbClient.dateutil import DateUtil
 def update_focus_newuser(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
-    print query_file
     insert_sql = """
         insert into hbdt_focus_newusers_daily (s_day, uv, pv, new_users, createtime, updatetime)
         values (%s, %s, %s, %s, now(), now())
@@ -41,12 +40,7 @@ def update_focus_newuser(days=0):
 
 
 def collect_his_phone_uid():
-    # import os
-    # status = os.call("cat /home/huolibi/data/hbdt/"
-    #                          "hbdt_focus/focus_jan.dat >>/home/huolibi/data/hbdt/hbdt_focus/new_hbdt_platform_his.dat",
-    #                          shell=True)
-    # if int(status) != 0:
-    #     return
+
     with open("/home/huolibi/data/hbdt/hbdt_focus/hbdt_focus_platform_his.dat") as hbdt_focus_data:
         for hbdt_data in hbdt_focus_data:
             try:

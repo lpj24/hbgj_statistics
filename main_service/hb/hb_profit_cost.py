@@ -131,10 +131,10 @@ def update_car_cost_detail(days=0):
         point_give_amount = cost_data["point_give_amount"]
         balance_give_amount = cost_data["balance_give_amount"]
         s_day = DateUtil.date2str(cost_data["s_day"], '%Y-%m-%d')
-        insert_car_cost.append((s_day, "pay_cost_in", pay_cost_in))
-        insert_car_cost.append((s_day, "coupon_in", coupon_in))
-        insert_car_cost.append((s_day, "point_give_amount", point_give_amount))
-        insert_car_cost.append((s_day, "balance_give_amount", balance_give_amount))
+        insert_car_cost.append((s_day, u"支付成本", pay_cost_in))
+        insert_car_cost.append((s_day, u"优惠券使用金额", coupon_in))
+        insert_car_cost.append((s_day, u"返还积分金额", point_give_amount))
+        insert_car_cost.append((s_day, u"赠送的余额", balance_give_amount))
         url = "http://58.83.139.232:8070/mall/bi/costdetail"
         params = {"beginDate": s_day,
                   "endDate": DateUtil.date2str(DateUtil.add_days(cost_data["s_day"], 1), '%Y-%m-%d')}

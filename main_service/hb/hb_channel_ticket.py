@@ -38,7 +38,7 @@ def update_hb_channel_ticket_weekly():
             new_channel_data = list(channel_data)
             if saletype in (10, 11, 14):
                 new_channel_data.append(1)
-            elif saletype == 12 and pn_resouce != 'supply':
+            elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
                 new_channel_data.append(2)
             elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
                 new_channel_data.append(3)
@@ -211,32 +211,59 @@ def update_unable_ticket():
             tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
             tmp_data.append(total_num)
             insert_intervention_data.append(tmp_data)
-
         start_week = DateUtil.add_days(start_week, 1)
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
 
 
-def update_refused_order_weekly():
+def update_supplier_refused_order_weekly():
     start_week, end_week = DateUtil.get_last_week_date()
     week_sql = """
-        SELECT agentid,count( DISTINCT t.ORDERID )
-        FROM
-        FLIGHT_TASK f
-        LEFT JOIN TICKET_ORDER t ON f.ORDERID = t.ORDERID
-        WHERE
-        f.CREATE_TIME >= %s
-        AND f.CREATE_TIME < %s
-        AND f.TASKTYPE = 4
-        AND f.DISABLED != 1
-        AND f.DONE_USERID !=1
-        AND f.DONE_USERID is not NULL
-        and f.DESCRIPTION like '%拒单%'
-        and t.PNRSOURCE='supply'
-        GROUP BY agentid
+            select a_table.s_day, a_table.agentid, b_table.order_num,
+            a_table.refused_order, a_table.over_time_order from (
+            SELECT %s s_day, agentid,
+            count(DISTINCT case when f.DESCRIPTION like '%%拒单%%' then t.ORDERID end) refused_order,
+            count(DISTINCT case when f.DESCRIPTION like '%%出票时间超过%%' then t.ORDERID end) over_time_order
+            FROM
+            FLIGHT_TASK f
+            LEFT JOIN TICKET_ORDER t ON f.ORDERID = t.ORDERID
+            WHERE
+            f.CREATE_TIME >= %s
+            AND f.CREATE_TIME < %s
+            AND f.TASKTYPE = 4
+            AND f.DISABLED != 1
+            AND f.DONE_USERID !=1
+            AND f.DONE_USERID is not NULL
+            and t.PNRSOURCE='supply'
+            and agentid is not null
+            GROUP BY agentid) AS a_table
+            right join
+            (
+            SELECT %s s_day,
+             agentid,count( DISTINCT O.ORDERID ) order_num
+            FROM
+            TICKET_ORDERDETAIL OD
+            LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
+            WHERE
+            O.ORDERSTATUE  NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+             IFNULL(OD.`LINKTYPE`, 0) != 2
+            AND OD.CREATETIME >= %s
+            AND OD.CREATETIME < %s
+            and O.PNRSOURCE='supply'
+            and agentid is not null
+            GROUP BY  agentid) as b_table on a_table.s_day=b_table.s_day
+            and a_table.agentid = b_table.agentid
     """
-    dto = [start_week, end_week]
+
+    insert_sql = """
+        insert into operation_hbgj_supplier_refused_weekly (s_day, agentid, order_num,
+        refused_order_num, overtime_order_num, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
+    """
+    dto = [DateUtil.date2str(start_week, '%Y-%m-%d'), start_week,
+           end_week, DateUtil.date2str(start_week, '%Y-%m-%d'), start_week, end_week]
     query_data = DBCli().sourcedb_cli.queryAll(week_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
 
 
 def do_exception_sale():
@@ -260,11 +287,28 @@ def do_exception_sale():
             DBCli().targetdb_cli.insert(do_sale_exception_sql, [DateUtil.date2str(min_date, '%Y-%m-%d'), u'航班管家', 'HBGJ'])
         min_date = DateUtil.add_days(min_date, 1)
 
+
+def update_product_ticket_weekly():
+    start_week, end_week = DateUtil.get_last_week_date()
+    product_sql = """
+        SELECT left(od.CREATETIME, 10) s_day, o.agentid,count(*),sum(od.OUTPAYPRICE) FROM
+        `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o
+        on od.ORDERID=o.ORDERID where od.CREATETIME
+        BETWEEN %s and %s and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+         IFNULL(od.`LINKTYPE`, 0) != 2 and o.PNRSOURCE='supply' GROUP BY o.agentid, s_day order by s_day;
+    """
+    insert_sql = """
+        insert into operation_hbgj_supplier_ticket_daily (s_day, agentid, ticket_num, amount, createtime, updatetime)
+        values (%s, %s, %s, %s, now(), now())
+    """
+    dto = [start_week, end_week]
+    supplier_data = DBCli().sourcedb_cli.queryAll(product_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, supplier_data)
+
+
 if __name__ == "__main__":
-    update_unable_ticket()
-
-
-      # import datetime
+    import datetime
+    # update_product_ticket_weekly()
     #
     # hb_code_sql = """
     #         select code,FOUR_NAME
@@ -272,10 +316,12 @@ if __name__ == "__main__":
     #     """
     # hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
     # hb_info = dict(hb_info)
-    # end_date = datetime.date(2016, 6, 27)
-    # start_date = datetime.date(2017, 2, 27)
+    end_date = datetime.date(2012, 11, 22)
+    start_date = datetime.date(2017, 2, 27)
+    # end_date = datetime.date(2017, 1, 30)
+    # start_date = datetime.date(2017, 2, 6)
     # while start_date > end_date:
     #     start_week, end_week = DateUtil.get_this_week_date(end_date)
-    #     update_hb_company_ticket_weekly(start_week, end_week, hb_info)
+    #     update_supplier_refused_order_weekly(start_week, end_week)
     #     print start_week, end_week
     #     end_date = end_week

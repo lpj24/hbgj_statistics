@@ -46,7 +46,7 @@ def collect_his_phone_uid():
     #                          shell=True)
     # if int(status) != 0:
     #     return
-    with open("/home/huolibi/data/hbdt/hbdt_focus/new_hbdt_platform_his.dat") as hbdt_focus_data:
+    with open("/home/huolibi/data/hbdt/hbdt_focus/hbdt_focus_platform_his.dat") as hbdt_focus_data:
         for hbdt_data in hbdt_focus_data:
             try:
                 (userid, phoneid, phone, token, flyid, focusdate, flydate

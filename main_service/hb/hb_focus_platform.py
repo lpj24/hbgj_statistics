@@ -448,8 +448,7 @@ def update_focus_platform_monthly():
     android_uv = iphone_uv = weixin_uv = jieji_uv \
         = gtgj_uv = total_uv = weixin_applate_uv = sms_uv = 0
 
-    start_date, end_date = DateUtil.get_last_week_date()
-
+    start_date, end_date = DateUtil.get_last_month_date()
     dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": DateUtil.date2str(end_date, '%Y-%m-%d')}
     app_data_uv = DBCli().oracle_cli.queryAll(all_platform_sql_uv, dto)
     for app in app_data_uv:
@@ -512,9 +511,9 @@ if __name__ == "__main__":
     # # update_focus_platform_weekly(start_date, end_date)
     # start_date, end_date = DateUtil.get_last_month_date()
     # print start_date, end_date
-    # update_focus_platform_monthly(start_date, end_date)
-    i = 9
-    while i >= 1:
-        update_focus_platform(i)
-        i -= 1
+    update_focus_platform_monthly()
+    # i = 9
+    # while i >= 1:
+    #     update_focus_platform(i)
+    #     i -= 1
 

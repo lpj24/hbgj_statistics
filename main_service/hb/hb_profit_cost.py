@@ -240,4 +240,5 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_huoli_car_income_type(i)
     #     i -= 1
-    update_car_cost_detail(1)
+    # update_car_cost_detail(1)
+    update_huoli_car_income_type(2)

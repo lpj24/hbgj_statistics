@@ -22,5 +22,5 @@ def update_hb_gt_order_daily_his():
     DBCli().targetdb_cli.batchInsert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
 
 if __name__ == "__main__":
-    update_hb_gt_order_daily(1)
+    update_hb_gt_order_daily(2)
     # update_hb_gt_order_daily_his()

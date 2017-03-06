@@ -229,6 +229,6 @@ if __name__ == "__main__":
     #     # update_flight_detail_user_daily(i)
     #     update_dt_detail_uid(i)
     #     i -= 1
-    update_flight_detail_user_daily(3)
+    update_flight_detail_user_daily(2)
 
     # update_flight_detail_user_weekly()

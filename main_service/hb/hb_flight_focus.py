@@ -435,6 +435,6 @@ def update_focus_platform(days=0):
         focus.close()
 
 if __name__ == "__main__":
-    update_flight_focus_user_daily(1)
+    update_flight_focus_user_daily(2)
     # update_focus_platform(1)
     # update_platform_focus_by_file()

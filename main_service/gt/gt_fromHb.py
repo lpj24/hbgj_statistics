@@ -32,5 +32,5 @@ def update_gtgj_from_hb(days=0):
 #         start_date = DateUtil.add_days(start_date, 1)
 
 if __name__ == "__main__":
-    update_gtgj_from_hb(1)
+    update_gtgj_from_hb(2)
     # update_gtgj_from_hb_his()

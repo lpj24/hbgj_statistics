@@ -88,10 +88,45 @@ def update_fouces_dat_daily(days=0):
 
     hbdt_focus_file.close()
 
+
+def update_focus_inland_inter_daily(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    query_file = start_date + "_hbdt_focus.dat"
+    with open("/home/huolibi/data/hbdt/hbdt_focus/"+ query_file) as hbdt_focus_data:
+        for hbdt_data in hbdt_focus_data:
+            try:
+                (userid, phoneid, phone, token, flyid, focusdate, flydate
+                 , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
+            except Exception:
+                continue
+
+
+def collect_inland_inter_flyid():
+    fly_info_sql = """
+        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL where to_char(CREATETIME) < '2017-03-07 00:00:00'
+        UNION ALL
+        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL_HIS
+    """
+    inland_code_sql = """
+        select THREE_WORDS_CODE from AIRPORT_NATION_INFO
+    """
+    inland_code = DBCli().oracle_cli.queryAll(inland_code_sql)
+    inland_code = [in_code[0] for in_code in inland_code]
+    fly_info = DBCli().oracle_cli.queryAll(fly_info_sql)
+    for fly in fly_info:
+        flyid, depcode, arrcode = fly
+        if depcode in inland_code or arrcode in inland_code:
+            DBCli().redis_dt_cli.sadd("focus_inland_fly", flyid)
+        else:
+            DBCli().redis_dt_cli.sadd("focus_inter_fly", flyid)
+
+
 if __name__ == "__main__":
+    collect_inland_inter_flyid()
     # collect_his_phone_uid()
     # update_focus_newuser()
     # update_fouces_dat_daily(2)
-    for x in xrange(33, 0, -1):
-        update_focus_newuser(x)
+    # for x in xrange(33, 0, -1):
+    #     update_focus_newuser(x)
 

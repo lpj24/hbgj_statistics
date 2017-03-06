@@ -6,6 +6,14 @@ from dbClient.dateutil import DateUtil
 def update_focus_newuser(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
+    check_s_day = DateUtil.get_date_before_days(days * 2)
+    check_last_sql = """
+        select count(*) from hbdt_focus_newusers_daily where s_day = %s
+    """
+
+    check_data = DBCli().targetdb_cli.queryOne(check_last_sql, [check_s_day])
+    if int(check_data[0]) < 1:
+        return
     insert_sql = """
         insert into hbdt_focus_newusers_daily (s_day, uv, pv, new_users, createtime, updatetime)
         values (%s, %s, %s, %s, now(), now())
@@ -85,5 +93,5 @@ if __name__ == "__main__":
     # update_focus_newuser()
     update_fouces_dat_daily(2)
     # for x in xrange(30, 0, -1):
-    #     update_focus_newuser(x)
+    # update_focus_newuser(1)
 

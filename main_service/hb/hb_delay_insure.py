@@ -27,9 +27,9 @@ def update_hb_deplay_insure(days=0):
         SELECT count(*) FROM TICKET_DELAY_CARE c join
         TICKET_ORDERDETAIL d on c.passcardno=d.PASSENGERIDCARDNO and c.orderid=d.ORDERID
         WHERE d.flydate=%s and c.chargecount<>0  and c.chargenum!=0
-        and  IFNULL(d.REFUNDID, 0) != 0
-    """
+        and  IFNULL(d.REFUNDID, 0) != 0 and remark!='刷延误宝嫌疑';
 
+    """
     compensate_amount_one_sql = """
         SELECT sum(chargecount) FROM TICKET_DELAY_CARE WHERE
         flydate=%s and state='1'
@@ -111,9 +111,9 @@ def update_compensate_detail(days=0):
     #     DBCli().targetdb_cli.insert(compensate_detail_insert_sql, [query_date, str(k), v])
 
 if __name__ == "__main__":
-    update_hb_deplay_insure(2)
-    update_compensate_detail(2)
-    # i = 539
-    # while i >= 1:
-    #     update_compensate_detail(i)
-    #     i -= 1
+    # update_hb_deplay_insure(2)
+    # update_compensate_detail(2)
+    i = 64
+    while i >= 1:
+        update_hb_deplay_insure(i)
+        i -= 1

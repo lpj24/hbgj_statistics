@@ -242,4 +242,4 @@ if __name__ == "__main__":
     #     i -= 1
     # update_car_cost_detail(1)
     # update_huoli_car_income_type(2)
-    update_profit_hb_income(2)
+    update_huoli_car_income_daily(2)

@@ -289,7 +289,7 @@ insert_coupon_car_use_detail_sql = """
 """
 
 huoli_hotel_use_detail_sql = """
-    select coupon_id,
+    select s_day, coupon_id,
     sum(case when TRADE_TYPE=1 then 1 else 0 END) use_coupon_count_in,
     sum(case when TRADE_TYPE=1 then price ELSE 0 END) use_coupon_amount_in,
     sum(case when TRADE_TYPE=4 then 1 ELSE 0 END) use_coupon_count_return,

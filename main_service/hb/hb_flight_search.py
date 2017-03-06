@@ -247,4 +247,5 @@ if __name__ == "__main__":
     # s.update()
     # update_check_pv_his(start_date)
     # update_flight_search_user_weekly()
-    update_flight_search_user_monthly()
+    # update_flight_search_user_monthly()
+    update_flight_search_user_daily(2)

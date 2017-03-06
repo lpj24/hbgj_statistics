@@ -8,7 +8,7 @@ from main_service.hb import hb_profit_cost
 
 
 def check_day_data():
-    query_date = DateUtil.get_date_before_days(1)
+    query_date = DateUtil.get_date_before_days(2)
     query_date = DateUtil.date2str(query_date, '%Y-%m-%d')
     msg = ""
     for execute_sql in sql:
@@ -66,5 +66,5 @@ def check_execute_job():
         print week_job
 
 if __name__ == "__main__":
-    execute_later_job()
+    # execute_later_job()
     check_day_data()

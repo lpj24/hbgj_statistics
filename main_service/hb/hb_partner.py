@@ -33,4 +33,4 @@ def update_hb_partner_daily(days=0):
 
 if __name__ == "__main__":
     # update_his()
-    update_hb_partner_daily(1)
+    update_hb_partner_daily(2)

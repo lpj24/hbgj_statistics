@@ -237,9 +237,13 @@ if __name__ == "__main__":
     # update_hb_insure_daily()
     # update_insure_class_daily(2)
     # update_hb_insure_daily(5)
-    i = 802
-    while i >= 29:
-        # update_hb_insure_daily(i)
-        # update_insure_class_daily(i)
-        update_insure_type_daily(i)
-        i -= 1
+    # i = 802
+    # while i >= 29:
+    #     # update_hb_insure_daily(i)
+    #     # update_insure_class_daily(i)
+    #     update_insure_type_daily(i)
+    #     i -= 1
+
+    update_hb_insure_daily(2)
+    update_insure_class_daily(2)
+    update_insure_type_daily(2)

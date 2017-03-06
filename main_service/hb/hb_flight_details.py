@@ -231,8 +231,8 @@ if __name__ == "__main__":
     #     i -= 1
     # update_flight_detail_user_daily(2)
 
-    # update_flight_detail_user_weekly()
-    i = 33
-    while i >= 1:
-        update_dt_detail_uid(i)
-        i -= 1
+    update_flight_detail_user_weekly()
+    # i = 33
+    # while i >= 1:
+    #     update_dt_detail_uid(i)
+    #     i -= 1

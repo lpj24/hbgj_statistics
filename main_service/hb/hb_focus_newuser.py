@@ -89,9 +89,9 @@ def update_fouces_dat_daily(days=0):
     hbdt_focus_file.close()
 
 if __name__ == "__main__":
-    # collect_his_phone_uid()
+    collect_his_phone_uid()
     # update_focus_newuser()
-    update_fouces_dat_daily(2)
+    # update_fouces_dat_daily(2)
     # for x in xrange(30, 0, -1):
     # update_focus_newuser(1)
 

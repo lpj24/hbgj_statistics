@@ -207,13 +207,12 @@ if __name__ == "__main__":
     # hb_ticket_book(82)
     # import time
     # time.sleep(60*30)
-    # i = 99
-    # while i < 300:
-    #     print i
-    #     hb_ticket_book(i)
-    #     i += 1
-    # hb_ticket_book(2)
-    update_booke_ticket_event_hourly(2)
+    i = 421
+    while i <= 431:
+        print i
+        hb_ticket_book(i)
+        i += 1
+    # update_booke_ticket_event_hourly(2)
 
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"

@@ -124,19 +124,22 @@ def update_hb_company_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
 
-def update_unable_ticket():
-    start_week, end_week = DateUtil.get_last_week_date()
+def update_unable_ticket(start_week, end_week):
+    # start_week, end_week = DateUtil.get_last_week_date()
     unable_ticket_sql = """
-        select A.oldsource, PNRSOURCE_CONFIG.NAME, sum(A.ticket_num) from (
-        SELECT count(*) ticket_num,o.oldsource FROM RECHARGE_RECORD
-        as r INNER JOIN TICKET_ORDER AS o ON r.orderid=o.ORDERID
-           where r.RECHARGE_TYPE=8
-           AND r.REMARK LIKE '无法出票补偿%%'
-           and r.RECHARGE_TIME >= %s
-           and r.RECHARGE_TIME < %s
-           GROUP BY o.oldsource,r.AMOUNT) as A
-           INNER join PNRSOURCE_CONFIG ON
-           A.oldsource=PNRSOURCE_CONFIG.PNRSOURCE GROUP BY A.oldsource, PNRSOURCE_CONFIG.NAME
+    select a_table.oldsource, a_table.name, sum(a_table.ticket_num * a_table.AMOUNT)/50
+    from
+    (select A.oldsource, PNRSOURCE_CONFIG.NAME, A.ticket_num, A.AMOUNT
+    from (SELECT count(*) ticket_num,o.oldsource, r.AMOUNT FROM RECHARGE_RECORD
+    as r INNER JOIN TICKET_ORDER AS o ON r.orderid=o.ORDERID
+       where r.RECHARGE_TYPE=8
+       AND r.REMARK LIKE '无法出票补偿%%'
+       and r.RECHARGE_TIME >=%s
+       and r.RECHARGE_TIME < %s
+       GROUP BY o.oldsource,r.AMOUNT) as A
+       INNER join PNRSOURCE_CONFIG ON
+       A.oldsource=PNRSOURCE_CONFIG.PNRSOURCE
+    ) a_table group by a_table.name, a_table.oldsource
     """
 
     human_intervention_sql = """
@@ -157,19 +160,22 @@ def update_unable_ticket():
     """
 
     total_ticket_sql = """
-        SELECT O.PNRSOURCE, count( DISTINCT O.ORDERID) ticket_num FROM
+        SELECT O.PNRSOURCE pnrsource, PNRSOURCE_CONFIG.NAME, count(*) ticket_num, count(DISTINCT OD.ORDERID) order_num FROM
         TICKET_ORDERDETAIL OD
         LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
+        INNER join PNRSOURCE_CONFIG ON
+        O.PNRSOURCE=PNRSOURCE_CONFIG.PNRSOURCE
         WHERE
         O.ORDERSTATUE  NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
         IFNULL(OD.`LINKTYPE`, 0) != 2
         AND OD.CREATETIME >= %s
         AND OD.CREATETIME < %s
-        GROUP BY O.PNRSOURCE
+        GROUP BY O.PNRSOURCE, PNRSOURCE_CONFIG.NAME
     """
 
     insert_sql = """
-        insert into operation_hbgj_unable_ticket_weekly (s_day, pn_resouce, channel_name, unable_ticket_num, total_num, createtime, updatetime)
+        insert into operation_hbgj_unable_ticket_weekly (s_day, pn_resouce,
+        channel_name, unable_ticket_num, total_num, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
     """
 
@@ -179,6 +185,7 @@ def update_unable_ticket():
         values (%s, %s, %s, %s, %s, now(), now())
     """
     insert_data = []
+    from collections import defaultdict
     insert_intervention_data = []
     while start_week < end_week:
         start_date = DateUtil.date2str(start_week)
@@ -188,29 +195,53 @@ def update_unable_ticket():
 
         human_intervention_data = DBCli().sourcedb_cli.queryAll(human_intervention_sql, dto)
         total_ticket_data = DBCli().sourcedb_cli.queryAll(total_ticket_sql, dto)
-        total_ticket_data = dict(list(total_ticket_data))
 
+        total_t_o = defaultdict(list)
+
+        for total in total_ticket_data:
+            total_t_o[total[0].lower()].extend([total[1], total[2], total[3]])
+        print total_t_o
+        no_unable = defaultdict(list)
         for unable_ticket in unable_ticket_data:
             tmp_data = list(unable_ticket)
             pn_resource, pn_name, ticket_num = tmp_data
+            no_unable[pn_resource].extend([pn_name, ticket_num])
             try:
-                total_num = total_ticket_data[pn_resource]
-            except KeyError:
-                continue
+                total_num = total_t_o[pn_resource.lower()][1]
+            except (IndexError, AttributeError, KeyError):
+                total_num = 0
             tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
             tmp_data.append(total_num)
             insert_data.append(tmp_data)
 
+        no_unable_list = set(total_t_o.keys()).difference(set(no_unable.keys()))
+
+        for no_unable_key in no_unable_list:
+            pn_name, ticket_num = (total_t_o[no_unable_key.lower()])[0], (total_t_o[no_unable_key.lower()])[1]
+            tmp_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_unable_key, pn_name, 0, ticket_num]
+            insert_data.append(tmp_data)
+
+        no_intervention = defaultdict(list)
+
         for intervention_ticket in human_intervention_data:
             tmp_data = list(intervention_ticket)
-            pn_resource, pn_name, ticket_num = tmp_data
+            pn_resource, pn_name, order_num = tmp_data
+            no_intervention[pn_resource].extend([pn_name, order_num])
             try:
-                total_num = total_ticket_data[pn_resource]
-            except KeyError:
+                total_num = total_t_o[pn_resource.lower()][2]
+            except (IndexError, AttributeError, KeyError):
                 continue
             tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
             tmp_data.append(total_num)
             insert_intervention_data.append(tmp_data)
+
+        no_intervention_list = set(total_t_o.keys()).difference(set(no_intervention.keys()))
+        for no_intervention_key in no_intervention_list:
+            pn_intervention_name, order_intervention_num = total_t_o[no_intervention_key][0], total_t_o[no_intervention_key][2]
+            tmp_intervention_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_intervention_key,
+                                     pn_intervention_name, 0, order_intervention_num]
+            insert_intervention_data.append(tmp_intervention_data)
+
         start_week = DateUtil.add_days(start_week, 1)
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
@@ -219,6 +250,8 @@ def update_unable_ticket():
 def update_supplier_refused_order_weekly():
     start_week, end_week = DateUtil.get_last_week_date()
     week_sql = """
+
+
             select a_table.s_day, a_table.agentid, b_table.order_num,
             a_table.refused_order, a_table.over_time_order from (
             SELECT %s s_day, agentid,
@@ -316,12 +349,12 @@ if __name__ == "__main__":
     #     """
     # hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
     # hb_info = dict(hb_info)
-    end_date = datetime.date(2012, 11, 22)
-    start_date = datetime.date(2017, 2, 27)
+    end_date = datetime.date(2014, 1, 6)
+    start_date = datetime.date(2017, 3, 6)
     # end_date = datetime.date(2017, 1, 30)
     # start_date = datetime.date(2017, 2, 6)
-    # while start_date > end_date:
-    #     start_week, end_week = DateUtil.get_this_week_date(end_date)
-    #     update_supplier_refused_order_weekly(start_week, end_week)
-    #     print start_week, end_week
-    #     end_date = end_week
+    while start_date > end_date:
+        start_week, end_week = DateUtil.get_this_week_date(end_date)
+        update_unable_ticket(start_week, end_week)
+        print start_week, end_week
+        end_date = end_week

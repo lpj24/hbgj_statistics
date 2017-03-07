@@ -175,7 +175,7 @@ if __name__ == "__main__":
     # collect_his_phone_uid()
     # update_focus_newuser()
     # update_fouces_dat_daily(2)
-    # for x in xrange(33, 0, -1):
-    #     update_focus_inland_inter_daily(x)
-    collect_inland_inter_flyid_daily(1)
+    for x in xrange(34, 0, -1):
+        update_focus_inland_inter_daily(x)
+    # collect_inland_inter_flyid_daily(1)
 

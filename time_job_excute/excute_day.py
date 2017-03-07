@@ -61,6 +61,9 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_hb_insure_daily)
     TimeService.add_day_service(hb_insure.update_insure_type_daily)
     TimeService.add_day_service(hb_insure.update_insure_class_daily)
+    TimeService.add_day_service(hb_insure.update_insure_class_daily)
+    TimeService.add_day_service(hb_focus_newuser.collect_inland_inter_flyid_daily)
+    TimeService.add_day_service(hb_focus_newuser.update_focus_inland_inter_daily)
     # TimeService.add_day_service(hb_profit_cost.update_hb_car_hotel_profit)
     return TimeService
 

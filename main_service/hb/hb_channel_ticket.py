@@ -199,20 +199,22 @@ def update_unable_ticket(start_week, end_week):
         total_t_o = defaultdict(list)
 
         for total in total_ticket_data:
-            total_t_o[total[0].lower()].extend([total[1], total[2], total[3]])
-        print total_t_o
+            total_t_o[total[0].lower()] = [total[1], total[2], total[3]]
+
         no_unable = defaultdict(list)
         for unable_ticket in unable_ticket_data:
-            tmp_data = list(unable_ticket)
-            pn_resource, pn_name, ticket_num = tmp_data
-            no_unable[pn_resource].extend([pn_name, ticket_num])
+            tmp_unable_data = list(unable_ticket)
+            pn_resource, pn_name, ticket_num = tmp_unable_data
+            no_unable[pn_resource] = [pn_name, ticket_num]
             try:
-                total_num = total_t_o[pn_resource.lower()][1]
-            except (IndexError, AttributeError, KeyError):
+                # total_num = total_t_o[pn_resource.lower()][1]
+                total_num = (total_t_o.get(pn_resource.lower()))[1]
+            except (IndexError, AttributeError, KeyError, TypeError):
                 total_num = 0
-            tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
-            tmp_data.append(total_num)
-            insert_data.append(tmp_data)
+
+            tmp_unable_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
+            tmp_unable_data.append(total_num)
+            insert_data.append(tmp_unable_data)
 
         no_unable_list = set(total_t_o.keys()).difference(set(no_unable.keys()))
 
@@ -228,8 +230,8 @@ def update_unable_ticket(start_week, end_week):
             pn_resource, pn_name, order_num = tmp_data
             no_intervention[pn_resource].extend([pn_name, order_num])
             try:
-                total_num = total_t_o[pn_resource.lower()][2]
-            except (IndexError, AttributeError, KeyError):
+                total_num = (total_t_o.get(pn_resource.lower()))[2]
+            except (IndexError, AttributeError, KeyError, TypeError):
                 continue
             tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
             tmp_data.append(total_num)
@@ -237,11 +239,11 @@ def update_unable_ticket(start_week, end_week):
 
         no_intervention_list = set(total_t_o.keys()).difference(set(no_intervention.keys()))
         for no_intervention_key in no_intervention_list:
-            pn_intervention_name, order_intervention_num = total_t_o[no_intervention_key][0], total_t_o[no_intervention_key][2]
+            pn_intervention_name, order_intervention_num = total_t_o[no_intervention_key][0], \
+                                                           total_t_o[no_intervention_key][2]
             tmp_intervention_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_intervention_key,
                                      pn_intervention_name, 0, order_intervention_num]
             insert_intervention_data.append(tmp_intervention_data)
-
         start_week = DateUtil.add_days(start_week, 1)
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
@@ -250,8 +252,6 @@ def update_unable_ticket(start_week, end_week):
 def update_supplier_refused_order_weekly():
     start_week, end_week = DateUtil.get_last_week_date()
     week_sql = """
-
-
             select a_table.s_day, a_table.agentid, b_table.order_num,
             a_table.refused_order, a_table.over_time_order from (
             SELECT %s s_day, agentid,
@@ -349,7 +349,9 @@ if __name__ == "__main__":
     #     """
     # hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
     # hb_info = dict(hb_info)
-    end_date = datetime.date(2014, 1, 6)
+    # end_date = datetime.date(2014, 1, 6)
+    # end_date = datetime.date(2015, 10, 19)
+    end_date = datetime.date(2015, 10, 19)
     start_date = datetime.date(2017, 3, 6)
     # end_date = datetime.date(2017, 1, 30)
     # start_date = datetime.date(2017, 2, 6)

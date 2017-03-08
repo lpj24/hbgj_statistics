@@ -124,8 +124,8 @@ def update_hb_company_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
 
-def update_unable_ticket(start_week, end_week):
-    # start_week, end_week = DateUtil.get_last_week_date()
+def update_unable_ticket():
+    start_week, end_week = DateUtil.get_last_week_date()
     unable_ticket_sql = """
     select a_table.oldsource, a_table.name, sum(a_table.ticket_num * a_table.AMOUNT)/50
     from
@@ -137,7 +137,7 @@ def update_unable_ticket(start_week, end_week):
        and r.RECHARGE_TIME >=%s
        and r.RECHARGE_TIME < %s
        GROUP BY o.oldsource,r.AMOUNT) as A
-       INNER join PNRSOURCE_CONFIG ON
+       left join PNRSOURCE_CONFIG ON
        A.oldsource=PNRSOURCE_CONFIG.PNRSOURCE
     ) a_table group by a_table.name, a_table.oldsource
     """
@@ -208,7 +208,14 @@ def update_unable_ticket(start_week, end_week):
             no_unable[pn_resource] = [pn_name, ticket_num]
             try:
                 # total_num = total_t_o[pn_resource.lower()][1]
-                total_num = (total_t_o.get(pn_resource.lower()))[1]
+                if pn_resource is None and pn_name is None:
+                    tmp_unable_data = [u'空白', u'空白', ticket_num]
+                    total_num = 0
+                elif pn_name is None and pn_resource is not None:
+                    tmp_unable_data = [pn_resource, u'默认', ticket_num]
+                    total_num = 0
+                else:
+                    total_num = (total_t_o.get(pn_resource.lower()))[1]
             except (IndexError, AttributeError, KeyError, TypeError):
                 total_num = 0
 
@@ -222,7 +229,7 @@ def update_unable_ticket(start_week, end_week):
             pn_name, ticket_num = (total_t_o[no_unable_key.lower()])[0], (total_t_o[no_unable_key.lower()])[1]
             tmp_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_unable_key, pn_name, 0, ticket_num]
             insert_data.append(tmp_data)
-
+        print insert_data
         no_intervention = defaultdict(list)
 
         for intervention_ticket in human_intervention_data:
@@ -351,12 +358,11 @@ if __name__ == "__main__":
     # hb_info = dict(hb_info)
     # end_date = datetime.date(2014, 1, 6)
     # end_date = datetime.date(2015, 10, 19)
-    end_date = datetime.date(2015, 10, 19)
+    end_date = datetime.date(2014, 1, 6)
     start_date = datetime.date(2017, 3, 6)
-    # end_date = datetime.date(2017, 1, 30)
-    # start_date = datetime.date(2017, 2, 6)
     while start_date > end_date:
         start_week, end_week = DateUtil.get_this_week_date(end_date)
         update_unable_ticket(start_week, end_week)
         print start_week, end_week
         end_date = end_week
+    # update_unable_ticket(start_date, end_date)

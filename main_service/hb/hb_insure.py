@@ -254,8 +254,9 @@ if __name__ == "__main__":
     #     i -= 1
 
     # update_hb_insure_daily(2)
-    i = 1411
-    while i >= 1:
-        update_insure_class_daily(i)
-        i -= 1
-    # update_insure_type_daily(2)
+    # i = 1411
+    # while i >= 1:
+    #     # update_insure_class_daily(i)
+    #     update_insure_type_daily(i)
+    #     i -= 1
+    update_insure_class_daily(1)

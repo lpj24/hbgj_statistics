@@ -123,6 +123,15 @@ def update_insure_class_daily(days=0):
         insert into operation_hbgj_insure_platform_daily (s_day, platform, insure_code, pid, inter_insure_num,
         inter_insure_amount, inland_insure_num, inland_insure_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        platform = values(platform),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        inter_insure_num = values(inter_insure_num),
+        inter_insure_amount = values(inter_insure_amount),
+        inland_insure_num = values(inland_insure_num),
+        inland_insure_amount = values(inland_insure_amount)
     """
 
     dto = [start_date, end_date]
@@ -244,6 +253,9 @@ if __name__ == "__main__":
     #     update_insure_type_daily(i)
     #     i -= 1
 
-    update_hb_insure_daily(2)
-    update_insure_class_daily(2)
-    update_insure_type_daily(2)
+    # update_hb_insure_daily(2)
+    i = 1411
+    while i >= 1:
+        update_insure_class_daily(i)
+        i -= 1
+    # update_insure_type_daily(2)

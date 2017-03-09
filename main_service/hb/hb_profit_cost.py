@@ -25,14 +25,14 @@ def update_hb_car_hotel_profit(days=0):
 
     other_cost_sql = """
         select
-        sum(case when AMOUNTTYPE=0 AND INTFLAG=0 THEN AMOUNT ELSE 0 END) inland_price_diff,
-        sum(case when AMOUNTTYPE=1 AND INTFLAG=0 THEN AMOUNT ELSE 0 END) inland_refund_new,
-        sum(case when AMOUNTTYPE=0 AND INTFLAG=1 THEN AMOUNT ELSE 0 END) inter_price_diff,
-        COSTDATE s_day
-        from TICKET_ORDER_COST_TOTAL
+        sum(case when INTFLAG=0 and AMOUNTTYPE!=2 then AMOUNT else 0 end) inland_price_diff,
+        sum(case when AMOUNTTYPE=2 then AMOUNT else 0 end) inland_refund_new,
+        sum(case when INTFLAG=1 and AMOUNTTYPE!=2 then AMOUNT else 0 end) inter_price_diff,
+        COSTDATE
+        FROM TICKET_ORDER_COST
         where COSTDATE>=%s and COSTDATE<%s
-        group by s_day
-        order by s_day
+        GROUP BY COSTDATE
+        ORDER BY COSTDATE
     """
 
     other_result = DBCli().sourcedb_cli.queryAll(other_cost_sql, dto)
@@ -265,7 +265,7 @@ def update_profit_hotel_income(days=0):
     DBCli().targetdb_cli.insert(insert_sql, hotel_data)
 
 if __name__ == "__main__":
-    # update_hb_car_hotel_profit(1)
+    update_hb_car_hotel_profit(1)
     # update_huoli_car_income_daily(1)
     # update_hb_car_hotel_profit(1)
     # i = 20
@@ -280,4 +280,4 @@ if __name__ == "__main__":
     # update_car_cost_detail(1)
     # update_huoli_car_income_type(2)
     # update_hb_car_hotel_profit(1)
-    update_profit_hotel_income(2)
+    # update_profit_hotel_income(2)

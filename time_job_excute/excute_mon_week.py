@@ -1,7 +1,6 @@
 from main_service.hb import hb_flight_details, hb_consumers, \
     hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform, hb_channel_ticket
-from main_service.huoli import eat_activeusers, car_consumers, \
-    hotel_activeusers, hotel_consumers
+from main_service.huoli import car_consumers, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers
 from time_job_excute.timeServiceList import TimeService
 from monitor import task

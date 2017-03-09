@@ -24,6 +24,7 @@ class DBCli(object):
         self._hb_fly = conf.hb_fly,
         self._pay_cost = conf.pay_cost
         self._hb_partner = conf.hb_partner
+        self._tongji_skyhotel = conf.tongji_skyhotel
         self._source_account_db = conf.source_account_db
         self.args = args if args else (list, )
 
@@ -97,5 +98,9 @@ class DBCli(object):
     @property
     def hb_source_account_cli(self):
         return DButils("mysql", self._source_account_db)
+
+    @property
+    def tongji_skyhotel_cli(self):
+        return DButils("mysql", self._tongji_skyhotel)
 
 

@@ -246,6 +246,24 @@ def update_profit_hb_income(days=0):
     hb_profit = DBCli().sourcedb_cli.queryOne(sql, [query_date, today])
     DBCli().targetdb_cli.insert(insert_sql, hb_profit)
 
+
+def update_profit_hotel_income(days=0):
+    query_date = DateUtil.get_date_before_days(days)
+    sql = """
+        select date, total_profit from hotel_order_profit where date=%s
+    """
+    hotel_data = DBCli().tongji_skyhotel_cli.queryOne(sql, [query_date])
+    if hotel_data is None:
+        return
+    insert_sql = """
+        insert into profit_huoli_hotel_income (s_day, income, createtime, updatetime)
+        values (%s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = VALUES(s_day),
+        income = VALUES(income)
+    """
+    DBCli().targetdb_cli.insert(insert_sql, hotel_data)
+
 if __name__ == "__main__":
     # update_hb_car_hotel_profit(1)
     # update_huoli_car_income_daily(1)
@@ -261,4 +279,5 @@ if __name__ == "__main__":
     #     i -= 1
     # update_car_cost_detail(1)
     # update_huoli_car_income_type(2)
-    update_hb_car_hotel_profit(1)
+    # update_hb_car_hotel_profit(1)
+    update_profit_hotel_income(2)

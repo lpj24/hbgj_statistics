@@ -23,6 +23,24 @@ def update_hb_car_hotel_profit(days=0):
     dto = [query_date, today]
     result = DBCli().pay_cost_cli.queryAll(sql, dto)
 
+    other_cost_sql = """
+        select
+        sum(case when AMOUNTTYPE=0 AND INTFLAG=0 THEN AMOUNT ELSE 0 END) inland_price_diff,
+        sum(case when AMOUNTTYPE=1 AND INTFLAG=0 THEN AMOUNT ELSE 0 END) inland_refund_new,
+        sum(case when AMOUNTTYPE=0 AND INTFLAG=1 THEN AMOUNT ELSE 0 END) inter_price_diff,
+        COSTDATE s_day
+        from TICKET_ORDER_COST_TOTAL
+        where COSTDATE>=%s and COSTDATE<%s
+        group by s_day
+        order by s_day
+    """
+
+    other_result = DBCli().sourcedb_cli.queryAll(other_cost_sql, dto)
+
+    update_other_cost_sql = """
+        update profit_hb_cost set inland_price_diff=%s, inland_refund_new=%s, inter_price_diff=%s where s_day=%s
+    """
+
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
@@ -39,6 +57,7 @@ def update_hb_car_hotel_profit(days=0):
         balance_give_amount = VALUES(balance_give_amount)
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, result)
+    DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
 
     car_sql = """
         select distinct TRADE_TIME s_day,
@@ -242,4 +261,4 @@ if __name__ == "__main__":
     #     i -= 1
     # update_car_cost_detail(1)
     # update_huoli_car_income_type(2)
-    update_huoli_car_income_daily(2)
+    update_hb_car_hotel_profit(1)

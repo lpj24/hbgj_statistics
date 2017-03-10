@@ -25,11 +25,15 @@ def update_hb_car_hotel_profit(days=0):
 
     other_cost_sql = """
         select
-        sum(case when INTFLAG=0 and AMOUNTTYPE!=2 then AMOUNT else 0 end) inland_price_diff,
+        sum(case when INTFLAG=0 and AMOUNTTYPE!=2 and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
+        sum(case when INTFLAG=0 and AMOUNTTYPE!=2 and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
+        sum(case when INTFLAG=0 and AMOUNTTYPE!=2 and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
         sum(case when AMOUNTTYPE=2 then AMOUNT else 0 end) inland_refund_new,
         sum(case when INTFLAG=1 and AMOUNTTYPE!=2 then AMOUNT else 0 end) inter_price_diff,
         COSTDATE
-        FROM TICKET_ORDER_COST
+        FROM TICKET_ORDER_COST T_COST
+        left join TICKET_ORDER_INCOME_TYPE T_TYPE
+        ON T_COST.PNRSOURCE = T_TYPE.PNRSOURCE
         where COSTDATE>=%s and COSTDATE<%s
         GROUP BY COSTDATE
         ORDER BY COSTDATE
@@ -38,7 +42,8 @@ def update_hb_car_hotel_profit(days=0):
     other_result = DBCli().sourcedb_cli.queryAll(other_cost_sql, dto)
 
     update_other_cost_sql = """
-        update profit_hb_cost set inland_price_diff=%s, inland_refund_new=%s, inter_price_diff=%s where s_day=%s
+        update profit_hb_cost set inland_price_diff_type0=%s, inland_price_diff_type1=%s, inland_price_diff_type2=%s,
+        inland_refund_new=%s, inter_price_diff=%s where s_day=%s
     """
 
     insert_sql = """
@@ -120,7 +125,6 @@ def update_hb_car_hotel_profit(days=0):
 
 def update_car_cost_detail(days=0):
     query_date = DateUtil.get_date_before_days(days * 7)
-    print query_date
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
     car_sql = """
@@ -221,29 +225,36 @@ def update_profit_hb_income(days=0):
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
-        sum(case when TYPE=0 AND INTFLAG=0 THEN INCOME else 0 END) inland_ticket_income,
+        SUM(case when TYPE=0 AND INTFLAG=0 AND INCOMETYPE= 0 THEN INCOME else 0 END) inland_ticket_incometype0,
+        SUM(case when TYPE=0 AND INTFLAG=0 AND INCOMETYPE= 1 THEN INCOME else 0 END) inland_ticket_incometype1,
+        SUM(case when TYPE=0 AND INTFLAG=0 AND INCOMETYPE= 2 THEN INCOME else 0 END) inland_ticket_incometype2,
         sum(case when TYPE=0 AND INTFLAG=1 THEN INCOME else 0 END) inter_ticket_income,
         sum(case when TYPE=1 AND INTFLAG=0 THEN INCOME else 0 END) inland_insure_income,
         sum(case when TYPE=1 AND INTFLAG=1 THEN INCOME else 0 END) inter_insure_income
-        FROM TICKET_ORDER_INCOME
-        WHERE INCOMEDATE>=%s
-        and INCOMEDATE<%s
+        FROM TICKET_ORDER_INCOME T_INCOME
+        left join TICKET_ORDER_INCOME_TYPE T_TYPE
+        ON T_INCOME.PNRSOURCE = T_TYPE.PNRSOURCE
+        WHERE INCOMEDATE>=%s and INCOMEDATE<%s
         GROUP BY INCOMEDATE
         ORDER BY INCOMEDATE
     """
     insert_sql = """
-        insert into profit_hb_income (s_day, inland_ticket_income, inter_ticket_income,
-        inland_insure_income, inter_insure_income, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, now(), now())
+        insert into profit_hb_income (s_day, inland_ticket_incometype0, inland_ticket_incometype1,
+        inland_ticket_incometype2, inter_ticket_income, inland_insure_income, inter_insure_income, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = VALUES(s_day),
-        inland_ticket_income = VALUES(inland_ticket_income),
+        inland_ticket_incometype0 = VALUES(inland_ticket_incometype0),
+        inland_ticket_incometype1 = VALUES(inland_ticket_incometype1),
+        inland_ticket_incometype2 = VALUES(inland_ticket_incometype2),
         inter_ticket_income = VALUES(inter_ticket_income),
         inland_insure_income = VALUES(inland_insure_income),
         inter_insure_income = VALUES(inter_insure_income)
     """
 
     hb_profit = DBCli().sourcedb_cli.queryOne(sql, [query_date, today])
+    if hb_profit is None:
+        return
     DBCli().targetdb_cli.insert(insert_sql, hb_profit)
 
 
@@ -268,11 +279,7 @@ if __name__ == "__main__":
     update_hb_car_hotel_profit(1)
     # update_huoli_car_income_daily(1)
     # update_hb_car_hotel_profit(1)
-    # i = 20
-    # while i >= 1:
-    #     print i
-    #     update_huoli_car_income_daily(i)
-    #     i -= 1
+
     # i = 60
     # while i >= 1:
     #     update_huoli_car_income_type(i)

@@ -289,8 +289,8 @@ if __name__ == "__main__":
 
     # update_huoli_car_coupon_daily(2)
     # update_huoli_hotel_coupon_daily(2)
-
-    i = 6
-    for i in xrange(6, 0, -1):
-        print i
-        update_hotel_use_detail_daily(i)
+    update_hotel_use_detail_daily(1)
+    # i = 6
+    # for i in xrange(6, 0, -1):
+    #     print i
+    #     update_hotel_use_detail_daily(i)

@@ -61,8 +61,7 @@ sql = [
 
     "select count(1) from profit_huoli_car_income_type where s_day=%s",
     "select count(1) from profit_huoli_car_cost_type where s_day=%s",
-    "select count(1) from hbdt_focus_users_inland_inter_daily where s_day=%s",
-    "select count(1) from hotel_order_profit where s_day=%s",
+    "select count(1) from hbdt_focus_users_inland_inter_daily where s_day=%s"
 ]
 
 week_sql = [

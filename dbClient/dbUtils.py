@@ -3,7 +3,6 @@ from DBUtils.PooledDB import PooledDB
 import logging
 import time
 import cx_Oracle
-import inspect
 
 
 class DButils(object):
@@ -28,9 +27,8 @@ class DButils(object):
 
     def batchInsert(self, sql, params):
         cursor = self._conn.cursor()
-
         try:
-            print self.log_str(sql, params)
+            logging.warning(self.log_str(sql, params))
             cursor.executemany(sql, params)
             self._conn.commit()
         except MySQLdb.Error, e:
@@ -42,9 +40,9 @@ class DButils(object):
     def insert(self, sql, params):
         cursor = self._conn.cursor()
         try:
-            print self.log_str(sql, params)
+            logging.warning(self.log_str(sql, params))
             cursor.execute(sql, params)
-            logging.warning("execute sql" + cursor._executed)
+            # logging.warning("execute sql" + cursor._executed)
             self._conn.commit()
         except MySQLdb.Error, e:
             warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
@@ -63,7 +61,7 @@ class DButils(object):
                     sql = sql.replace("tablename", params.pop(), 1)
             cursor.execute(sql, params)
 
-        logging.warning("execute sql" + cursor._executed)
+        # logging.warning("execute sql" + cursor._executed)
         data = cursor.fetchall()
         cursor.close()
         return data
@@ -78,10 +76,10 @@ class DButils(object):
                     for i in xrange(sql.count("tablename")):
                         sql = sql.replace("tablename", params.pop(), 1)
                 cursor.execute(sql, params)
-            logging.warning("execute sql" + cursor._executed)
+            # logging.warning("execute sql" + cursor._executed)
             data = cursor.fetchone()
         except MySQLdb.OperationalError:
-            print "error"
+            logging.warning("error")
         finally:
             cursor.close()
         return data

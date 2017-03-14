@@ -275,4 +275,4 @@ def update_profit_hotel_income(days=0):
     DBCli().targetdb_cli.insert(insert_sql, hotel_data)
 
 if __name__ == "__main__":
-    update_car_cost_detail(1)
+    update_car_cost_detail(2)

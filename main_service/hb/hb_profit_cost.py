@@ -258,11 +258,13 @@ def update_profit_hb_income(days=0):
 
 
 def update_profit_hotel_income(days=0):
-    query_date = DateUtil.get_date_before_days(days)
+    query_start = DateUtil.get_date_before_days(days*7)
+    query_end = DateUtil.get_date_after_days(1 - days)
     sql = """
-        select date, total_profit from hotel_order_profit where date=%s
+        select date, total_profit from hotel_order_profit where date>=%s
+        and date<%s
     """
-    hotel_data = DBCli().tongji_skyhotel_cli.queryOne(sql, [query_date])
+    hotel_data = DBCli().tongji_skyhotel_cli.queryAll(sql, [query_start, query_end])
     if hotel_data is None:
         return
     insert_sql = """
@@ -272,7 +274,7 @@ def update_profit_hotel_income(days=0):
         s_day = VALUES(s_day),
         income = VALUES(income)
     """
-    DBCli().targetdb_cli.insert(insert_sql, hotel_data)
+    DBCli().targetdb_cli.batchInsert(insert_sql, hotel_data)
 
 if __name__ == "__main__":
-    update_car_cost_detail(2)
+    update_profit_hotel_income(1)

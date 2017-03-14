@@ -4,4 +4,4 @@ main_service/tmp_task/*
 *.gz
 fabfile.py
 log/*
-dbClient/dbUtils
+dbClient/dbUtils.py

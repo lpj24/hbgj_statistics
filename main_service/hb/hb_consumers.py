@@ -22,7 +22,6 @@ def update_hb_consumers_weekly(days=0):
 
 def update_hb_consumers_monthly(days=0):
     start_monthdate, end_enddate = DateUtil.get_this_month_date()
-    print start_monthdate, end_enddate
     start_monthdate = DateUtil.date2str(start_monthdate)
     end_enddate = DateUtil.date2str(end_enddate)
     dto = [start_monthdate, end_enddate, start_monthdate, end_enddate]

@@ -10,8 +10,6 @@ import time
 
 
 def localytics_cli(app_id, event, metrics, start_date):
-    # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
-    # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
     api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
     api_root = "https://api.localytics.com/v1/query"
@@ -248,4 +246,4 @@ if __name__ == "__main__":
     # update_check_pv_his(start_date)
     # update_flight_search_user_weekly()
     # update_flight_search_user_monthly()
-    update_flight_search_user_daily(2)
+    update_flight_search_user_daily(1)

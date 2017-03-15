@@ -51,6 +51,7 @@ def execute_later_job():
     hb_profit_cost.update_hb_car_hotel_profit(1)
     hb_profit_cost.update_car_cost_detail(1)
     hb_profit_cost.update_huoli_car_income_type(1)
+    hb_profit_cost.update_profit_hotel_income(1)
 
 
 def check_execute_job():

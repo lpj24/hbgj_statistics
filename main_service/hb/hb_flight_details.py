@@ -12,8 +12,6 @@ import datetime
 def localytics_cli(app_id, event, metrics, start_date):
     api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
     api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
-    # api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
-    # api_secret = "2049d2d0815af8273eff9e4-3f408e30-5f00-11e6-7216-002dea3c3994"
     api_root = "https://api.localytics.com/v1/query"
     # app_id = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
     data_params = {"app_id": app_id, "dimensions": "day", "metrics": metrics}
@@ -229,9 +227,9 @@ if __name__ == "__main__":
     #     # update_flight_detail_user_daily(i)
     #     update_dt_detail_uid(i)
     #     i -= 1
-    # update_flight_detail_user_daily(2)
+    update_flight_detail_user_daily(1)
 
-    update_flight_detail_user_weekly()
+    # update_flight_detail_user_weekly()
     # i = 33
     # while i >= 1:
     #     update_dt_detail_uid(i)

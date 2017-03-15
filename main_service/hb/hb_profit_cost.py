@@ -45,6 +45,27 @@ def update_hb_car_hotel_profit(days=0):
         inland_refund_new=%s, inter_price_diff=%s where s_day=%s
     """
 
+    query_dft_cost_sql = """
+        SELECT
+        sum(od.REALPRICE +  od.AIRPORTFEE)*0.0005 as dft_amount,
+        DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIMe>=%s
+        and od.CREATETIMe<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and o.PNRSOURCE='hlth'
+        and o.SUBORDERNO='BOP' and
+        od.ETICKET is not null
+        group by s_day
+    """
+
+    update_dft_cost_sql = """
+        update profit_hb_cost set dft_cost=%s where s_day=%s
+    """
+    dft_result = DBCli().sourcedb_cli.queryAll(query_dft_cost_sql, dto)
+
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
@@ -62,6 +83,7 @@ def update_hb_car_hotel_profit(days=0):
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, result)
     DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
+    DBCli().targetdb_cli.batchInsert(update_dft_cost_sql, dft_result)
 
     car_sql = """
         select distinct TRADE_TIME s_day,
@@ -277,4 +299,4 @@ def update_profit_hotel_income(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, hotel_data)
 
 if __name__ == "__main__":
-    update_profit_hotel_income(1)
+    update_hb_car_hotel_profit(1)

@@ -62,7 +62,7 @@ def hbdt_event(days=0):
             data_params["conditions"] = json.dumps(conditions)
 
             try:
-                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=240)
                 result = r.json()
                 if r.status_code == 429:
                     raise AssertionError

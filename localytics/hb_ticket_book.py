@@ -80,9 +80,9 @@ def hb_ticket_book(days=0):
 
             data_params["conditions"] = json.dumps(conditions)
             try:
-                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=240)
+                print r
                 result = r.json()
-                print result
                 if r.status_code == 429:
                     raise AssertionError
                 data = result["results"]
@@ -179,7 +179,7 @@ def update_booke_ticket_event_hourly(days=0):
 
             data_params["conditions"] = json.dumps(conditions)
             try:
-                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+                r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=240)
                 result = r.json()
                 if r.status_code == 429:
                     raise AssertionError
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     #     print i
     #     hb_ticket_book(i)
     #     i += 1
-    hb_ticket_book(1)
+    # hb_ticket_book(1)
     update_booke_ticket_event_hourly(1)
 
     # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"

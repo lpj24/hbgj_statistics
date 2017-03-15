@@ -81,7 +81,6 @@ def hb_ticket_book(days=0):
             data_params["conditions"] = json.dumps(conditions)
             try:
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=240)
-                print r
                 result = r.json()
                 if r.status_code == 429:
                     raise AssertionError

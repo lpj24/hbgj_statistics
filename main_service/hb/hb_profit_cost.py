@@ -47,7 +47,7 @@ def update_hb_car_hotel_profit(days=0):
 
     query_dft_cost_sql = """
         SELECT
-        sum(od.REALPRICE +  od.AIRPORTFEE)*0.0005 as dft_amount,
+        sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
         DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
@@ -299,4 +299,4 @@ def update_profit_hotel_income(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, hotel_data)
 
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    update_profit_hotel_income(1)

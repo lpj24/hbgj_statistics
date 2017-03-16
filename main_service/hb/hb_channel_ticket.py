@@ -31,6 +31,7 @@ def update_hb_channel_ticket_weekly():
         query_end_date = DateUtil.add_days(start_week, 1)
         channel_all_data = DBCli().sourcedb_cli.queryAll(channel_sql, [start_week, start_week, query_end_date])
         # new_channel_data = [list(channel_data).insert(0, s_day) for channel_data in channel_all_data]
+
         insert_channel_data = []
         sale_data = 0
         for channel_data in channel_all_data:
@@ -346,6 +347,97 @@ def update_product_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, supplier_data)
 
 
+def update_refund_ticket_channel_daily(days=0):
+    query_date = DateUtil.get_date_before_days(days * 1)
+    today = DateUtil.get_date_after_days(1 - days)
+
+    refund_channel_ticket_sql = """
+        select A.s_day,PNRSOURCE_CONFIG.SALETYPE, PNRSOURCE_CONFIG.NAME,A.pn_resouce, A.back_num, A.amount from (
+        SELECT %s s_day, o.PNRSOURCE pn_resouce, count(*) back_num, sum(od.OUTPAYPRICE) amount
+        FROM skyhotel.`TICKET_ORDERDETAIL` od
+        INNER JOIN skyhotel.`TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        INNER JOIN skyhotel.`TICKET_ORDER_REFUND` r on od.ORDERID=r.ORDERID
+        where r.createtime
+        BETWEEN %s and %s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2 and  IFNULL(od.REFUNDID,0) != 0
+        GROUP BY o.PNRSOURCE) A
+        left join PNRSOURCE_CONFIG ON A.pn_resouce=PNRSOURCE_CONFIG.PNRSOURCE
+    """
+
+    ticket_sql = """
+        select %s s_day, PNRSOURCE_CONFIG.SALETYPE, PNRSOURCE_CONFIG.NAME,AA.pn_resouce, AA.ticket_num, AA.amount from (
+        SELECT o.PNRSOURCE pn_resouce,count(*) ticket_num,sum(od.OUTPAYPRICE) amount FROM
+        `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o
+        on od.ORDERID=o.ORDERID where od.CREATETIME
+        BETWEEN %s and %s  and
+        o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+         IFNULL(od.`LINKTYPE`, 0) != 2 GROUP BY o.PNRSOURCE) AA
+        left join PNRSOURCE_CONFIG ON AA.pn_resouce=PNRSOURCE_CONFIG.PNRSOURCE
+    """
+    update_refund_sql = """
+        insert operation_hbgj_channel_refund_ticket_daily (s_day, pid,
+        refund_ticket_num, refund_ticket_amount, ticket_num, ticket_amount,
+        createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+    """
+    sale_data = 0
+    dto = [query_date, query_date, today]
+    channel_refund_data = DBCli().sourcedb_cli.queryAll(refund_channel_ticket_sql, dto)
+    channel_ticket_data = DBCli().sourcedb_cli.queryAll(ticket_sql, dto)
+
+    from collections import defaultdict
+    pid_channel_refund_ticket_num = defaultdict(list)
+    pid_channel_refund_ticket_amount = defaultdict(list)
+    pid_channel_ticket_num = defaultdict(list)
+    pid_channel_ticket_amount = defaultdict(list)
+    insert_data = []
+
+    for channel_data in channel_refund_data:
+        s_day, saletype, pn_name, pn_resouce, refund_ticket_num, refund_ticket_amount = channel_data
+        if saletype in (10, 11, 14):
+            pid = 1
+        elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
+            pid = 2
+        elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
+            pid = 3
+        elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
+            pid = 4
+        elif saletype == 13 or pn_resouce == 'hlth':
+            sale_data += 1
+            pid = 5
+        else:
+            continue
+        pid_channel_refund_ticket_num[pid].append(refund_ticket_num)
+        pid_channel_refund_ticket_amount[pid].append(refund_ticket_amount)
+
+    for channel_data in channel_ticket_data:
+        s_day, saletype, pn_name, pn_resouce, ticket_num, ticket_amount \
+            = channel_data
+        if saletype in (10, 11, 14):
+            pid = 1
+        elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
+            pid = 2
+        elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
+            pid = 3
+        elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
+            pid = 4
+        elif saletype == 13 or pn_resouce == 'hlth':
+            sale_data += 1
+            pid = 5
+        else:
+            continue
+        pid_channel_ticket_num[pid].append(ticket_num)
+        pid_channel_ticket_amount[pid].append(ticket_amount)
+
+    for i in xrange(1, 6, 1):
+        new_insert_data = [query_date, i,
+                           sum(pid_channel_refund_ticket_num.get(i, [0])), sum(pid_channel_refund_ticket_amount.get(i, [0.0])),
+                           sum(pid_channel_ticket_num.get(i, [0])), sum(pid_channel_ticket_amount.get(i, [0.0]))]
+        insert_data.append(new_insert_data)
+
+    DBCli().targetdb_cli.batchInsert(update_refund_sql, insert_data)
+
+
 if __name__ == "__main__":
     import datetime
     # update_product_ticket_weekly()
@@ -356,13 +448,17 @@ if __name__ == "__main__":
     #     """
     # hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
     # hb_info = dict(hb_info)
-    # end_date = datetime.date(2014, 1, 6)
-    # end_date = datetime.date(2015, 10, 19)
-    end_date = datetime.date(2014, 1, 6)
-    start_date = datetime.date(2017, 3, 6)
-    while start_date > end_date:
-        start_week, end_week = DateUtil.get_this_week_date(end_date)
-        update_unable_ticket(start_week, end_week)
-        print start_week, end_week
-        end_date = end_week
-    # update_unable_ticket(start_date, end_date)
+
+    # start_date = datetime.date(2017, 3, 13)
+    # end_date = datetime.date(2015, 4, 6)
+    # # end_date = datetime.date(2017, 3, 6)
+    # while start_date > end_date:
+    #     start_week, end_week = DateUtil.get_this_week_date(end_date)
+    #     update_refund_ticket_channel(start_week, end_week)
+    #     print start_week, end_week
+    #     end_date = end_week
+    i = 1
+    #1585
+    while i <= 1585:
+        update_refund_ticket_channel_daily(i)
+        i += 1

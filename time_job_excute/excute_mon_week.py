@@ -16,7 +16,6 @@ def add_execute_job():
     TimeService.add_week_mon_service(hb_activeusers.update_hbgj_activeusers_weekly)
 
     TimeService.add_week_mon_service(hotel_consumers.update_hotel_consumers_weekly)
-    TimeService.add_week_mon_service(hb_channel_ticket.update_hb_channel_ticket_weekly)
     TimeService.add_week_mon_service(hb_channel_ticket.update_hb_company_ticket_weekly)
     TimeService.add_week_mon_service(hb_channel_ticket.update_product_ticket_weekly)
     TimeService.add_week_mon_service(hb_channel_ticket.update_supplier_refused_order_weekly)

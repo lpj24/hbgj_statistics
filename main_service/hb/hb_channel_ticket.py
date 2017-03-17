@@ -4,8 +4,9 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
-def update_hb_channel_ticket_weekly():
-    start_week, end_week = DateUtil.get_last_week_date()
+def update_hb_channel_ticket_daily(days=0):
+    start_week = DateUtil.get_date_before_days(days * 1)
+    end_week = DateUtil.get_date_after_days(1 - days)
     channel_sql = """
         select %s, PNRSOURCE_CONFIG.SALETYPE, PNRSOURCE_CONFIG.NAME,A.pn_resouce, A.ticket_num, A.amount from (
         SELECT o.PNRSOURCE pn_resouce,count(*) ticket_num,sum(od.OUTPAYPRICE) amount FROM
@@ -26,36 +27,32 @@ def update_hb_channel_ticket_weekly():
         insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
         createtime, updatetime) values (%s, 13, %s, %s, 0, 0, 5, now(), now())
     """
+    channel_all_data = DBCli().sourcedb_cli.queryAll(channel_sql, [start_week, start_week, end_week])
+    # new_channel_data = [list(channel_data).insert(0, s_day) for channel_data in channel_all_data]
 
-    while start_week < end_week:
-        query_end_date = DateUtil.add_days(start_week, 1)
-        channel_all_data = DBCli().sourcedb_cli.queryAll(channel_sql, [start_week, start_week, query_end_date])
-        # new_channel_data = [list(channel_data).insert(0, s_day) for channel_data in channel_all_data]
+    insert_channel_data = []
+    sale_data = 0
+    for channel_data in channel_all_data:
+        saletype, pn_resouce = channel_data[1], channel_data[3]
+        new_channel_data = list(channel_data)
+        if saletype in (10, 11, 14):
+            new_channel_data.append(1)
+        elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
+            new_channel_data.append(2)
+        elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
+            new_channel_data.append(3)
+        elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
+            new_channel_data.append(4)
+        elif saletype == 13 or pn_resouce == 'hlth':
+            sale_data += 1
+            new_channel_data.append(5)
+        else:
+            continue
+        insert_channel_data.append(new_channel_data)
 
-        insert_channel_data = []
-        sale_data = 0
-        for channel_data in channel_all_data:
-            saletype, pn_resouce = channel_data[1], channel_data[3]
-            new_channel_data = list(channel_data)
-            if saletype in (10, 11, 14):
-                new_channel_data.append(1)
-            elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
-                new_channel_data.append(2)
-            elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
-                new_channel_data.append(3)
-            elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
-                new_channel_data.append(4)
-            elif saletype == 13 or pn_resouce == 'hlth':
-                sale_data += 1
-                new_channel_data.append(5)
-            else:
-                continue
-            insert_channel_data.append(new_channel_data)
-
-        DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
-        if sale_data == 0:
-            DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week,  u'航班管家', 'HBGJ'])
-        start_week = DateUtil.add_days(start_week, 1)
+    DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
+    if sale_data == 0:
+        DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week,  u'航班管家', 'HBGJ'])
 
 
     # total_week_sql = """
@@ -457,8 +454,4 @@ if __name__ == "__main__":
     #     update_refund_ticket_channel(start_week, end_week)
     #     print start_week, end_week
     #     end_date = end_week
-    i = 1
-    #1585
-    while i <= 1585:
-        update_refund_ticket_channel_daily(i)
-        i += 1
+    update_hb_channel_ticket_daily(1)

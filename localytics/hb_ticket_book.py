@@ -200,36 +200,50 @@ def update_booke_ticket_event_hourly(days=0):
     DBCli().targetdb_cli.batchInsert(sql, hour_data)
 
 
+def update_ios_android_newuser_daily(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
+    api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
+
+    api_root = "https://api.localytics.com/v1/query"
+
+    app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
+    app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
+    insert_data = [start_date]
+    hbdt_event = ["android.ticket.query", "ios.ticket.query"]
+
+    insert_sql = """
+        insert into ticket_query_newuser_daily (s_day, android_ticket_query_num, android_ticket_query_new_num,
+        ios_ticket_query_num, ios_ticket_query_new_num, createtime, updatetime) values
+        (%s, %s, %s, %s, %s , now(), now())
+        on duplicate key update updatetime = now(),
+        android_ticket_query_num = VALUES(android_ticket_query_num),
+        android_ticket_query_new_num = VALUES(android_ticket_query_new_num),
+        ios_ticket_query_num = VALUES(ios_ticket_query_num),
+        ios_ticket_query_new_num = VALUES(ios_ticket_query_new_num)
+    """
+
+    for event in hbdt_event:
+        if event.startswith("ios"):
+            app_id = app_id_ios
+        elif event.startswith("android"):
+            app_id = app_id_android
+
+        data_params = {"app_id": app_id, "dimensions": "day, new_device", "metrics": "users"}
+
+        conditions = {"event_name": event, "day": ["between", start_date, start_date]}
+
+        data_params["conditions"] = json.dumps(conditions)
+        r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=240)
+        result_data = r.json()["results"]
+        for result in result_data:
+            insert_data.append(result["users"])
+
+    DBCli().targetdb_cli.insert(insert_sql, insert_data)
+
+
 if __name__ == "__main__":
-    # hb_ticket_book(82)
-    # import time
-    # time.sleep(60*30)
-    # i = 427
-    # while i <= 431:
-    #     print i
-    #     hb_ticket_book(i)
-    #     i += 1
-    # hb_ticket_book(1)
-    update_booke_ticket_event_hourly(1)
-
-    # api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
-    # api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
-    # api_root = "https://api.localytics.com/v1/query"
-    # # app_id = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
-    # app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
-    # app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
-    # # start_date = DateUtil.date2str(datetime.datetime(2017, 2, 1, 12, 0, 0))
-    # # end_date = DateUtil.date2str(datetime.datetime(2017, 2, 1, 12, 59, 59))
-    # start_date = DateUtil.date2str(datetime.date(2017, 2, 10), '%Y-%m-%d')
-    # end_date = DateUtil.date2str(datetime.date(2017, 2, 13), '%Y-%m-%d')
-    # data_params = {"app_id": "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900", "dimensions": "day", "metrics": "sessions_per_event"}
-    # conditions = {"event_name": "ios.status.query.open", "day": ["between", start_date, start_date]}
-    #
-    # data_params["conditions"] = json.dumps(conditions)
-    # r = requests.get(api_root, auth=(api_key, api_secret), params=data_params)
-    # result = r.json()
-    # print result
-    # data = result["results"]
-    # print data
-
-
+    i = 71
+    while 1 < 1500:
+        update_ios_android_newuser_daily(i)
+        i += 1

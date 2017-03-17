@@ -11,6 +11,7 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(hb_ticket_book.hb_ticket_book)
     TimeService.add_localytics_service(hbdt_event.hbdt_event)
     TimeService.add_localytics_service(hb_pay_type.hb_pay_type)
+    TimeService.add_localytics_service(hb_ticket_book.update_ios_android_newuser_daily)
 
     for fun in TimeService.get_localytics_service():
         try:

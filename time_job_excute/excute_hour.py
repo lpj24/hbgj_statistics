@@ -22,7 +22,7 @@ if __name__ == "__main__":
         try:
             fun()
         except Exception as e:
-            logging.warning(e.message)
+            logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
             continue
 
 

@@ -3,6 +3,9 @@ from sql.hb_sqlHandlers import hb_flight_focus_user_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 import ast
+from collections import defaultdict
+import os
+os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
 
 def update_flight_focus_user_daily(days=0):
@@ -434,7 +437,191 @@ def update_focus_platform(days=0):
             start_date = DateUtil.add_days(start_date, 1)
         focus.close()
 
+
+def update_hb_focus_inter_inland(days=0):
+    start_date = DateUtil.get_date_before_days(int(days))
+    end_date = DateUtil.get_date_after_days(1-int(days))
+    inter_inland_sql = """
+        SELECT USERID,FLYKEY
+        FROM FLY_USERFOCUS_TBL WHERE FOCUSTIME>=%s and FOCUSTIME <%s
+        union all
+        SELECT USERID,FLYKEY
+        FROM FLY_USERFOCUS_TBL_HIS WHERE FOCUSTIME>=%s and FOCUSTIME <%s
+    """
+
+    inter_sql = """
+        select THREE_WORDS_CODE from AIRPORT_INTER_INFO
+    """
+
+    insert_sql = """
+        insert into hbdt_focus_daily_inter
+        (s_day, pv_inland, pv_inter, uv_inland, uv_inter, uv, createtime, updatetime)
+        values
+        (%s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now() ,
+        s_day = VALUES(s_day),
+        pv_inland = VALUES(pv_inland),
+        pv_inter = VALUES(pv_inter),
+        uv_inland = VALUES(uv_inland),
+        uv_inter = VALUES(uv_inter),
+        uv = VALUES(uv)
+    """
+
+    inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
+    inter_codes = [code[0] for code in inter_codes]
+    dto = [start_date, end_date, start_date, end_date]
+    inter_inland_data = DBCli().dynamic_focus_cli.queryAll(inter_inland_sql, dto)
+
+    fly_uv = defaultdict(list)
+    inter_uv_num = 0
+    inland_uv_num = 0
+    inter_pv_num = 0
+    inland_pv_num = 0
+
+    for data in inter_inland_data:
+        user_id, fly_key = data
+        fly_info = fly_key.split(",")
+        fly_uv[user_id].append([fly_info[2], fly_info[3]])
+
+    for k, v in fly_uv.items():
+        tmp_inter_uv = 0
+        tmp_inland_uv = 0
+        for fly in v:
+            dep, arr = fly
+            if dep in inter_codes or arr in inter_codes:
+                tmp_inter_uv += 1
+            else:
+                tmp_inland_uv += 1
+
+        if tmp_inter_uv > 0:
+            # 有一个航班是国际, inter_uv = 1  inland_uv=0, pv分开算
+            # 如果2个国际, 2个国内, inter_pv = 2, inland_pv = 2
+            inter_uv_num += 1
+            inland_uv_num += 0
+            inter_pv_num += tmp_inter_uv
+            inland_pv_num += tmp_inland_uv
+        else:
+            inland_uv_num += 1
+            inter_uv_num += 0
+            inland_pv_num += tmp_inland_uv
+            inter_pv_num += 0
+
+    # print inter_pv_num
+    # print inland_pv_num
+    # print inter_uv_num
+    # print inland_uv_num
+    DBCli().targetdb_cli.insert(insert_sql, [DateUtil.date2str(start_date, '%Y-%m-%d'),
+                                             inland_pv_num, inter_pv_num, inland_uv_num, inter_uv_num, len(fly_uv)])
+
+
+def tmp_cal_inter_inland(codes_city):
+    import datetime
+    start_date = datetime.date(2016, 12, 15)
+    end_date = datetime.date(2017, 3, 16)
+    dto = [start_date, end_date, start_date, end_date]
+    sql = """
+        SELECT USERID,FLYKEY
+        FROM FLY_USERFOCUS_TBL WHERE FOCUSTIME>=%s and FOCUSTIME <%s
+        union all
+        SELECT USERID,FLYKEY
+        FROM FLY_USERFOCUS_TBL_HIS WHERE FOCUSTIME>=%s and FOCUSTIME <%s
+    """
+    inter_sql = """
+        select THREE_WORDS_CODE from AIRPORT_INTER_INFO
+    """
+
+    inland_sql = """
+        select THREE_WORDS_CODE from AIRPORT_NATION_INFO
+    """
+    inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
+    inter_codes = [code[0] for code in inter_codes]
+
+    inland_codes = DBCli().oracle_cli.queryAll(inland_sql)
+    inland_codes = [code[0] for code in inland_codes]
+
+    # NAY与PEK 是北京机场
+    # SHA与PVG 是上海机场
+
+    fly_info = DBCli().dynamic_focus_cli.queryAll(sql, dto)
+    fly_line = defaultdict(list)
+    fly_line_inland = defaultdict(list)
+    fly_line_result = defaultdict(int)
+    fly_line_inland_result = defaultdict(int)
+
+    inter_file = open("inter_file.dat", "a")
+    inland_file = open("inland_file.dat", "a")
+    for data in fly_info:
+        user_id, fly_key = data
+        fly_info = fly_key.split(",")
+        dep, arr = fly_info[2], fly_info[3]
+        # if dep == "NAY":
+        #     dep = "PEK"
+        # elif dep == "PVG":
+        #     dep = "SHA"
+        # elif arr == "PVG":
+        #     arr = "SHA"
+        # elif arr == "NAY":
+        #     arr = "PEK"
+
+        if dep in inter_codes or arr in inter_codes:
+            # 国际航班
+            try:
+                if dep in inland_codes:
+                    # 关注国际航班的  起飞地是国内
+                    dep_inland = codes_city[dep]
+                    arr_inland = codes_city[arr]
+                    fly_line_inland[dep_inland + "-" + arr_inland].append(user_id)
+                dep = codes_city[dep]
+                arr = codes_city[arr]
+                fly_line[dep + "-" + arr].append(user_id)
+            except (KeyError, ):
+                continue
+
+    for k, v in fly_line.items():
+        fly_line_result[k] = len(v)
+
+    for k, v in fly_line_inland.items():
+        fly_line_inland_result[k] = len(v)
+
+    i = 0
+    for k, v in sorted(fly_line_result.iteritems(), key=lambda a: a[1], reverse=True):
+        if i > 50:
+            break
+        inter_file.write("\t".join(k.split("-")) + "\t" + str(v) + "\n")
+        i += 1
+
+    i = 0
+    print "---------------------------------------------------------"
+    for k, v in sorted(fly_line_inland_result.iteritems(), key=lambda a: a[1], reverse=True):
+        if i > 20:
+            break
+        # print "\t".join(k.split("-")) + "\t" + str(v)
+        inland_file.write("\t".join(k.split("-")) + "\t" + str(v) + "\n")
+        i += 1
+
+
 if __name__ == "__main__":
-    update_flight_focus_user_daily(2)
+    # update_flight_focus_user_daily(2)
     # update_focus_platform(1)
     # update_platform_focus_by_file()
+    inter_sql = """
+        select CITYNAME, THREE_WORDS_CODE from AIRPORT_INTER_INFO
+    """
+
+    inland_sql = """
+        select CITY, THREE_WORDS_CODE from AIRPORT_NATION_INFO
+    """
+    inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
+    inland_codes = DBCli().oracle_cli.queryAll(inland_sql)
+    inter_dict = {}
+    for code in inter_codes:
+        inter_dict[code[1]] = code[0]
+
+    for code in inland_codes:
+        inter_dict[code[1]] = code[0]
+
+    tmp_cal_inter_inland(inter_dict)
+    # i = 30
+    # while i >= 1:
+    #     update_hb_focus_inter_inland(inter_codes, i)
+    #     i -= 1

@@ -36,6 +36,6 @@ def update_eat_active_user_quarterly():
     DBCli().targetdb_cli.insert(eat_activeusers_sql['insert_eat_activeusers_quarterly'], query_data)
 
 if __name__ == "__main__":
-    update_eat_active_user_daily(2)
+    update_eat_active_user_daily(1)
     # update_eat_active_user_weekly()
     # update_eat_active_user_monthly()

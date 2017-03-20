@@ -21,6 +21,7 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_search_focus.write_day)
+    TimeService.add_hard_service(hb_flight_focus.update_hb_focus_inter_inland)
     # TimeService.add_hard_service(hb_profit_cost.update_profit_hotel_income)
 
     #tmp task

@@ -8,8 +8,8 @@ def update_hotel_newconsumers_daily(days=0):
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [DateUtil.date2str(start_date),
            DateUtil.date2str(end_date), DateUtil.date2str(start_date)]
-    query_data = DBCli().sky_hotel_cli.queryAll(hotel_newconsumers_sql["hotel_newconsumers_daily"], dto)
-    p2p_num = DBCli().sky_hotel_cli.queryOne(hotel_newconsumers_sql["hotel_newconsumers_p2p_daily"], dto)
+    query_data = DBCli().tongji_skyhotel_cli.queryAll(hotel_newconsumers_sql["hotel_newconsumers_daily"], dto)
+    p2p_num = DBCli().tongji_skyhotel_cli.queryOne(hotel_newconsumers_sql["hotel_newconsumers_p2p_daily"], dto)
     for uid in query_data:
         DBCli().redis_cli.sadd("hotel_newconsumers_day", uid[0])
     newconsumers_num = DBCli().redis_cli.sdiffstore("hotel_newconsumers_day", "hotel_newconsumers_day", "hotel_phoneid_history")

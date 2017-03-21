@@ -8,7 +8,7 @@ def update_hotel_consumers_daily(days=0):
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_daily"], dto)
+    query_data = DBCli().tongji_skyhotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_daily"], dto)
     DBCli().targetdb_cli.insert(hotel_consumers_sql["update_hotel_consumers_daily"], query_data)
 
 
@@ -16,7 +16,7 @@ def update_hotel_consumers_weekly():
     start_date, end_date = DateUtil.get_last_week_date()
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_weekly"], dto)
+    query_data = DBCli().tongji_skyhotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_weekly"], dto)
     DBCli().targetdb_cli.insert(hotel_consumers_sql["update_hotel_consumers_weekly"], query_data)
 
 
@@ -24,7 +24,7 @@ def update_hotel_consumers_monthly():
     start_date, end_date = DateUtil.get_last_month_date()
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    query_data = DBCli().sky_hotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_monthly"], dto)
+    query_data = DBCli().tongji_skyhotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_monthly"], dto)
     DBCli().targetdb_cli.insert(hotel_consumers_sql["update_hotel_consumers_monthly"], query_data)
 
 if __name__ == "__main__":

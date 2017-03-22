@@ -300,3 +300,4 @@ def update_profit_hotel_income(days=0):
 
 if __name__ == "__main__":
     update_profit_hotel_income(1)
+    update_profit_hb_income(1)

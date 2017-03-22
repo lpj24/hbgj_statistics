@@ -31,5 +31,5 @@ if __name__ == "__main__":
         try:
             fun(int(days))
         except Exception as e:
-            logging.warning(e.message + str(fun))
+            logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
             continue

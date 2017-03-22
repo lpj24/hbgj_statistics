@@ -152,18 +152,25 @@ def update_flight_detail_user_monthly():
 
 
 def update_flight_detail_user_quarterly():
-    last_month_start, last_month_end = DateUtil.get_last_quarter_date()
-    dto = [last_month_start, last_month_start]
-    start_index = last_month_start.month
-    if last_month_end.month < start_index:
-        end_index = 13
-    else:
-        end_index = last_month_end.month
-    for tablelist in xrange(start_index, end_index):
-        table_list = DateUtil.get_all_table(last_month_start.year, tablelist)
-        dto.extend(table_list)
-    query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_quarterly'], dto)
-    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_quarterly'], query_data)
+    start_quarter, end_quarter = DateUtil.get_last_quarter_date()
+    s_day = DateUtil.date2str(start_quarter, '%Y-%m-%d')
+    dto = [start_quarter, end_quarter]
+    query_key = []
+    while end_quarter > start_quarter:
+        query_key.append(DateUtil.date2str(start_quarter, '%Y-%m-%d') + "_hbdt_detail")
+        start_quarter = DateUtil.add_days(start_quarter, 1)
+    quarter_uv = len(DBCli().redis_dt_cli.sunion(query_key))
+
+    pv_sql = """
+            select pv from hbdt_details_daily where s_day>=%s and s_day<%s
+        """
+
+    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_sum = 0
+    for pv in pv_data:
+        pv_sum += pv[0]
+    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_quarterly'],
+                                [s_day, quarter_uv, pv_sum])
 
 
 def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):

@@ -30,6 +30,7 @@ where createtime>=%s
 and createtime<%s
 and (gdsdesc in ('已成单','已结账','已确认','已入住','已取消') or hotelorderid is not null)
 and gdsname='p2p'
+and phoneid != '12831915'
 GROUP BY s_day) A
 right JOIN (
 SELECT DATE_FORMAT(createtime, '%%Y-%%m-%%d') s_day,
@@ -39,6 +40,7 @@ sum(case when producttype=3 then roomcount Else TIMESTAMPDIFF(day,arrivedate, le
 from hotelorder
 where createtime>=%s
 and createtime<%s
+and phoneid != '12831915'
 and (gdsdesc in ('已成单','已结账','已确认','已入住','已取消') or hotelorderid is not null)
 GROUP BY s_day
 ) B on B.s_day=A.s_day

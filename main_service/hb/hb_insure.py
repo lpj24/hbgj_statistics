@@ -235,6 +235,107 @@ def update_insure_type_daily(days=0):
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
 
+
+def update_hb_boat(days=0):
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
+    dto = [start_date, end_date]
+    detail_sql = """
+        SELECT DATE_FORMAT(i.createtime, '%%Y-%%m-%%d') s_day,
+        sum(case when o.P like '%%hbgj%%' and o.INTFLAG=0 then 1 else 0 END) insuer_hbgj_inland_count,
+        sum(case when o.P like '%%hbgj%%' and o.INTFLAG=1 then 1 else 0 END) insuer_hbgj_inter_count,
+        sum(case when o.P like '%%gtgj%%' and o.INTFLAG=0 then 1 else 0 END) insuer_gtgj_inland_count,
+        sum(case when o.P like '%%gtgj%%' and o.INTFLAG=1 then 1 else 0 END) insuer_gtgj_inter_count,
+        sum(case when o.INTFLAG=0 then 1 else 0 END) insuer_inland_count,
+        sum(case when o.INTFLAG=1 then 1 else 0 END) insuer_inter_count,
+        sum(case when o.P like '%%hbgj%%' and o.INTFLAG=0 then i.PRICE else 0 END) insuer_hbgj_inland_amount,
+        sum(case when o.P like '%%hbgj%%' and o.INTFLAG=1 then i.PRICE else 0 END) insuer_hbgj_inter_amount,
+        sum(case when o.P like '%%gtgj%%' and o.INTFLAG=0 then i.PRICE else 0 END) insuer_gtgj_inland_amount,
+        sum(case when o.P like '%%gtgj%%' and o.INTFLAG=1 then i.PRICE else 0 END) insuer_gtgj_inter_amount,
+        sum(case when o.INTFLAG=0 then i.PRICE else 0 END) insuer_inland_amount,
+        sum(case when o.INTFLAG=1 then i.PRICE else 0 END) insuer_inter_amount
+        FROM `INSURE_ORDERDETAIL` i
+        join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
+        where i.CREATETIME>=%s
+        and i.CREATETIME<%s
+        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG','A_QUNAYSFYJHS')
+        GROUP BY s_day;
+    """
+
+    insert_sql = """
+        insert into operation_accident_insure_detail_daily (s_day, insuer_hbgj_inland_count, insuer_hbgj_inter_count, insuer_gtgj_inland_count
+                ,insuer_gtgj_inter_count, insuer_inland_count, insuer_inter_count, insuer_hbgj_inland_amount, insuer_hbgj_inter_amount
+                ,insuer_gtgj_inland_amount, insuer_gtgj_inter_amount, insuer_inland_amount, insuer_inter_amount,
+                createtime, updatetime
+                ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+                on duplicate key update updatetime = now(),
+                s_day = values(s_day),
+                insuer_hbgj_inland_count = values(insuer_hbgj_inland_count),
+                insuer_hbgj_inter_count = values(insuer_hbgj_inter_count),
+                insuer_gtgj_inland_count = values(insuer_gtgj_inland_count),
+                insuer_gtgj_inter_count = values(insuer_gtgj_inter_count),
+                insuer_inland_count = values(insuer_inland_count),
+                insuer_inter_count = values(insuer_inter_count),
+                insuer_hbgj_inland_amount = values(insuer_hbgj_inland_amount),
+                insuer_hbgj_inter_amount = values(insuer_hbgj_inter_amount),
+                insuer_gtgj_inland_amount = values(insuer_gtgj_inland_amount),
+                insuer_gtgj_inter_amount = values(insuer_gtgj_inter_amount),
+                insuer_inland_amount = values(insuer_inland_amount),
+                insuer_inter_amount = values(insuer_inter_amount)
+
+    """
+    detail_data = DBCli().sourcedb_cli.queryAll(detail_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, detail_data)
+
+    detail_refund_sql = """
+        SELECT DATE_FORMAT(i.updatetime, '%%Y-%%m-%%d') s_day,
+        sum(case when o.P LIKE '%%hbgj%%' and o.INTFLAG=0 then 1 else 0 end) insuer_refund_hbgj_inland,
+        sum(case when o.P LIKE '%%hbgj%%' and o.INTFLAG=1 then 1 else 0 end) insuer_refund_hbgj_inter,
+        sum(case when o.P LIKE '%%gtgj%%' and o.INTFLAG=0 then 1 else 0 end) insuer_refund_gtgj_inland,
+        sum(case when o.P LIKE '%%gtgj%%' and o.INTFLAG=1 then 1 else 0 end) insuer_refund_gtgj_inter,
+        sum(case when o.INTFLAG=0 then 1 else 0 end) insuer_refund_inland,
+        sum(case when o.INTFLAG=1 then 1 else 0 end) insuer_refund_inter,
+        sum(case when o.P LIKE '%%hbgj%%' and o.INTFLAG=0 then i.PRICE else 0 end) insuer_refund_hbgj_inland_amount,
+        sum(case when o.P LIKE '%%hbgj%%' and o.INTFLAG=1 then i.PRICE else 0 end) insuer_refund_hbgj_inter_amount,
+        sum(case when o.P LIKE '%%gtgj%%' and o.INTFLAG=0 then i.PRICE else 0 end) insuer_refund_gtgj_inland_amount,
+        sum(case when o.P LIKE '%%gtgj%%' and o.INTFLAG=1 then i.PRICE else 0 end) insuer_refund_gtgj_inter_amount,
+        sum(case when o.INTFLAG=0 then i.PRICE else 0 end) insuer_refund_inland_amount,
+        sum(case when o.INTFLAG=1 then i.PRICE else 0 end) insuer_refund_inter_amount
+        FROM `INSURE_ORDERDETAIL` i
+        join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
+        where i.updatetime>=%s
+        and i.updatetime<%s
+        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG','A_QUNAYSFYJHS')
+        and i.STATUS in ('21','2')
+        GROUP BY s_day;
+    """
+
+    insert_sql = """
+            insert into operation_accident_insure_refund_detail_daily (s_day, insuer_refund_hbgj_inland, insuer_refund_hbgj_inter,
+                insuer_refund_gtgj_inland, insuer_refund_gtgj_inter, insuer_refund_inland, insuer_refund_inter, insuer_refund_hbgj_inland_amount,
+                insuer_refund_hbgj_inter_amount, insuer_refund_gtgj_inland_amount, insuer_refund_gtgj_inter_amount,
+                insuer_refund_inland_amount, insuer_refund_inter_amount, createtime, updatetime
+            ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+            on duplicate key update updatetime = now(),
+            s_day = values(s_day),
+            insuer_refund_hbgj_inland = values(insuer_refund_hbgj_inland),
+            insuer_refund_hbgj_inter = values(insuer_refund_hbgj_inter),
+            insuer_refund_gtgj_inland = values(insuer_refund_gtgj_inland),
+            insuer_refund_gtgj_inter = values(insuer_refund_gtgj_inter),
+
+            insuer_refund_inland = values(insuer_refund_inland),
+            insuer_refund_inter = values(insuer_refund_inter),
+            insuer_refund_hbgj_inland_amount = values(insuer_refund_hbgj_inland_amount),
+            insuer_refund_hbgj_inter_amount = values(insuer_refund_hbgj_inter_amount),
+            insuer_refund_gtgj_inland_amount = values(insuer_refund_gtgj_inland_amount),
+            insuer_refund_gtgj_inter_amount = values(insuer_refund_gtgj_inter_amount),
+            insuer_refund_inland_amount = values(insuer_refund_inland_amount),
+            insuer_refund_inter_amount = values(insuer_refund_inter_amount)
+    """
+    detail_refund_data = DBCli().sourcedb_cli.queryAll(detail_refund_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, detail_refund_data)
+
+
 if __name__ == "__main__":
     # import datetime
     # min_date = datetime.date(2013, 4, 26)
@@ -259,4 +360,4 @@ if __name__ == "__main__":
     #     # update_insure_class_daily(i)
     #     update_insure_type_daily(i)
     #     i -= 1
-    update_insure_class_daily(1)
+    update_hb_boat(1)

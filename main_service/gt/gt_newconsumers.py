@@ -62,7 +62,8 @@ def gt_newconsumers_daily(days=0):
                   and pay_time<%s
         """
     start_date = DateUtil.get_date_before_days(days)
-    dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
+    dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1)),
+           DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
     query_data_ios = DBCli().gt_cli.queryAll(new_consumers_daily_ios, dto)
     query_data_android = DBCli().gt_cli.queryAll(new_consumers_daily_android, dto)
 
@@ -115,7 +116,7 @@ def gt_newconsumers_hourly(days, s_hour):
 
     query_start_date = s_day + " " + str(s_hour) + ":00:00"
     query_end_date = s_day + " " + str(s_hour) + ":59:59"
-    dto = [query_start_date, query_end_date]
+    dto = [query_start_date, query_end_date, query_start_date, query_end_date]
     hourly_sql_ios = """
         SELECT distinct uid
                   FROM user_order

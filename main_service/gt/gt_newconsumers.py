@@ -37,11 +37,25 @@ def gt_newconsumers_daily(days=0):
                   and p_info LIKE '%%ios%%'
                   and pay_time>=%s
                   and pay_time<%s
+            union all
+                SELECT distinct uid
+              FROM user_order_history
+              where i_status=3
+              and p_info LIKE '%%ios%%'
+              and pay_time>=%s
+              and pay_time<%s
         """
 
     new_consumers_daily_android = """
                     SELECT distinct uid
                   FROM user_order
+                  where i_status=3
+                  and p_info LIKE '%%android%%'
+                  and pay_time>=%s
+                  and pay_time<%s
+                  union all
+                SELECT distinct uid
+                  FROM user_order_history
                   where i_status=3
                   and p_info LIKE '%%android%%'
                   and pay_time>=%s
@@ -109,7 +123,13 @@ def gt_newconsumers_hourly(days, s_hour):
                   and p_info LIKE '%%ios%%'
                   and pay_time>=%s
                   and pay_time<=%s
-
+            union all
+                    SELECT distinct uid
+                  FROM user_order_history
+                  where i_status=3
+                  and p_info LIKE '%%ios%%'
+                  and pay_time>=%s
+                  and pay_time<=%s
         """
 
     hourly_sql_android = """
@@ -119,7 +139,13 @@ def gt_newconsumers_hourly(days, s_hour):
                   and p_info LIKE '%%android%%'
                   and pay_time>=%s
                   and pay_time<=%s
-
+            union
+        SELECT distinct uid
+                  FROM user_order_history
+                  where i_status=3
+                  and p_info LIKE '%%android%%'
+                  and pay_time>=%s
+                  and pay_time<=%s
         """
     query_data_ios = DBCli().gt_cli.queryAll(hourly_sql_ios, dto)
     query_data_android = DBCli().gt_cli.queryAll(hourly_sql_android, dto)

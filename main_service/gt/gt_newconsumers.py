@@ -29,8 +29,6 @@ def gt_newconsumers_history():
 
 def gt_newconsumers_daily(days=0):
     redis_cli = DBCli().redis_cli
-    gt_cli = DBCli().gt_cli
-    targetdb_cli = DBCli().targetdb_cli
     new_consumers_daily_ios = """
             SELECT distinct uid
                   FROM user_order
@@ -51,8 +49,9 @@ def gt_newconsumers_daily(days=0):
     start_date = DateUtil.get_date_before_days(days)
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
 
-    query_data_ios = gt_cli.queryAll(new_consumers_daily_ios, dto)
-    query_data_android = gt_cli.queryAll(new_consumers_daily_android, dto)
+    query_data_ios = DBCli().gt_cli.queryAll(new_consumers_daily_ios, dto)
+    query_data_android = DBCli().gt_cli.queryAll(new_consumers_daily_android, dto)
+
     res_ios = map(lambda x: x[0], query_data_ios)
     res_android = map(lambda x: x[0], query_data_android)
 
@@ -79,7 +78,7 @@ def gt_newconsumers_daily(days=0):
         """
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), today_uids_ios + today_uids_android, today_uids_ios,
            today_uids_android]
-    targetdb_cli.insert(sql, dto)
+    DBCli().targetdb_cli.insert(sql, dto)
 
     redis_cli.sunionstore("total_uids_ios", "total_uids_ios", "today_uid_ios")
     redis_cli.sunionstore("total_uids_android", "total_uids_android", "today_uid_android")
@@ -90,8 +89,6 @@ def gt_newconsumers_daily(days=0):
 
 def gt_newconsumers_hourly():
     redis_cli = DBCli().redis_cli
-    gt_cli = DBCli().gt_cli
-    targetdb_cli = DBCli().targetdb_cli
     s_day = DateUtil.get_today("%Y-%m-%d")
     s_hour = int(datetime.datetime.now().strftime("%H"))
 
@@ -123,8 +120,8 @@ def gt_newconsumers_hourly():
                   and pay_time<=%s
 
         """
-    query_data_ios = gt_cli.queryAll(hourly_sql_ios, dto)
-    query_data_android = gt_cli.queryAll(hourly_sql_android, dto)
+    query_data_ios = DBCli().gt_cli.queryAll(hourly_sql_ios, dto)
+    query_data_android = DBCli().gt_cli.queryAll(hourly_sql_android, dto)
 
     res_ios = map(lambda x: x[0], query_data_ios)
     res_android = map(lambda x: x[0], query_data_android)
@@ -157,13 +154,13 @@ def gt_newconsumers_hourly():
         """
 
     dto = [s_hour, s_day, hour_uids_ios + hour_uids_android, hour_uids_ios, hour_uids_android]
-    targetdb_cli.insert(update_new_consumers_hourly_sql, dto)
+    DBCli().targetdb_cli.insert(update_new_consumers_hourly_sql, dto)
 
 
 if __name__ == "__main__":
-    # gt_newconsumers_daily(1)
+    gt_newconsumers_daily(1)
     # gt_newconsumers_history()
-    i = 8
-    while i <= 15:
-        gt_newconsumers_hourly()
-        i += 1
+    # i = 8
+    # while i <= 15:
+    #     gt_newconsumers_hourly()
+    #     i += 1

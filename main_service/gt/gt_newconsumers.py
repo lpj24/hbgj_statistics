@@ -23,6 +23,7 @@ def gt_newconsumers_history():
                     if uid:
                         # redis_cli.sadd("total_his_uids", uid[0:-1])
                         DBCli().redis_cli.sadd(uids_key, uid[0:-1])
+                        DBCli().redis_cli.sadd(uids_key + "backup", uid[0:-1])
                     else:
                         break
 
@@ -89,15 +90,15 @@ def gt_newconsumers_daily(days=0):
 
 def gt_newconsumers_hourly(s_hour):
     redis_cli = DBCli().redis_cli
-    # s_day = DateUtil.get_today("%Y-%m-%d")
-    # s_hour = int(datetime.datetime.now().strftime("%H"))
-    #
-    # if s_hour == 0:
-    #     s_day = DateUtil.date2str(DateUtil.get_date_before_days(2), '%Y-%m-%d')
-    #     s_hour = 23
-    # else:
-    #     s_hour -= 1
-    s_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
+    s_day = DateUtil.get_today("%Y-%m-%d")
+    s_hour = int(datetime.datetime.now().strftime("%H"))
+
+    if s_hour == 0:
+        s_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
+        s_hour = 23
+    else:
+        s_hour -= 1
+
     query_start_date = s_day + " " + str(s_hour) + ":00:00"
     query_end_date = s_day + " " + str(s_hour) + ":59:59"
     dto = [query_start_date, query_end_date]
@@ -126,11 +127,11 @@ def gt_newconsumers_hourly(s_hour):
     res_ios = map(lambda x: x[0], query_data_ios)
     res_android = map(lambda x: x[0], query_data_android)
 
-    # for uid in res_ios:
-    #     redis_cli.sadd("hour_uid_ios", uid)
-    #
-    # for uid in res_android:
-    #     redis_cli.sadd("hour_uid_android", uid)
+    for uid in res_ios:
+        redis_cli.sadd("hour_uid_ios", uid)
+
+    for uid in res_android:
+        redis_cli.sadd("hour_uid_android", uid)
 
     redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids_ios")
     redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids_android")
@@ -159,9 +160,8 @@ def gt_newconsumers_hourly(s_hour):
 
 if __name__ == "__main__":
     # gt_newconsumers_daily(1)
-    # gt_newconsumers_history()
-    i = 14
-    while i <= 23:
-        gt_newconsumers_hourly(i)
-        break
-        i += 1
+    gt_newconsumers_history()
+    # i = 14
+    # while i <= 23:
+    #     gt_newconsumers_hourly(i)
+    #     i += 1

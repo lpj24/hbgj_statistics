@@ -132,29 +132,29 @@ def gt_newconsumers_hourly(s_hour):
     for uid in res_android:
         redis_cli.sadd("hour_uid_android", uid)
 
-    redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids_ios")
-    redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids_android")
-    redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids")
-    hour_uids_ios = redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", s_day + "_hour_uids")
-
-    redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", "total_uids_ios")
-    redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", "total_uids_android")
-    redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", "total_uids")
-    hour_uids_android = redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", s_day + "_hour_uids")
-
-    redis_cli.sunionstore(s_day + "_hour_uids", s_day + "_hour_uids", "hour_uid_android")
-    redis_cli.sunionstore(s_day + "_hour_uids", s_day + "_hour_uids", "hour_uid_ios")
-    redis_cli.expire(s_day + "_hour_uids", 86400)
-    redis_cli.delete("hour_uid_android")
-    redis_cli.delete("hour_uid_ios")
-
-    update_new_consumers_hourly_sql = """
-            insert into gtgj_newconsumers_hourly (hour, s_day, new_consumers, new_consumers_ios,
-            new_consumers_android, createtime, updatetime) values (%s, %s, %s, %s , %s, now(), now())
-        """
-
-    dto = [s_hour, s_day, hour_uids_ios + hour_uids_android, hour_uids_ios, hour_uids_android]
-    DBCli().targetdb_cli.insert(update_new_consumers_hourly_sql, dto)
+    # redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids_ios")
+    # redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids_android")
+    # redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", "total_uids")
+    # hour_uids_ios = redis_cli.sdiffstore("hour_uid_ios", "hour_uid_ios", s_day + "_hour_uids")
+    #
+    # redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", "total_uids_ios")
+    # redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", "total_uids_android")
+    # redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", "total_uids")
+    # hour_uids_android = redis_cli.sdiffstore("hour_uid_android", "hour_uid_android", s_day + "_hour_uids")
+    #
+    # redis_cli.sunionstore(s_day + "_hour_uids", s_day + "_hour_uids", "hour_uid_android")
+    # redis_cli.sunionstore(s_day + "_hour_uids", s_day + "_hour_uids", "hour_uid_ios")
+    # redis_cli.expire(s_day + "_hour_uids", 86400)
+    # redis_cli.delete("hour_uid_android")
+    # redis_cli.delete("hour_uid_ios")
+    #
+    # update_new_consumers_hourly_sql = """
+    #         insert into gtgj_newconsumers_hourly (hour, s_day, new_consumers, new_consumers_ios,
+    #         new_consumers_android, createtime, updatetime) values (%s, %s, %s, %s , %s, now(), now())
+    #     """
+    #
+    # dto = [s_hour, s_day, hour_uids_ios + hour_uids_android, hour_uids_ios, hour_uids_android]
+    # DBCli().targetdb_cli.insert(update_new_consumers_hourly_sql, dto)
 
 
 if __name__ == "__main__":
@@ -163,4 +163,5 @@ if __name__ == "__main__":
     i = 14
     while i <= 23:
         gt_newconsumers_hourly(i)
+        break
         i += 1

@@ -3,12 +3,6 @@ import conf
 
 
 class DBCli(object):
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(DBCli, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
 
     def __init__(self, *args):
         self._source_db = conf.source_db
@@ -74,10 +68,6 @@ class DBCli(object):
     @property
     def redis_dt_cli(self):
         return conf.redis_hbdt_cli
-
-    @property
-    def redis_test_cli(self):
-        return conf.redis_test_cli
 
     @property
     def sky_hotel_cli(self):

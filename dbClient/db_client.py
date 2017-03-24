@@ -76,6 +76,10 @@ class DBCli(object):
         return conf.redis_hbdt_cli
 
     @property
+    def redis_test_cli(self):
+        return conf.redis_test_cli
+
+    @property
     def sky_hotel_cli(self):
         return DButils("mysql", self._sky_hotel)
 

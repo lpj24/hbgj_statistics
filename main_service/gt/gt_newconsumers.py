@@ -7,10 +7,13 @@ import datetime
 
 def gt_newconsumers_history():
     # file_list = os.walk("C:\Users\Administrator\PycharmProjects\gt_newconsumers_hourly\data")
-    file_list = os.walk("/home/huolibi/task/gt_newconsumers_hourly/data")
+    # total uid 3-21
+    file_list = os.walk("/home/huolibi/task/gt_newconsumers/data")
     for dirpath, dirnames, filenames in file_list:
         for f_uid in filenames:
             filename = os.path.join(dirpath, f_uid)
+            if filename == "20170322_ios" or filename == "20170322_ios":
+                break
             if filename.endswith("ios"):
                 uids_key = "total_uids_ios"
             elif filename.endswith("android"):
@@ -37,25 +40,11 @@ def gt_newconsumers_daily(days=0):
                   and p_info LIKE '%%ios%%'
                   and pay_time>=%s
                   and pay_time<%s
-            union all
-                SELECT distinct uid
-              FROM user_order_history
-              where i_status=3
-              and p_info LIKE '%%ios%%'
-              and pay_time>=%s
-              and pay_time<%s
         """
 
     new_consumers_daily_android = """
                     SELECT distinct uid
                   FROM user_order
-                  where i_status=3
-                  and p_info LIKE '%%android%%'
-                  and pay_time>=%s
-                  and pay_time<%s
-                  union all
-                SELECT distinct uid
-                  FROM user_order_history
                   where i_status=3
                   and p_info LIKE '%%android%%'
                   and pay_time>=%s
@@ -187,18 +176,18 @@ def gt_newconsumers_hourly(days, s_hour):
 
 if __name__ == "__main__":
     # gt_newconsumers_daily(1)
-    # gt_newconsumers_history()
+    gt_newconsumers_history()
 
-    days = 275
-    while days >= 1:
-        i = 7
-        while i <= 23:
-            gt_newconsumers_hourly(days, i)
-            i += 1
-
-        print "============"
-        gt_newconsumers_daily(days)
-        days -= 1
-        break
+    # days = 275
+    # while days >= 1:
+    #     i = 7
+    #     while i <= 23:
+    #         gt_newconsumers_hourly(days, i)
+    #         i += 1
+    #
+    #     print "============"
+    #     gt_newconsumers_daily(days)
+    #     days -= 1
+    #     break
 
 

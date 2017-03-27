@@ -19,4 +19,6 @@ if __name__ == "__main__":
             time.sleep(1 * 60 * 60)
         except Exception as e:
             logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
+            time.sleep(1 * 60 * 60)
+            fun(int(days))
             continue

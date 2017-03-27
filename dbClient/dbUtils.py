@@ -6,12 +6,6 @@ import cx_Oracle
 
 
 class DButils(object):
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(DButils, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
 
     def __init__(self, dbtype=None, conf=None, *args):
         _return_cursor = MySQLdb.cursors.DictCursor if dict in args else MySQLdb.cursors.Cursor

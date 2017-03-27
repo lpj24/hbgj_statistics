@@ -12,8 +12,10 @@ def gt_newconsumers_history():
     for dirpath, dirnames, filenames in file_list:
         for f_uid in filenames:
             filename = os.path.join(dirpath, f_uid)
-            if filename == "20170322_ios" or filename == "20170322_ios":
-                break
+            if filename in ["20170322_ios", "20170323_ios", "20170324_ios", "20170325_ios", "20170326_ios",
+                            "20170322_android", "20170323_android", "20170324_android", "20170325_android",
+                            "20170326_android"]:
+                continue
             if filename.endswith("ios"):
                 uids_key = "total_uids_ios"
             elif filename.endswith("android"):
@@ -51,8 +53,7 @@ def gt_newconsumers_daily(days=0):
                   and pay_time<%s
         """
     start_date = DateUtil.get_date_before_days(days)
-    dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1)),
-           DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
+    dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
     query_data_ios = DBCli().gt_cli.queryAll(new_consumers_daily_ios, dto)
     query_data_android = DBCli().gt_cli.queryAll(new_consumers_daily_android, dto)
 
@@ -105,17 +106,10 @@ def gt_newconsumers_hourly(days, s_hour):
 
     query_start_date = s_day + " " + str(s_hour) + ":00:00"
     query_end_date = s_day + " " + str(s_hour) + ":59:59"
-    dto = [query_start_date, query_end_date, query_start_date, query_end_date]
+    dto = [query_start_date, query_end_date]
     hourly_sql_ios = """
         SELECT distinct uid
                   FROM user_order
-                  where i_status=3
-                  and p_info LIKE '%%ios%%'
-                  and pay_time>=%s
-                  and pay_time<=%s
-            union all
-                    SELECT distinct uid
-                  FROM user_order_history
                   where i_status=3
                   and p_info LIKE '%%ios%%'
                   and pay_time>=%s
@@ -125,13 +119,6 @@ def gt_newconsumers_hourly(days, s_hour):
     hourly_sql_android = """
         SELECT distinct uid
                   FROM user_order
-                  where i_status=3
-                  and p_info LIKE '%%android%%'
-                  and pay_time>=%s
-                  and pay_time<=%s
-            union
-        SELECT distinct uid
-                  FROM user_order_history
                   where i_status=3
                   and p_info LIKE '%%android%%'
                   and pay_time>=%s
@@ -178,16 +165,16 @@ if __name__ == "__main__":
     # gt_newconsumers_daily(1)
     gt_newconsumers_history()
 
-    # days = 275
-    # while days >= 1:
-    #     i = 7
-    #     while i <= 23:
-    #         gt_newconsumers_hourly(days, i)
-    #         i += 1
-    #
-    #     print "============"
-    #     gt_newconsumers_daily(days)
-    #     days -= 1
-    #     break
+    days = 5
+    while days >= 1:
+        i = 7
+        while i <= 23:
+            gt_newconsumers_hourly(days, i)
+            i += 1
+
+        print "============"
+        gt_newconsumers_daily(days)
+        days -= 1
+        break
 
 

@@ -17,21 +17,21 @@ def gt_newconsumers_history():
                                "20170327_ios", "20170322_android", "20170323_android", "20170324_android",
                                "20170325_android", "20170326_android", "20170327_android"]:
                 continue
-            # if filename.endswith("ios"):
-            #     uids_key = "total_uids_ios"
-            # elif filename.endswith("android"):
-            #     uids_key = "total_uids_android"
-            # else:
-            #     uids_key = "total_uids"
-            # with open(filename, 'r') as fp:
-            #     while 1:
-            #         uid = fp.readline()
-            #         if uid:
-            #             # redis_cli.sadd("total_his_uids", uid[0:-1])
-            #             DBCli().redis_cli.sadd(uids_key, uid[0:-1])
-            #             DBCli().redis_cli.sadd(uids_key + "backup", uid[0:-1])
-            #         else:
-            #             break
+            if filename.endswith("ios"):
+                uids_key = "total_uids_ios"
+            elif filename.endswith("android"):
+                uids_key = "total_uids_android"
+            else:
+                uids_key = "total_uids"
+            with open(filename, 'r') as fp:
+                while 1:
+                    uid = fp.readline()
+                    if uid:
+                        # redis_cli.sadd("total_his_uids", uid[0:-1])
+                        DBCli().redis_cli.sadd(uids_key, uid[0:-1])
+                        DBCli().redis_cli.sadd(uids_key + "backup", uid[0:-1])
+                    else:
+                        break
 
 
 def gt_newconsumers_daily(days=0):

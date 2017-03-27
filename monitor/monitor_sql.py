@@ -69,6 +69,7 @@ sql = [
     "select count(1) from operation_accident_insure_refund_detail_daily where s_day=%s",
     "select count(1) from operation_accident_insure_detail_daily where s_day=%s",
     "select count(1) from operation_hbgj_order_detail_daily where s_day=%s",
+    "select count(1) from operation_hbgj_channel_ticket_income_daily where s_day=%s",
 ]
 
 week_sql = [

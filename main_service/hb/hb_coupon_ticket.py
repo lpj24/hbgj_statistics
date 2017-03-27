@@ -251,7 +251,6 @@ def update_hb_coupon_his():
     """
 
     issue_coupon_data = DBCli().hb_source_account_cli.queryAll(issue_sql)
-    print issue_coupon_data
     DBCli().targetdb_cli.batchInsert(insert_sql, issue_coupon_data)
     use_sql = """
         select

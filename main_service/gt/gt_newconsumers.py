@@ -12,25 +12,26 @@ def gt_newconsumers_history():
     for dirpath, dirnames, filenames in file_list:
         for f_uid in filenames:
             filename = os.path.join(dirpath, f_uid)
+            print filename
             if filename in ["20170322_ios", "20170323_ios", "20170324_ios", "20170325_ios", "20170326_ios",
                             "20170322_android", "20170323_android", "20170324_android", "20170325_android",
                             "20170326_android"]:
                 continue
-            if filename.endswith("ios"):
-                uids_key = "total_uids_ios"
-            elif filename.endswith("android"):
-                uids_key = "total_uids_android"
-            else:
-                uids_key = "total_uids"
-            with open(filename, 'r') as fp:
-                while 1:
-                    uid = fp.readline()
-                    if uid:
-                        # redis_cli.sadd("total_his_uids", uid[0:-1])
-                        DBCli().redis_cli.sadd(uids_key, uid[0:-1])
-                        DBCli().redis_cli.sadd(uids_key + "backup", uid[0:-1])
-                    else:
-                        break
+            # if filename.endswith("ios"):
+            #     uids_key = "total_uids_ios"
+            # elif filename.endswith("android"):
+            #     uids_key = "total_uids_android"
+            # else:
+            #     uids_key = "total_uids"
+            # with open(filename, 'r') as fp:
+            #     while 1:
+            #         uid = fp.readline()
+            #         if uid:
+            #             # redis_cli.sadd("total_his_uids", uid[0:-1])
+            #             DBCli().redis_cli.sadd(uids_key, uid[0:-1])
+            #             DBCli().redis_cli.sadd(uids_key + "backup", uid[0:-1])
+            #         else:
+            #             break
 
 
 def gt_newconsumers_daily(days=0):
@@ -163,16 +164,16 @@ def gt_newconsumers_hourly(days, s_hour):
 
 if __name__ == "__main__":
     # gt_newconsumers_daily(1)
-    # gt_newconsumers_history()
+    gt_newconsumers_history()
 
-    days = 5
-    while days >= 1:
-        i = 7
-        while i <= 23:
-            gt_newconsumers_hourly(days, i)
-            i += 1
-
-        print "============"
-        gt_newconsumers_daily(days)
-        days -= 1
+    # days = 5
+    # while days >= 1:
+    #     i = 7
+    #     while i <= 23:
+    #         gt_newconsumers_hourly(days, i)
+    #         i += 1
+    #
+    #     print "============"
+    #     gt_newconsumers_daily(days)
+    #     days -= 1
 

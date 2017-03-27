@@ -12,10 +12,10 @@ def gt_newconsumers_history():
     for dirpath, dirnames, filenames in file_list:
         for f_uid in filenames:
             filename = os.path.join(dirpath, f_uid)
-            print filename
-            if filename in ["20170322_ios", "20170323_ios", "20170324_ios", "20170325_ios", "20170326_ios",
-                            "20170322_android", "20170323_android", "20170324_android", "20170325_android",
-                            "20170326_android"]:
+            filter_file = filename.split("/")[-1]
+            if filter_file in ["20170322_ios", "20170323_ios", "20170324_ios", "20170325_ios", "20170326_ios",
+                               "20170327_ios", "20170322_android", "20170323_android", "20170324_android",
+                               "20170325_android", "20170326_android", "20170327_android"]:
                 continue
             # if filename.endswith("ios"):
             #     uids_key = "total_uids_ios"
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     # gt_newconsumers_daily(1)
     gt_newconsumers_history()
 
-    # days = 5
+    # days = 6
     # while days >= 1:
     #     i = 7
     #     while i <= 23:

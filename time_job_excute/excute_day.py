@@ -20,7 +20,7 @@ def add_execute_job():
     TimeService.add_day_service(gt_consumers.update_gtgj_consumers_daily)
     TimeService.add_day_service(gt_order.update_gt_order_daily)
 
-    # TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
+    TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_weekly)

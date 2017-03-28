@@ -150,6 +150,6 @@ def hb_pay_type(days=0):
 
 if __name__ == "__main__":
     try:
-        hb_pay_type(3)
+        hb_pay_type(1)
     except Exception as e:
         print e.message

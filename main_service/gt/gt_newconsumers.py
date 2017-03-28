@@ -166,14 +166,16 @@ if __name__ == "__main__":
     # gt_newconsumers_daily(1)
     # gt_newconsumers_history()
 
-    days = 6
-    while days >= 1:
-        i = 7
-        while i <= 23:
-            gt_newconsumers_hourly(days, i)
-            i += 1
-
-        print "============"
-        gt_newconsumers_daily(days)
-        days -= 1
+    gt_newconsumers_hourly(0, 7)
+    gt_newconsumers_hourly(0, 8)
+    # days = 6
+    # while days >= 1:
+    #     i = 7
+    #     while i <= 23:
+    #         gt_newconsumers_hourly(days, i)
+    #         i += 1
+    #
+    #     print "============"
+    #     gt_newconsumers_daily(days)
+    #     days -= 1
 

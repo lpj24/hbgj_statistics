@@ -64,7 +64,7 @@ def update_hotel_activeusers_monthly():
 
 if __name__ == "__main__":
     update_hotel_activeusers_daily(1)
-    update_hotel_activeusers_weekly(1)
+    # update_hotel_activeusers_weekly(1)
     # update_hotel_activeusers_monthly()
 
 

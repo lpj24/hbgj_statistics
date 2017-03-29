@@ -358,7 +358,8 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         if pn_rsource == "hlth":
             profit_amount = float(profit_amount) - float(hlth_cost_data[0])
 
-        profit_data.append([s_day, saletype, pn_name, pn_rsource, profit_amount])
+        pid, sale_data = get_sale_type(saletype, pn_rsource)
+        profit_data.append([s_day, saletype, pn_name, pn_rsource, profit_amount, pid])
     has_cost_no_income = set(cost_data.keys()).difference(set(income_pn))
     has_cost_no_income = tuple(has_cost_no_income)
 
@@ -369,38 +370,41 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     if len(has_cost_no_income) > 0:
         has_cost_no_income_data = DBCli().sourcedb_cli.queryAll(cost_no_income_sql, has_cost_no_income)
         for no_income in has_cost_no_income_data:
+            pid, sale_data = get_sale_type(no_income[0], no_income[2])
             profit_data.append([DateUtil.date2str(query_start, "%Y-%m-%d"), no_income[0], no_income[1], no_income[2],
-                                -float(cost_data[no_income[2]])])
+                                -float(cost_data[no_income[2]]), pid])
 
     insert_sql = """
         insert into operation_hbgj_channel_ticket_profit_daily (s_day, saletype, channel_name, pn_resouce,
-        profit_amount,
-        createtime, updatetime) values (%s, %s, %s, %s, %s, now(), now())
+        profit_amount, pid,
+        createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         saletype = values(saletype),
         channel_name = values(channel_name),
         pn_resouce = values(pn_resouce),
-        profit_amount = values(profit_amount)
+        profit_amount = values(profit_amount),
+        pid = values(pid)
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
 
 
 def get_sale_type(saletype, pn_resouce):
     sale_data = 0
-    print saletype, pn_resouce
     if saletype in (10, 11, 14):
-        type = 1
-    elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
-        type = 2
+        sale_type = 1
+    elif saletype in (0, 12) and pn_resouce != 'supply' and pn_resouce != 'hlth':
+        sale_type = 2
     elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
-        type = 3
+        sale_type = 3
     elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
-        type = 4
+        sale_type = 4
     elif saletype == 13 or pn_resouce == 'hlth':
         sale_data += 1
-        type = 5
-    return type, sale_data
+        sale_type = 5
+    else:
+        sale_type = 2
+    return sale_type, sale_data
 
 
 if __name__ == "__main__":

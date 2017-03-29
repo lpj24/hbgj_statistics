@@ -20,7 +20,7 @@ def update_hotel_newusers_daily(days=0):
         for tar_file in file_list:
             try:
                 tar = tarfile.open(tar_file)
-            except Exception as e:
+            except Exception:
                 logging.warning(str(tar_file) + " file error")
                 return
             filename = (tar.getnames())[0]

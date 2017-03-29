@@ -321,6 +321,8 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     """
     cost_data = DBCli().sourcedb_cli.queryAll(cost_sql, dto)
 
+    cost_data = dict(cost_data)
+
     hlth_cost_sql = """
         SELECT
         sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
@@ -339,21 +341,36 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     hlth_cost_data = DBCli().sourcedb_cli.queryAll(hlth_cost_sql, dto)
     hlth_cost_data = hlth_cost_data[0]
     profit_data = []
+
+    income_pn = []
+
     for income in income_data:
         s_day, saletype, pn_name, pn_rsource, amount = income
-        for cost in cost_data:
-            cost_pn, cost_amount = cost
-            if pn_rsource == cost_pn:
+        income_pn.append(pn_rsource)
 
-                if pn_rsource == "hlth":
-                    profit_amount = float(amount) - float(cost_amount) \
-                               - float(hlth_cost_data[0])
-                else:
-                    profit_amount = float(amount) - float(cost_amount)
+        cost_amount = cost_data.get(pn_rsource, None)
+        if cost_amount:
+            profit_amount = float(amount) - float(cost_amount)
 
-                # pid, sale_data = get_sale_type(saletype, pn_rsource)
+        else:
+            profit_amount = amount
 
-                profit_data.append([s_day, saletype, pn_name, pn_rsource, profit_amount])
+        if pn_rsource == "hlth":
+            profit_amount = float(profit_amount) - float(hlth_cost_data[0])
+
+        profit_data.append([s_day, saletype, pn_name, pn_rsource, profit_amount])
+    has_cost_no_income = set(cost_data.keys()).difference(set(income_pn))
+    has_cost_no_income = tuple(has_cost_no_income)
+
+    cost_no_income_sql = """
+        select SALETYPE, name, PNRSOURCE from PNRSOURCE_CONFIG where PNRSOURCE in (%s)
+    """
+
+    if len(has_cost_no_income) > 0:
+        has_cost_no_income_data = DBCli().sourcedb_cli.queryAll(cost_no_income_sql, has_cost_no_income)
+        for no_income in has_cost_no_income_data:
+            profit_data.append([DateUtil.date2str(query_start, "%Y-%m-%d"), no_income[0], no_income[1], no_income[2],
+                                -float(cost_data[no_income[2]])])
 
     insert_sql = """
         insert into operation_hbgj_channel_ticket_profit_daily (s_day, saletype, channel_name, pn_resouce,
@@ -389,7 +406,7 @@ def get_sale_type(saletype, pn_resouce):
 if __name__ == "__main__":
     # update_profit_hotel_income(1)
     # update_profit_hb_income(1)
-    # update_operation_hbgj_channel_ticket_profit_daily(1)
+    # update_operation_hbgj_channel_ticket_profit_daily(18)
     i = 87
     while i >= 1:
         update_operation_hbgj_channel_ticket_profit_daily(i)

@@ -298,6 +298,99 @@ def update_profit_hotel_income(days=0):
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, hotel_data)
 
+
+def update_operation_hbgj_channel_ticket_profit_daily(days=0):
+    query_start = DateUtil.get_date_before_days(days*1)
+    query_end = DateUtil.get_date_after_days(1 - days)
+    income_sql = """
+        select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME) from TICKET_ORDER_INCOME a
+        left join PNRSOURCE_CONFIG b ON a.PNRSOURCE = b.PNRSOURCE
+        where a.INCOMEDATE >= %s and a.INCOMEDATE < %s
+        and a.TYPE=0
+        GROUP BY a.PNRSOURCE, a.INCOMEDATE order by a.INCOMEDATE
+    """
+    dto = [DateUtil.date2str(query_start, "%Y-%m-%d"), DateUtil.date2str(query_end, "%Y-%m-%d")]
+    income_data = DBCli().sourcedb_cli.queryAll(income_sql, dto)
+
+    cost_sql = """
+
+        select a.PNRSOURCE, SUM(AMOUNT) COST_AMOUNT from TICKET_ORDER_COST a
+        where a.COSTDATE >= %s and a.COSTDATE < %s
+        and AMOUNTTYPE!=2
+        GROUP BY a.PNRSOURCE, a.COSTDATE
+    """
+    cost_data = DBCli().sourcedb_cli.queryAll(cost_sql, dto)
+
+    hlth_cost_sql = """
+        SELECT
+        sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
+        DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIMe>=%s
+        and od.CREATETIMe<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and o.PNRSOURCE='hlth'
+        and o.SUBORDERNO='BOP' and
+        od.ETICKET is not null
+        group by s_day
+    """
+    hlth_cost_data = DBCli().sourcedb_cli.queryAll(hlth_cost_sql, dto)
+    hlth_cost_data = hlth_cost_data[0]
+    profit_data = []
+    for income in income_data:
+        s_day, saletype, pn_name, pn_rsource, amount = income
+        for cost in cost_data:
+            cost_pn, cost_amount = cost
+            if pn_rsource == cost_pn:
+
+                if pn_rsource == "hlth":
+                    profit_amount = float(amount) - float(cost_amount) \
+                               - float(hlth_cost_data[0])
+                else:
+                    profit_amount = float(amount) - float(cost_amount)
+
+                # pid, sale_data = get_sale_type(saletype, pn_rsource)
+
+                profit_data.append([s_day, saletype, pn_name, pn_rsource, profit_amount])
+
+    insert_sql = """
+        insert into operation_hbgj_channel_ticket_profit_daily (s_day, saletype, channel_name, pn_resouce,
+        profit_amount,
+        createtime, updatetime) values (%s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        saletype = values(saletype),
+        channel_name = values(channel_name),
+        pn_resouce = values(pn_resouce),
+        profit_amount = values(profit_amount)
+    """
+    DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
+
+
+def get_sale_type(saletype, pn_resouce):
+    sale_data = 0
+    print saletype, pn_resouce
+    if saletype in (10, 11, 14):
+        type = 1
+    elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
+        type = 2
+    elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
+        type = 3
+    elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
+        type = 4
+    elif saletype == 13 or pn_resouce == 'hlth':
+        sale_data += 1
+        type = 5
+    return type, sale_data
+
+
 if __name__ == "__main__":
-    update_profit_hotel_income(1)
-    update_profit_hb_income(1)
+    # update_profit_hotel_income(1)
+    # update_profit_hb_income(1)
+    # update_operation_hbgj_channel_ticket_profit_daily(1)
+    i = 87
+    while i >= 1:
+        update_operation_hbgj_channel_ticket_profit_daily(i)
+        i -= 1

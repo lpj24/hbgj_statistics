@@ -43,6 +43,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_order.update_hb_gt_order_daily)
     TimeService.add_day_service(hb_profit_cost.update_huoli_car_income_daily)
     TimeService.add_day_service(hb_profit_cost.update_profit_hb_income)
+    TimeService.add_day_service(hb_profit_cost.update_operation_hbgj_channel_ticket_profit_daily)
     TimeService.add_day_service(hb_partner.update_hb_partner_daily)
 
     TimeService.add_day_service(hb_coupon_ticket.update_hbgj_coupon_tickt)

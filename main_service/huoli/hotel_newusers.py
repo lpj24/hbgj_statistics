@@ -18,7 +18,11 @@ def update_hotel_newusers_daily(days=0):
     if os.path.isfile(file_list[0]) and os.path.isfile(file_list[1]):
         uid_key = s_day + "_log_uid"
         for tar_file in file_list:
-            tar = tarfile.open(tar_file)
+            try:
+                tar = tarfile.open(tar_file)
+            except Exception as e:
+                logging.warning(str(tar_file) + " file error")
+                return
             filename = (tar.getnames())[0]
             log_file = "access.log_" + s_day
             tar.extract(filename)

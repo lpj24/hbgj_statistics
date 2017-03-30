@@ -242,7 +242,7 @@ def update_huoli_car_income_type(days=0):
 
 
 def update_profit_hb_income(days=0):
-    query_date = DateUtil.get_date_before_days(days)
+    query_date = DateUtil.get_date_before_days(days*3)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
@@ -273,10 +273,10 @@ def update_profit_hb_income(days=0):
         inter_insure_income = VALUES(inter_insure_income)
     """
 
-    hb_profit = DBCli().sourcedb_cli.queryOne(sql, [query_date, today])
+    hb_profit = DBCli().sourcedb_cli.queryAll(sql, [query_date, today])
     if hb_profit is None:
         return
-    DBCli().targetdb_cli.insert(insert_sql, hb_profit)
+    DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
 
 
 def update_profit_hotel_income(days=0):
@@ -409,9 +409,10 @@ def get_sale_type(saletype, pn_resouce):
 
 if __name__ == "__main__":
     # update_profit_hotel_income(1)
+    update_profit_hb_income(1)
+    # update_operation_hbgj_channel_ticket_profit_daily(1)
     # update_profit_hb_income(1)
-    # update_operation_hbgj_channel_ticket_profit_daily(18)
-    i = 87
-    while i >= 1:
-        update_operation_hbgj_channel_ticket_profit_daily(i)
-        i -= 1
+    # i = 87
+    # while i >= 1:
+    #     update_operation_hbgj_channel_ticket_profit_daily(i)
+    #     i -= 1

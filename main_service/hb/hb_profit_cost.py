@@ -432,9 +432,6 @@ if __name__ == "__main__":
     # update_profit_hb_income(1)
     # update_operation_hbgj_channel_ticket_profit_daily(1)
     # update_profit_hb_income(1)
-    i = 89
-    while i >= 1:
-        update_operation_hbgj_channel_ticket_profit_daily(i)
-        i -= 1
-
+    # update_operation_hbgj_channel_ticket_profit_daily(10)
+    update_car_cost_detail(1)
     # update_hb_car_hotel_profit(1)

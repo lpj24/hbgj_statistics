@@ -17,7 +17,6 @@ def update_hotel_newconsumers_daily_history():
 
         # query_data = sky_hotel_cli.queryOne(hotel_newconsumers_sql["hotel_newconsumers_daily"], dto)
         query_data = sourcedb_cli.queryOne(hotel_newconsumers_sql["hotel_newconsumers_daily"], dto)
-        print query_data
         targetdb_cli.insert(hotel_newconsumers_sql["update_hotel_newconsumers_daily"], query_data)
         start_date = DateUtil.add_days(start_date, 1)
 

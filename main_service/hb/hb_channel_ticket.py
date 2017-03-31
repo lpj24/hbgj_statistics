@@ -424,8 +424,10 @@ def do_exception_sale():
         min_date = DateUtil.add_days(min_date, 1)
 
 
-def update_product_ticket_weekly():
-    start_week, end_week = DateUtil.get_last_week_date()
+def update_product_ticket_daily(days=0):
+    # start_week, end_week = DateUtil.get_last_week_date()
+    start_week = DateUtil.get_date_before_days(days * 1)
+    end_week = DateUtil.get_date_after_days(1 - days)
     product_sql = """
         SELECT left(od.CREATETIME, 10) s_day, o.agentid,count(*),sum(od.OUTPAYPRICE) FROM
         `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o
@@ -534,26 +536,7 @@ def update_refund_ticket_channel_daily(days=0):
 
 
 if __name__ == "__main__":
-    import datetime
-    # update_product_ticket_weekly()
-    #
-    # hb_code_sql = """
-    #         select code,FOUR_NAME
-    #         from AIRLINES_NORMAl
-    #     """
-    # hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
-    # hb_info = dict(hb_info)
-
-    # start_date = datetime.date(2017, 3, 13)
-    # end_date = datetime.date(2015, 4, 6)
-    # # end_date = datetime.date(2017, 3, 6)
-    # while start_date > end_date:
-    #     start_week, end_week = DateUtil.get_this_week_date(end_date)
-    #     update_refund_ticket_channel(start_week, end_week)
-    #     print start_week, end_week
-    #     end_date = end_week
-
-    i = 89
+    i = 4
     while i >= 1:
-        update_hb_channel_ticket_income_daily(i)
+        update_product_ticket_daily(i)
         i -= 1

@@ -117,4 +117,4 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hb_deplay_insure(i)
     #     i -= 1
-    update_compensate_detail(1)
+    update_hb_deplay_insure(1)

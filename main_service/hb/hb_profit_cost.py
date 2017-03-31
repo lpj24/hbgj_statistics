@@ -302,26 +302,41 @@ def update_profit_hotel_income(days=0):
 def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     query_start = DateUtil.get_date_before_days(days*1)
     query_end = DateUtil.get_date_after_days(1 - days)
+
     income_sql = """
-        select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME) from TICKET_ORDER_INCOME a
+        select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME),
+        (select supplier_name
+        from flow.sys_supplier
+        where channeltype=1 and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
         left join PNRSOURCE_CONFIG b ON a.PNRSOURCE = b.PNRSOURCE
+        left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.INCOMEDATE >= %s and a.INCOMEDATE < %s
         and a.TYPE=0
-        GROUP BY a.PNRSOURCE, a.INCOMEDATE order by a.INCOMEDATE
+        GROUP BY a.PNRSOURCE, a.INCOMEDATE, agaent_name, TICKET_ORDER.agentid order by a.INCOMEDATE
     """
     dto = [DateUtil.date2str(query_start, "%Y-%m-%d"), DateUtil.date2str(query_end, "%Y-%m-%d")]
     income_data = DBCli().sourcedb_cli.queryAll(income_sql, dto)
 
     cost_sql = """
-
-        select a.PNRSOURCE, SUM(AMOUNT) COST_AMOUNT from TICKET_ORDER_COST a
+        select a.COSTDATE, P_C.SALETYPE,P_C.NAME, a.PNRSOURCE, SUM(AMOUNT) COST_AMOUNT,
+        (select supplier_name
+        from flow.sys_supplier
+        where channeltype=1 and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_COST a
+        left join PNRSOURCE_CONFIG P_C ON a.PNRSOURCE=P_C.PNRSOURCE
+        left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.COSTDATE >= %s and a.COSTDATE < %s
         and AMOUNTTYPE!=2
-        GROUP BY a.PNRSOURCE, a.COSTDATE
+        GROUP BY a.PNRSOURCE, a.COSTDATE, agaent_name, TICKET_ORDER.agentid
     """
     cost_data = DBCli().sourcedb_cli.queryAll(cost_sql, dto)
 
-    cost_data = dict(cost_data)
+    cost_data_dict = {}
+    for c_d in cost_data:
+        cost_date, sale_type, pn_name, pn_r, cost_mon, aga_name, aga_id = c_d
+        new_cost = get_sale_type(sale_type, pn_r, list(c_d))
+
+        key = new_cost[3]
+        cost_data_dict[key] = new_cost
 
     hlth_cost_sql = """
         SELECT
@@ -345,11 +360,15 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     income_pn = []
 
     for income in income_data:
-        s_day, saletype, pn_name, pn_rsource, amount = income
+        # s_day, saletype, pn_name, pn_rsource, amount, agaent_name, agaent_id = income
+        saletype, pn_rsource = income[1], income[3]
+        new_income_data = get_sale_type(saletype, pn_rsource, list(income))
+        s_day, saletype, pn_name, pn_rsource, amount, pid = new_income_data
         income_pn.append(pn_rsource)
 
-        cost_amount = cost_data.get(pn_rsource, None)
+        cost_amount = cost_data_dict.get(pn_rsource, None)
         if cost_amount:
+            cost_amount = cost_amount[4]
             profit_amount = float(amount) - float(cost_amount)
 
         else:
@@ -358,21 +377,15 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         if pn_rsource == "hlth":
             profit_amount = float(profit_amount) - float(hlth_cost_data[0])
 
-        pid, sale_data = get_sale_type(saletype, pn_rsource)
-        profit_data.append([s_day, saletype, pn_name, pn_rsource, profit_amount, pid])
-    has_cost_no_income = set(cost_data.keys()).difference(set(income_pn))
+        new_income_data[4] = profit_amount
+        profit_data.append(new_income_data)
+    has_cost_no_income = set(cost_data_dict.keys()).difference(set(income_pn))
     has_cost_no_income = tuple(has_cost_no_income)
 
-    cost_no_income_sql = """
-        select SALETYPE, name, PNRSOURCE from PNRSOURCE_CONFIG where PNRSOURCE in (%s)
-    """
-
     if len(has_cost_no_income) > 0:
-        has_cost_no_income_data = DBCli().sourcedb_cli.queryAll(cost_no_income_sql, has_cost_no_income)
-        for no_income in has_cost_no_income_data:
-            pid, sale_data = get_sale_type(no_income[0], no_income[2])
-            profit_data.append([DateUtil.date2str(query_start, "%Y-%m-%d"), no_income[0], no_income[1], no_income[2],
-                                -float(cost_data[no_income[2]]), pid])
+        for cost_no_income_key in has_cost_no_income:
+            cost_data_dict[cost_no_income_key][4] = -float(cost_data_dict[cost_no_income_key][4])
+            profit_data.append(cost_data_dict[cost_no_income_key])
 
     insert_sql = """
         insert into operation_hbgj_channel_ticket_profit_daily (s_day, saletype, channel_name, pn_resouce,
@@ -389,30 +402,39 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
 
 
-def get_sale_type(saletype, pn_resouce):
+def get_sale_type(saletype, pn_resouce, new_channel_data):
     sale_data = 0
+    agaent_id = new_channel_data.pop()
+    agaent_name = new_channel_data.pop()
     if saletype in (10, 11, 14):
         sale_type = 1
     elif saletype in (0, 12) and pn_resouce != 'supply' and pn_resouce != 'hlth':
         sale_type = 2
     elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
         sale_type = 3
-    elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
+    elif pn_resouce == 'intsupply':
         sale_type = 4
     elif saletype == 13 or pn_resouce == 'hlth':
         sale_data += 1
         sale_type = 5
+    elif pn_resouce == "supply" and (agaent_name is not None and len(agaent_name) > 0):
+        new_channel_data[2] = agaent_name
+        new_channel_data[3] = agaent_id
+        sale_type = 4
     else:
         sale_type = 2
-    return sale_type, sale_data
+    new_channel_data.append(sale_type)
+    return new_channel_data
 
 
 if __name__ == "__main__":
     # update_profit_hotel_income(1)
-    update_profit_hb_income(1)
+    # update_profit_hb_income(1)
     # update_operation_hbgj_channel_ticket_profit_daily(1)
     # update_profit_hb_income(1)
-    # i = 87
-    # while i >= 1:
-    #     update_operation_hbgj_channel_ticket_profit_daily(i)
-    #     i -= 1
+    i = 89
+    while i >= 1:
+        update_operation_hbgj_channel_ticket_profit_daily(i)
+        i -= 1
+
+    # update_hb_car_hotel_profit(1)

@@ -113,7 +113,8 @@ def update_compensate_detail(days=0):
 if __name__ == "__main__":
     # update_hb_deplay_insure(2)
     # update_compensate_detail(2)
-    i = 64
-    while i >= 1:
-        update_hb_deplay_insure(i)
-        i -= 1
+    # i = 64
+    # while i >= 1:
+    #     update_hb_deplay_insure(i)
+    #     i -= 1
+    update_compensate_detail(1)

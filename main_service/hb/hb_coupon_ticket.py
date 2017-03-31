@@ -52,7 +52,6 @@ def update_huoli_hotel_coupon_daily(days=0):
 def update_common_coupon_daily(days=0):
     start_date = DateUtil.get_date_before_days(days * 3)
     end_date = DateUtil.get_date_after_days(1 - days)
-
     dto = [start_date, end_date]
     common_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["common_coupon_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_common_coupon_sql"], common_coupon_data)
@@ -288,7 +287,7 @@ if __name__ == "__main__":
 
     # update_huoli_car_coupon_daily(2)
     # update_huoli_hotel_coupon_daily(2)
-    update_common_coupon_daily(4)
+    update_common_coupon_daily(1)
     # i = 6
     # for i in xrange(6, 0, -1):
     #     print i

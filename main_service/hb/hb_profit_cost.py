@@ -3,10 +3,13 @@
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 import requests
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 def update_hb_car_hotel_profit(days=0):
-    query_date = DateUtil.get_date_before_days(days * 7)
+    query_date = DateUtil.get_date_before_days(days * 90)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -85,63 +88,63 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
     DBCli().targetdb_cli.batchInsert(update_dft_cost_sql, dft_result)
 
-    car_sql = """
-        select distinct TRADE_TIME s_day,
-        sum(case when (AMOUNT_TYPE=2 and PRODUCT='7' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
-        sum(case when (AMOUNT_TYPE=3 and PRODUCT='7' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and PRODUCT='7' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and PRODUCT='7' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
-        sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('5','13')) then amount else 0 end) point_give_amount,
-        sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('12','29')) then amount else 0 end) balance_give_amount
-        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
-        group by s_day
-    """
-
-    result = DBCli().pay_cost_cli.queryAll(car_sql, dto)
-    insert_car_sql = """
-        insert into profit_huoli_car_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
-         point_give_amount, balance_give_amount, createtime, updatetime) values (
-            %s, %s, %s, %s, %s, %s, %s, now(), now()
-        )
-        on duplicate key update updatetime = now(),
-        s_day = VALUES(s_day),
-        paycost_in = VALUES(paycost_in),
-        paycost_return = VALUES(paycost_return),
-        coupon_in = VALUES(coupon_in),
-        coupon_return = VALUES(coupon_return),
-        point_give_amount = VALUES(point_give_amount),
-        balance_give_amount = VALUES(balance_give_amount)
-    """
-    DBCli().targetdb_cli.batchInsert(insert_car_sql, result)
-
-    hotel_sql = """
-        select distinct TRADE_TIME s_day,
-        sum(case when (AMOUNT_TYPE=2 and PRODUCT='36' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
-        sum(case when (AMOUNT_TYPE=3 and PRODUCT='36' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and PRODUCT='36' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and PRODUCT='36' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
-        sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('8')) then amount else 0 end) point_give_amount,
-        sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('9','10')) then amount else 0 end) balance_give_amount
-        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
-        group by s_day
-    """
-
-    result = DBCli().pay_cost_cli.queryAll(hotel_sql, dto)
-    insert_hotel_sql = """
-        insert into profit_huoli_hotel_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
-         point_give_amount, balance_give_amount, createtime, updatetime) values (
-            %s, %s, %s, %s, %s, %s, %s, now(), now()
-        )
-        on duplicate key update updatetime = now(),
-        s_day = VALUES(s_day),
-        paycost_in = VALUES(paycost_in),
-        paycost_return = VALUES(paycost_return),
-        coupon_in = VALUES(coupon_in),
-        coupon_return = VALUES(coupon_return),
-        point_give_amount = VALUES(point_give_amount),
-        balance_give_amount = VALUES(balance_give_amount)
-    """
-    DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
+    # car_sql = """
+    #     select distinct TRADE_TIME s_day,
+    #     sum(case when (AMOUNT_TYPE=2 and PRODUCT='7' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
+    #     sum(case when (AMOUNT_TYPE=3 and PRODUCT='7' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
+    #     sum(case when (AMOUNT_TYPE=1 and PRODUCT='7' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
+    #     sum(case when (AMOUNT_TYPE=4 and PRODUCT='7' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
+    #     sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('5','13')) then amount else 0 end) point_give_amount,
+    #     sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('12','29')) then amount else 0 end) balance_give_amount
+    #     from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+    #     group by s_day
+    # """
+    #
+    # result = DBCli().pay_cost_cli.queryAll(car_sql, dto)
+    # insert_car_sql = """
+    #     insert into profit_huoli_car_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
+    #      point_give_amount, balance_give_amount, createtime, updatetime) values (
+    #         %s, %s, %s, %s, %s, %s, %s, now(), now()
+    #     )
+    #     on duplicate key update updatetime = now(),
+    #     s_day = VALUES(s_day),
+    #     paycost_in = VALUES(paycost_in),
+    #     paycost_return = VALUES(paycost_return),
+    #     coupon_in = VALUES(coupon_in),
+    #     coupon_return = VALUES(coupon_return),
+    #     point_give_amount = VALUES(point_give_amount),
+    #     balance_give_amount = VALUES(balance_give_amount)
+    # """
+    # DBCli().targetdb_cli.batchInsert(insert_car_sql, result)
+    #
+    # hotel_sql = """
+    #     select distinct TRADE_TIME s_day,
+    #     sum(case when (AMOUNT_TYPE=2 and PRODUCT='36' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
+    #     sum(case when (AMOUNT_TYPE=3 and PRODUCT='36' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
+    #     sum(case when (AMOUNT_TYPE=1 and PRODUCT='36' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
+    #     sum(case when (AMOUNT_TYPE=4 and PRODUCT='36' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
+    #     sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('8')) then amount else 0 end) point_give_amount,
+    #     sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('9','10')) then amount else 0 end) balance_give_amount
+    #     from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+    #     group by s_day
+    # """
+    #
+    # result = DBCli().pay_cost_cli.queryAll(hotel_sql, dto)
+    # insert_hotel_sql = """
+    #     insert into profit_huoli_hotel_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
+    #      point_give_amount, balance_give_amount, createtime, updatetime) values (
+    #         %s, %s, %s, %s, %s, %s, %s, now(), now()
+    #     )
+    #     on duplicate key update updatetime = now(),
+    #     s_day = VALUES(s_day),
+    #     paycost_in = VALUES(paycost_in),
+    #     paycost_return = VALUES(paycost_return),
+    #     coupon_in = VALUES(coupon_in),
+    #     coupon_return = VALUES(coupon_return),
+    #     point_give_amount = VALUES(point_give_amount),
+    #     balance_give_amount = VALUES(balance_give_amount)
+    # """
+    # DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
 
 
 def update_car_cost_detail(days=0):
@@ -242,7 +245,7 @@ def update_huoli_car_income_type(days=0):
 
 
 def update_profit_hb_income(days=0):
-    query_date = DateUtil.get_date_before_days(days*3)
+    query_date = DateUtil.get_date_before_days(days*90)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
@@ -331,12 +334,20 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     cost_data = DBCli().sourcedb_cli.queryAll(cost_sql, dto)
 
     cost_data_dict = {}
-    for c_d in cost_data:
-        cost_date, sale_type, pn_name, pn_r, cost_mon, aga_name, aga_id = c_d
-        new_cost = get_sale_type(sale_type, pn_r, list(c_d))
 
-        key = new_cost[3]
-        cost_data_dict[key] = new_cost
+    for c_d in cost_data:
+        cost_date, s_type, pn_name, pn_r, cost_mon, aga_name, aga_id = c_d
+        new_cost = get_sale_type(s_type, pn_r, list(c_d))
+
+        cost_key = new_cost[3]
+
+        if cost_key == "hlth" and "hlth" in cost_data_dict:
+            cost_data_dict["hlth"][4] += new_cost[4]
+        else:
+            if cost_key in cost_data_dict:
+                (cost_data_dict[cost_key])[4] += new_cost[4]
+            else:
+                cost_data_dict[cost_key] = new_cost
 
     hlth_cost_sql = """
         SELECT
@@ -359,51 +370,62 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     income_pn = []
 
+    hlth_profit = {}
+
+    profit_add_pid_data_dict = {}
     for income in income_data:
-        # s_day, saletype, pn_name, pn_rsource, amount, agaent_name, agaent_id = income
+
         saletype, pn_rsource = income[1], income[3]
         new_income_data = get_sale_type(saletype, pn_rsource, list(income))
         s_day, saletype, pn_name, pn_rsource, amount, pid = new_income_data
         income_pn.append(pn_rsource)
 
-        cost_amount = cost_data_dict.get(pn_rsource, None)
-        if cost_amount:
-            cost_amount = cost_amount[4]
-            profit_amount = float(amount) - float(cost_amount)
+        if pn_rsource == "hlth" and "hlth" not in hlth_profit:
+            hlth_profit["hlth"] = new_income_data
+            hlth_profit["hlth"][4] -= float(cost_data_dict.get("hlth")[4])
+            hlth_profit["hlth"][4] -= float(hlth_cost_data[0])
+            continue
+        elif pn_rsource == "hlth" and "hlth" in hlth_profit:
+            hlth_profit["hlth"][4] += amount
+            continue
 
+        profit_key = pn_rsource
+        if profit_key in profit_add_pid_data_dict:
+            (profit_add_pid_data_dict[profit_key])[4] += amount
         else:
-            profit_amount = amount
+            cost_amount = cost_data_dict.get(pn_rsource, None)
+            if cost_amount:
+                cost_amount = cost_amount[4]
+            else:
+                cost_amount = 0
 
-        if pn_rsource == "hlth":
-            profit_amount = float(profit_amount) - float(hlth_cost_data[0])
+            profit_amount = amount - cost_amount
+            new_income_data[4] = profit_amount
+            profit_add_pid_data_dict[profit_key] = new_income_data
 
-        new_income_data[4] = profit_amount
-        profit_data.append(new_income_data)
+        # profit_data.append(new_income_data)
+
+        profit_data = [pro_v for pro_k, pro_v in profit_add_pid_data_dict.items()]
+
     has_cost_no_income = set(cost_data_dict.keys()).difference(set(income_pn))
     has_cost_no_income = tuple(has_cost_no_income)
 
     if len(has_cost_no_income) > 0:
         for cost_no_income_key in has_cost_no_income:
+
             cost_data_dict[cost_no_income_key][4] = -float(cost_data_dict[cost_no_income_key][4])
             profit_data.append(cost_data_dict[cost_no_income_key])
 
+    profit_data.append(hlth_profit["hlth"])
     insert_sql = """
         insert into operation_hbgj_channel_ticket_profit_daily (s_day, saletype, channel_name, pn_resouce,
         profit_amount, pid,
         createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
-        on duplicate key update updatetime = now(),
-        s_day = values(s_day),
-        saletype = values(saletype),
-        channel_name = values(channel_name),
-        pn_resouce = values(pn_resouce),
-        profit_amount = values(profit_amount),
-        pid = values(pid)
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
 
 
 def get_sale_type(saletype, pn_resouce, new_channel_data):
-    sale_data = 0
     agaent_id = new_channel_data.pop()
     agaent_name = new_channel_data.pop()
     if saletype in (10, 11, 14):
@@ -415,11 +437,11 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     elif pn_resouce == 'intsupply':
         sale_type = 4
     elif saletype == 13 or pn_resouce == 'hlth':
-        sale_data += 1
         sale_type = 5
     elif pn_resouce == "supply" and (agaent_name is not None and len(agaent_name) > 0):
         new_channel_data[2] = agaent_name
-        new_channel_data[3] = agaent_id
+        new_channel_data[3] = str(agaent_id)
+        # print new_channel_data
         sale_type = 4
     else:
         sale_type = 2
@@ -433,5 +455,39 @@ if __name__ == "__main__":
     # update_operation_hbgj_channel_ticket_profit_daily(1)
     # update_profit_hb_income(1)
     # update_operation_hbgj_channel_ticket_profit_daily(10)
-    update_car_cost_detail(1)
+    # update_car_cost_detail(1)
     # update_hb_car_hotel_profit(1)
+    i = 90
+    while i >= 1:
+        update_operation_hbgj_channel_ticket_profit_daily(i)
+        i -= 1
+
+    check_sql_1 = """
+        select sum(profit_amount) from operation_hbgj_channel_ticket_profit_daily
+        where s_day=%s order by channel_name;
+    """
+
+    check_sql_2 = """
+        select A.income_amount - A.cost from (
+        select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
+        income_amount,(select (inland_price_diff_type0 + inland_price_diff_type1 + inland_price_diff_type2 + dft_cost + inter_price_diff)
+        from profit_hb_cost where s_day=%s) cost
+        from profit_hb_income where s_day=%s) A
+    """
+
+    import datetime
+    a = datetime.date(2017, 1, 1)
+    b = datetime.date(2017, 3, 31)
+    while a <= b:
+        dto1 = [DateUtil.date2str(a, "%Y-%m-%d")]
+        dto2 = [DateUtil.date2str(a, "%Y-%m-%d"), DateUtil.date2str(a, "%Y-%m-%d")]
+        income = DBCli().targetdb_cli.queryOne(check_sql_1, dto1)
+        cost = DBCli().targetdb_cli.queryOne(check_sql_2, dto2)
+
+        income = income[0]
+        cost = cost[0]
+        if income != cost:
+            print a
+            print income, cost
+        a = DateUtil.add_days(a, 1)
+

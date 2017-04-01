@@ -604,23 +604,7 @@ if __name__ == "__main__":
     # update_flight_focus_user_daily(2)
     # update_focus_platform(1)
     # update_platform_focus_by_file()
-    inter_sql = """
-        select CITYNAME, THREE_WORDS_CODE from AIRPORT_INTER_INFO
-    """
-
-    inland_sql = """
-        select CITY, THREE_WORDS_CODE from AIRPORT_NATION_INFO
-    """
-    inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
-    inland_codes = DBCli().oracle_cli.queryAll(inland_sql)
-    inter_dict = {}
-    for code in inter_codes:
-        inter_dict[code[1]] = code[0]
-
-    for code in inland_codes:
-        inter_dict[code[1]] = code[0]
-
-    tmp_cal_inter_inland(inter_dict)
+    update_focus_platform(1)
     # i = 30
     # while i >= 1:
     #     update_hb_focus_inter_inland(inter_codes, i)

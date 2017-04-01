@@ -421,6 +421,14 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         insert into operation_hbgj_channel_ticket_profit_daily (s_day, saletype, channel_name, pn_resouce,
         profit_amount, pid,
         createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        saletype = values(saletype),
+        channel_name = values(channel_name),
+        pn_resouce = values(pn_resouce),
+        profit_amount = values(profit_amount),
+        pid = values(pid)
+
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
 
@@ -457,37 +465,37 @@ if __name__ == "__main__":
     # update_operation_hbgj_channel_ticket_profit_daily(10)
     # update_car_cost_detail(1)
     # update_hb_car_hotel_profit(1)
-    i = 90
-    while i >= 1:
-        update_operation_hbgj_channel_ticket_profit_daily(i)
-        i -= 1
-
-    check_sql_1 = """
-        select sum(profit_amount) from operation_hbgj_channel_ticket_profit_daily
-        where s_day=%s order by channel_name;
-    """
-
-    check_sql_2 = """
-        select A.income_amount - A.cost from (
-        select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
-        income_amount,(select (inland_price_diff_type0 + inland_price_diff_type1 + inland_price_diff_type2 + dft_cost + inter_price_diff)
-        from profit_hb_cost where s_day=%s) cost
-        from profit_hb_income where s_day=%s) A
-    """
-
-    import datetime
-    a = datetime.date(2017, 1, 1)
-    b = datetime.date(2017, 3, 31)
-    while a <= b:
-        dto1 = [DateUtil.date2str(a, "%Y-%m-%d")]
-        dto2 = [DateUtil.date2str(a, "%Y-%m-%d"), DateUtil.date2str(a, "%Y-%m-%d")]
-        income = DBCli().targetdb_cli.queryOne(check_sql_1, dto1)
-        cost = DBCli().targetdb_cli.queryOne(check_sql_2, dto2)
-
-        income = income[0]
-        cost = cost[0]
-        if income != cost:
-            print a
-            print income, cost
-        a = DateUtil.add_days(a, 1)
+    # i = 90
+    # while i >= 1:
+    #     update_operation_hbgj_channel_ticket_profit_daily(i)
+    #     i -= 1
+    update_operation_hbgj_channel_ticket_profit_daily(1)
+    # check_sql_1 = """
+    #     select sum(profit_amount) from operation_hbgj_channel_ticket_profit_daily
+    #     where s_day=%s order by channel_name;
+    # """
+    #
+    # check_sql_2 = """
+    #     select A.income_amount - A.cost from (
+    #     select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
+    #     income_amount,(select (inland_price_diff_type0 + inland_price_diff_type1 + inland_price_diff_type2 + dft_cost + inter_price_diff)
+    #     from profit_hb_cost where s_day=%s) cost
+    #     from profit_hb_income where s_day=%s) A
+    # """
+    #
+    # import datetime
+    # a = datetime.date(2017, 1, 1)
+    # b = datetime.date(2017, 3, 31)
+    # while a <= b:
+    #     dto1 = [DateUtil.date2str(a, "%Y-%m-%d")]
+    #     dto2 = [DateUtil.date2str(a, "%Y-%m-%d"), DateUtil.date2str(a, "%Y-%m-%d")]
+    #     income = DBCli().targetdb_cli.queryOne(check_sql_1, dto1)
+    #     cost = DBCli().targetdb_cli.queryOne(check_sql_2, dto2)
+    #
+    #     income = income[0]
+    #     cost = cost[0]
+    #     if income != cost:
+    #         print a
+    #         print income, cost
+    #     a = DateUtil.add_days(a, 1)
 

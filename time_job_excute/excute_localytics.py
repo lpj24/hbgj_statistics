@@ -17,6 +17,8 @@ if __name__ == "__main__":
         try:
             fun(int(days))
             time.sleep(1 * 60 * 61)
-        except Exception as e:
+        except (Exception, AssertionError) as e:
+            TimeService.add_localytics_service(fun)
+            time.sleep(1 * 60 * 10)
             logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
             continue

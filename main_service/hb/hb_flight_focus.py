@@ -470,7 +470,6 @@ def update_hb_focus_inter_inland(days=0):
     inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
     inter_codes = [code[0] for code in inter_codes]
     dto = [start_date, end_date, start_date, end_date]
-    print dto
     inter_inland_data = DBCli().dynamic_focus_cli.queryAll(inter_inland_sql, dto)
 
     fly_uv = defaultdict(list)
@@ -605,7 +604,7 @@ if __name__ == "__main__":
     # update_flight_focus_user_daily(2)
     # update_focus_platform(1)
     # update_platform_focus_by_file()
-    i = 7
+    i = 5
     while i >= 1:
         update_hb_focus_inter_inland(i)
         i -= 1

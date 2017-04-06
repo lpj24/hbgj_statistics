@@ -3,7 +3,6 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
-# 1.31号开始计算
 def update_focus_newuser(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
@@ -43,7 +42,7 @@ def update_focus_newuser(days=0):
     his_focus_id = DBCli().redis_dt_cli.smembers("hbdt_focus_his_uid")
     focus_newuser = len(set(query_id).difference(his_focus_id))
 
-    # DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
+    DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
     for focus_id in query_id:
         DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", focus_id)
 
@@ -80,7 +79,7 @@ def update_fouces_dat_daily(days=0):
         and createtime>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
     """
     hbdt_focus_file = start_date + "_hbdt_focus.dat"
-    hbdt_focus_file = open(hbdt_focus_file, 'a')
+    hbdt_focus_file = open("/home/huolibi/data/hbdt/hbdt_focus/" + hbdt_focus_file, 'a')
     dto = {"start_date": start_date, "end_date": end_date}
     query_data = DBCli().oracle_cli.queryAll(sql, dto)
     for q in query_data:
@@ -171,13 +170,17 @@ def collect_inland_inter_flyid_daily(days=0):
 
 
 if __name__ == "__main__":
+    # collect_inland_inter_flyid_his()
+    # collect_inland_inter_flyid_daily(2)
     # collect_his_phone_uid()
-    # i = 64
-    # while i > 7:
-    #     update_focus_newuser(i)
-    #     i -= 1
-    collect_inland_inter_flyid_his()
+    # update_focus_newuser()
+    # update_fouces_dat_daily(2)
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
+
+    i = 7
+    while i >= 1:
+        update_fouces_dat_daily(i)
+        i -= 1
     # collect_inland_inter_flyid_daily(1)
 

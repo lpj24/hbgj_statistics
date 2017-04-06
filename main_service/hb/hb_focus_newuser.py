@@ -3,6 +3,7 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
+# 在1月31号基础上计算
 def update_focus_newuser(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
@@ -14,6 +15,7 @@ def update_focus_newuser(days=0):
     check_data = DBCli().targetdb_cli.queryOne(check_last_sql, [check_s_day])
     if int(check_data[0]) < 1:
         return
+
     insert_sql = """
         insert into hbdt_focus_newusers_daily (s_day, uv, pv, new_users, createtime, updatetime)
         values (%s, %s, %s, %s, now(), now())
@@ -37,12 +39,12 @@ def update_focus_newuser(days=0):
             if query_date == "None":
                 continue
             query_id.append(phone_id)
-    focus_pv = len(query_id)
-    focus_uv = len(set(query_id))
+    # focus_pv = len(query_id)
+    # focus_uv = len(set(query_id))
     his_focus_id = DBCli().redis_dt_cli.smembers("hbdt_focus_his_uid")
-    focus_newuser = len(set(query_id).difference(his_focus_id))
+    # focus_newuser = len(set(query_id).difference(his_focus_id))
 
-    DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
+    # DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
     for focus_id in query_id:
         DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", focus_id)
 
@@ -178,9 +180,13 @@ if __name__ == "__main__":
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
 
-    i = 7
-    while i >= 1:
-        update_fouces_dat_daily(i)
+    i = 64
+    while i > 7:
+        update_focus_newuser(i)
         i -= 1
+    # i = 7
+    # while i >= 1:
+    #     update_fouces_dat_daily(i)
+    #     i -= 1
     # collect_inland_inter_flyid_daily(1)
 

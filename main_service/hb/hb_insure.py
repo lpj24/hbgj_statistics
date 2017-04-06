@@ -168,28 +168,25 @@ def update_insure_type_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_boat_sql, boat_data)
 
     refund_order_amount_sql = """
-        SELECT A.s_day,
-        ifnull(A.insurecode, 0),
-       (SELECT DISTINCT bigtype from INSURE_DATA where id=A.insurecode) bigtype,
-        ifnull(A.insure_order_num, 0),
-        ifnull(A.insure_amount, 0),
-        ifnull(B.claim_num, 0),
-        ifnull(B.claim_amount, 0)
-        from (
-        SELECT left(flydatetime,10) s_day, insurecode,
-        count(*) insure_order_num,sum(INSURE_ORDERDETAIL.price) insure_amount FROM
-        `INSURE_ORDERDETAIL`
-        where createtime >=%s and createtime<%s
-        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (3))
-        and flydatetime>= %s and flydatetime<%s group BY left(flydatetime,10), insurecode
-        ) A left join (
-        SELECT left(flydatetime,10) s_day, insurecode, count(*) claim_num,
-        sum(claim_price) claim_amount FROM `INSURE_ORDERDETAIL`
-        where createtime>= %s and createtime<%s
-        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (3)) and
-        flydatetime >=%s and flydatetime<%s
-        and `claim_price` is not null group BY left(flydatetime,10), insurecode
-    ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode
+            SELECT A.s_day,
+                    ifnull(A.insurecode, 0),
+                   (SELECT DISTINCT bigtype from INSURE_DATA where id=A.insurecode) bigtype,
+                    ifnull(A.insure_order_num, 0),
+                    ifnull(A.insure_amount, 0),
+                    ifnull(A.claim_num, 0),
+                    ifnull(A.claim_amount, 0) from (
+            SELECT left(flydatetime,10) s_day, insurecode,
+            count(case when `claim_price` is not null then 1 end) claim_num,
+            sum(case when `claim_price` is not null then claim_price end) claim_amount,
+            count(*) insure_order_num,
+            sum(INSURE_ORDERDETAIL.price) insure_amount FROM
+            `INSURE_ORDERDETAIL`
+            where createtime >=%s and createtime<%s
+            and INSURE_ORDERDETAIL.insurecode in
+            (select DISTINCT id from INSURE_DATA where bigtype in (3))
+            and flydatetime>=%s and flydatetime<%s group BY left(flydatetime,10), insurecode
+            ) A
+
 
     """
 
@@ -201,28 +198,23 @@ def update_insure_type_daily(days=0):
     import datetime
     refund_start_date = datetime.date(2016, 8, 15)
     refund_start_date = DateUtil.date2str(refund_start_date, '%Y-%m-%d')
-    dto = [refund_start_date, end_date, start_date, end_date, refund_start_date, end_date, start_date, end_date]
+    dto = [refund_start_date, end_date, start_date, end_date]
     refund_data = DBCli().sourcedb_cli.queryAll(refund_order_amount_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_refund_sql, refund_data)
 
     delay_sql = """
-        select A.s_day, A.insurecode,(SELECT DISTINCT bigtype from INSURE_DATA where id=A.insurecode) bigtype,
-        ifnull(B.insure_num, 0),
-        ifnull(A.insure_claim_num, 0)
-        from (
-        SELECT left(flydatetime ,10) s_day, insurecode, count(*) insure_claim_num FROM
-        `INSURE_ORDERDETAIL`
-        where flydatetime>= %s and flydatetime<%s
-        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype=1)
-        and `STATUS`='7' group BY left(flydatetime ,10), insurecode)
-        A left join (
-        SELECT left(flydatetime ,10) s_day,insurecode , count(*) insure_num
+        select A.s_day, A.insurecode,
+        (SELECT DISTINCT bigtype from INSURE_DATA where id=A.insurecode) bigtype,
+        ifnull(A.insure_num, 0),
+        ifnull(A.insure_claim_num, 0) from (
+        SELECT left(flydatetime ,10) s_day, insurecode,
+        count(case when STATUS='7' then 1 end) insure_claim_num,
+        count(*) insure_num
         FROM `INSURE_ORDERDETAIL`
-        where
-        flydatetime>= %s and flydatetime<%s
-        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype=1)
-        group BY left(flydatetime ,10), insurecode) B
-        on A.s_day = B.s_day and A.insurecode = B.insurecode
+        where flydatetime>=%s and flydatetime<%s
+        and INSURE_ORDERDETAIL.insurecode
+        in (select DISTINCT id from INSURE_DATA where bigtype=1)
+        group BY left(flydatetime ,10), insurecode ) A
     """
 
     insert_delay_sql = """
@@ -230,7 +222,7 @@ def update_insure_type_daily(days=0):
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, 0, %s, 0, now(), now())
     """
-    dto = [start_date, end_date, start_date, end_date]
+    dto = [start_date, end_date]
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
 
@@ -354,11 +346,11 @@ if __name__ == "__main__":
     #     i -= 1
 
     # update_hb_insure_daily(2)
-    i = 1411
-    while i >= 1:
+    i = 1
+    while i <= 1440:
         # update_insure_class_daily(i)
         update_insure_type_daily(i)
-        i -= 1
+        i += 1
     # update_hb_insure_daily(1)
     # update_insure_class_daily(1)
     # update_insure_type_daily(1)

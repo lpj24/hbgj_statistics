@@ -180,14 +180,11 @@ if __name__ == "__main__":
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
 
-    update_focus_newuser(7)
-    # i = 64
-    # while i > 7:
-    #     update_focus_newuser(i)
-    #     i -= 1
-    # i = 7
-    # while i >= 1:
-    #     update_fouces_dat_daily(i)
-    #     i -= 1
-    # collect_inland_inter_flyid_daily(1)
+    i = 29
+    while i > 7:
+        collect_inland_inter_flyid_daily(i)
+        i -= 1
+
+
+
 

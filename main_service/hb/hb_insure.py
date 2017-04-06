@@ -146,8 +146,8 @@ def update_insure_class_daily(days=0):
 
 
 def update_insure_type_daily(days=0):
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
     boat_sql = """
         SELECT left(i.createtime,10), i.insurecode,
@@ -155,7 +155,7 @@ def update_insure_type_daily(days=0):
         count(*),sum(i.price)
         FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
         on i.outorderid=o.orderid
-        where i.createtime BETWEEN %s and %s
+        where i.createtime >=%s and i.createtime < %s
         and i.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (2))
         GROUP BY left(i.createtime,10), i.insurecode
     """
@@ -179,16 +179,15 @@ def update_insure_type_daily(days=0):
         SELECT left(flydatetime,10) s_day, insurecode,
         count(*) insure_order_num,sum(INSURE_ORDERDETAIL.price) insure_amount FROM
         `INSURE_ORDERDETAIL`
-        where createtime
-        BETWEEN %s and %s
-        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (3)) and flydatetime
-        BETWEEN %s and %s group BY left(flydatetime,10), insurecode
+        where createtime >=%s and createtime<%s
+        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (3))
+        and flydatetime>= %s and flydatetime<%s group BY left(flydatetime,10), insurecode
         ) A left join (
         SELECT left(flydatetime,10) s_day, insurecode, count(*) claim_num,
         sum(claim_price) claim_amount FROM `INSURE_ORDERDETAIL`
-        where createtime BETWEEN %s and %s
-        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (3)) and flydatetime
-        BETWEEN %s and %s
+        where createtime>= %s and createtime<%s
+        and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (3)) and
+        flydatetime >=%s and flydatetime<%s
         and `claim_price` is not null group BY left(flydatetime,10), insurecode
     ) B ON A.s_day = B.s_day and A.insurecode = B.insurecode
 
@@ -213,14 +212,14 @@ def update_insure_type_daily(days=0):
         from (
         SELECT left(flydatetime ,10) s_day, insurecode, count(*) insure_claim_num FROM
         `INSURE_ORDERDETAIL`
-        where flydatetime BETWEEN %s and %s
+        where flydatetime>= %s and flydatetime<%s
         and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype=1)
         and `STATUS`='7' group BY left(flydatetime ,10), insurecode)
         A left join (
         SELECT left(flydatetime ,10) s_day,insurecode , count(*) insure_num
         FROM `INSURE_ORDERDETAIL`
         where
-        flydatetime  BETWEEN %s and %s
+        flydatetime>= %s and flydatetime<%s
         and INSURE_ORDERDETAIL.insurecode in (select DISTINCT id from INSURE_DATA where bigtype=1)
         group BY left(flydatetime ,10), insurecode) B
         on A.s_day = B.s_day and A.insurecode = B.insurecode
@@ -355,12 +354,13 @@ if __name__ == "__main__":
     #     i -= 1
 
     # update_hb_insure_daily(2)
-    # i = 1411
-    # while i >= 1:
-    #     # update_insure_class_daily(i)
-    #     update_insure_type_daily(i)
-    #     i -= 1
-    update_hb_insure_daily(1)
-    update_insure_class_daily(1)
-    update_insure_type_daily(1)
-    update_hb_boat(1)
+    i = 1411
+    while i >= 1:
+        # update_insure_class_daily(i)
+        update_insure_type_daily(i)
+        i -= 1
+    # update_hb_insure_daily(1)
+    # update_insure_class_daily(1)
+    # update_insure_type_daily(1)
+    # update_hb_boat(1)
+

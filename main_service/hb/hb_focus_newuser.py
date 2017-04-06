@@ -39,12 +39,12 @@ def update_focus_newuser(days=0):
             if query_date == "None":
                 continue
             query_id.append(phone_id)
-    # focus_pv = len(query_id)
-    # focus_uv = len(set(query_id))
+    focus_pv = len(query_id)
+    focus_uv = len(set(query_id))
     his_focus_id = DBCli().redis_dt_cli.smembers("hbdt_focus_his_uid")
-    # focus_newuser = len(set(query_id).difference(his_focus_id))
+    focus_newuser = len(set(query_id).difference(his_focus_id))
 
-    # DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
+    DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
     for focus_id in query_id:
         DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", focus_id)
 
@@ -180,10 +180,11 @@ if __name__ == "__main__":
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
 
-    i = 64
-    while i > 7:
-        update_focus_newuser(i)
-        i -= 1
+    update_focus_newuser(7)
+    # i = 64
+    # while i > 7:
+    #     update_focus_newuser(i)
+    #     i -= 1
     # i = 7
     # while i >= 1:
     #     update_fouces_dat_daily(i)

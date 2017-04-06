@@ -128,9 +128,9 @@ def update_focus_inland_inter_daily(days=0):
 
 def collect_inland_inter_flyid_his():
     fly_info_sql = """
-        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL where to_char(CREATETIME) < '2017-03-30 00:00:00'
+        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL where to_char(CREATETIME) < '2017-03-07 00:00:00'
         UNION ALL
-        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL_HIS to_char(CREATETIME) < '2017-03-30 00:00:00'
+        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL_HIS
     """
     inland_code_sql = """
         select THREE_WORDS_CODE from AIRPORT_NATION_INFO
@@ -171,13 +171,12 @@ def collect_inland_inter_flyid_daily(days=0):
 
 
 if __name__ == "__main__":
-    collect_inland_inter_flyid_his()
     # collect_his_phone_uid()
     # i = 64
     # while i > 7:
     #     update_focus_newuser(i)
     #     i -= 1
-
+    collect_inland_inter_flyid_his()
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
     # collect_inland_inter_flyid_daily(1)

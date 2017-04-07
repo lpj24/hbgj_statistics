@@ -172,7 +172,7 @@ def collect_inland_inter_flyid_daily(days=0):
 
 
 if __name__ == "__main__":
-    # collect_inland_inter_flyid_his()
+    collect_inland_inter_flyid_his()
     # collect_inland_inter_flyid_daily(2)
     # collect_his_phone_uid()
     # update_focus_newuser()
@@ -180,10 +180,10 @@ if __name__ == "__main__":
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
 
-    i = 29
-    while i > 7:
-        collect_inland_inter_flyid_daily(i)
-        i -= 1
+    # i = 29
+    # while i > 7:
+    #     collect_inland_inter_flyid_daily(i)
+    #     i -= 1
 
 
 

@@ -122,6 +122,7 @@ def update_hb_channel_ticket_income_daily(days=0):
         # insert_channel_data.append(new_channel_data)
     for income_k, income_v in pn_resouce_amount_dict.items():
         insert_channel_data.append(income_v)
+
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_date, u'航班管家', 'HBGJ'])
@@ -488,31 +489,35 @@ if __name__ == "__main__":
     # update_refund_ticket_channel_daily(1)
     # update_product_ticket_daily(1)
 
-    i = 90
-    while i >= 1:
-        update_hb_channel_ticket_income_daily(i)
-        i -= 1
-
-    check_sql = """
-        select sum(income_amount) from operation_hbgj_channel_ticket_income_daily where s_day=%s
-    """
-
-    check_sql_2 = """
-        select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
-        income from profit_hb_income where s_day=%s
-    """
-    import datetime
-
-    a = datetime.date(2017, 1, 1)
-    b = datetime.date(2017, 3, 31)
-    while a <= b:
-        dto = [DateUtil.date2str(a, "%Y-%m-%d")]
-        income = DBCli().targetdb_cli.queryOne(check_sql, dto)
-        income_sum = DBCli().targetdb_cli.queryOne(check_sql_2, dto)
-
-        income = income[0]
-        income_sum = income_sum[0]
-        if income != income_sum:
-            print a
-            print income, income_sum
-        a = DateUtil.add_days(a, 1)
+    # update_refund_ticket_channel_daily(1)
+    # update_hb_channel_ticket_daily(1)
+    update_hb_channel_ticket_income_daily(1)
+    # update_product_ticket_daily(1)
+    # i = 90
+    # while i >= 1:
+    #     update_hb_channel_ticket_income_daily(i)
+    #     i -= 1
+    #
+    # check_sql = """
+    #     select sum(income_amount) from operation_hbgj_channel_ticket_income_daily where s_day=%s
+    # """
+    #
+    # check_sql_2 = """
+    #     select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
+    #     income from profit_hb_income where s_day=%s
+    # """
+    # import datetime
+    #
+    # a = datetime.date(2017, 1, 1)
+    # b = datetime.date(2017, 3, 31)
+    # while a <= b:
+    #     dto = [DateUtil.date2str(a, "%Y-%m-%d")]
+    #     income = DBCli().targetdb_cli.queryOne(check_sql, dto)
+    #     income_sum = DBCli().targetdb_cli.queryOne(check_sql_2, dto)
+    #
+    #     income = income[0]
+    #     income_sum = income_sum[0]
+    #     if income != income_sum:
+    #         print a
+    #         print income, income_sum
+    #     a = DateUtil.add_days(a, 1)

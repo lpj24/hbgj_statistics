@@ -76,7 +76,6 @@ def mongo_his():
                          tmp_result_android["gmv"]
                          )
 
-            print tmp_tuple
             DBCli().targetdb_cli.insert(gt_new_order_sql["update_gtgj_new_order_daily"], tmp_tuple)
 
         start_date = DateUtil.add_days(start_date, -1)

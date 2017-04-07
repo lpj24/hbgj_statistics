@@ -604,10 +604,11 @@ if __name__ == "__main__":
     # update_flight_focus_user_daily(2)
     # update_focus_platform(1)
     # update_platform_focus_by_file()
-    i = 5
-    while i >= 1:
-        update_hb_focus_inter_inland(i)
-        i -= 1
+    # i = 5
+    # while i >= 1:
+    #     update_hb_focus_inter_inland(i)
+    #     i -= 1
+    update_hb_focus_inter_inland(1)
     # i = 30
     # while i >= 1:
     #     update_hb_focus_inter_inland(inter_codes, i)

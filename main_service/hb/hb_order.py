@@ -90,6 +90,6 @@ def update_operation_hbgj_order_detail_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_gt_order_daily(1)
+    # update_hb_gt_order_daily(1)
     update_operation_hbgj_order_detail_daily(1)
     # update_hb_gt_order_daily_his()

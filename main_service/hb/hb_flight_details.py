@@ -19,10 +19,13 @@ def localytics_cli(app_id, event, metrics, start_date):
     conditions = {"event_name": event, "day": ["between", start_date, start_date]}
 
     data_params["conditions"] = json.dumps(conditions)
-
-    r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+    try:
+        r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=60)
+    except Exception:
+        raise RuntimeError("localytics time out")
     result = r.json()
-    return (result["results"])[0][metrics]
+    status_code = r.status_code
+    return status_code, (result["results"])[0][metrics]
 
 
 def update_flight_detail_user_daily(days=0):
@@ -65,7 +68,10 @@ def update_flight_detail_user_daily(days=0):
     localytics_check = {"sessions": 0, "users": 0}
     for i in metrics:
         for x in xrange(len(metrics)):
-            localytics_result = localytics_cli(app_id[x], event_list[x], i, s_day)
+            status_code, localytics_result = localytics_cli(app_id[x], event_list[x], i, s_day)
+            if status_code == 429:
+                raise AssertionError("localytics over times")
+                return
             localytics_check[i] += localytics_result
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])

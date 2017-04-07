@@ -23,7 +23,6 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_search_focus.write_day)
     TimeService.add_hard_service(hb_flight_focus.update_hb_focus_inter_inland)
     # TimeService.add_hard_service(hb_profit_cost.update_profit_hotel_income)
-
     #tmp task
     # TimeService.add_day_service(hb_focus_newuser.collect_his_phone_uid)
 

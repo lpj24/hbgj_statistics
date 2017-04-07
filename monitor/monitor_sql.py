@@ -73,7 +73,6 @@ sql = [
     "select count(1) from ticket_query_newuser_daily where s_day=%s",
     "select count(1) from operation_hbgj_channel_ticket_profit_daily where s_day=%s",
     "select count(1) from operation_hbgj_supplier_ticket_daily where s_day=%s",
-    "select count(1) from hbdt_focus_users_inland_inter_daily where s_day=%s",
 ]
 
 week_sql = [

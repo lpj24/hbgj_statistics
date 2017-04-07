@@ -21,8 +21,6 @@ def add_execute_job():
     TimeService.add_day_service(gt_order.update_gt_order_daily)
 
     TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
-    TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
-    TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_weekly)
     TimeService.add_day_service(hb_activeusers.update_hbgj_activeusers_daily)
 
@@ -70,6 +68,8 @@ def add_execute_job():
     TimeService.add_day_service(hb_channel_ticket.update_product_ticket_daily)
     TimeService.add_day_service(hb_order.update_operation_hbgj_order_detail_daily)
     TimeService.add_day_service(hb_insure.update_hb_boat)
+    TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
+    TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     return TimeService
 
 

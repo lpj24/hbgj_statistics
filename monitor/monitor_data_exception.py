@@ -40,4 +40,4 @@ def get_table_column_info(table_name):
 
 if __name__ == "__main__":
     all_table = get_all_monitor_table_name()
-    get_table_column_info(all_table[0])
+    print get_table_column_info(all_table[0])

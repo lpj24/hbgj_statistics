@@ -139,7 +139,6 @@ def collect_inland_inter_flyid_his():
     inland_code = DBCli().oracle_cli.queryAll(inland_code_sql)
     inland_code = [in_code[0] for in_code in inland_code]
     fly_info = DBCli().oracle_cli.queryAll(fly_info_sql)
-    print len(fly_info)
     for fly in fly_info:
         flyid, depcode, arrcode = fly
         if depcode in inland_code or arrcode in inland_code:
@@ -173,7 +172,7 @@ def collect_inland_inter_flyid_daily(days=0):
 
 
 if __name__ == "__main__":
-    collect_inland_inter_flyid_his()
+    # collect_inland_inter_flyid_his()
     # collect_inland_inter_flyid_daily(2)
     # collect_his_phone_uid()
     # update_focus_newuser()
@@ -181,10 +180,12 @@ if __name__ == "__main__":
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
 
-    # i = 29
-    # while i > 7:
-    #     collect_inland_inter_flyid_daily(i)
-    #     i -= 1
+    i = 11
+    while i >= 1:
+        collect_inland_inter_flyid_daily(i)
+        update_focus_inland_inter_daily(i)
+        break
+        i -= 1
 
     # update_fouces_dat_daily(1)
     # update_focus_newuser(1)

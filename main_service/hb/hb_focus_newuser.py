@@ -174,18 +174,18 @@ def collect_inland_inter_flyid_daily(days=0):
 if __name__ == "__main__":
     # collect_inland_inter_flyid_his()
     # collect_inland_inter_flyid_daily(2)
-    # collect_his_phone_uid()
+    collect_his_phone_uid()
     # update_focus_newuser()
     # update_fouces_dat_daily(2)
     # for x in xrange(34, 0, -1):
     #     update_focus_inland_inter_daily(x)
 
-    i = 11
-    while i >= 1:
-        collect_inland_inter_flyid_daily(i)
-        update_focus_inland_inter_daily(i)
-        break
-        i -= 1
+    # i = 11
+    # while i >= 1:
+    #     collect_inland_inter_flyid_daily(i)
+    #     update_focus_inland_inter_daily(i)
+    #     break
+    #     i -= 1
 
     # update_fouces_dat_daily(1)
     # update_focus_newuser(1)

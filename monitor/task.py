@@ -5,6 +5,7 @@ from monitor_sql import sql, week_sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
 from main_service.hb import hb_profit_cost
+from monitor_data_exception import cal_balance
 
 
 def check_day_data():
@@ -71,3 +72,5 @@ def check_execute_job():
 if __name__ == "__main__":
     execute_later_job()
     check_day_data()
+    exception_table = cal_balance()
+    utils.sendMail("lipenju24@163.com", exception_table, "与前一天的数据有差异")

@@ -168,6 +168,7 @@ def collect_inland_inter_flyid_daily(days=0):
     inland_code = DBCli().oracle_cli.queryAll(inland_code_sql)
     inland_code = [in_code[0] for in_code in inland_code]
     fly_info = DBCli().oracle_cli.queryAll(fly_info_sql, dto)
+    print len(fly_info)
     for fly in fly_info:
         flyid, depcode, arrcode = fly
         if depcode in inland_code or arrcode in inland_code:
@@ -184,7 +185,7 @@ if __name__ == "__main__":
     i = 35
     while i >= 1:
         collect_inland_inter_flyid_daily(i)
-        # update_focus_inland_inter_daily(i)
+        update_focus_inland_inter_daily(i)
         break
         i -= 1
 

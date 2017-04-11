@@ -176,10 +176,11 @@ if __name__ == "__main__":
     # collect_inland_inter_flyid_daily(2)
     # collect_his_phone_uid()
 
-    i = 33
+    i = 34
     while i >= 1:
-        collect_inland_inter_flyid_daily(i)
+        # collect_inland_inter_flyid_daily(i)
         update_focus_inland_inter_daily(i)
+        break
         i -= 1
 
     # update_fouces_dat_daily(1)

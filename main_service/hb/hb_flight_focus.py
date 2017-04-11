@@ -608,7 +608,10 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hb_focus_inter_inland(i)
     #     i -= 1
-    update_hb_focus_inter_inland(1)
+    i = 4
+    while i >= 1:
+        update_hb_focus_inter_inland(i)
+        i -= 1
     # i = 30
     # while i >= 1:
     #     update_hb_focus_inter_inland(inter_codes, i)

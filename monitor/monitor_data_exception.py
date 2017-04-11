@@ -33,6 +33,10 @@ def get_table_column_info(table_name):
             column_n, column_key, data_type = column_info
             if data_type == "int" or data_type == "decimal":
                 cal_column.append([column_n, table_name, l_day, column_n, table_name, n_day])
+    # s_day不是主键
+    else:
+        # TODO
+        pass
     return cal_column
 
 
@@ -61,9 +65,14 @@ def cal_balance():
                 exception_table.append(table_name)
     return set(exception_table)
 
-
-if __name__ == "__main__":
-    print cal_balance()
+#
+# if __name__ == "__main__":
+#     # print cal_balance()
+#
+#     all_table = get_all_monitor_table_name()
+#
+#     for tab_name in all_table:
+#         require_query_column = get_table_column_info(tab_name)
 
 
 

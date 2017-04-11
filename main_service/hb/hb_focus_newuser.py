@@ -128,7 +128,7 @@ def update_focus_inland_inter_daily(days=0):
                                                 "increment_focus_inter_fly"))
     print start_date, inland_fly, inter_fly, exception_fly
     # DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
-    DBCli().redis_dt_cli.expire(start_date + "_focus_fly", 86400)
+    DBCli().redis_dt_cli.delete(start_date + "_focus_fly")
 
 
 def collect_inland_inter_flyid_his():
@@ -160,6 +160,11 @@ def collect_inland_inter_flyid_daily(days=0):
         CREATETIME < to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
         and
         CREATETIME >= to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
+        union
+        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL_HIS where
+        CREATETIME < to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
+        and
+        CREATETIME >= to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
     """
     inland_code_sql = """
         select THREE_WORDS_CODE from AIRPORT_NATION_INFO
@@ -180,10 +185,10 @@ if __name__ == "__main__":
     # collect_inland_inter_flyid_daily(2)
     # collect_his_phone_uid()
 
-    i = 34
+    i = 35
     while i >= 1:
         collect_inland_inter_flyid_daily(i)
-        update_focus_inland_inter_daily(i)
+        # update_focus_inland_inter_daily(i)
         break
         i -= 1
 

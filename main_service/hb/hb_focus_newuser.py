@@ -128,7 +128,7 @@ def update_focus_inland_inter_daily(days=0):
                                                 "increment_focus_inter_fly"))
     print start_date, inland_fly, inter_fly, exception_fly
     # DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
-    DBCli().redis_dt_cli.delete(start_date + "_focus_fly")
+    DBCli().redis_dt_cli.expire(start_date + "_focus_fly", 86400)
 
 
 def collect_inland_inter_flyid_his():
@@ -155,7 +155,6 @@ def collect_inland_inter_flyid_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     dto = {"start_date": start_date, "end_date": end_date}
-    print dto
     fly_info_sql = """
         select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL where
         CREATETIME < to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
@@ -168,7 +167,6 @@ def collect_inland_inter_flyid_daily(days=0):
     inland_code = DBCli().oracle_cli.queryAll(inland_code_sql)
     inland_code = [in_code[0] for in_code in inland_code]
     fly_info = DBCli().oracle_cli.queryAll(fly_info_sql, dto)
-    print len(fly_info)
     for fly in fly_info:
         flyid, depcode, arrcode = fly
         if depcode in inland_code or arrcode in inland_code:
@@ -184,7 +182,7 @@ if __name__ == "__main__":
 
     i = 35
     while i >= 1:
-        collect_inland_inter_flyid_daily(i)
+        # collect_inland_inter_flyid_daily(i)
         update_focus_inland_inter_daily(i)
         break
         i -= 1

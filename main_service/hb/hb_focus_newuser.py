@@ -123,7 +123,8 @@ def update_focus_inland_inter_daily(days=0):
     exception_fly = len(DBCli().redis_dt_cli.sdiff(start_date + "_focus_fly", "focus_inland_fly", "focus_inter_fly"))
     inland_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inland_fly"))
     inter_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inter_fly"))
-    DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
+    print start_date, inland_fly, inter_fly, exception_fly
+    # DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
     DBCli().redis_dt_cli.expire(start_date + "_focus_fly", 86400)
 
 

@@ -155,16 +155,12 @@ def collect_inland_inter_flyid_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     dto = {"start_date": start_date, "end_date": end_date}
+    print dto
     fly_info_sql = """
         select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL where
-        FLY_FLYINFO_TBL.CREATETIME < to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
+        CREATETIME < to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
         and
-        FLY_FLYINFO_TBL.CREATETIME >= to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        union
-        select FLYID, FLYDEP ,FLYARR from FLY_FLYINFO_TBL_HIS where
-        FLY_FLYINFO_TBL.CREATETIME < to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and
-        FLY_FLYINFO_TBL.CREATETIME >= to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
+        CREATETIME >= to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
     """
     inland_code_sql = """
         select THREE_WORDS_CODE from AIRPORT_NATION_INFO

@@ -3,6 +3,7 @@ from DBUtils.PooledDB import PooledDB
 import logging
 import time
 import cx_Oracle
+import re
 
 
 class DButils(object):
@@ -57,8 +58,8 @@ class DButils(object):
             cursor.execute(sql)
         else:
             if sql.count("tablename") > 0:
-                for i in xrange(sql.count("tablename")):
-                    sql = sql.replace("tablename", params.pop(), 1)
+                rx = re.compile("tablename")
+                sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
         # logging.warning("execute sql" + cursor._executed)
@@ -73,8 +74,8 @@ class DButils(object):
                 cursor.execute(sql)
             else:
                 if sql.count("tablename") > 0:
-                    for i in xrange(sql.count("tablename")):
-                        sql = sql.replace("tablename", params.pop(), 1)
+                    rx = re.compile("tablename")
+                    sql, num = rx.subn(params.pop(), sql)
                 cursor.execute(sql, params)
             # logging.warning("execute sql" + cursor._executed)
             data = cursor.fetchone()

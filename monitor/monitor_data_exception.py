@@ -2,6 +2,7 @@
 from monitor_sql import sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
+import operator
 
 
 def get_all_monitor_table_name():
@@ -57,7 +58,7 @@ def cal_balance():
             try:
                 last_data = float(require_compare_data[0][0])
                 next_data = float(require_compare_data[0][0])
-                balance_num_boolean = abs(last_data - next_data) / next_data > 0.3
+                balance_num_boolean = operator.abs(last_data - next_data) / next_data > 0.3
             except (Exception, ZeroDivisionError):
                 break
 

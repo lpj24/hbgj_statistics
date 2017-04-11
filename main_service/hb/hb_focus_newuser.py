@@ -93,14 +93,14 @@ def update_fouces_dat_daily(days=0):
 
 def update_focus_inland_inter_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    # check_s_day = DateUtil.get_date_before_days(days * 2)
-    # check_last_sql = """
-    #     select count(*) from hbdt_focus_users_inland_inter_daily where s_day = %s
-    # """
-    #
-    # check_data = DBCli().targetdb_cli.queryOne(check_last_sql, [check_s_day])
-    # if int(check_data[0]) < 1:
-    #     return
+    check_s_day = DateUtil.get_date_before_days(days * 2)
+    check_last_sql = """
+        select count(*) from hbdt_focus_users_inland_inter_daily where s_day = %s
+    """
+
+    check_data = DBCli().targetdb_cli.queryOne(check_last_sql, [check_s_day])
+    if int(check_data[0]) < 1:
+        return
 
     insert_sql = """
         insert into hbdt_focus_users_inland_inter_daily (s_day, focus_users_inland, focus_users_inter, exception_users_inter,
@@ -126,8 +126,7 @@ def update_focus_inland_inter_daily(days=0):
                                                  "increment_focus_inland_fly"))
     inter_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inter_fly",
                                                 "increment_focus_inter_fly"))
-    print start_date, inland_fly, inter_fly, exception_fly
-    # DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
+    DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
     DBCli().redis_dt_cli.expire(start_date + "_focus_fly", 86400)
 
 

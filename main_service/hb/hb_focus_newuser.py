@@ -120,9 +120,12 @@ def update_focus_inland_inter_daily(days=0):
             except Exception:
                 continue
             DBCli().redis_dt_cli.sadd(start_date + "_focus_fly", flyid)
-    exception_fly = len(DBCli().redis_dt_cli.sdiff(start_date + "_focus_fly", "focus_inland_fly", "focus_inter_fly"))
-    inland_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inland_fly"))
-    inter_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inter_fly"))
+    exception_fly = len(DBCli().redis_dt_cli.sdiff(start_date + "_focus_fly", "focus_inland_fly", "focus_inter_fly",
+                                                   "increment_focus_inland_fly", "increment_focus_inter_fly"))
+    inland_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inland_fly",
+                                                 "increment_focus_inland_fly"))
+    inter_fly = len(DBCli().redis_dt_cli.sinter(start_date + "_focus_fly", "focus_inter_fly",
+                                                "increment_focus_inter_fly"))
     print start_date, inland_fly, inter_fly, exception_fly
     # DBCli().targetdb_cli.insert(insert_sql, [start_date, inland_fly, inter_fly, exception_fly])
     DBCli().redis_dt_cli.expire(start_date + "_focus_fly", 86400)
@@ -167,9 +170,9 @@ def collect_inland_inter_flyid_daily(days=0):
     for fly in fly_info:
         flyid, depcode, arrcode = fly
         if depcode in inland_code or arrcode in inland_code:
-            DBCli().redis_dt_cli.sadd("focus_inland_fly", flyid)
+            DBCli().redis_dt_cli.sadd("increment_focus_inland_fly", flyid)
         else:
-            DBCli().redis_dt_cli.sadd("focus_inter_fly", flyid)
+            DBCli().redis_dt_cli.sadd("increment_focus_inter_fly", flyid)
 
 
 if __name__ == "__main__":
@@ -179,7 +182,7 @@ if __name__ == "__main__":
 
     i = 34
     while i >= 1:
-        # collect_inland_inter_flyid_daily(i)
+        collect_inland_inter_flyid_daily(i)
         update_focus_inland_inter_daily(i)
         break
         i -= 1

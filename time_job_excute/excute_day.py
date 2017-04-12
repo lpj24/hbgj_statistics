@@ -42,7 +42,6 @@ def add_execute_job():
     TimeService.add_day_service(hb_profit_cost.update_huoli_car_income_daily)
     TimeService.add_day_service(hb_profit_cost.update_profit_hb_income)
     TimeService.add_day_service(hb_profit_cost.update_operation_hbgj_channel_ticket_profit_daily)
-    TimeService.add_day_service(hb_partner.update_hb_partner_daily)
 
     TimeService.add_day_service(hb_coupon_ticket.update_hbgj_coupon_tickt)
     TimeService.add_day_service(hb_coupon_ticket.update_gt_coupon_daily)
@@ -70,6 +69,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_hb_boat)
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
+    TimeService.add_day_service(hb_partner.update_hb_partner_daily)
     return TimeService
 
 

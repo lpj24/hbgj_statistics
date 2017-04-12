@@ -67,8 +67,8 @@ def cal_balance():
     return set(exception_table)
 
 #
-# if __name__ == "__main__":
-#     # print cal_balance()
+if __name__ == "__main__":
+    print cal_balance()
 #
 #     all_table = get_all_monitor_table_name()
 #

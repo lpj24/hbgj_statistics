@@ -15,7 +15,9 @@ def update_hotel_newusers_daily(days=0):
     #              os.path.join("C:\\Users\\Administrator\\Desktop", "access.log_209_" + s_day + ".tar.gz")]
     # regex = re.compile(regex)
     # uid=(([0-9]|[a-z])*)
-    if os.path.isfile(file_list[0]) and os.path.isfile(file_list[1]):
+    if False in map(os.path.isfile, file_list):
+        logging.warn("no file" + s_day + "log")
+    else:
         uid_key = s_day + "_log_uid"
         for tar_file in file_list:
             try:
@@ -49,9 +51,6 @@ def update_hotel_newusers_daily(days=0):
 
         dto = [DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y-%m-%d"), today_uid_num]
         DBCli().targetdb_cli.insert(insert_sql, dto)
-
-    else:
-        logging.warn("no file" + s_day + "log")
 
 if __name__ == "__main__":
     update_hotel_newusers_daily(1)

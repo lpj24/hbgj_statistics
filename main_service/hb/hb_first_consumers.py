@@ -121,7 +121,7 @@ def update_hbgj_newconsumers_type_daily(days=0):
 
 
 def update_new_register_user_daily(days=0):
-    """更新新增注册用户, new_register_user_daily"""
+    """更新新增注册用户, hbgj_new_register_user_daily"""
     register_sql = """
         select
         A.s_day,
@@ -138,7 +138,7 @@ def update_new_register_user_daily(days=0):
     """
 
     insert_sql = """
-        insert into new_register_user_daily (s_day, gt_user_num, hb_user_num,
+        insert into hbgj_new_register_user_daily (s_day, gt_user_num, hb_user_num,
         weixin_user_num, createtime, updatetime)
         values (%s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),

@@ -1,27 +1,18 @@
+# -*- coding: utf-8 -*-
 from sql.huoli_sqlHandlers import car_consumers_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
 def update_car_consumers_daily(days=0):
+    """更新专车消费(日), huoli_car_consumers_daily"""
+
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))
-    dto = []
-    # for i in xrange(4):
-    #     dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-    #     dto.append(DateUtil.date2str(today))
-    #     dto.append(DateUtil.date2str(tomorrow))
-    #
-    # query_data = car_cli.queryOne(car_consumers_sql['car_consumers_daily'], dto)
-    # targetdb_cli.insert(car_consumers_sql['update_car_consumers_daily'], query_data)
-
-    for i in xrange(3):
-        dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-        dto.append(DateUtil.date2str(today))
-        dto.append(DateUtil.date2str(tomorrow))
-
+    dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), DateUtil.date2str(tomorrow)] * 3
     query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_daily"], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_daily"], query_data)
+    return __file__
 
 
 def update_car_consumers_weekly():
@@ -83,6 +74,7 @@ def update_car_consumers_quarterly():
 
 
 def update_car_newconsumers_daily(days=0):
+    """更新专车新增消费用户(日), huoli_car_newconsumers_daily"""
     today = DateUtil.get_date_before_days(int(days))
     dto = []
     for i in xrange(3):
@@ -91,6 +83,7 @@ def update_car_newconsumers_daily(days=0):
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
     query_data = DBCli().car_cli.queryOne(car_consumers_sql['car_newconsumers_daily'], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql['update_car_newconsumers_daily'], query_data)
+    return __file__
 
 if __name__ == "__main__":
     update_car_consumers_daily(2)

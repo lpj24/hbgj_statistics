@@ -5,6 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gtgj_activeusers_daily(days=0):
+    """更新高铁活跃用户(日), gtgj_activeusers_daily"""
     if days > 0:
         today = DateUtil.date2str(DateUtil.get_date_before_days(3), '%Y-%m-%d')
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(0), '%Y-%m-%d')
@@ -14,6 +15,7 @@ def update_gtgj_activeusers_daily(days=0):
     dto = [tomorrow, today]
     query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_activeusers_daily"], query_data)
+    return __file__
 
 
 def update_gtgj_activeusers_weekly():
@@ -32,6 +34,7 @@ def update_gtgj_activeusers_monthly():
 
 
 def update_gtgj_newusers_daily(days=0):
+    """更新高铁新用户(日), gtgj_newusers_daily"""
     if days > 0:
         today = DateUtil.date2str(DateUtil.get_date_before_days(3), '%Y-%m-%d')
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(0), '%Y-%m-%d')
@@ -41,6 +44,7 @@ def update_gtgj_newusers_daily(days=0):
     dto = [tomorrow, today]
     query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_newusers_daily"], dto)
     DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_newusers_daily"], query_data)
+    return __file__
 
 
 def update_gtgj_activeusers_quarterly():

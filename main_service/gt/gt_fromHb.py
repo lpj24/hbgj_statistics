@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 from sql.gt_sqlHandlers import gt_order_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
-import datetime
 
 
 def update_gtgj_from_hb(days=0):
+    """更新由航班转换到高铁的订单, gtgj_ticket_from_hb"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [today, tomorrow]
@@ -13,6 +14,7 @@ def update_gtgj_from_hb(days=0):
 
     query_data = [query_data_order[0], query_data_order[1], query_data_ticket[1]]
     DBCli().targetdb_cli.insert(gt_order_sql["insert_gtgj_from_hb"], query_data)
+    return __file__
 
 
 # def update_gtgj_from_hb_his():

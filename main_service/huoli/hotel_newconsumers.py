@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 from dbClient.dateutil import DateUtil
 from dbClient.db_client import DBCli
 from sql.huoli_sqlHandlers import hotel_newconsumers_sql
 
 
 def update_hotel_newconsumers_daily(days=0):
+    """更新酒店新增消费用户(日), hotel_newconsumers_daily"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [DateUtil.date2str(start_date),

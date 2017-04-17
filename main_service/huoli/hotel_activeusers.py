@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dbClient.dateutil import DateUtil
 from dbClient.db_client import DBCli
 
@@ -18,6 +19,7 @@ def update_hotel_activeusers_daily(days=0):
 
 
 def update_hotel_activeusers_weekly(days=0):
+    """更新酒店活跃用户(周), hotel_activeusers_weekly"""
     start_week, end_week = DateUtil.get_last_week_date(DateUtil.get_date_before_days(days))
     start_week = DateUtil.add_days(start_week, 7)
     s_day = start_week

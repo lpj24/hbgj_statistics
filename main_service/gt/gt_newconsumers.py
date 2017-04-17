@@ -1,4 +1,4 @@
-import redis
+# -*- coding: utf-8 -*-
 from dbClient.dateutil import DateUtil
 from dbClient.db_client import DBCli
 import os
@@ -35,6 +35,7 @@ def gt_newconsumers_history():
 
 
 def gt_newconsumers_daily(days=0):
+    """更新高铁新增消费用户(日), gtgj_newconsumers_daily"""
     redis_cli = DBCli().redis_cli
     new_consumers_daily_ios = """
             SELECT distinct uid

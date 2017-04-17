@@ -3,7 +3,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_focus_platform(days=0):
-
+    """更新不同平台关注数据(日), hbdt_focus_platform_daily"""
     all_platform_sql_uv = """
         select platform, count(distinct userid) from (
             select distinct(userid) userid, platform from fly_userfocus_tbl
@@ -37,44 +37,6 @@ def update_focus_platform(days=0):
         group by platform
     """
 
-    all_uv_sql = """
-            select :s_day s_day,sum(focus_users) from (
-    select count(DISTINCT phoneid) focus_users from (
-        SELECT phoneid FROM FLY_USERFOCUS_TBL
-        where PHONEID>0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        union
-        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
-        where PHONEID>0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        )
-        UNION
-        select count(DISTINCT userid) focus_users from (
-            SELECT userid from FLY_USERFOCUS_TBL
-            where PHONEID=0
-            and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-            and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-            UNION
-            SELECT USERID from FLY_USERFOCUS_TBL_HIS
-            where PHONEID=0
-            and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-            and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        ) )
-    """
-
-    # gtgj_sql = """
-    # select count(distinct userid) from (
-    #     select distinct(userid) userid from fly_userfocus_tbl
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
-    #     union
-    #     select distinct(userid) userid from fly_userfocus_tbl_his
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
-    # """
-
     gtgj_sql = """
         select count(distinct userid) from (
         select A_table.userid from (
@@ -98,17 +60,6 @@ def update_focus_platform(days=0):
         ) B_table
         )
     """
-
-    # gtgj_sql_pv = """
-    # select sum(pv) from (
-    #     select count(*) pv from fly_userfocus_tbl
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0
-    #     union
-    #     select count(*) pv from fly_userfocus_tbl_his
-    #     where createtime between to_date(:start_date, 'yyyy-mm-dd')
-    #     and to_date(:end_date, 'yyyy-mm-dd') and userid like 'gt%' and ordertype = 0)
-    # """
 
     gtgj_sql_pv = """
         select sum(count_pv) from (
@@ -234,8 +185,6 @@ def update_focus_platform(days=0):
     duanxin_pv = duanxin_data_pv[0]
     gtgj_data_pv = DBCli().oracle_cli.queryOne(gtgj_sql_pv, dto)
     gtgj_pv = gtgj_data_pv[0]
-    # weixin_applate_data_pv = DBCli().oracle_cli.queryOne(weixin_applate_sql_pv, dto)
-    # weixin_applate_pv = weixin_applate_data_pv[0]
     total_pv = iphone_pv + android_pv + weixin_pv + gtgj_pv + jieji_pv + duanxin_pv + weixin_applate_pv
 
     insert_sql = """
@@ -285,33 +234,6 @@ def update_focus_platform_weekly():
             and ordertype = 0 and (platform = 'android' or platform = 'iphone'
             or platform = 'iphonepro' or platform = 'web' or platform='weixin')
             and userid not like 'gt%') group by platform
-    """
-
-    all_uv_sql = """
-            select :s_day s_day,sum(focus_users) from (
-    select count(DISTINCT phoneid) focus_users from (
-        SELECT phoneid FROM FLY_USERFOCUS_TBL
-        where PHONEID>0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        union
-        SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
-        where PHONEID>0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        )
-        UNION
-        select count(DISTINCT userid) focus_users from (
-            SELECT userid from FLY_USERFOCUS_TBL
-            where PHONEID=0
-            and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-            and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-            UNION
-            SELECT USERID from FLY_USERFOCUS_TBL_HIS
-            where PHONEID=0
-            and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-            and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-        ) )
     """
 
     gtgj_sql = """

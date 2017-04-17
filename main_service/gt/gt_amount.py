@@ -64,6 +64,7 @@ def getGtAmountChange(start_date, end_date):
 
 
 def update_gtgj_amount_daily(days=0):
+    """更新高铁交易额(日), gtgj_amount_daily"""
     if days > 0:
         query_date = DateUtil.get_date_before_days(3)
         today = DateUtil.get_date_before_days(3)
@@ -100,6 +101,7 @@ def update_gtgj_amount_daily(days=0):
         query_data.append(int_round(amount_grab.pop()[0]))
         query_date = DateUtil.add_days(query_date, 1)
         DBCli().targetdb_cli.insert(gt_amount_sql["update_gtgj_amount_daily"], query_data)
+    return __file__
 
 
 def int_round(num):

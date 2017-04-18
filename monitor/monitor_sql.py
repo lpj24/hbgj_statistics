@@ -73,6 +73,9 @@ sql = [
     "select count(1) from operation_hbgj_channel_ticket_profit_daily where s_day=%s",
     "select count(1) from operation_hbgj_supplier_ticket_daily where s_day=%s",
     "select count(1) from hbdt_focus_daily_inter where s_day=%s",
+    "select count(1) from hbgj_newconsumers_type_daily where s_day=%s",
+    "select count(1) from hbgj_new_register_user_daily where s_day=%s",
+    "select count(1) from hbgj_inter_inland_consumers_daily where s_day=%s",
 ]
 
 week_sql = [

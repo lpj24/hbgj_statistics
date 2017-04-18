@@ -29,7 +29,7 @@ def add_execute_job():
     TimeService.add_day_service(hotel_order.update_hotel_orders_daily)
 
     TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
-    TimeService.add_day_service(hbgj_users.hbgj_user)
+    # TimeService.add_day_service(hbgj_users.hbgj_user)
 
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 
@@ -74,29 +74,11 @@ def add_execute_job():
     return TimeService
 
 
-def execute_day_job_again(fun_path, fun_name):
-    import os
-    fun_path = (fun_path.split("\\"))[-3:]
-    fun_path[-1] = (fun_path[-1].split("."))[0]
-    fun_path = ".".join(fun_path)
-    with open("tmp_py.py", "w") as py_file:
-        coding_str = "# -*- coding: utf-8 -*-\n"
-        import_str = "from " + fun_path + " import " + fun_name + "\n"
-        main_str = "if __name__ == '__main__':\n"
-        execute_fun_str = "\t" + fun_name + "(2)" + "\n"
-        py_str = coding_str + import_str + main_str + execute_fun_str
-        py_file.write(py_str)
-    a = os.system("python ./tmp_py.py")
-    if a == 0:
-        print "update success"
-
-from dbClient.db_client import DBCli
 if __name__ == "__main__":
     # days = sys.argv[1]
-    import os
     days = 1
     service = add_execute_job()
-    bi_execute_day_job = []
+    from dbClient import utils
     for fun in service.get_day_service():
         try:
             fun_path = fun(int(days))
@@ -104,19 +86,7 @@ if __name__ == "__main__":
                 fun_path = fun_path[0: -1]
             fun_name = fun.__name__
             fun_doc = fun.__doc__
-
-            renewable = 1 if fun_path else 0
-            job_type = 1
-            if fun_name == "hbgj_user":
-                job_type = 5
-            bi_execute_day_job.extend([fun_name, fun_path, fun_doc, job_type, renewable])
-
+            utils.storage_execute_job(fun_path, fun_name, fun_doc)
         except Exception as e:
             logging.warning(str(fun) + "----" + str(e.message) + "---" + str(e.args))
             continue
-
-    insert_sql = """
-        insert into bi_execute_job (job_name, job_path, job_doc, job_type, renewable, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, now(), now())
-    """
-    DBCli().targetdb_cli.batchInsert(insert_sql, bi_execute_day_job)

@@ -5,6 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_deplay_insure(days=0):
+    """更新航班关怀活动(邮件2-6), operation_hbgj_delay_treasure_daily"""
     fly_order_num_sql = """
         SELECT count(DISTINCT(O.ORDERID)) FROM TICKET_ORDERDETAIL O
         LEFT JOIN TICKET_ORDER T ON O.ORDERID=T.ORDERID
@@ -78,9 +79,11 @@ def update_hb_deplay_insure(days=0):
                    compensate_exception_num[0]]
 
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
+    return __file__
 
 
 def update_compensate_detail(days=0):
+    """更新延误宝赔付明细(邮件2-6), operation_delaycare_detail_daily"""
     compensate_detail_sql = """
         SELECT chargecount,count(*) order_num FROM TICKET_DELAY_CARE
         WHERE flydate = %s and state='1'
@@ -91,24 +94,13 @@ def update_compensate_detail(days=0):
         insert into operation_delaycare_detail_daily (s_day, delaycare_type, delaycare_count, createtime, updatetime)
         values (%s, %s, %s, now(), now())
     """
-    # from collections import OrderedDict
-    # compensate_type = OrderedDict()
-    # compensate_type[10] = 0
-    # compensate_type[30] = 0
-    # compensate_type[60] = 0
-    # compensate_type[120] = 0
-    # compensate_type[200] = 0
 
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     compensate_detail = DBCli(dict).sourcedb_cli.queryAll(compensate_detail_sql, [query_date])
     for i in compensate_detail:
         DBCli().targetdb_cli.insert(compensate_detail_insert_sql, [query_date, i["chargecount"], i["order_num"]])
-    # for i in compensate_detail:
-    #     if i["chargecount"] in compensate_type:
-    #         compensate_type[i["chargecount"]] = i["order_num"]
-    #
-    # for k, v in compensate_type.items():
-    #     DBCli().targetdb_cli.insert(compensate_detail_insert_sql, [query_date, str(k), v])
+
+    return __file__
 
 if __name__ == "__main__":
     # update_hb_deplay_insure(2)

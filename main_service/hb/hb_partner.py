@@ -19,7 +19,8 @@ def update_his():
 
 
 def update_hb_partner_daily(days=0):
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3), '%Y-%m-%d')
+    """更新航班合作伙伴pv和uv, hbdt_flight_partnerapi"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 8), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
     sql = """
@@ -38,6 +39,7 @@ def update_hb_partner_daily(days=0):
     """
     query_data = DBCli().hb_partner_cli.queryAll(sql, [start_date, end_date])
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    return __file__
 
 if __name__ == "__main__":
     # update_his()

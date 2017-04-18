@@ -5,6 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_channel_ticket_daily(days=0):
+    """航班各个渠道票量与交易额, operation_hbgj_channel_ticket_daily"""
     start_week = DateUtil.get_date_before_days(days * 1)
     end_week = DateUtil.get_date_after_days(1 - days)
     channel_sql = """
@@ -54,8 +55,11 @@ def update_hb_channel_ticket_daily(days=0):
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week,  u'航班管家', 'HBGJ'])
 
+    return __file__
+
 
 def update_hb_channel_ticket_income_daily(days=0):
+    """更新航班各个渠道机票收入, operation_hbgj_channel_ticket_income_daily"""
     start_date = DateUtil.get_date_before_days(days * 1)
     end_date = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -126,6 +130,7 @@ def update_hb_channel_ticket_income_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_date, u'航班管家', 'HBGJ'])
+    return __file__
 
 
 def update_hb_company_ticket_weekly():
@@ -371,6 +376,7 @@ def do_exception_sale():
 
 
 def update_product_ticket_daily(days=0):
+    """更新供应商出票, operation_hbgj_supplier_ticket_daily"""
     # start_week, end_week = DateUtil.get_last_week_date()
     start_week = DateUtil.get_date_before_days(days * 1)
     end_week = DateUtil.get_date_after_days(1 - days)
@@ -388,9 +394,11 @@ def update_product_ticket_daily(days=0):
     dto = [start_week, end_week]
     supplier_data = DBCli().sourcedb_cli.queryAll(product_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, supplier_data)
+    return __file__
 
 
 def update_refund_ticket_channel_daily(days=0):
+    """航班渠道退票, operation_hbgj_channel_refund_ticket_daily"""
     query_date = DateUtil.get_date_before_days(days * 1)
     today = DateUtil.get_date_after_days(1 - days)
 
@@ -479,6 +487,7 @@ def update_refund_ticket_channel_daily(days=0):
         insert_data.append(new_insert_data)
 
     DBCli().targetdb_cli.batchInsert(update_refund_sql, insert_data)
+    return __file__
 
 
 if __name__ == "__main__":

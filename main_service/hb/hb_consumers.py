@@ -1,32 +1,39 @@
+# -*- coding: utf-8 -*-
 from sql.hb_sqlHandlers import hb_consumers_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
 def update_hb_consumers_daily(days=0):
+    """更新航班消费用户, hbgj_consumers_daily"""
     today_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today_date, end_date, today_date, end_date]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_consumers_daily'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_daily'], query_data)
+    return __file__
 
 
 def update_hb_consumers_weekly(days=0):
+    """更新航班消费周用户, hbgj_consumers_weekly_test"""
     start_weekdate, end_weekdate = DateUtil.get_this_week_date()
     start_date = DateUtil.date2str(start_weekdate)
     end_date = DateUtil.date2str(end_weekdate)
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_consumers_weekly'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_weekly'], query_data)
+    return __file__
 
 
 def update_hb_consumers_monthly(days=0):
+    """更新航班月消费用户, hbgj_consumers_monthly_test"""
     start_monthdate, end_enddate = DateUtil.get_this_month_date()
     start_monthdate = DateUtil.date2str(start_monthdate)
     end_enddate = DateUtil.date2str(end_enddate)
     dto = [start_monthdate, end_enddate, start_monthdate, end_enddate]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_consumers_monthly'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_monthly'], query_data)
+    return __file__
 
 
 def update_hb_consumers_quarterly():
@@ -39,10 +46,12 @@ def update_hb_consumers_quarterly():
 
 
 def update_hb_newconsumers_daily(days=0):
+    """更新航班新增消费用户, hbgj_newconsumers_daily"""
     yesterday = DateUtil.get_before_days(days)
     dto = [yesterday, yesterday, yesterday, yesterday]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_newconsumers_daily'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_newconsumers_daily'], query_data)
+    return __file__
 
 if __name__ == "__main__":
     # update_hb_consumers_daily(1)

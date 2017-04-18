@@ -9,6 +9,7 @@ import time
 
 
 def hb_ticket_book(days=0):
+    """更新localytics机票预定事件(日), ticket_book_event"""
     api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
 
@@ -101,9 +102,11 @@ def hb_ticket_book(days=0):
             sql_data.append(num)
 
         DBCli().targetdb_cli.insert(sql, sql_data)
+    return __file__
 
 
 def update_booke_ticket_event_hourly(days=0):
+    """更新localytics预定机票各阶段事件(小时), ticket_book_event_hourly"""
     api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     # api_key = "0d2eb34de63f71462c15f0e-3f4088c2-5f00-11e6-7216-002dea3c3994"
@@ -198,9 +201,11 @@ def update_booke_ticket_event_hourly(days=0):
         hour_data.append(new_tmp_data)
 
     DBCli().targetdb_cli.batchInsert(sql, hour_data)
+    return __file__
 
 
 def update_ios_android_newuser_daily(days=0):
+    """更新ios android新用户, ticket_query_newuser_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
@@ -243,6 +248,7 @@ def update_ios_android_newuser_daily(days=0):
             insert_data.append(result["users"])
 
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
+    return __file__
 
 
 if __name__ == "__main__":

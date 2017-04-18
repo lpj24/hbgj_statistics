@@ -6,11 +6,13 @@ from sql.hb_sqlHandlers import hb_orders_date_sql
 
 
 def update_hb_gt_order_daily(days=0):
+    """更新航班高铁订单, hbgj_order_detail_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
     query_data = DBCli().sourcedb_cli.queryAll(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
     DBCli().targetdb_cli.batchInsert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
+    return __file__
 
 
 def update_hb_gt_order_daily_his():
@@ -23,6 +25,7 @@ def update_hb_gt_order_daily_his():
 
 
 def update_operation_hbgj_order_detail_daily(days=0):
+    """更新航班管家订单详情, operation_hbgj_order_detail_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
@@ -87,6 +90,7 @@ def update_operation_hbgj_order_detail_daily(days=0):
     """
     query_data = DBCli().sourcedb_cli.queryOne(sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, query_data)
+    return __file__
 
 
 if __name__ == "__main__":

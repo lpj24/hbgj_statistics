@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 

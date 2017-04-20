@@ -211,7 +211,7 @@ def update_huoli_car_income_daily(days=0):
         income = VALUES(income)
     """
     import requests
-    url = "http://58.83.139.232:8070/mall/bi/income"
+    url = "http://123.56.24.152:8070/mall/bi/income"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"][0]
@@ -493,4 +493,4 @@ if __name__ == "__main__":
     #         print a
     #         print income, cost
     #     a = DateUtil.add_days(a, 1)
-    update_car_cost_detail(1)
+    update_huoli_car_income_daily(1)

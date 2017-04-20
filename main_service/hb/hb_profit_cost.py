@@ -183,7 +183,7 @@ def update_car_cost_detail(days=0):
         insert_car_cost.append((s_day, u"优惠券使用金额", coupon_in))
         insert_car_cost.append((s_day, u"返还积分金额", point_give_amount))
         insert_car_cost.append((s_day, u"赠送余额", balance_give_amount))
-        url = "http://10.0.1.178:8070/mall/bi/costdetail"
+        url = "http://123.56.24.152:8070/mall/bi/costdetail"
         params = {"beginDate": s_day,
                   "endDate": DateUtil.date2str(DateUtil.add_days(cost_data["s_day"], 1), '%Y-%m-%d')}
         car_result = requests.get(url, params=params).json()
@@ -231,7 +231,7 @@ def update_huoli_car_income_type(days=0):
         income = VALUES(income)
     """
     import requests
-    url = "http://10.0.1.178:8070/mall/bi/incomedetail"
+    url = "http://123.56.24.152:8070/mall/bi/incomedetail"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"]

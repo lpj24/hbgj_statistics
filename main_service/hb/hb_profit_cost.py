@@ -183,7 +183,7 @@ def update_car_cost_detail(days=0):
         insert_car_cost.append((s_day, u"优惠券使用金额", coupon_in))
         insert_car_cost.append((s_day, u"返还积分金额", point_give_amount))
         insert_car_cost.append((s_day, u"赠送余额", balance_give_amount))
-        url = "http://58.83.139.232:8070/mall/bi/costdetail"
+        url = "http://10.0.1.178:8070/mall/bi/costdetail"
         params = {"beginDate": s_day,
                   "endDate": DateUtil.date2str(DateUtil.add_days(cost_data["s_day"], 1), '%Y-%m-%d')}
         car_result = requests.get(url, params=params).json()
@@ -231,7 +231,7 @@ def update_huoli_car_income_type(days=0):
         income = VALUES(income)
     """
     import requests
-    url = "http://58.83.139.232:8070/mall/bi/incomedetail"
+    url = "http://10.0.1.178:8070/mall/bi/incomedetail"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"]
@@ -461,35 +461,36 @@ if __name__ == "__main__":
 
     # update_huoli_car_income_daily(1)
 
-    update_operation_hbgj_channel_ticket_profit_daily(6)
-    check_sql_1 = """
-        select sum(profit_amount) from operation_hbgj_channel_ticket_profit_daily
-        where s_day=%s order by channel_name;
-    """
-
-    check_sql_2 = """
-        select A.income_amount - A.cost from (
-        select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
-        income_amount,(select (inland_price_diff_type0 + inland_price_diff_type1 + inland_price_diff_type2 + dft_cost + inter_price_diff)
-        from profit_hb_cost where s_day=%s) cost
-        from profit_hb_income where s_day=%s) A
-    """
-
-    import datetime
-
-    a = datetime.date(2017, 4, 3)
-    b = datetime.date(2017, 4, 10)
-    while a <= b:
-        dto1 = [DateUtil.date2str(a, "%Y-%m-%d")]
-        dto2 = [DateUtil.date2str(a, "%Y-%m-%d"), DateUtil.date2str(a, "%Y-%m-%d")]
-        income = DBCli().targetdb_cli.queryOne(check_sql_1, dto1)
-        cost = DBCli().targetdb_cli.queryOne(check_sql_2, dto2)
-
-        income = income[0]
-        cost = cost[0]
-
-        # print income, cost
-        if income != cost:
-            print a
-            print income, cost
-        a = DateUtil.add_days(a, 1)
+    # update_operation_hbgj_channel_ticket_profit_daily(6)
+    # check_sql_1 = """
+    #     select sum(profit_amount) from operation_hbgj_channel_ticket_profit_daily
+    #     where s_day=%s order by channel_name;
+    # """
+    #
+    # check_sql_2 = """
+    #     select A.income_amount - A.cost from (
+    #     select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
+    #     income_amount,(select (inland_price_diff_type0 + inland_price_diff_type1 + inland_price_diff_type2 + dft_cost + inter_price_diff)
+    #     from profit_hb_cost where s_day=%s) cost
+    #     from profit_hb_income where s_day=%s) A
+    # """
+    #
+    # import datetime
+    #
+    # a = datetime.date(2017, 4, 3)
+    # b = datetime.date(2017, 4, 10)
+    # while a <= b:
+    #     dto1 = [DateUtil.date2str(a, "%Y-%m-%d")]
+    #     dto2 = [DateUtil.date2str(a, "%Y-%m-%d"), DateUtil.date2str(a, "%Y-%m-%d")]
+    #     income = DBCli().targetdb_cli.queryOne(check_sql_1, dto1)
+    #     cost = DBCli().targetdb_cli.queryOne(check_sql_2, dto2)
+    #
+    #     income = income[0]
+    #     cost = cost[0]
+    #
+    #     # print income, cost
+    #     if income != cost:
+    #         print a
+    #         print income, cost
+    #     a = DateUtil.add_days(a, 1)
+    update_car_cost_detail(1)

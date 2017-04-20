@@ -1,7 +1,7 @@
 import sys, logging
 from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
-from main_service.hb import hb_consumers, hb_focus_newuser, hb_profit_cost
+from main_service.hb import hb_consumers, hb_ticket_issue_refund
 from main_service.tmp_task.hb_search_focus import hb_search_focus
 from main_service.huoli import hotel_consumers
 import time
@@ -24,6 +24,9 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_first_consumers.update_hbgj_newconsumers_type_daily)
     TimeService.add_hard_service(hb_first_consumers.update_new_register_user_daily)
     TimeService.add_hard_service(hb_first_consumers.update_hbgj_inter_inland_consumers_daily)
+
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_hbgj_income_issue_refund_daily)
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_hbgj_cost_type_daily)
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
 

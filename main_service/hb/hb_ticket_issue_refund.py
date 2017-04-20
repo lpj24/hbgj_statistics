@@ -135,7 +135,7 @@ def update_hbgj_no_transfer_order_income_cost_daily(days=0):
 
 def update_hbgj_transfer_order_income_cost_daily(days=0):
     """转单收入与成本, hbgj_transfer_order_income_cost_daily"""
-
+    pass
 
 if __name__ == "__main__":
     # update_hbgj_income_issue_refund_daily(1)

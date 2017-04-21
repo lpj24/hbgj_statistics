@@ -9,14 +9,18 @@ def update_hbgj_income_issue_refund_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     hb_gt_sql = """
         SELECT %s,
-        count(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.TICKETNO else 0 end) hbgj_issue_ticket_num,
-        sum(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.income else 0 end) hbgj_issue_income,
-        count(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO else 0 end) gtgj_issue_ticket_num,
-        sum(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.income else 0 end) gtgj_issue_income,
-        count(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then i.TICKETNO else 0 end) hbgj_refund_ticket_num,
-        sum(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then i.income else 0 end) hbgj_refund_income,
-        count(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then i.TICKETNO else 0 end) gtgj_refund_ticket_num,
-        sum(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then i.income else 0 end) gtgj_refund_income
+        count(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) hbgj_issue_ticket_num,
+        sum(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.income end) hbgj_issue_income,
+        count(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) gtgj_issue_ticket_num,
+        sum(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.income end) gtgj_issue_income,
+        count(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) hbgj_refund_ticket_num,
+        sum(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then i.income end) hbgj_refund_income,
+        count(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) gtgj_refund_ticket_num,
+        sum(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then i.income end) gtgj_refund_income,
+        count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) else_issue_ticket_num,
+        sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then i.income end) else_issue_income,
+        count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) else_refund_ticket_num,
+        sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.income end) else_refund_income
         FROM `TICKET_ORDER_INCOME` i
         join `TICKET_ORDER` o on i.orderid=o.orderid
         where i.type=0
@@ -25,8 +29,12 @@ def update_hbgj_income_issue_refund_daily(days=0):
     insert_sql = """
         insert into profit_hb_income_type_daily (s_day, hbgj_issue_ticket_num, hbgj_issue_income,
         gtgj_issue_ticket_num, gtgj_issue_income, hbgj_refund_ticket_num, hbgj_refund_income,
-        gtgj_refund_ticket_num, gtgj_refund_income, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        gtgj_refund_ticket_num, gtgj_refund_income, else_issue_ticket_num,
+        else_issue_income,
+        else_refund_ticket_num,
+        else_refund_income,
+        createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now() ,
         s_day = VALUES(s_day),
         hbgj_issue_ticket_num = VALUES(hbgj_issue_ticket_num),
@@ -36,7 +44,11 @@ def update_hbgj_income_issue_refund_daily(days=0):
         hbgj_refund_ticket_num = VALUES(hbgj_refund_ticket_num),
         hbgj_refund_income = VALUES(hbgj_refund_income),
         gtgj_refund_ticket_num = VALUES(gtgj_refund_ticket_num),
-        gtgj_refund_income = VALUES(gtgj_refund_income)
+        gtgj_refund_income = VALUES(gtgj_refund_income),
+        else_issue_ticket_num = VALUES(else_issue_ticket_num),
+        else_issue_income = VALUES(else_issue_income),
+        else_refund_ticket_num = VALUES(else_refund_ticket_num),
+        else_refund_income = VALUES(else_refund_income)
     """
     hb_gt_income_data = DBCli().sourcedb_cli.queryOne(hb_gt_sql, [start_date] * 2)
     DBCli().targetdb_cli.insert(insert_sql, hb_gt_income_data)
@@ -58,6 +70,19 @@ def update_hbgj_cost_type_daily(days=0):
         and p like '%%{}%%'
         GROUP BY c.COSTDATE, c.PNRSOURCE, PNRSOURCE_CONFIG.`NAME`;
     """
+
+    else_cost_sql = """
+        SELECT sum(c.amount), count(c.odid) ticket_num, c.COSTDATE, %s, %s, c.PNRSOURCE,
+        PNRSOURCE_CONFIG.`NAME`
+        FROM `TICKET_ORDER_COST` c
+        join `TICKET_ORDER` o on c.orderid=o.orderid
+        left join PNRSOURCE_CONFIG on c.PNRSOURCE=PNRSOURCE_CONFIG.PNRSOURCE
+        where c.AMOUNTTYPE=%s  and c.type=%s
+        and COSTTYPE=%s
+        and c.COSTDATE=%s
+        and p not like '%%hbgj%%' and p not like '%%gtgj%%'
+        GROUP BY c.COSTDATE, c.PNRSOURCE, PNRSOURCE_CONFIG.`NAME`;
+    """
     insert_sql = """
         insert into profit_hb_cost_type_daily
         (cost, ticket_num, s_day, platform, amounttype, pnrsource, pnrsource_name, createtime,
@@ -70,42 +95,54 @@ def update_hbgj_cost_type_daily(days=0):
     """
     hbgj_bonus_user_issue_dto = ['hbgj', 0, 0, 0, 0, start_date]
     gtgj_bonus_user_issue_dto = ['gtgj', 0, 0, 0, 0, start_date]
+    else_bonus_user_issue_dto = ['else', 0, 0, 0, 0, start_date]
+
     hbgj_bonus_channel_issue_dto = ['hbgj', 1, 1, 0, 0, start_date]
-    gtgj_bonus_channel_issue_dto = ['gtgj', 1, 1, 0, 0, start_date,]
+    gtgj_bonus_channel_issue_dto = ['gtgj', 1, 1, 0, 0, start_date]
+    else_bonus_channel_issue_dto = ['else', 1, 1, 0, 0, start_date]
 
     hbgj_bonus_return_issue_dto = ['hbgj', 2, 2, 0, 0, start_date]
     gtgj_bonus_return_issue_dto = ['gtgj', 2, 2, 0, 0, start_date]
+    else_bonus_return_issue_dto = ['else', 2, 2, 0, 0, start_date]
 
     #退票
     hbgj_bonus_user_refund_dto = ['hbgj', 0, 0, 0, 1, start_date]
     gtgj_bonus_user_refund_dto = ['gtgj', 0, 0, 0, 1, start_date]
+    else_bonus_user_refund_dto = ['else', 0, 0, 0, 1, start_date]
+
     hbgj_bonus_channel_refund_dto = ['hbgj', 1, 1, 0, 1, start_date]
     gtgj_bonus_channel_refund_dto = ['gtgj', 1, 1, 0, 1, start_date]
+    else_bonus_channel_refund_dto = ['else', 1, 1, 0, 1, start_date]
 
     hbgj_bonus_return_refund_dto = ['hbgj', 2, 2, 0, 1, start_date]
     gtgj_bonus_return_refund_dto = ['gtgj', 2, 2, 0, 1, start_date]
+    else_bonus_return_refund_dto = ['else', 2, 2, 0, 1, start_date]
 
-    query_issue_dto = [hbgj_bonus_user_issue_dto, gtgj_bonus_user_issue_dto,
-                       hbgj_bonus_channel_issue_dto, gtgj_bonus_channel_issue_dto,
-                       hbgj_bonus_return_issue_dto, gtgj_bonus_return_issue_dto]
+    query_issue_dto = [hbgj_bonus_user_issue_dto, gtgj_bonus_user_issue_dto, else_bonus_user_issue_dto,
+                       hbgj_bonus_channel_issue_dto, gtgj_bonus_channel_issue_dto, else_bonus_channel_issue_dto,
+                       hbgj_bonus_return_issue_dto, gtgj_bonus_return_issue_dto, else_bonus_return_issue_dto]
 
-    query_refund_dto = [hbgj_bonus_user_refund_dto, gtgj_bonus_user_refund_dto,
-                        hbgj_bonus_channel_refund_dto, gtgj_bonus_channel_refund_dto,
-                        hbgj_bonus_return_refund_dto, gtgj_bonus_return_refund_dto]
+    query_refund_dto = [hbgj_bonus_user_refund_dto, gtgj_bonus_user_refund_dto, else_bonus_user_refund_dto,
+                        hbgj_bonus_channel_refund_dto, gtgj_bonus_channel_refund_dto, else_bonus_channel_refund_dto,
+                        hbgj_bonus_return_refund_dto, gtgj_bonus_return_refund_dto, else_bonus_return_refund_dto]
 
     for index, dto in enumerate(query_issue_dto):
-        issue_cost_sql = hbgj_cost_sql.format(dto[0])
+        if dto[0] != "else":
+            issue_cost_sql = hbgj_cost_sql.format(dto[0])
+            refund_cost_sql = hbgj_cost_sql.format((query_refund_dto[index])[0])
+        else:
+            issue_cost_sql = else_cost_sql
+            refund_cost_sql = else_cost_sql
         issue_cost = DBCli().sourcedb_cli.queryAll(issue_cost_sql, dto)
         DBCli().targetdb_cli.batchInsert(insert_sql, issue_cost)
 
-        refund_cost_sql = hbgj_cost_sql.format((query_refund_dto[index])[0])
         refund_cost = DBCli().sourcedb_cli.queryAll(refund_cost_sql, query_refund_dto[index])
         DBCli().targetdb_cli.batchInsert(update_sql, refund_cost)
     return __file__
 
 
 def update_hbgj_no_transfer_order_income_cost_daily(days=0):
-    """更新自营非转单收入成本, profit_hb_no_self_transfer_daily"""
+    """更新自营非转单收入成本, profit_hb_self_no_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     transfer_income_sql = """
@@ -133,7 +170,7 @@ def update_hbgj_no_transfer_order_income_cost_daily(days=0):
     """
 
     insert_sql = """
-        insert into profit_hb_no_self_transfer_daily (s_day, no_transfer_issue_income,
+        insert into profit_hb_self_no_transfer_daily (s_day, no_transfer_issue_income,
         no_transfer_refund_income, no_transfer_issue_cost, no_transfer_refund_cost,
         createtime, updatetime) values (%s, %s, %s, %s, %s, now(), now())
     """
@@ -236,7 +273,7 @@ def update_hbgj_supply_transfer_order_income_cost_daily(days=0):
     """
 
     insert_sql = """
-        insert into profit_hb_supply_transfer_income_cost_order_daily
+        insert into profit_hb_supply_transfer_daily
         (s_day, agentid, transfer_issue_one_income1, transfer_issue_one_income2,
         transfer_refund_one_income, transfer_issue_two_income, transfer_refund_two_income,
         createtime, updatetime)
@@ -244,7 +281,7 @@ def update_hbgj_supply_transfer_order_income_cost_daily(days=0):
     """
 
     update_sql = """
-        update profit_hb_supply_transfer_income_cost_order_daily set transfer_issue_one_cost=%s,
+        update profit_hb_supply_transfer_daily set transfer_issue_one_cost=%s,
         transfer_refund_one_cost = %s, transfer_issue_two_cost=%s, transfer_refund_two_cost=%s
         where s_day=%s and agentid=%s
     """
@@ -287,13 +324,13 @@ def update_hbgj_supply_no_transfer_order_income_cost_daily(days=0):
     """
 
     insert_sql = """
-        insert into profit_hb_supply_no_transfer_income_cost_order_daily (s_day, agentid,
+        insert into profit_hb_supply_no_transfer_daily (s_day, agentid,
         no_transfer_issue_income, no_transfer_refund_income,
         createtime, updatetime) values (%s, %s, %s, %s, now(), now())
     """
 
     update_sql = """
-        update profit_hb_supply_no_transfer_income_cost_order_daily set no_transfer_issue_cost=%s,
+        update profit_hb_supply_no_transfer_daily set no_transfer_issue_cost=%s,
         no_transfer_refund_cost=%s where s_day=%s and agentid=%s
     """
     dto = [start_date, end_date]
@@ -307,8 +344,8 @@ def update_hbgj_supply_no_transfer_order_income_cost_daily(days=0):
 
 if __name__ == "__main__":
     i = 1
-    while i <= 109:
-        update_hbgj_income_issue_refund_daily(i)
+    while i <= 110:
+        # update_hbgj_income_issue_refund_daily(i)
         update_hbgj_cost_type_daily(i)
         i += 1
     # update_hbgj_no_transfer_order_income_cost_daily(1)

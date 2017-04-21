@@ -35,7 +35,7 @@ if __name__ == "__main__":
             fun(int(days))
         except AssertionError as e:
             TimeService.add_hard_service(fun)
-            time.sleep(1 * 60 * 10)
+            time.sleep(2 * 10)
             continue
         except Exception as e:
             logging.warning(str(e.message) + "---" + str(e.args) + "--" + str(fun))

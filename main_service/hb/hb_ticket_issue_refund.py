@@ -64,7 +64,7 @@ def update_hbgj_cost_type_daily(days=0):
         FROM `TICKET_ORDER_COST` c
         join `TICKET_ORDER` o on c.orderid=o.orderid
         left join PNRSOURCE_CONFIG on c.PNRSOURCE=PNRSOURCE_CONFIG.PNRSOURCE
-        where c.AMOUNTTYPE=%s  and c.type=%s
+        where c.AMOUNTTYPE in %s and c.type=0
         and COSTTYPE=%s
         and c.COSTDATE=%s
         and p like '%%{}%%'
@@ -77,7 +77,7 @@ def update_hbgj_cost_type_daily(days=0):
         FROM `TICKET_ORDER_COST` c
         join `TICKET_ORDER` o on c.orderid=o.orderid
         left join PNRSOURCE_CONFIG on c.PNRSOURCE=PNRSOURCE_CONFIG.PNRSOURCE
-        where c.AMOUNTTYPE=%s  and c.type=%s
+        where c.AMOUNTTYPE in %s and c.type=0
         and COSTTYPE=%s
         and c.COSTDATE=%s
         and p not like '%%hbgj%%' and p not like '%%gtgj%%'
@@ -93,30 +93,41 @@ def update_hbgj_cost_type_daily(days=0):
         update profit_hb_cost_type_daily set refund_cost=%s, refund_ticket_num=%s where
         s_day=%s and platform=%s and amounttype=%s and pnrsource=%s and pnrsource_name=%s
     """
-    hbgj_bonus_user_issue_dto = ['hbgj', 0, 0, 0, 0, start_date]
-    gtgj_bonus_user_issue_dto = ['gtgj', 0, 0, 0, 0, start_date]
-    else_bonus_user_issue_dto = ['else', 0, 0, 0, 0, start_date]
 
-    hbgj_bonus_channel_issue_dto = ['hbgj', 1, 1, 0, 0, start_date]
-    gtgj_bonus_channel_issue_dto = ['gtgj', 1, 1, 0, 0, start_date]
-    else_bonus_channel_issue_dto = ['else', 1, 1, 0, 0, start_date]
+    insert_refund_cost_sql = """
+        insert into profit_hb_cost_type_daily (refund_cost, refund_ticket_num, s_day, platform,
+        amounttype, pnrsource, pnrsource_name, cost, ticket_num, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, 0, 0, now(), now())
+    """
 
-    hbgj_bonus_return_issue_dto = ['hbgj', 2, 2, 0, 0, start_date]
-    gtgj_bonus_return_issue_dto = ['gtgj', 2, 2, 0, 0, start_date]
-    else_bonus_return_issue_dto = ['else', 2, 2, 0, 0, start_date]
+    check_income_sql = """
+        select count(*) from profit_hb_cost_type_daily where s_day=%s and platform=%s
+        and amounttype=%s and pnrsource=%s and pnrsource_name=%s
+    """
+    hbgj_bonus_user_issue_dto = ['hbgj', 0, (0, ), 0, start_date]
+    gtgj_bonus_user_issue_dto = ['gtgj', 0, (0, ), 0, start_date]
+    else_bonus_user_issue_dto = ['else', 0, (0, ), 0, start_date]
+
+    hbgj_bonus_channel_issue_dto = ['hbgj', 1, (1, ), 0, start_date]
+    gtgj_bonus_channel_issue_dto = ['gtgj', 1, (1, ), 0, start_date]
+    else_bonus_channel_issue_dto = ['else', 1, (1, ), 0, start_date]
+
+    hbgj_bonus_return_issue_dto = ['hbgj', 2, (2, 3), 0, start_date]
+    gtgj_bonus_return_issue_dto = ['gtgj', 2, (2, 3), 0, start_date]
+    else_bonus_return_issue_dto = ['else', 2, (2, 3), 0, start_date]
 
     #退票
-    hbgj_bonus_user_refund_dto = ['hbgj', 0, 0, 0, 1, start_date]
-    gtgj_bonus_user_refund_dto = ['gtgj', 0, 0, 0, 1, start_date]
-    else_bonus_user_refund_dto = ['else', 0, 0, 0, 1, start_date]
+    hbgj_bonus_user_refund_dto = ['hbgj', 0, (0, ), 1, start_date]
+    gtgj_bonus_user_refund_dto = ['gtgj', 0, (0, ), 1, start_date]
+    else_bonus_user_refund_dto = ['else', 0, (0, ), 1, start_date]
 
-    hbgj_bonus_channel_refund_dto = ['hbgj', 1, 1, 0, 1, start_date]
-    gtgj_bonus_channel_refund_dto = ['gtgj', 1, 1, 0, 1, start_date]
-    else_bonus_channel_refund_dto = ['else', 1, 1, 0, 1, start_date]
+    hbgj_bonus_channel_refund_dto = ['hbgj', 1, (1, ), 1, start_date]
+    gtgj_bonus_channel_refund_dto = ['gtgj', 1, (1, ), 1, start_date]
+    else_bonus_channel_refund_dto = ['else', 1, (1, ), 1, start_date]
 
-    hbgj_bonus_return_refund_dto = ['hbgj', 2, 2, 0, 1, start_date]
-    gtgj_bonus_return_refund_dto = ['gtgj', 2, 2, 0, 1, start_date]
-    else_bonus_return_refund_dto = ['else', 2, 2, 0, 1, start_date]
+    hbgj_bonus_return_refund_dto = ['hbgj', 2, (2, 3), 1, start_date]
+    gtgj_bonus_return_refund_dto = ['gtgj', 2, (2, 3), 1, start_date]
+    else_bonus_return_refund_dto = ['else', 2, (2, 3), 1, start_date]
 
     query_issue_dto = [hbgj_bonus_user_issue_dto, gtgj_bonus_user_issue_dto, else_bonus_user_issue_dto,
                        hbgj_bonus_channel_issue_dto, gtgj_bonus_channel_issue_dto, else_bonus_channel_issue_dto,
@@ -137,7 +148,14 @@ def update_hbgj_cost_type_daily(days=0):
         DBCli().targetdb_cli.batchInsert(insert_sql, issue_cost)
 
         refund_cost = DBCli().sourcedb_cli.queryAll(refund_cost_sql, query_refund_dto[index])
-        DBCli().targetdb_cli.batchInsert(update_sql, refund_cost)
+        for refund_data in refund_cost:
+            check_dto = refund_data[2:]
+            income_count = DBCli().targetdb_cli.queryOne(check_income_sql, check_dto)
+            if income_count[0] == 0:
+                DBCli().targetdb_cli.insert(insert_refund_cost_sql, refund_data)
+            else:
+                DBCli().targetdb_cli.insert(update_sql, refund_data)
+        # DBCli().targetdb_cli.batchInsert(update_sql, refund_cost)
     return __file__
 
 
@@ -343,12 +361,16 @@ def update_hbgj_supply_no_transfer_order_income_cost_daily(days=0):
 
 
 if __name__ == "__main__":
+    # i = 1
+    # while i <= 113:
+    #     update_hbgj_transfer_order_income_cost_daily(i)
+    #     update_hbgj_no_transfer_order_income_cost_daily(i)
+    #     update_hbgj_supply_no_transfer_order_income_cost_daily(i)
+    #     update_hbgj_supply_transfer_order_income_cost_daily(i)
+    #     i += 1
     i = 1
     while i <= 113:
-        update_hbgj_transfer_order_income_cost_daily(i)
-        update_hbgj_no_transfer_order_income_cost_daily(i)
-        update_hbgj_supply_no_transfer_order_income_cost_daily(i)
-        update_hbgj_supply_transfer_order_income_cost_daily(i)
+        update_hbgj_cost_type_daily(i)
         i += 1
     # update_hbgj_no_transfer_order_income_cost_daily(1)
     # update_hbgj_transfer_order_income_cost_daily(1)

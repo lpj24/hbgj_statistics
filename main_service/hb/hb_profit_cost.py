@@ -27,11 +27,11 @@ def update_hb_car_hotel_profit(days=0):
     result = DBCli().pay_cost_cli.queryAll(sql, dto)
     other_cost_sql = """
         select
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE!=2 and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE!=2 and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE!=2 and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
-        sum(case when AMOUNTTYPE=2 then AMOUNT else 0 end) inland_refund_new,
-        sum(case when T_COST.INTFLAG=1 and AMOUNTTYPE!=2 then AMOUNT else 0 end) inter_price_diff,
+        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
+        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
+        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
+        sum(case when AMOUNTTYPE in (2, 3) then AMOUNT else 0 end) inland_refund_new,
+        sum(case when T_COST.INTFLAG=1 and AMOUNTTYPE in (0, 1) then AMOUNT else 0 end) inter_price_diff,
         COSTDATE
         FROM TICKET_ORDER_COST T_COST
         left join TICKET_ORDER_INCOME_TYPE T_TYPE
@@ -493,4 +493,8 @@ if __name__ == "__main__":
     #         print a
     #         print income, cost
     #     a = DateUtil.add_days(a, 1)
-    update_huoli_car_income_daily(1)
+    # update_huoli_car_income_daily(1)
+    i = 1
+    while i <= 113:
+        update_hb_car_hotel_profit(i)
+        i += 1

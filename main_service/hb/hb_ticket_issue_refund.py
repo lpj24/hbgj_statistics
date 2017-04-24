@@ -344,9 +344,11 @@ def update_hbgj_supply_no_transfer_order_income_cost_daily(days=0):
 
 if __name__ == "__main__":
     i = 1
-    while i <= 110:
-        # update_hbgj_income_issue_refund_daily(i)
-        update_hbgj_cost_type_daily(i)
+    while i <= 113:
+        update_hbgj_transfer_order_income_cost_daily(i)
+        update_hbgj_no_transfer_order_income_cost_daily(i)
+        update_hbgj_supply_no_transfer_order_income_cost_daily(i)
+        update_hbgj_supply_transfer_order_income_cost_daily(i)
         i += 1
     # update_hbgj_no_transfer_order_income_cost_daily(1)
     # update_hbgj_transfer_order_income_cost_daily(1)

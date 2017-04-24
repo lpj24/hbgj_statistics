@@ -62,7 +62,7 @@ class DButils(object):
                 sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
-        logging.warning("execute sql" + cursor._executed)
+        # logging.warning("execute sql" + cursor._executed)
         data = cursor.fetchall()
         cursor.close()
         return data

@@ -157,23 +157,32 @@ def update_operation_hbgj_qp_success(days=0):
     dto = [start_date, end_date]
     qp_sql = """
         SELECT
-        DATE_FORMAT(S.createtime, "%Y-%m-%d"),
+        DATE_FORMAT(S.createtime, '%%Y-%%m-%%d'),
         sum(case when S.`status` IN (1,2,3,4) then S.seatnum end) qp,
         sum(case when S.`status`=2 then S.seatnum end) qp_success
         FROM snapped_ticket_task S
-        WHERE S.createtime>%s
+        WHERE S.createtime>=%s
         AND S.createtime <%s
-        GROUP BY DATE_FORMAT(S.createtime, "%Y-%m-%d");
+        GROUP BY DATE_FORMAT(S.createtime, '%%Y-%%m-%%d');
     """
     insert_sql = """
-        insert into operation_hbgj_qp_success (s_day, )
+        insert into operation_hbgj_qp_success (s_day, qp_amount, qp_success_amount,
+        createtime, updatetime) values (%s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        qp_amount = values(qp_amount),
+        qp_success_amount = values(qp_success_amount)
     """
     qp_data = DBCli().sourcedb_cli.queryAll(qp_sql, dto)
-    DBCli().targetdb_cli.batchInsert()
+    DBCli().targetdb_cli.batchInsert(insert_sql, qp_data)
 
 
 if __name__ == "__main__":
-    # update_operation_hbgj_amount_monitor_cz(1)
-    # update_operation_hbgj_amount_monitor_hlth(1)
-    # update_operation_hbgj_amount_monitor_hlth_szx(1)
-    update_operation_hbgj_amount_monitor_inter(1)
+    i = 1
+    while i <= 113:
+        update_operation_hbgj_amount_monitor_cz(i)
+        update_operation_hbgj_amount_monitor_hlth(i)
+        update_operation_hbgj_amount_monitor_hlth_szx(i)
+        update_operation_hbgj_amount_monitor_inter(i)
+        update_operation_hbgj_qp_success(i)
+        i += 1

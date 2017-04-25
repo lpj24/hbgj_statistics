@@ -247,7 +247,7 @@ def update_ios_android_newuser_daily(days=0):
 
 if __name__ == "__main__":
     # update_ios_android_newuser_daily(1)
-    update_ios_android_newuser_daily(4)
+    update_ios_android_newuser_daily(1)
     # i = 368
     # while 1 < 1500:
     #     update_ios_android_newuser_daily(i)

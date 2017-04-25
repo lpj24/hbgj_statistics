@@ -78,6 +78,15 @@ sql = [
     "select count(1) from hbgj_inter_inland_consumers_daily where s_day=%s",
     "select count(1) from profit_hb_cost_type_daily where s_day=%s",
     "select count(1) from profit_hb_income_type_daily where s_day=%s",
+    "select count(1) from profit_hb_self_no_transfer_daily where s_day=%s",
+    "select count(1) from profit_hb_self_transfer_daily where s_day=%s",
+    "select count(1) from profit_hb_supply_transfer_daily where s_day=%s",
+    "select count(1) from profit_hb_supply_no_transfer_daily where s_day=%s",
+    "select count(1) from operation_hbgj_amount_monitor_cz where s_day=%s",
+    "select count(1) from operation_hbgj_amount_monitor_hlth where s_day=%s",
+    "select count(1) from operation_hbgj_amount_monitor_hlth_SZX where s_day=%s",
+    "select count(1) from operation_hbgj_amount_monitor_inter where s_day=%s",
+    "select count(1) from operation_hbgj_qp_success where s_day=%s",
 ]
 
 week_sql = [

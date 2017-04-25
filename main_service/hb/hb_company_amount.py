@@ -6,7 +6,7 @@ from dbClient.dateutil import DateUtil
 
 def update_operation_hbgj_amount_monitor_cz(days=0):
     """更新南航国内外销售额, operation_hbgj_amount_monitor_cz"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     cz_inter_inland_sql = """
         SELECT DATE_FORMAT(OD.CREATETIME, '%%Y-%%m-%%d') s_day,
@@ -40,7 +40,7 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
 
 def update_operation_hbgj_amount_monitor_hlth(days=0):
     """更新伙力天汇各航司出票情况, operation_hbgj_amount_monitor_hlth"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     hlth_sql = """
         SELECT d.FLYDATE,
@@ -78,7 +78,7 @@ def update_operation_hbgj_amount_monitor_hlth(days=0):
 
 def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
     """更新深圳始发3个航空公司, operation_hbgj_amount_monitor_hlth_SZX"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     szx_sql = """
         SELECT d.FLYDATE,
@@ -118,7 +118,7 @@ def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
 
 def update_operation_hbgj_amount_monitor_inter(days=0):
     """国际各直销航司出票金额统计/月底清零, operation_hbgj_amount_monitor_inter"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     pn_sql = """
         SELECT left(od.CREATETIME,10),o.PNRSOURCE,PNRSOURCE_CONFIG.`NAME` ,sum(od.OUTPAYPRICE)
@@ -152,7 +152,7 @@ def update_operation_hbgj_amount_monitor_inter(days=0):
 
 def update_operation_hbgj_qp_success(days=0):
     """更新抢票情况统计, operation_hbgj_qp_success"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
     qp_sql = """

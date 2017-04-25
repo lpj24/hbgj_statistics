@@ -220,7 +220,6 @@ def update_huoli_car_income_daily(days=0):
     return __file__
 
 
-
 def update_huoli_car_income_type(days=0):
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)

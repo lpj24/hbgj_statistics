@@ -4,6 +4,8 @@ import web
 import requests
 import signal
 import time, logging
+from dbClient.db_client import DBCli
+from dbClient.dateutil import DateUtil
 
 
 def getMailServer():
@@ -24,7 +26,7 @@ def sendMail(mail, msgText, subject):
                                'X-Mailer': 'webpy.sendmail'}))
 
 
-def execute_day_job_again(fun_path, fun_name):
+def execute_day_job_again(table_name, fun_path, fun_name, execute_day=1):
     import os
     fun_path = (fun_path.split("\\"))[-3:]
     fun_path[-1] = (fun_path[-1].split("."))[0]
@@ -33,12 +35,15 @@ def execute_day_job_again(fun_path, fun_name):
         coding_str = "# -*- coding: utf-8 -*-\n"
         import_str = "from " + fun_path + " import " + fun_name + "\n"
         main_str = "if __name__ == '__main__':\n"
-        execute_fun_str = "\t" + fun_name + "(2)" + "\n"
+        execute_fun_str = "\t" + fun_name + "(" + str(execute_day) + ")" + "\n"
         py_str = coding_str + import_str + main_str + execute_fun_str
         py_file.write(py_str)
-    a = os.system("python ./tmp_py.py")
-    if a == 0:
-        print "update success"
+    # del execute day data
+    s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(execute_day)), "%Y-%m-%d")
+    delete_sql = "delete from " + table_name + " where s_day=%s"
+    DBCli().targetdb_cli.batchInsert(delete_sql, [s_day])
+    os.system("python ./tmp_py.py")
+    os.remove("./tmp_py.py")
 
 
 def storage_execute_job(f_path, f_name, f_doc):
@@ -92,18 +97,9 @@ def get_airplane_info(flightno, date, depcode, arrcode):
     return result.json()
 
 if __name__ == "__main__":
-    # flight_info = get_airplane_info('3U8020', '2016-12-11', 'NGB', 'CTU')
-    # #A320-214(SL)
-    # print flight_info["data"]["aptype"]
-    flight_info = get_airplane_info('HU7662', '2016-12-16', 'NGB', 'CTU')
-    print flight_info["data"]
-    # import datetime
-    # from dbClient.dateutil import DateUtil
-    #
-    # start_date = datetime.date(2016, 12, 1)
-    # end_date = datetime.date(2017, 2, 1)
-    # while start_date <= end_date:
-    #     flight_info = get_airplane_info('HU7662', DateUtil.date2str(start_date, '%Y-%m-%d'), 'HGH', 'CAN')
-    #     # print flight_info
-    #     print flight_info["data"]["aptype"]
-    #     start_date = DateUtil().add_days(start_date, 1)
+    import sys
+    t_name = sys.argv[1]
+    f_path = sys.argv[2]
+    f_name = sys.argv[3]
+    e_day = sys.argv[4]
+    execute_day_job_again(t_name, f_path, f_name, e_day)

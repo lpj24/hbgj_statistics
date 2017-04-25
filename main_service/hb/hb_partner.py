@@ -20,7 +20,7 @@ def update_his():
 
 def update_hb_partner_daily(days=0):
     """更新航班合作伙伴pv和uv, hbdt_flight_partnerapi"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 8), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 5), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
     sql = """

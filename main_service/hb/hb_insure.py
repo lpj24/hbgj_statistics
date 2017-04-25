@@ -5,6 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_insure_daily(days=0):
+    """更新保险销售的投保率, operation_hbgj_insure"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     platform_sql = """
@@ -68,9 +69,11 @@ def update_hb_insure_daily(days=0):
 
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(update_delay_sql, delay_data)
+    return __file__
 
 
 def update_insure_class_daily(days=0):
+    """平台保险类型统计, operation_hbgj_insure_platform_daily"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1-days)
     hbgj_insure_sql = """
@@ -143,9 +146,11 @@ def update_insure_class_daily(days=0):
 
     other_data = DBCli().sourcedb_cli.queryAll(other_insure_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, other_data)
+    return __file__
 
 
 def update_insure_type_daily(days=0):
+    """更新航意险,退票险,延误险明细, operation_hbgj_insure_type_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
@@ -225,9 +230,11 @@ def update_insure_type_daily(days=0):
     dto = [start_date, end_date]
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
+    return __file__
 
 
 def update_hb_boat(days=0):
+    """航意险投保详情和航意险退保详情, operation_accident_insure_detail_daily operation_accident_insure_refund_detail_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     dto = [start_date, end_date]
@@ -325,6 +332,7 @@ def update_hb_boat(days=0):
     """
     detail_refund_data = DBCli().sourcedb_cli.queryAll(detail_refund_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, detail_refund_data)
+    return __file__
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gt_income_cost(days):
+    """更新高铁收入与成本, profit_gt_income profit_gt_cost"""
     start_date = DateUtil.get_date_before_days(7 * int(days))
     end_date = DateUtil.get_date_before_days(0)
 
@@ -60,6 +61,7 @@ def update_gt_income_cost(days):
                 else:
                     dto = [v, s_day, i_c_type]
                     DBCli().targetdb_cli.insert(update_cost_sql, dto)
+    return __file__
 
 if __name__ == "__main__":
     update_gt_income_cost(1)

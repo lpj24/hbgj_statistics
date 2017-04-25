@@ -6,6 +6,7 @@ from sql.hb_sqlHandlers import coupon_sql
 
 
 def update_hbgj_coupon_tickt(days=0):
+    """更新航班机票优惠券发放与使用情况, coupon_hbgj_ticket"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
@@ -14,18 +15,22 @@ def update_hbgj_coupon_tickt(days=0):
     issue_coupon_data = DBCli().hb_source_account_cli.queryOne(coupon_sql["hbgj_issue_coupon_sql"], dto)
     insert_data = issue_coupon_data + use_coupon_data
     DBCli().targetdb_cli.insert(coupon_sql["insert_hbgj_coupon_sql"], insert_data)
+    return __file__
 
 
 def update_gt_coupon_daily(days=0):
+    """高铁优惠券发送与使用数量, coupon_gtgj_ticket"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
     dto = [start_date, end_date, start_date, end_date]
     gtgj_coupon_data = DBCli().gt_cli.queryOne(coupon_sql["gtgj_use_issue_coupon_sql"], dto)
     DBCli().targetdb_cli.insert(coupon_sql["insert_gtgj_coupon_sql"], gtgj_coupon_data)
+    return __file__
 
 
 def update_huoli_car_coupon_daily(days=0):
+    """专车优惠券发放与使用数量, coupon_huoli_car"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
@@ -34,9 +39,11 @@ def update_huoli_car_coupon_daily(days=0):
     issue_coupon_data = DBCli().hb_source_account_cli.queryOne(coupon_sql["huoli_car_issue_coupon_sql"], dto)
     insert_data = issue_coupon_data + use_coupon_data
     DBCli().targetdb_cli.insert(coupon_sql["insert_huoli_car_sql"], insert_data)
+    return __file__
 
 
 def update_huoli_hotel_coupon_daily(days=0):
+    """酒店优惠券发放与使用数量, coupon_huoli_hotel"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
@@ -47,17 +54,21 @@ def update_huoli_hotel_coupon_daily(days=0):
     issue_coupon_data = issue_coupon_data if issue_coupon_data[0] else (0, 0, 0)
     insert_data = (DateUtil.date2str(start_date, '%Y-%m-%d'), ) + issue_coupon_data + use_coupon_data
     DBCli().targetdb_cli.insert(coupon_sql["insert_huoli_hotel_sql"], insert_data)
+    return __file__
 
 
 def update_common_coupon_daily(days=0):
+    """普通优惠券发送数量, coupon_common"""
     start_date = DateUtil.get_date_before_days(days * 3)
     end_date = DateUtil.get_date_after_days(1 - days)
     dto = [start_date, end_date]
     common_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["common_coupon_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_common_coupon_sql"], common_coupon_data)
+    return __file__
 
 
 def update_hb_coupon_use_detail_daily(days=0):
+    """航班优惠券使用详情, coupon_hbgj_ticket_use_detail"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
@@ -67,33 +78,41 @@ def update_hb_coupon_use_detail_daily(days=0):
 
     use_detail_noclient_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["hbdj_use_detail_noclient_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_noclient_sql"], use_detail_noclient_coupon_data)
+    return __file__
 
 
 def update_coupon_use_detail_daily(days=0):
+    """优惠券发放详情, coupon_issue_detail"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
     dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["coupon_issue_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_coupon_issue_detail_sql"], use_detail_coupon_data)
+    return __file__
 
 
 def update_car_use_detail_daily(days=0):
+    """专车优惠券使用详情, coupon_huoli_car_use_detail"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
     dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["huoli_car_coupon_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_coupon_car_use_detail_sql"], use_detail_coupon_data)
+    return __file__
 
 
 def update_hotel_use_detail_daily(days=0):
+    """酒店优惠券使用详情, coupon_huoli_hotel_use_detail"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
     dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["huoli_hotel_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_huoli_hotel_use_detail_sql"], use_detail_coupon_data)
+    return __file__
 
 
 def update_gtgj_use_issue_detail_daily(days=0):
+    """高铁优惠券使用详情, coupon_gtgj_ticket_use_detail"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
     dto = [start_date, end_date]
@@ -102,6 +121,7 @@ def update_gtgj_use_issue_detail_daily(days=0):
 
     use_detail_coupon_data = DBCli().gt_cli.queryAll(coupon_sql["gtgj_coupon_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_gtgj_coupon_use_detail_sql"], use_detail_coupon_data)
+    return __file__
 
 
 def update_coupon_use_detail_daily_his(days=0):
@@ -285,4 +305,5 @@ if __name__ == "__main__":
     # update_hotel_use_detail_daily(1)
     # update_coupon_use_detail_daily(1)
     # update_gt_coupon_daily(1)
-    update_common_coupon_daily(1)
+    # update_common_coupon_daily(1)
+    update_hotel_use_detail_daily(1)

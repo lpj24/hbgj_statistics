@@ -9,6 +9,7 @@ import time
 
 
 def hbdt_event(days=0):
+    """更新localytics航班动态事件, hbdt_event"""
     api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
 
@@ -81,6 +82,7 @@ def hbdt_event(days=0):
             sql_data.append(num)
 
         DBCli().targetdb_cli.insert(sql, sql_data)
+    return __file__
 
 if __name__ == "__main__":
     # import time

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import os
 import logging
@@ -7,6 +8,7 @@ import tarfile
 
 
 def update_hotel_newusers_daily(days=0):
+    """更新酒店新用户, hotel_newusers_daily"""
     regex = re.compile(r"uid=([0-9]*)")
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y%m%d")
     file_list = [os.path.join("/home/huolibi/external_data/hotel_log", "access.log_207_" + s_day + ".tar.gz"),

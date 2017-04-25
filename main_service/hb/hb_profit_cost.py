@@ -200,6 +200,7 @@ def update_car_cost_detail(days=0):
 
 
 def update_huoli_car_income_daily(days=0):
+    """更新伙力专车收入, profit_huoli_car_income"""
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
@@ -216,6 +217,7 @@ def update_huoli_car_income_daily(days=0):
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"][0]
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
+    return __file__
 
 
 def update_huoli_car_income_type(days=0):
@@ -245,6 +247,7 @@ def update_huoli_car_income_type(days=0):
 
 
 def update_profit_hb_income(days=0):
+    """更新航班收入, profit_hb_income"""
     query_date = DateUtil.get_date_before_days(days*3)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -280,6 +283,7 @@ def update_profit_hb_income(days=0):
     if hb_profit is None:
         return
     DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
+    return __file__
 
 
 def update_profit_hotel_income(days=0):
@@ -303,6 +307,7 @@ def update_profit_hotel_income(days=0):
 
 
 def update_operation_hbgj_channel_ticket_profit_daily(days=0):
+    """更新航班各个渠道的利润, operation_hbgj_channel_ticket_profit_daily"""
     query_start = DateUtil.get_date_before_days(days*1)
     query_end = DateUtil.get_date_after_days(1 - days)
 
@@ -430,6 +435,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
+    return __file__
 
 
 def get_sale_type(saletype, pn_resouce, new_channel_data):

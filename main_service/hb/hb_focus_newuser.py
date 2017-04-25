@@ -5,6 +5,7 @@ from dbClient.dateutil import DateUtil
 
 # 在1月31号基础上计算
 def update_focus_newuser(days=0):
+    """更新航班关注新用户, hbdt_focus_newusers_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
     check_s_day = DateUtil.get_date_before_days(days * 2)
@@ -67,6 +68,7 @@ def collect_his_phone_uid():
 
 
 def update_fouces_dat_daily(days=0):
+    """生成航班关注文件, /home/huolibi/data/hbdt/hbdt_focus/hbdt_focus.dat"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """

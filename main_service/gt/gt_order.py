@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 from sql.gt_sqlHandlers import gt_order_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
 def update_gt_order_daily(days=0):
+    """更新高铁订单(日), gtgj_order_daily"""
     dto = []
     if days > 0:
         today = DateUtil.date2str(DateUtil.get_date_before_days(3))
@@ -21,6 +23,7 @@ def update_gt_order_daily(days=0):
         query_data = DBCli().gt_cli.queryAll(gt_order_sql["gtgj_order_daily"], dto)
 
     DBCli().targetdb_cli.batchInsert(gt_order_sql["update_gtgj_order_daily"], query_data)
+    return __file__
 
 
 def update_gt_order_hourly(days=0):

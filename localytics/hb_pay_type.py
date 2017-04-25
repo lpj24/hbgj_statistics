@@ -8,6 +8,7 @@ import datetime
 
 
 def hb_pay_type(days=0):
+    """更新localytics支付事件, hbgj_event_orderpay_paytype_ios_android_daily"""
     api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     api_root = "https://api.localytics.com/v1/query"
@@ -26,28 +27,6 @@ def hb_pay_type(days=0):
     event_list = [android_ticket_order_pay_start, android_ticket_order_pay_succ, android_ticket_order_pay_fail, ios_ticket_order_pay_start,
                   ios_ticket_order_pay_succ, ios_ticket_order_pay_fail]
     dimensions = ["occurrences", "sessions_per_event", "users"]
-
-    # pay_type_list = {
-    #     "flypay.creditcard": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "alipay": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "weixinpay": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "flypay.depositcard": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "flypay.creditcard+balance": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "alipay+balance": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "weixinpay+balance": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "flypay.depositcard+balance": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "flypay.creditcard+coupons": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "flypay.depositcard+coupons": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "alipay+coupons": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "flypay.creditcard+balance+coupons": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "alipay+balance+coupons": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "corppay": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    #     "weixinpay+coupons": {"paystart_o": 0, "paystart_s": 0, "paystart_u":0, "paysucc_o": 0, "paysucc_s": 0, "paysucc_u":0, "payfail_o": 0, "payfail_s": 0, "payfail_u":0},
-    # }
-
-    data_params = {}
-    # start_date = datetime.date(2016, 8, 24)
-    # end_date = datetime.date(2016, 9, 1)
 
     start_date = DateUtil.get_date_before_days(days)
     end_date = start_date
@@ -147,6 +126,7 @@ def hb_pay_type(days=0):
             DBCli().targetdb_cli.insert(sql, insert_data)
         time.sleep(100*2)
         start_date = DateUtil.add_days(start_date, 1)
+    return __file__
 
 if __name__ == "__main__":
     try:

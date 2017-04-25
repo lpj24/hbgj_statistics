@@ -29,6 +29,7 @@ def localytics_cli(app_id, event, metrics, start_date):
 
 
 def update_flight_detail_user_daily(days=0):
+    """更新航班详情pv与uv, hbdt_details_daily"""
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     tomorrow_date = DateUtil.date2str(tomorrow)
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
@@ -77,9 +78,11 @@ def update_flight_detail_user_daily(days=0):
     query_data.append(localytics_check["sessions"])
 
     DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_daily'], query_data)
+    return __file__
 
 
 def update_dt_detail_uid(days=0):
+    """更新航班动态uid用于计算周数据与月, redis数据库"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """
@@ -240,7 +243,7 @@ if __name__ == "__main__":
     #     # update_flight_detail_user_daily(i)
     #     update_dt_detail_uid(i)
     #     i -= 1
-    update_flight_detail_user_daily(1)
+    update_flight_detail_user_daily(3)
 
     # update_flight_detail_user_weekly()
     # i = 33

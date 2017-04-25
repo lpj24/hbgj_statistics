@@ -1,3 +1,4 @@
+# -*- coding: utf-8 *-
 from main_service.hb import hb_activeusers, hb_profit_cost, hb_focus_platform, hb_delay_insure, hb_order, hb_partner, hb_coupon_ticket, \
     hb_focus_newuser, hb_insure, hb_channel_ticket
 from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_activeusers, \
@@ -28,7 +29,7 @@ def add_execute_job():
     TimeService.add_day_service(hotel_order.update_hotel_orders_daily)
 
     TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
-    TimeService.add_day_service(hbgj_users.hbgj_user)
+    # TimeService.add_day_service(hbgj_users.hbgj_user)
 
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 
@@ -74,11 +75,22 @@ def add_execute_job():
 
 
 if __name__ == "__main__":
+    from dbClient.db_client import DBCli
     days = sys.argv[1]
     service = add_execute_job()
+    from dbClient import utils
     for fun in service.get_day_service():
         try:
-            fun(int(days))
+            fun_path = fun(int(days))
+            fun_name = fun.__name__
+            fun_doc = fun.__doc__
+            check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
+            if not check_fun:
+                if fun_path.endswith("pyc"):
+                    fun_path = fun_path[0: -1]
+                utils.storage_execute_job(fun_path, fun_name, fun_doc)
+                DBCli().redis_cli.sadd("execute_day_job", fun_name)
+
         except Exception as e:
             logging.warning(str(fun) + "----" + str(e.message) + "---" + str(e.args))
             continue

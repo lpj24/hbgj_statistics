@@ -9,6 +9,7 @@ os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
 
 def update_flight_focus_user_daily(days=0):
+    """更新航班关注用户, hbdt_focus_daily"""
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = {"s_day": DateUtil.date2str(today, '%Y-%m-%d'), "start_date": DateUtil.date2str(today, '%Y-%m-%d'),
@@ -29,6 +30,7 @@ def update_flight_focus_user_daily(days=0):
     query_data = (query_data[0], query_data[1], int(query_pv[0]) + int(query_his_pv[0]))
 
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_data)
+    return __file__
 
 
 def get_focus_new_user(days=0):
@@ -439,6 +441,7 @@ def update_focus_platform(days=0):
 
 
 def update_hb_focus_inter_inland(days=0):
+    """更新国内外航班关注pv及uv, hbdt_focus_daily_inter"""
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     inter_inland_sql = """
@@ -506,12 +509,9 @@ def update_hb_focus_inter_inland(days=0):
             inland_pv_num += tmp_inland_uv
             inter_pv_num += 0
 
-    # print inter_pv_num
-    # print inland_pv_num
-    # print inter_uv_num
-    # print inland_uv_num
     DBCli().targetdb_cli.insert(insert_sql, [DateUtil.date2str(start_date, '%Y-%m-%d'),
                                              inland_pv_num, inter_pv_num, inland_uv_num, inter_uv_num, len(fly_uv)])
+    return __file__
 
 
 def tmp_cal_inter_inland(codes_city):

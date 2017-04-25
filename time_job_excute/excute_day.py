@@ -75,18 +75,22 @@ def add_execute_job():
 
 
 if __name__ == "__main__":
-    # days = sys.argv[1]
+    from dbClient.db_client import DBCli
     days = 1
     service = add_execute_job()
     from dbClient import utils
     for fun in service.get_day_service():
         try:
             fun_path = fun(int(days))
-            if fun_path.endswith("pyc"):
-                fun_path = fun_path[0: -1]
             fun_name = fun.__name__
             fun_doc = fun.__doc__
-            utils.storage_execute_job(fun_path, fun_name, fun_doc)
+            check_fun = DBCli().redis_cli.sismember("exexute_day_job", fun_name)
+            if not check_fun:
+                if fun_path.endswith("pyc"):
+                    fun_path = fun_path[0: -1]
+                utils.storage_execute_job(fun_path, fun_name, fun_doc)
+                DBCli().redis_cli.sadd("exexute_day_job", fun_name)
+
         except Exception as e:
             logging.warning(str(fun) + "----" + str(e.message) + "---" + str(e.args))
             continue

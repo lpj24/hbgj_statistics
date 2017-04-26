@@ -87,6 +87,8 @@ sql = [
     "select count(1) from operation_hbgj_amount_monitor_hlth_SZX where s_day=%s",
     "select count(1) from operation_hbgj_amount_monitor_inter where s_day=%s",
     "select count(1) from operation_hbgj_qp_success where s_day=%s",
+    "select count(1) from profit_huoli_fmall_cost where s_day=%s",
+    "select count(1) from profit_huoli_buy_cost where s_day=%s",
 ]
 
 week_sql = [

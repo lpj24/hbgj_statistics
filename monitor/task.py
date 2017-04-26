@@ -76,7 +76,7 @@ if __name__ == "__main__":
     later_service = execute_later_job()
     for fun in later_service.get_later_service():
         try:
-            fun_path = fun(int(1))
+            fun_path = fun(1)
             fun_name = fun.__name__
             fun_doc = fun.__doc__
             check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)

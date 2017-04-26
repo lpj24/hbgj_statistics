@@ -21,6 +21,10 @@ def update_gt_income_cost(days):
     insert_cost_sql = """
         insert into profit_gt_cost (s_day, type, amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
+        on duplicate key update updatetime = now() ,
+        s_day = values(s_day),
+        type = values(type),
+        amount = values(amount)
     """
 
     update_income_sql = """
@@ -31,7 +35,18 @@ def update_gt_income_cost(days):
         update profit_gt_cost set amount=%s, updatetime=now() where s_day = %s and type=%s
     """
 
+    gt_coupon_use_sql = """
+        select distinct TRADE_TIME s_day,
+        sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='29'
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='29'
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return
+        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+        group by TRADE_TIME
+    """
+
     query_dto = [start_date, end_date]
+
     result_income_cost = DBCli(dict).gt_cli.queryAll(query_sql, query_dto)
 
     income_cost_type = DBCli().gt_cli.queryAll("select COLUMN_NAME from information_schema.COLUMNS "
@@ -40,6 +55,7 @@ def update_gt_income_cost(days):
     income_cost_type.pop(0)
     income_cost_type.pop(-1)
     income_cost_type.pop(-1)
+
     # income_cost_type.reverse()
     for result in result_income_cost:
         s_day = result["s_date"]
@@ -61,6 +77,13 @@ def update_gt_income_cost(days):
                 else:
                     dto = [v, s_day, i_c_type]
                     DBCli().targetdb_cli.insert(update_cost_sql, dto)
+    gt_coupon_data = DBCli(dict).pay_cost_cli.queryAll(gt_coupon_use_sql, query_dto)
+    insert_gt_coupon = []
+    for gt_coupon in gt_coupon_data:
+        insert_gt_coupon.append([gt_coupon["s_day"], "coupon_in", gt_coupon["coupon_in"]])
+        insert_gt_coupon.append([gt_coupon["s_day"], "coupon_return", gt_coupon["coupon_return"]])
+
+    DBCli().targetdb_cli.batchInsert(insert_cost_sql, insert_gt_coupon)
     return __file__
 
 if __name__ == "__main__":

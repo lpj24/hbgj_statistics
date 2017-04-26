@@ -15,8 +15,10 @@ def update_hb_car_hotel_profit(days=0):
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
         sum(case when (AMOUNT_TYPE=3 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and PRODUCT='0' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and PRODUCT='0' and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
+        sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and TRADE_CHANNEL='coupon')
+        then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and TRADE_CHANNEL='coupon')
+        then amount else 0 end) coupon_return,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
         sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('6','8','24','25')) then amount else 0 end) balance_give_amount
@@ -463,95 +465,5 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     new_channel_data.append(sale_type)
     return new_channel_data
 
-
-def update_hb_car_hotel_profit_type(days=0):
-    query_date = DateUtil.get_date_before_days(days * 1)
-    today = DateUtil.get_date_after_days(1 - days)
-    sql = """
-        select distinct TRADE_TIME s_day,
-        sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
-        sum(case when (AMOUNT_TYPE=3 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and PRODUCT='0' and (cost is null or cost=1) and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and PRODUCT='0' and (cost is null or cost=1) and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return,
-
-        sum(case when (AMOUNT_TYPE=1 and PRODUCT='0' and (cost is not null and cost!=1) and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_in_else,
-        sum(case when (AMOUNT_TYPE=4 and PRODUCT='0' and (cost is not null and cost!=1) and TRADE_CHANNEL like '%%coupon%%') then amount else 0 end) coupon_return_else,
-
-        sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
-        sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
-        sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('6','8','24','25')) then amount else 0 end) balance_give_amount
-        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
-        group by TRADE_TIME
-    """
-    dto = [query_date, today]
-    result = DBCli().pay_cost_cli.queryAll(sql, dto)
-    other_cost_sql = """
-        select
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
-        sum(case when AMOUNTTYPE in (2, 3) then AMOUNT else 0 end) inland_refund_new,
-        sum(case when T_COST.INTFLAG=1 and AMOUNTTYPE in (0, 1) then AMOUNT else 0 end) inter_price_diff,
-        COSTDATE
-        FROM TICKET_ORDER_COST T_COST
-        left join TICKET_ORDER_INCOME_TYPE T_TYPE
-        ON T_COST.PNRSOURCE = T_TYPE.PNRSOURCE
-        where COSTDATE>=%s and COSTDATE<%s
-        GROUP BY COSTDATE
-        ORDER BY COSTDATE
-    """
-
-    other_result = DBCli().sourcedb_cli.queryAll(other_cost_sql, dto)
-
-    update_other_cost_sql = """
-        update profit_hb_cost set inland_price_diff_type0=%s, inland_price_diff_type1=%s, inland_price_diff_type2=%s,
-        inland_refund_new=%s, inter_price_diff=%s where s_day=%s
-    """
-
-    query_dft_cost_sql = """
-        SELECT
-        sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
-        DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
-        FROM `TICKET_ORDERDETAIL` od
-        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
-        where od.CREATETIMe>=%s
-        and od.CREATETIMe<%s
-        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
-        AND IFNULL(od.`LINKTYPE`, 0) != 2
-        and o.PNRSOURCE='hlth'
-        and o.SUBORDERNO='BOP' and
-        od.ETICKET is not null
-        group by s_day
-    """
-
-    update_dft_cost_sql = """
-        update profit_hb_cost set dft_cost=%s where s_day=%s
-    """
-    dft_result = DBCli().sourcedb_cli.queryAll(query_dft_cost_sql, dto)
-
-    insert_sql = """
-        insert into profit_hb_cost_copy (s_day, paycost_in, paycost_return, coupon_in, coupon_return, coupon_in_else, coupon_return_else,
-        delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now()
-        )
-        on duplicate key update updatetime = now(),
-        s_day = VALUES(s_day),
-        paycost_in = VALUES(paycost_in),
-        paycost_return = VALUES(paycost_return),
-        coupon_in = VALUES(coupon_in),
-        coupon_return = VALUES(coupon_return),
-        coupon_in_else = VALUES(coupon_in_else),
-        coupon_return_else = VALUES(coupon_return_else),
-        delay_care = VALUES(delay_care),
-        point_give_amount = VALUES(point_give_amount),
-        balance_give_amount = VALUES(balance_give_amount)
-    """
-    DBCli().targetdb_cli.batchInsert(insert_sql, result)
-    DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
-    DBCli().targetdb_cli.batchInsert(update_dft_cost_sql, dft_result)
-
 if __name__ == "__main__":
-    i = 30
-    while i >= 1:
-        update_hb_car_hotel_profit_type(i)
-        i -= 1
+    pass

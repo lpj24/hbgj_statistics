@@ -293,7 +293,67 @@ def update_hb_coupon_his():
     """
     DBCli().targetdb_cli.batchInsert(update_sql, use_coupon_data)
 
+
+def update_profit_huoli_fmall_cost(days=0):
+    """更新商城优惠券使用, profit_huoli_fmall_cost"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
+    dto = [start_date, end_date]
+
+    fmall_coupon_sql = """
+        select distinct TRADE_TIME s_day,
+        sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) in ('21', '22')
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) in ('21', '22')
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return
+        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+        group by TRADE_TIME
+    """
+
+    insert_sql = """
+        insert into profit_huoli_fmall_cost (s_day, coupon_in, coupon_return, createtime, updatetime)
+        values (%s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        coupon_in = values(coupon_in),
+        coupon_return = values(coupon_return)
+    """
+    fmall_data = DBCli().pay_cost_cli.queryAll(fmall_coupon_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, fmall_data)
+    return __file__
+
+
+def update_profit_huoli_buy_cost(days=0):
+    """更新卖好货优惠券使用, profit_huoli_buy_cost"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
+    dto = [start_date, end_date]
+
+    buy_coupon_sql = """
+        select distinct TRADE_TIME s_day,
+        sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) = '48'
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) = '48'
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return
+        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+        group by TRADE_TIME
+    """
+
+    insert_sql = """
+        insert into profit_huoli_buy_cost (s_day, coupon_in, coupon_return, createtime, updatetime)
+        values (%s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        coupon_in = values(coupon_in),
+        coupon_return = values(coupon_return)
+    """
+    buy_data = DBCli().pay_cost_cli.queryAll(buy_coupon_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, buy_data)
+    return __file__
+
 if __name__ == "__main__":
+    # update_profit_huoli_fmall_cost(1)
+    update_profit_huoli_buy_cost(1)
     # update_huoli_car_coupon_daily(1)
     # update_hbgj_coupon_tickt(1)
     # update_huoli_hotel_coupon_daily(1)
@@ -306,4 +366,4 @@ if __name__ == "__main__":
     # update_coupon_use_detail_daily(1)
     # update_gt_coupon_daily(1)
     # update_common_coupon_daily(1)
-    update_hotel_use_detail_daily(1)
+    # update_hotel_use_detail_daily(1)

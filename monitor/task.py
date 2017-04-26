@@ -6,6 +6,8 @@ from dbClient import utils
 from main_service.gt import gt_income_cost
 from main_service.hb import hb_profit_cost
 from monitor_data_exception import cal_balance
+from time_job_excute.timeServiceList import TimeService
+import logging
 
 
 def check_day_data():
@@ -48,11 +50,12 @@ def check_week_data():
 
 
 def execute_later_job():
-    gt_income_cost.update_gt_income_cost(1)
-    hb_profit_cost.update_hb_car_hotel_profit(1)
-    hb_profit_cost.update_car_cost_detail(1)
-    hb_profit_cost.update_huoli_car_income_type(1)
-    hb_profit_cost.update_profit_hotel_income(1)
+    TimeService.add_later_service(gt_income_cost.update_gt_income_cost)
+    TimeService.add_later_service(hb_profit_cost.update_hb_car_hotel_profit)
+    TimeService.add_later_service(hb_profit_cost.update_car_cost_detail)
+    TimeService.add_later_service(hb_profit_cost.update_huoli_car_income_type)
+    TimeService.add_later_service(hb_profit_cost.update_profit_hotel_income)
+    return TimeService
 
 
 def check_execute_job():
@@ -70,7 +73,23 @@ def check_execute_job():
         print week_job
 
 if __name__ == "__main__":
-    execute_later_job()
+    later_service = execute_later_job()
+    for fun in later_service.get_later_service():
+        try:
+            fun_path = fun(int(1))
+            fun_name = fun.__name__
+            fun_doc = fun.__doc__
+            check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
+            if not check_fun:
+                if fun_path.endswith("pyc"):
+                    fun_path = fun_path[0: -1]
+                utils.storage_execute_job(fun_path, fun_name, fun_doc)
+                DBCli().redis_cli.sadd("execute_day_job", fun_name)
+
+        except Exception as e:
+            logging.warning(str(fun) + "----" + str(e.message) + "---" + str(e.args))
+            continue
+
     check_day_data()
     exception_table = cal_balance()
     if bool(exception_table):

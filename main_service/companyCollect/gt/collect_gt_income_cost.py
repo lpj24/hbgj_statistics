@@ -27,7 +27,6 @@ def collect_income_cost():
     income_cost_type.pop(0)
     income_cost_type.pop(-1)
     income_cost_type.pop(-1)
-    # income_cost_type.reverse()
     for result in result_income_cost:
         s_day = result["s_date"]
 

@@ -8,6 +8,7 @@ class TimeService:
     __gt_newconsumers_service = []
     __hard_service = []
     __localytics_service = []
+    __later_service = []
 
     @staticmethod
     def add_hour_service(job_fun):
@@ -46,6 +47,10 @@ class TimeService:
         TimeService.__localytics_service.append(job_fun)
 
     @staticmethod
+    def add_later_service(job_fun):
+        TimeService.__later_service.append(job_fun)
+
+    @staticmethod
     def get_hour_service():
         return TimeService.__hour_service
 
@@ -80,6 +85,10 @@ class TimeService:
     @staticmethod
     def get_localytics_service():
         return TimeService.__localytics_service
+
+    @staticmethod
+    def get_later_service():
+        return TimeService.__later_service
 
 
 

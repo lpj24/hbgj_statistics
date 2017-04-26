@@ -3,7 +3,8 @@ from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
 from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount
 from main_service.tmp_task.hb_search_focus import hb_search_focus
-from main_service.huoli import hotel_consumers
+from dbClient.db_client import DBCli
+from dbClient import utils
 import time
 
 
@@ -28,6 +29,11 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_ticket_issue_refund.update_hbgj_income_issue_refund_daily)
     TimeService.add_hard_service(hb_ticket_issue_refund.update_hbgj_cost_type_daily)
 
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_self_no_transfer_daily)
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_self_transfer_daily)
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_no_transfer_daily)
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_transfer_daily)
+
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_hlth_szx)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_hlth)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_qp_success)
@@ -39,7 +45,15 @@ if __name__ == "__main__":
 
     for fun in TimeService.get_hard_service():
         try:
-            fun(int(days))
+            fun_path = fun(int(days))
+            fun_name = fun.__name__
+            fun_doc = fun.__doc__
+            check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
+            if not check_fun:
+                if fun_path.endswith("pyc"):
+                    fun_path = fun_path[0: -1]
+                utils.storage_execute_job(fun_path, fun_name, fun_doc)
+                DBCli().redis_cli.sadd("execute_day_job", fun_name)
         except AssertionError as e:
             TimeService.add_hard_service(fun)
             time.sleep(2 * 10)

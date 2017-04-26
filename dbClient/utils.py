@@ -28,7 +28,7 @@ def sendMail(mail, msgText, subject):
 
 def execute_day_job_again(table_name, fun_path, fun_name, execute_day=1):
     import os
-    fun_path = (fun_path.split("\\"))[-3:]
+    fun_path = (fun_path.split(os.path.sep))[-3:]
     fun_path[-1] = (fun_path[-1].split("."))[0]
     fun_path = ".".join(fun_path)
     with open("tmp_py.py", "w") as py_file:

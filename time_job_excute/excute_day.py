@@ -6,6 +6,8 @@ from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
     gt_income_cost
 from main_service.tmp_task import hbgj_users
+from dbClient.db_client import DBCli
+from dbClient import utils
 from time_job_excute.timeServiceList import TimeService
 import sys
 import logging
@@ -29,7 +31,7 @@ def add_execute_job():
     TimeService.add_day_service(hotel_order.update_hotel_orders_daily)
 
     TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
-    # TimeService.add_day_service(hbgj_users.hbgj_user)
+    TimeService.add_day_service(hbgj_users.hbgj_user)
 
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
 
@@ -60,8 +62,6 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_hb_insure_daily)
     TimeService.add_day_service(hb_insure.update_insure_type_daily)
     TimeService.add_day_service(hb_insure.update_insure_class_daily)
-    # TimeService.add_day_service(hb_focus_newuser.collect_inland_inter_flyid_daily)
-    # TimeService.add_day_service(hb_focus_newuser.update_focus_inland_inter_daily)
     TimeService.add_day_service(hb_channel_ticket.update_refund_ticket_channel_daily)
     TimeService.add_day_service(hb_channel_ticket.update_hb_channel_ticket_daily)
     TimeService.add_day_service(hb_channel_ticket.update_hb_channel_ticket_income_daily)
@@ -75,10 +75,8 @@ def add_execute_job():
 
 
 if __name__ == "__main__":
-    from dbClient.db_client import DBCli
     days = sys.argv[1]
     service = add_execute_job()
-    from dbClient import utils
     for fun in service.get_day_service():
         try:
             fun_path = fun(int(days))

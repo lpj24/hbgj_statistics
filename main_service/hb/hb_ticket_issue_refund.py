@@ -159,7 +159,7 @@ def update_hbgj_cost_type_daily(days=0):
     return __file__
 
 
-def update_hbgj_no_transfer_order_income_cost_daily(days=0):
+def update_profit_hb_self_no_transfer_daily(days=0):
     """更新自营非转单收入成本, profit_hb_self_no_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
@@ -200,7 +200,7 @@ def update_hbgj_no_transfer_order_income_cost_daily(days=0):
     return __file__
 
 
-def update_hbgj_transfer_order_income_cost_daily(days=0):
+def update_profit_hb_self_transfer_daily(days=0):
     """自营转单收入与成本, profit_hb_self_transfer_daily"""
 
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
@@ -242,6 +242,17 @@ def update_hbgj_transfer_order_income_cost_daily(days=0):
     insert_sql = """
         insert into profit_hb_self_transfer_daily
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        transfer_issue_one_income1 = values(transfer_issue_one_income1),
+        transfer_issue_one_income2 = values(transfer_issue_one_income2),
+        transfer_refund_one_income = values(transfer_refund_one_income),
+        transfer_issue_two_income = values(transfer_issue_two_income),
+        transfer_refund_two_income = values(transfer_refund_two_income),
+        transfer_issue_one_cost = values(transfer_issue_one_cost),
+        transfer_refund_one_cost = values(transfer_refund_one_cost),
+        transfer_issue_two_cost = values(transfer_issue_two_cost),
+        transfer_refund_two_cost = values(transfer_refund_two_cost)
     """
     dto = [start_date, end_date]
     income_data = DBCli().sourcedb_cli.queryOne(transfer_income_sql, dto)
@@ -251,7 +262,7 @@ def update_hbgj_transfer_order_income_cost_daily(days=0):
     return __file__
 
 
-def update_hbgj_supply_transfer_order_income_cost_daily(days=0):
+def update_profit_hb_supply_transfer_daily(days=0):
     """更新供应商转单收入成本, profit_hb_supply_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
@@ -311,7 +322,7 @@ def update_hbgj_supply_transfer_order_income_cost_daily(days=0):
     return __file__
 
 
-def update_hbgj_supply_no_transfer_order_income_cost_daily(days=0):
+def update_profit_hb_supply_no_transfer_daily(days=0):
     """更新供应商非转单收入成本, profit_hb_supply_no_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
@@ -368,10 +379,7 @@ if __name__ == "__main__":
     #     update_hbgj_supply_no_transfer_order_income_cost_daily(i)
     #     update_hbgj_supply_transfer_order_income_cost_daily(i)
     #     i += 1
-    i = 1
-    while i <= 113:
-        update_hbgj_cost_type_daily(i)
-        i += 1
+    pass
     # update_hbgj_no_transfer_order_income_cost_daily(1)
     # update_hbgj_transfer_order_income_cost_daily(1)
     # update_hbgj_supply_transfer_order_income_cost_daily(1)

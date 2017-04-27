@@ -51,11 +51,8 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
 
 def storage_execute_job(f_path, f_name, f_doc):
     renewable = 1 if f_path else 0
-    job_type = 1
-    if f_name == "hbgj_user":
-        job_type = 5
-    f_doc = f_doc.split(",")
-    f_des, f_table = f_doc
+    job_type = 5 if f_name == "hbgj_user" else 1
+    f_des, f_table = f_doc.split(",")
     insert_sql = """
         insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, now(), now())
@@ -103,15 +100,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(usage='python -table hbgj gtgj gt_consumers -path', description='this is a test')
     parser.add_argument('-table', required=True, type=str, nargs="*",
-                        help='[gt_user, hb_consumers], the update tablename list')
-    parser.add_argument('-path', required=True, type=str,
-                        help='py file path')
-    parser.add_argument('-name', required=True, type=str,
-                        help='function name')
-    parser.add_argument('-day', required=True, type=str,
-                        help='update days')
-    parser.add_argument('-jobType', required=True, type=int,
-                        help='update days')
+                        help='gt_user hb_consumers, 要操作的目标数据表, 多张表使用空格分离')
+    parser.add_argument('-path', required=True, type=str, help='操作py文件的具体路径')
+    parser.add_argument('-name', required=True, type=str, help='操作的函数名')
+    parser.add_argument('-day', required=True, type=str, help='更新的天数')
+    parser.add_argument('-jobType', required=True, type=int, help='更新的任务类型')
     args = parser.parse_args()
     t_name = args.table
     f_path = args.path

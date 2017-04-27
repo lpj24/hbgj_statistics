@@ -367,4 +367,4 @@ if __name__ == "__main__":
     # update_hb_boat(1)
     # update_insure_type_daily(1)
     # update_insure_class_daily(1)
-    update_hb_insure_daily(1)
+    update_hb_boat(1)

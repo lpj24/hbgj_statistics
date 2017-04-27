@@ -33,8 +33,6 @@ def add_execute_job():
     TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
     TimeService.add_day_service(hbgj_users.hbgj_user)
 
-    TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
-
     TimeService.add_day_service(gt_fromHb.update_gtgj_from_hb)
     TimeService.add_day_service(gt_income_cost.update_gt_income_cost)
 
@@ -71,10 +69,7 @@ def add_execute_job():
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_day_service(hb_partner.update_hb_partner_daily)
-
-    TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
-    TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
-
+    TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
     return TimeService
 
 
@@ -88,7 +83,7 @@ if __name__ == "__main__":
             fun_doc = fun.__doc__
             check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
             if not check_fun:
-                if fun_path.endswith("pyc"):
+                if fun_path and fun_path.endswith("pyc"):
                     fun_path = fun_path[0: -1]
                 utils.storage_execute_job(fun_path, fun_name, fun_doc)
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)

@@ -26,8 +26,9 @@ def sendMail(mail, msgText, subject):
                                'X-Mailer': 'webpy.sendmail'}))
 
 
-def execute_day_job_again(table_name, fun_path, fun_name, execute_day=1):
+def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=1):
     import os
+    print table_name, fun_path, fun_name, job_type, execute_day
     fun_path = (fun_path.split(os.path.sep))[-3:]
     fun_path[-1] = (fun_path[-1].split("."))[0]
     fun_path = ".".join(fun_path)
@@ -40,14 +41,15 @@ def execute_day_job_again(table_name, fun_path, fun_name, execute_day=1):
         py_file.write(py_str)
     # del execute day data
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(execute_day)), "%Y-%m-%d")
-    delete_sql = "delete from " + table_name + " where s_day=%s"
-    DBCli().targetdb_cli.batchInsert(delete_sql, [s_day])
+    if job_type != 5:
+        for table in table_name:
+            delete_sql = "delete from " + table + " where s_day=%s"
+            DBCli().targetdb_cli.batchInsert(delete_sql, [s_day])
     os.system("python ./tmp_py.py")
-    os.remove("./tmp_py.py")
+    os.remove("tmp_py.py")
 
 
 def storage_execute_job(f_path, f_name, f_doc):
-    from dbClient.db_client import DBCli
     renewable = 1 if f_path else 0
     job_type = 1
     if f_name == "hbgj_user":
@@ -58,7 +60,7 @@ def storage_execute_job(f_path, f_name, f_doc):
         insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, now(), now())
     """
-    DBCli().targetdb_cli.insert(insert_sql, [f_name, f_path, f_des, f_table, job_type, renewable])
+    DBCli().targetdb_cli.insert(insert_sql, [f_name, f_path, f_des.strip(), f_table.strip(), job_type, renewable])
 
 
 def handler_timeout():
@@ -97,9 +99,23 @@ def get_airplane_info(flightno, date, depcode, arrcode):
     return result.json()
 
 if __name__ == "__main__":
-    import sys
-    t_name = sys.argv[1]
-    f_path = sys.argv[2]
-    f_name = sys.argv[3]
-    e_day = sys.argv[4]
-    execute_day_job_again(t_name, f_path, f_name, e_day)
+    import argparse
+
+    parser = argparse.ArgumentParser(usage='python -table hbgj gtgj gt_consumers -path', description='this is a test')
+    parser.add_argument('-table', required=True, type=str, nargs="*",
+                        help='[gt_user, hb_consumers], the update tablename list')
+    parser.add_argument('-path', required=True, type=str,
+                        help='py file path')
+    parser.add_argument('-name', required=True, type=str,
+                        help='function name')
+    parser.add_argument('-day', required=True, type=str,
+                        help='update days')
+    parser.add_argument('-jobType', required=True, type=int,
+                        help='update days')
+    args = parser.parse_args()
+    t_name = args.table
+    f_path = args.path
+    f_name = args.name
+    e_day = args.day
+    j_type = args.jobType
+    execute_day_job_again(t_name, f_path, f_name, j_type, e_day)

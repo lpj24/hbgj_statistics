@@ -466,4 +466,4 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    pass
+    update_profit_hb_income(1)

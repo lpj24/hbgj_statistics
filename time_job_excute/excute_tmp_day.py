@@ -1,7 +1,7 @@
 import sys, logging
 from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
-from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount
+from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount, hb_coupon_ticket
 from main_service.tmp_task.hb_search_focus import hb_search_focus
 from dbClient.db_client import DBCli
 from dbClient import utils
@@ -39,6 +39,8 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_qp_success)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_cz)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_inter)
+    TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
+    TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
 
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
@@ -50,7 +52,7 @@ if __name__ == "__main__":
             fun_doc = fun.__doc__
             check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
             if not check_fun:
-                if fun_path.endswith("pyc"):
+                if fun_path and fun_path.endswith("pyc"):
                     fun_path = fun_path[0: -1]
                 utils.storage_execute_job(fun_path, fun_name, fun_doc)
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)

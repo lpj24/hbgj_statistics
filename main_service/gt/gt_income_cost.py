@@ -80,8 +80,8 @@ def update_gt_income_cost(days):
     gt_coupon_data = DBCli(dict).pay_cost_cli.queryAll(gt_coupon_use_sql, query_dto)
     insert_gt_coupon = []
     for gt_coupon in gt_coupon_data:
-        insert_gt_coupon.append([gt_coupon["s_day"], "coupon_in", gt_coupon["coupon_in"]])
-        insert_gt_coupon.append([gt_coupon["s_day"], "coupon_return", gt_coupon["coupon_return"]])
+        coupon_in_return = gt_coupon["coupon_in"] - gt_coupon["coupon_return"]
+        insert_gt_coupon.append([gt_coupon["s_day"], "coupon_in_return", coupon_in_return])
 
     DBCli().targetdb_cli.batchInsert(insert_cost_sql, insert_gt_coupon)
     return __file__

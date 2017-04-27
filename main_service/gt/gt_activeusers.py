@@ -89,6 +89,6 @@ def update_gtgj_activeusers_quarterly():
 if __name__ == "__main__":
     #下面2项只在凌晨更新前三天
     update_gtgj_activeusers_daily(1)
-    update_gtgj_newusers_daily(1)
+    # update_gtgj_newusers_daily(1)
     # update_gtgj_activeusers_weekly()
     # update_gtgj_activeusers_quarterly()

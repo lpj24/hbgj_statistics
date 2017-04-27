@@ -500,7 +500,7 @@ if __name__ == "__main__":
 
     # update_refund_ticket_channel_daily(1)
     # update_hb_channel_ticket_daily(1)
-    update_hb_channel_ticket_income_daily(1)
+    update_product_ticket_daily(1)
     # update_product_ticket_daily(1)
     # i = 90
     # while i >= 1:

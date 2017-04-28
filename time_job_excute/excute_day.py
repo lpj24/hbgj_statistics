@@ -1,6 +1,6 @@
 # -*- coding: utf-8 *-
-from main_service.hb import hb_activeusers, hb_profit_cost, hb_focus_platform, hb_delay_insure, hb_order, hb_partner, hb_coupon_ticket, \
-    hb_focus_newuser, hb_insure, hb_channel_ticket
+from main_service.hb import hb_activeusers, hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
+    hb_coupon_ticket, hb_focus_newuser, hb_insure
 from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_activeusers, \
     hotel_newconsumers, hotel_order, hotel_consumers
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
@@ -34,15 +34,11 @@ def add_execute_job():
     TimeService.add_day_service(hbgj_users.hbgj_user)
 
     TimeService.add_day_service(gt_fromHb.update_gtgj_from_hb)
-    TimeService.add_day_service(gt_income_cost.update_gt_income_cost)
 
     TimeService.add_day_service(hb_focus_platform.update_focus_platform)
     TimeService.add_day_service(hb_delay_insure.update_hb_deplay_insure)
     TimeService.add_day_service(hb_delay_insure.update_compensate_detail)
     TimeService.add_day_service(hb_order.update_hb_gt_order_daily)
-    TimeService.add_day_service(hb_profit_cost.update_huoli_car_income_daily)
-    TimeService.add_day_service(hb_profit_cost.update_profit_hb_income)
-    TimeService.add_day_service(hb_profit_cost.update_operation_hbgj_channel_ticket_profit_daily)
 
     TimeService.add_day_service(hb_coupon_ticket.update_hbgj_coupon_tickt)
     TimeService.add_day_service(hb_coupon_ticket.update_gt_coupon_daily)
@@ -60,10 +56,6 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_hb_insure_daily)
     TimeService.add_day_service(hb_insure.update_insure_type_daily)
     TimeService.add_day_service(hb_insure.update_insure_class_daily)
-    TimeService.add_day_service(hb_channel_ticket.update_refund_ticket_channel_daily)
-    TimeService.add_day_service(hb_channel_ticket.update_hb_channel_ticket_daily)
-    TimeService.add_day_service(hb_channel_ticket.update_hb_channel_ticket_income_daily)
-    TimeService.add_day_service(hb_channel_ticket.update_product_ticket_daily)
     TimeService.add_day_service(hb_order.update_operation_hbgj_order_detail_daily)
     TimeService.add_day_service(hb_insure.update_hb_boat)
     TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)

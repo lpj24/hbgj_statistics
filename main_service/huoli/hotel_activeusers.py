@@ -43,6 +43,7 @@ def update_hotel_activeusers_weekly(days=0):
     """
     dto = [DateUtil.date2str(s_day, "%Y-%m-%d"), week_activeusers_num]
     DBCli().targetdb_cli.insert(activeuser_weekly_sql, dto)
+    return __file__
 
 
 def update_hotel_activeusers_monthly():

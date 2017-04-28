@@ -218,6 +218,7 @@ def update_focus_platform(days=0):
                     str(gtgj_uv), str(jieji_uv), str(duanxin_uv), str(weixin_applate_uv), str(total_uv), str(android_pv), str(iphone_pv),
                     str(weixin_pv), str(gtgj_pv), str(jieji_pv), str(duanxin_pv), str(weixin_applate_pv), str(total_pv)]
     DBCli().targetdb_cli.insert(insert_sql, result_data)
+    return __file__
 
 
 def update_focus_platform_weekly():

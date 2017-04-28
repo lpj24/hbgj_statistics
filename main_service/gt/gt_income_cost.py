@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 def update_gt_income_cost(days):
     """更新高铁收入与成本, profit_gt_income profit_gt_cost"""
-    start_date = DateUtil.get_date_before_days(7 * int(days))
+    start_date = DateUtil.get_date_before_days(20 * int(days))
     end_date = DateUtil.get_date_before_days(0)
 
     query_sql = """

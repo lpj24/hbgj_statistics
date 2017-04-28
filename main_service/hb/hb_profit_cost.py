@@ -9,6 +9,7 @@ sys.setdefaultencoding('utf8')
 
 
 def update_hb_car_hotel_profit(days=0):
+    """更新航班专车酒店成本, profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -147,9 +148,11 @@ def update_hb_car_hotel_profit(days=0):
         balance_give_amount = VALUES(balance_give_amount)
     """
     DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
+    return __file__
 
 
 def update_car_cost_detail(days=0):
+    """更新专车成本明细, profit_huoli_car_cost_type"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
@@ -199,6 +202,7 @@ def update_car_cost_detail(days=0):
             except KeyError:
                 continue
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_car_cost)
+    return __file__
 
 
 def update_huoli_car_income_daily(days=0):
@@ -223,6 +227,7 @@ def update_huoli_car_income_daily(days=0):
 
 
 def update_huoli_car_income_type(days=0):
+    """更新专车的收入类型, profit_huoli_car_income_type"""
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
@@ -246,6 +251,7 @@ def update_huoli_car_income_type(days=0):
         income_amount = car_income_data["amount"]
         insert_car_income.append((car_date, income_type, income_amount))
     DBCli().targetdb_cli.batchInsert(insert_car_sql, insert_car_income)
+    return __file__
 
 
 def update_profit_hb_income(days=0):

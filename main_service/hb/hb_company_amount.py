@@ -168,12 +168,12 @@ def update_operation_hbgj_qp_success(days=0):
         GROUP BY DATE_FORMAT(S.createtime, '%%Y-%%m-%%d');
     """
     insert_sql = """
-        insert into operation_hbgj_qp_success (s_day, qp_amount, qp_success_amount,
+        insert into operation_hbgj_qp_success (s_day, qp_count, qp_success_count,
         createtime, updatetime) values (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
-        qp_amount = values(qp_amount),
-        qp_success_amount = values(qp_success_amount)
+        qp_count = values(qp_count),
+        qp_success_count = values(qp_success_count)
     """
     qp_data = DBCli().sourcedb_cli.queryAll(qp_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, qp_data)

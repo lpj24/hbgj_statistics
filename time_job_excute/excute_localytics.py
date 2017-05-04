@@ -1,11 +1,13 @@
-from time_job_excute.timeServiceList import TimeService
-import sys
 import logging
-from localytics import hb_ticket_book, hbdt_event, hb_pay_type
+import sys
 import time
-from dbClient.db_client import DBCli
-from dbClient import utils
 
+from main_service.localytics import hb_ticket_book, hb_pay_type
+
+from dbClient import utils
+from dbClient.db_client import DBCli
+from main_service.localytics import hbdt_event
+from time_job_excute.timeServiceList import TimeService
 
 if __name__ == "__main__":
     days = sys.argv[1]
@@ -22,7 +24,7 @@ if __name__ == "__main__":
             fun_doc = fun.__doc__
             check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
             if not check_fun:
-                if fun_path.endswith("pyc"):
+                if fun_path and fun_path.endswith("pyc"):
                     fun_path = fun_path[0: -1]
                 utils.storage_execute_job(fun_path, fun_name, fun_doc)
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)

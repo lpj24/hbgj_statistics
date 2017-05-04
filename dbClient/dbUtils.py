@@ -43,7 +43,7 @@ class DButils(object):
         try:
             logging.warning(self.log_str(sql, params))
             cursor.execute(sql, params)
-            # logging.warning("execute sql" + cursor._executed)
+            logging.warning(dir(cursor))
             self._conn.commit()
         except MySQLdb.Error, e:
             warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
@@ -62,7 +62,7 @@ class DButils(object):
                 sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
-        # logging.warning("execute sql" + cursor._executed)
+        logging.warning("execute sql" + dir(cursor))
         data = cursor.fetchall()
         cursor.close()
         return data

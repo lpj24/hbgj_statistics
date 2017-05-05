@@ -53,7 +53,6 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
 
-
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
 

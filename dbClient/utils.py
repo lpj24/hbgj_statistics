@@ -28,7 +28,6 @@ def sendMail(mail, msgText, subject):
 
 def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=1):
     import os
-    print table_name, fun_path, fun_name, job_type, execute_day
     fun_path = (fun_path.split(os.path.sep))[-3:]
     fun_path[-1] = (fun_path[-1].split("."))[0]
     fun_path = ".".join(fun_path)
@@ -46,7 +45,7 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
             delete_sql = "delete from " + table + " where s_day=%s"
             DBCli().targetdb_cli.batchInsert(delete_sql, [s_day])
     os.system("python ./tmp_py.py")
-    # os.remove("tmp_py.py")
+    os.remove("tmp_py.py")
 
 
 def storage_execute_job(f_path, f_name, f_doc):

@@ -6,17 +6,22 @@ from dbClient.dateutil import DateUtil
 
 def update_operation_hbgj_amount_monitor_cz(days=0):
     """更新南航国内外销售额, operation_hbgj_amount_monitor_cz"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     cz_inter_inland_sql = """
         SELECT DATE_FORMAT(OD.CREATETIME, '%%Y-%%m-%%d') s_day,
-        sum(case when O.PNRSOURCE ='csair' then OD.OUTPAYPRICE else 0 end) CZ_inland_amount,
-        sum(case when O.PNRSOURCE ='czint' then OD.OUTPAYPRICE else 0 end) CZ_inter_amount
+        sum(case when O.PNRSOURCE ='csair' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        then OD.OUTPAYPRICE else 0 end) CZ_inland_amount,
+        sum(case when O.PNRSOURCE ='czint' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+         then OD.OUTPAYPRICE else 0 end) CZ_inter_amount,
+
+        sum(case when O.PNRSOURCE ='csair' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)
+        then OD.OUTPAYPRICE else 0 end) CZ_inland_amount_return,
+        sum(case when O.PNRSOURCE ='czint' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)
+        then OD.OUTPAYPRICE else 0 end) CZ_inter_amount_return
         FROM TICKET_ORDERDETAIL OD
         LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
-        WHERE
-        O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
-        AND IFNULL(OD.`LINKTYPE`, 0) != 2
+        WHERE IFNULL(OD.`LINKTYPE`, 0) != 2
         AND OD.CREATETIME >= %s
         AND OD.CREATETIME < %s
         AND OD.ETICKET IS NOT NULL
@@ -25,12 +30,15 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
 
     insert_cz_sql = """
         insert into operation_hbgj_amount_monitor_cz (s_day, CZ_inland_amount, CZ_inter_amount,
+        CZ_inland_amount_return, CZ_inter_amount_return,
         createtime, updatetime)
-        values (%s, %s, %s, now(), now())
+        values (%s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         CZ_inland_amount = values(CZ_inland_amount),
-        CZ_inter_amount = values(CZ_inter_amount)
+        CZ_inter_amount = values(CZ_inter_amount),
+        CZ_inland_amount_return = values(CZ_inland_amount_return),
+        CZ_inter_amount_return = values(CZ_inter_amount_return)
     """
     dto = [start_date, end_date]
     cz_data = DBCli().sourcedb_cli.queryAll(cz_inter_inland_sql, dto)
@@ -181,11 +189,4 @@ def update_operation_hbgj_qp_success(days=0):
 
 
 if __name__ == "__main__":
-    i = 1
-    while i <= 113:
-        update_operation_hbgj_amount_monitor_cz(i)
-        update_operation_hbgj_amount_monitor_hlth(i)
-        update_operation_hbgj_amount_monitor_hlth_szx(i)
-        update_operation_hbgj_amount_monitor_inter(i)
-        update_operation_hbgj_qp_success(i)
-        i += 1
+    update_operation_hbgj_amount_monitor_cz(1)

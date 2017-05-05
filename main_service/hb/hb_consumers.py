@@ -54,8 +54,8 @@ def update_hb_newconsumers_daily(days=0):
     return __file__
 
 if __name__ == "__main__":
-    # update_hb_consumers_daily(1)
+    update_hb_consumers_daily(1)
     # update_hb_newconsumers_daily(1)
     # update_hb_consumers_weekly()
-    update_hb_consumers_monthly()
+    # update_hb_consumers_monthly()
     # update_hb_consumers_quarterly()

@@ -20,7 +20,7 @@ def update_hbgj_income_issue_refund_daily(days=0):
         count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) else_issue_ticket_num,
         sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then i.income end) else_issue_income,
         count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) else_refund_ticket_num,
-        sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.income end) else_refund_income
+        sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.income else 0 end) else_refund_income
         FROM `TICKET_ORDER_INCOME` i
         join `TICKET_ORDER` o on i.orderid=o.orderid
         where i.type=0
@@ -372,6 +372,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
+    update_hbgj_income_issue_refund_daily(1)
     # i = 1
     # while i <= 113:
     #     update_hbgj_transfer_order_income_cost_daily(i)

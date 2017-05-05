@@ -41,9 +41,6 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_qp_success)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_cz)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_inter)
-    TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
-    TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
-
     TimeService.add_hard_service(hb_channel_ticket.update_refund_ticket_channel_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_hb_channel_ticket_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_hb_channel_ticket_income_daily)
@@ -53,6 +50,9 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_profit_cost.update_profit_hb_income)
     TimeService.add_hard_service(hb_profit_cost.update_operation_hbgj_channel_ticket_profit_daily)
     TimeService.add_hard_service(gt_income_cost.update_gt_income_cost)
+    TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
+    TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
+
 
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)

@@ -302,20 +302,31 @@ def update_profit_huoli_fmall_cost(days=0):
     fmall_coupon_sql = """
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) in ('21', '22')
+        and (PRODUCT=COST OR COST IS NULL)
         and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_in,
         sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) in ('21', '22')
-        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return
+        and (PRODUCT=COST OR COST IS NULL)
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return,
+        sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) in ('21', '22')
+        and PRODUCT!=COST
+        and TRADE_CHANNEL='coupon') then amount else 0 end) else_coupon_in,
+        sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) in ('21', '22')
+        and PRODUCT!=COST
+        and TRADE_CHANNEL='coupon') then amount else 0 end) else_coupon_return
         from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
         group by TRADE_TIME
     """
 
     insert_sql = """
-        insert into profit_huoli_fmall_cost (s_day, coupon_in, coupon_return, createtime, updatetime)
-        values (%s, %s, %s, now(), now())
+        insert into profit_huoli_fmall_cost (s_day, coupon_in, coupon_return,
+        else_coupon_in, else_coupon_return, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         coupon_in = values(coupon_in),
-        coupon_return = values(coupon_return)
+        coupon_return = values(coupon_return),
+        else_coupon_in = values(else_coupon_in),
+        else_coupon_return = values(else_coupon_return)
     """
     fmall_data = DBCli().pay_cost_cli.queryAll(fmall_coupon_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, fmall_data)
@@ -331,20 +342,31 @@ def update_profit_huoli_buy_cost(days=0):
     buy_coupon_sql = """
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) = '48'
+        and (PRODUCT=COST OR COST IS NULL)
         and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_in,
         sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) = '48'
-        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return
+        and (PRODUCT=COST OR COST IS NULL)
+        and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return,
+        sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) = '48'
+        and PRODUCT!=COST
+        and TRADE_CHANNEL='coupon') then amount else 0 end) else_coupon_in,
+        sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST) = '48'
+        and PRODUCT!=COST
+        and TRADE_CHANNEL='coupon') then amount else 0 end) else_coupon_return
         from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
         group by TRADE_TIME
     """
 
     insert_sql = """
-        insert into profit_huoli_buy_cost (s_day, coupon_in, coupon_return, createtime, updatetime)
-        values (%s, %s, %s, now(), now())
+        insert into profit_huoli_buy_cost (s_day, coupon_in, coupon_return, else_coupon_in, else_coupon_return,
+        createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         coupon_in = values(coupon_in),
-        coupon_return = values(coupon_return)
+        coupon_return = values(coupon_return),
+        else_coupon_in = values(else_coupon_in),
+        else_coupon_return = values(else_coupon_return)
     """
     buy_data = DBCli().pay_cost_cli.queryAll(buy_coupon_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, buy_data)

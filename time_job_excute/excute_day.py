@@ -1,5 +1,5 @@
 # -*- coding: utf-8 *-
-from main_service.hb import hb_activeusers, hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
+from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
     hb_coupon_ticket, hb_focus_newuser, hb_insure
 from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_activeusers, \
     hotel_newconsumers, hotel_order, hotel_consumers
@@ -25,7 +25,6 @@ def add_execute_job():
 
     TimeService.add_day_service(gt_newconsumers.gt_newconsumers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_weekly)
-    TimeService.add_day_service(hb_activeusers.update_hbgj_activeusers_daily)
 
     TimeService.add_day_service(hotel_newconsumers.update_hotel_newconsumers_daily)
     TimeService.add_day_service(hotel_order.update_hotel_orders_daily)

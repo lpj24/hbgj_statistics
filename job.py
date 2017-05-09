@@ -1,37 +1,42 @@
-# -*-coding:utf-8 -*-
-import requests
-
-from pdfminer.pdfinterp import PDFResourceManager, process_pdf
-
-from pdfminer.converter import TextConverter
-
+#-*- coding:utf-8 -*-
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfpage import PDFTextExtractionNotAllowed
+from pdfminer.pdfinterp import PDFResourceManager
+from pdfminer.pdfinterp import PDFPageInterpreter
+from pdfminer.pdfdevice import PDFDevice
 from pdfminer.layout import LAParams
-
-from io import StringIO
-
-from io import open
+from pdfminer.converter import PDFPageAggregator
 
 
-def count_words_at_url(url):
-    resp = requests.get(url)
-    return len(resp.text.split())
+#获取文档对象，你把algorithm.pdf换成你自己的文件名即可。
 
-if __name__ == "__main__":
-    # print count_words_at_url("http://www.cnblogs.com/gudaojuanma/p/Python-RQ-Job.html")
+fp=open("./","rb")
 
-    # def readPDF(pdffile):
-    #     # 存储共享资源
-    #     rsrcmgr = PDFResourceManager()
-    #     retstr = StringIO()
-    #     laparams = LAParams()
-    #     device = TextConverter(rsrcmgr, retstr, laparams=laparams)
-    #     process_pdf(rsrcmgr, device, pdffile)
-    #     device.close()
-    #     content = retstr.getvalue()
-    #     return content
-    #
-    # pdffile = open("E:\\pdf\\pdfbook\\geli.PDF", "r")
-    # print readPDF(pdffile)
-    import os
-    a = os.popen("pdf2txt.py E:\\pdf\\pdfbook\\geli.PDF")
-    print a
+#创建一个与文档相关联的解释器
+parser=PDFParser(fp)
+#PDF文档对象
+doc=PDFDocument(parser)
+#链接解释器和文档对象
+parser.set_document(doc)
+#doc.set_paeser(parser)
+#初始化文档
+#doc.initialize("")
+#创建PDF资源管理器
+resource=PDFResourceManager()
+#参数分析器
+laparam=LAParams()
+#创建一个聚合器
+device=PDFPageAggregator(resource,laparams=laparam)
+#创建PDF页面解释器
+interpreter=PDFPageInterpreter(resource,device)
+#使用文档对象得到页面集合
+for page in PDFPage.create_pages(doc):
+    #使用页面解释器来读取
+    interpreter.process_page(page)
+    #使用聚合器来获取内容
+    layout=device.get_result()
+    for out in layout:
+        if hasattr(out, "get_text"):
+            print out.get_text()

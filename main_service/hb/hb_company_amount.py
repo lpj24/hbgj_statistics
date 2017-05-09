@@ -6,7 +6,7 @@ from dbClient.dateutil import DateUtil
 
 def update_operation_hbgj_amount_monitor_cz(days=0):
     """更新南航国内外销售额, operation_hbgj_amount_monitor_cz"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*128))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     cz_inter_inland_sql = """
         SELECT DATE_FORMAT(OD.CREATETIME, '%%Y-%%m-%%d') s_day,
@@ -14,18 +14,19 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
         then OD.OUTPAYPRICE else 0 end) CZ_inland_amount,
         sum(case when O.PNRSOURCE ='czint' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
          then OD.OUTPAYPRICE else 0 end) CZ_inter_amount,
-
         sum(case when O.PNRSOURCE ='csair' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)
+        and IFNULL(OD.REFUNDID, 0) != 0
         then OD.OUTPAYPRICE else 0 end) CZ_inland_amount_return,
         sum(case when O.PNRSOURCE ='czint' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)
+        and IFNULL(OD.REFUNDID, 0) != 0
         then OD.OUTPAYPRICE else 0 end) CZ_inter_amount_return
         FROM TICKET_ORDERDETAIL OD
         LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
         WHERE IFNULL(OD.`LINKTYPE`, 0) != 2
-        AND OD.CREATETIME >= %s
+        and OD.CREATETIME >= %s
         AND OD.CREATETIME < %s
         AND OD.ETICKET IS NOT NULL
-        group by s_day
+        group by s_day;
     """
 
     insert_cz_sql = """

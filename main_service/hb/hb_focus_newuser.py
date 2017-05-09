@@ -30,13 +30,13 @@ def update_focus_newuser(days=0):
     with open("/home/huolibi/data/hbdt/hbdt_focus/" + query_file) as hbdt_focus_data:
         for hbdt_data in hbdt_focus_data:
             try:
-                (userid, phoneid, phone, token, flyid, focusdate, flydate
-                 , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
+                (userid, phoneid, phone, token, flyid, focusdate
+                 , platform, ordertype) = hbdt_data.strip().split("\t")
             except Exception:
                 continue
 
             phone_id = str(userid) + '_' + str(phoneid)
-            query_date = focusdate.split(" ")[0] if focusdate.split(" ")[0] != "None" else createtime.split(" ")[0]
+            query_date = focusdate.split(" ")[0]
             if query_date == "None":
                 continue
             query_id.append(phone_id)
@@ -72,12 +72,12 @@ def update_fouces_dat_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     sql = """
-        SELECT userid, phoneid, phone, token, flyid, focusdate, FOCUSFLYDATE
-        , createtime, platform, ordertype FROM FLY_USERFOCUS_TBL
+        SELECT userid, phoneid, phone, token, flyid, focusdate,
+        , platform, ordertype FROM FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s  and FOCUSTIME<%s
         union
-        SELECT userid, phoneid, phone, token, flyid, focusdate, FOCUSFLYDATE
-        , createtime, platform, ordertype FROM FLY_USERFOCUS_TBL_HIS
+        SELECT userid, phoneid, phone, token, flyid, focustime,
+        , platform, ordertype FROM FLY_USERFOCUS_TBL_HIS
         where FOCUSTIME>=%s  and FOCUSTIME<%s
     """
     hbdt_focus_file = start_date + "_hbdt_focus.dat"

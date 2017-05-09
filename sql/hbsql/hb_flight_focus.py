@@ -1,28 +1,28 @@
 hb_flight_focus_users_daily = """
-    select :s_day s_day,sum(focus_users) from (
-    select count(DISTINCT phoneid) focus_users from (
+    select %s,sum(AA.focus_users) from (
+    select count(DISTINCT A.phoneid) focus_users from (
         SELECT phoneid FROM FLY_USERFOCUS_TBL
         where PHONEID>0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
+        and FOCUSTIME<%s
+        and FOCUSTIME>=%s
         union
         SELECT phoneid FROM FLY_USERFOCUS_TBL_HIS
         where PHONEID>0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-    )
+        and FOCUSTIME<%s
+        and FOCUSTIME>=%s
+    ) A
     UNION
-    select count(DISTINCT userid) focus_users from (
+    select count(DISTINCT B.userid) focus_users from (
         SELECT userid from FLY_USERFOCUS_TBL
         where PHONEID=0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
+        and FOCUSTIME<%s
+        and FOCUSTIME>=%s
         UNION
         SELECT USERID from FLY_USERFOCUS_TBL_HIS
         where PHONEID=0
-        and CREATETIME<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and CREATETIME>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
-    ) )
+        and FOCUSTIME<%s
+        and FOCUSTIME>=%s
+    ) B) AA
 """
 
 update_flight_focus_user_daily = """

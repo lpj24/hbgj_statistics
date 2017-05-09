@@ -72,11 +72,11 @@ def update_fouces_dat_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     sql = """
-        SELECT userid, phoneid, phone, token, flyid, focusdate,
+        SELECT userid, phoneid, phone, token, flyid, focustime
         , platform, ordertype FROM FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s  and FOCUSTIME<%s
         union
-        SELECT userid, phoneid, phone, token, flyid, focustime,
+        SELECT userid, phoneid, phone, token, flyid, focustime
         , platform, ordertype FROM FLY_USERFOCUS_TBL_HIS
         where FOCUSTIME>=%s  and FOCUSTIME<%s
     """

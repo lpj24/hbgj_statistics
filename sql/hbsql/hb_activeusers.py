@@ -1,14 +1,14 @@
 hbgj_activeusers_daily = """
     select A.s_day,A.active_users, A.active_users_ios,
     (A.active_users-A.active_users_ios) active_users_android
-    from (select :s_day  s_day,count(distinct userid) active_users,
+    from (select %s s_day,count(distinct userid) active_users,
     sum(case when p LIKE '%%91ZS%%' or p LIKE '%%appstore%%' or p LIKE '%%juwan%%' or p LIKE '%%91PGZS%%'
     or p LIKE '%%kuaiyong%%' or p LIKE '%%TBT%%' or p LIKE '%%PPZS%%' then 1 else 0 end ) active_users_ios
     from ACTIVE_USER_LOG
-    where createtime>=to_date(:start_date, 'yyyy-mm-dd')
-    and createtime<to_date(:end_date, 'yyyy-mm-dd')
-    and p like '%hbgj%'
-    group by to_char(createtime,'yyyy-mm-dd')) A
+    where DATE_FORMAT(createtime,'%%Y-%%m-%%d')>=%s
+    and DATE_FORMAT(createtime,'%%Y-%%m-%%d')<%s
+    and p like '%%hbgj%%'
+) A;
 """
 
 update_hbgj_activeusers_daily = """

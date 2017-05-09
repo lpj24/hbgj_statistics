@@ -69,23 +69,21 @@ def collect_his_phone_uid():
 
 def update_fouces_dat_daily(days=0):
     """生成航班关注文件, /home/huolibi/data/hbdt/hbdt_focus/hbdt_focus.dat"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     sql = """
         SELECT userid, phoneid, phone, token, flyid, focusdate, FOCUSFLYDATE
         , createtime, platform, ordertype FROM FLY_USERFOCUS_TBL
-        where createtime<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and createtime>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
+        where FOCUSTIME>=%s  and FOCUSTIME<%s
         union
         SELECT userid, phoneid, phone, token, flyid, focusdate, FOCUSFLYDATE
         , createtime, platform, ordertype FROM FLY_USERFOCUS_TBL_HIS
-        where createtime<to_date(:end_date, 'YYYY-MM-DD HH24:MI:SS')
-        and createtime>=to_date(:start_date, 'YYYY-MM-DD HH24:MI:SS')
+        where FOCUSTIME>=%s  and FOCUSTIME<%s
     """
     hbdt_focus_file = start_date + "_hbdt_focus.dat"
     hbdt_focus_file = open("/home/huolibi/data/hbdt/hbdt_focus/" + hbdt_focus_file, 'a')
-    dto = {"start_date": start_date, "end_date": end_date}
-    query_data = DBCli().oracle_cli.queryAll(sql, dto)
+    dto = [start_date, end_date] * 2
+    query_data = DBCli().dynamic_focus_cli.queryAll(sql, dto)
     for q in query_data:
         q_list = [str(d) for d in list(q)]
         hbdt_focus_file.write("\t".join(q_list) + "\n")
@@ -178,19 +176,6 @@ def collect_inland_inter_flyid_daily(days=0):
 
 
 if __name__ == "__main__":
-    # collect_inland_inter_flyid_his()
-    # collect_inland_inter_flyid_daily(2)
-    # collect_his_phone_uid()
-
-    i = 35
-    while i >= 1:
-        # collect_inland_inter_flyid_daily(i)
-        update_focus_inland_inter_daily(i)
-        break
-        i -= 1
-
-    # update_fouces_dat_daily(1)
-    # update_focus_newuser(1)
-
+    update_fouces_dat_daily(1)
 
 

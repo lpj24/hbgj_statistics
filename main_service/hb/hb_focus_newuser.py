@@ -69,7 +69,7 @@ def collect_his_phone_uid():
 
 def update_fouces_dat_daily(days=0):
     """生成航班关注文件, /home/huolibi/data/hbdt/hbdt_focus/hbdt_focus.dat"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     sql = """
         SELECT userid, phoneid, phone, token, flyid, focustime
@@ -80,9 +80,9 @@ def update_fouces_dat_daily(days=0):
         , platform, ordertype FROM FLY_USERFOCUS_TBL_HIS
         where FOCUSTIME>=%s  and FOCUSTIME<%s
     """
-    hbdt_focus_file = start_date + "_hbdt_focus.dat"
+    hbdt_focus_file = DateUtil.date2str(start_date, '%Y-%m-%d') + "_hbdt_focus.dat"
     hbdt_focus_file = open("/home/huolibi/data/hbdt/hbdt_focus/" + hbdt_focus_file, 'a')
-    dto = [start_date, end_date] * 2
+    dto = [DateUtil.date2str(start_date), end_date] * 2
     query_data = DBCli().dynamic_focus_cli.queryAll(sql, dto)
     for q in query_data:
         q_list = [str(d) for d in list(q)]

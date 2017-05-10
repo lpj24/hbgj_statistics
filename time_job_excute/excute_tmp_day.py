@@ -52,6 +52,7 @@ if __name__ == "__main__":
     TimeService.add_hard_service(gt_income_cost.update_gt_income_cost)
 
     TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)
+    TimeService.add_hard_service(hb_activeusers.update_hbgj_newuser_daily)
 
     TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)

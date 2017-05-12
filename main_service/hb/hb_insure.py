@@ -256,7 +256,7 @@ def update_hb_boat(days=0):
         join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
         where i.CREATETIME>=%s
         and i.CREATETIME<%s
-        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG','A_QUNAYSFYJHS')
+        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG', 'A30_YG','A_QUNAYSFYJHS')
         GROUP BY s_day;
     """
 
@@ -303,7 +303,7 @@ def update_hb_boat(days=0):
         join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
         where i.updatetime>=%s
         and i.updatetime<%s
-        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG','A_QUNAYSFYJHS')
+        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG', 'A30_YG', 'A_QUNAYSFYJHS')
         and i.STATUS in ('21','2')
         GROUP BY s_day;
     """
@@ -367,4 +367,4 @@ if __name__ == "__main__":
     # update_hb_boat(1)
     # update_insure_type_daily(1)
     # update_insure_class_daily(1)
-    update_hb_boat(1)
+    update_hb_boat(3)

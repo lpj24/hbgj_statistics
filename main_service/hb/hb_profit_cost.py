@@ -9,7 +9,7 @@ sys.setdefaultencoding('utf8')
 
 
 def update_hb_car_hotel_profit(days=0):
-    """更新航班专车酒店成本, profit_hb_cost_copy profit_huoli_car_cost profit_huoli_hotel_cost"""
+    """更新航班专车酒店成本, profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
     query_date = DateUtil.get_date_before_days(days * 3)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -502,4 +502,7 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
 if __name__ == "__main__":
     update_profit_hb_income(1)
     import requests
-    requests.get("http://120.133.0.164:8900/count/ticket/income", params={'sday': '2017-05-10'})
+    proxies = {
+        'http': 'http://120.133.0.164'
+    }
+    r = requests.get("http://120.133.0.164:8900/count/ticket/income", params={'sday': '2017-05-10'}, proxies=proxies)

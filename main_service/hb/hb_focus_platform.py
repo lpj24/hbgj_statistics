@@ -81,7 +81,14 @@ def update_focus_platform(days=0):
         where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
         union
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
-        where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji')A
+        where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
+        union
+        select count(distinct(phoneid)) as uv
+        from FLY_USERFOCUS_TBL
+        where FOCUSTIME>=%s
+        and FOCUSTIME<%s
+        and ordertype = 0 and platform = 'jieji' and phoneid is not null
+        )A
     """
 
     jieji_sql_pv = """
@@ -91,6 +98,12 @@ def update_focus_platform(days=0):
         union
         select count(*) pv from FLY_USERFOCUS_TBL_HIS where FOCUSTIME>=%s  and FOCUSTIME<%s
         and ordertype = 0 and platform = 'jieji'
+        union
+        select count(*) as pv
+        from FLY_USERFOCUS_TBL
+        where FOCUSTIME>=%s
+        and FOCUSTIME<%s
+        and ordertype = 0 and platform = 'jieji' and phoneid is not null
     )A
     """
 
@@ -129,7 +142,7 @@ def update_focus_platform(days=0):
         else:
             weixin_applate_uv += app_uv
 
-    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*2)
+    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*3)
     duanxin_data = DBCli().dynamic_focus_cli.queryOne(duanxin_sql, dto*2)
     jieji_uv = jieji_data[0]
     duanxin_uv = duanxin_data[0]
@@ -235,7 +248,13 @@ def update_focus_platform_weekly():
         where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
         union
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
-        where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji') A
+        where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
+        union
+        select count(distinct(phoneid)) as uv
+        from FLY_USERFOCUS_TBL
+        where FOCUSTIME>=%s
+        and FOCUSTIME<%s
+        and ordertype = 0 and platform = 'jieji' and phoneid is not null) A
     """
 
     sms_sql = """
@@ -252,8 +271,8 @@ def update_focus_platform_weekly():
 
     start_date, end_date = DateUtil.get_last_week_date()
 
-    dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]*2
-    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto)
+    dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
+    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto*2)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -265,12 +284,12 @@ def update_focus_platform_weekly():
         else:
             weixin_applate_uv += app_uv
 
-    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto)
+    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*3)
     jieji_uv = jieji_data[0]
-    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto)
+    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto*2)
     gtgj_uv = gtgj_data[0]
 
-    sms_uv = (DBCli().dynamic_focus_cli.queryOne(sms_sql, dto))[0]
+    sms_uv = (DBCli().dynamic_focus_cli.queryOne(sms_sql, dto*2))[0]
 
     total_uv = iphone_uv + android_uv + weixin_uv + gtgj_uv + jieji_uv + weixin_applate_uv + sms_uv
 
@@ -328,7 +347,13 @@ def update_focus_platform_monthly():
         where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
         union
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
-        where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji')A
+        where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
+        union
+        select count(distinct(phoneid)) as uv
+        from FLY_USERFOCUS_TBL
+        where FOCUSTIME>=%s
+        and FOCUSTIME<%s
+        and ordertype = 0 and platform = 'jieji' and phoneid is not null)A
     """
 
     sms_sql = """
@@ -344,7 +369,7 @@ def update_focus_platform_monthly():
 
     start_date, end_date = DateUtil.get_last_month_date()
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
-    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto)
+    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto*2)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -356,12 +381,12 @@ def update_focus_platform_monthly():
         else:
             weixin_applate_uv += app_uv
 
-    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto)
+    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*3)
     jieji_uv = jieji_data[0]
-    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto)
+    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto*2)
     gtgj_uv = gtgj_data[0]
 
-    sms_uv = (DBCli().dynamic_focus_cli.queryOne(sms_sql, dto))[0]
+    sms_uv = (DBCli().dynamic_focus_cli.queryOne(sms_sql, dto*2))[0]
 
     total_uv = iphone_uv + android_uv + weixin_uv + gtgj_uv + jieji_uv + weixin_applate_uv + sms_uv
 
@@ -406,7 +431,7 @@ if __name__ == "__main__":
     # start_date, end_date = DateUtil.get_last_month_date()
     # print start_date, end_date
     # update_focus_platform(1)
-    update_focus_platform_weekly()
+    update_focus_platform_monthly()
     # i = 9
     # while i >= 1:
     #     update_focus_platform(i)

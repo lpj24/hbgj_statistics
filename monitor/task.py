@@ -14,17 +14,24 @@ def check_day_data():
     query_date = DateUtil.get_date_before_days(1)
     query_date = DateUtil.date2str(query_date, '%Y-%m-%d')
     msg = ""
+    insert_msg = []
+    insert_sql = """
+        insert into error_update_table_daily (s_day, job_table)
+        values(%s, %s)
+    """
     for execute_sql in sql:
         dto = [query_date]
         data = DBCli().targetdb_cli.queryOne(execute_sql, dto)
 
         if data[0] < 1:
-            #error
+            # error
+            insert_msg.append([query_date, execute_sql.split(" ")[3]])
             msg += execute_sql.split(" ")[3] + "<br/>"
         else:
             pass
     if len(msg) > 0:
-        utils.sendMail("lipenju24@163.com", msg, "数据查询异常")
+        # DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
+        utils.sendMail("lipenju24@163.com", "<br/>".join(msg), "数据查询异常")
     else:
         utils.sendMail("lipenju24@163.com", "数据查询正常", "数据查询正常")
 

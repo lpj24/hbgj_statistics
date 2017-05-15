@@ -30,7 +30,7 @@ def check_day_data():
         else:
             pass
     if len(msg) > 0:
-        # DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
+        DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
         utils.sendMail("lipenju24@163.com", "<br/>".join(msg), "数据查询异常")
     else:
         utils.sendMail("lipenju24@163.com", "数据查询正常", "数据查询正常")

@@ -62,7 +62,7 @@ class DButils(object):
                 sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
-        # logging.warning("execute sql" + dir(cursor))
+        # logging.warning("execute sql" + cursor._executed)
         data = cursor.fetchall()
         cursor.close()
         return data
@@ -77,6 +77,7 @@ class DButils(object):
                     rx = re.compile("tablename")
                     sql, num = rx.subn(params.pop(), sql)
                 cursor.execute(sql, params)
+            # logging.warning("execute sql" + cursor._executed)
             data = cursor.fetchone()
         except MySQLdb.OperationalError:
             logging.warning("error")

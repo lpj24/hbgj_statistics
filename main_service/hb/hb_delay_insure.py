@@ -87,10 +87,10 @@ def update_hb_deplay_insure(days=0):
 def update_compensate_detail(days=0):
     """更新延误宝赔付明细(邮件2-6), operation_delaycare_detail_daily"""
     compensate_detail_sql = """
-        SELECT DATE_FORMAT(flydate, '%%Y-%%m-%%d') s_day, chargecount,count(*) order_num FROM TICKET_DELAY_CARE
+        SELECT DATE_FORMAT(flydate, '%%Y-%%m-%%d') s_day, chargenum,count(*) order_num FROM TICKET_DELAY_CARE
         WHERE flydate >= %s
         and flydate < %s and state='1'
-        and chargetime<>0 and chargenum!=0 GROUP BY chargecount, s_day
+        and chargetime<>0 and chargenum!=0 GROUP BY chargenum, s_day
         order by s_day
     """
 
@@ -112,5 +112,5 @@ def update_compensate_detail(days=0):
 
 if __name__ == "__main__":
     # update_hb_deplay_insure(2)
-    # update_compensate_detail(2)
+    update_compensate_detail(1)
     update_hb_deplay_insure(1)

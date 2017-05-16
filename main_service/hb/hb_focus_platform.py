@@ -83,7 +83,7 @@ def update_focus_platform(days=0):
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
         where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
         union
-        select count(distinct(phoneid)) as uv
+        select distinct(phoneid) as uv
         from FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s
         and FOCUSTIME<%s
@@ -175,7 +175,7 @@ def update_focus_platform(days=0):
         else:
             weixin_applate_pv += app_pv
 
-    jieji_data_pv = DBCli().dynamic_focus_cli.queryOne(jieji_sql_pv, dto*2)
+    jieji_data_pv = DBCli().dynamic_focus_cli.queryOne(jieji_sql_pv, dto*3)
     duanxin_data_pv = DBCli().dynamic_focus_cli.queryOne(duanxin_sql_pv, dto*2)
     jieji_pv = jieji_data_pv[0]
     duanxin_pv = duanxin_data_pv[0]
@@ -209,7 +209,7 @@ def update_focus_platform(days=0):
         pv = VALUES(pv)
     """
 
-    result_data = [ DateUtil.date2str(start_date, '%Y-%m-%d'), str(android_uv), str(iphone_uv), str(weixin_uv),
+    result_data = [DateUtil.date2str(start_date, '%Y-%m-%d'), str(android_uv), str(iphone_uv), str(weixin_uv),
                     str(gtgj_uv), str(jieji_uv), str(duanxin_uv), str(weixin_applate_uv), str(total_uv), str(android_pv), str(iphone_pv),
                     str(weixin_pv), str(gtgj_pv), str(jieji_pv), str(duanxin_pv), str(weixin_applate_pv), str(total_pv)]
     DBCli().targetdb_cli.insert(insert_sql, result_data)
@@ -250,7 +250,7 @@ def update_focus_platform_weekly():
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
         where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
         union
-        select count(distinct(phoneid)) as uv
+        select distinct(phoneid) as uv
         from FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s
         and FOCUSTIME<%s
@@ -349,7 +349,7 @@ def update_focus_platform_monthly():
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
         where  FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
         union
-        select count(distinct(phoneid)) as uv
+        select distinct(phoneid) as uv
         from FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s
         and FOCUSTIME<%s
@@ -412,28 +412,6 @@ def update_focus_platform_monthly():
     DBCli().targetdb_cli.insert(insert_sql, result_data)
 
 if __name__ == "__main__":
-    # one_focus = open("new_one_focus.dat", 'a')
-    # import datetime
-    # start_date = datetime.date(2017, 1, 1)
-    # end_date = datetime.date(2017, 1, 22)
-    # while start_date < end_date:
-    #     next_day = DateUtil.add_days(start_date, 1)
-    #     out_str = update_focus_platform(start_date, next_day)
-    #     start_date = DateUtil.add_days(start_date, 1)
-    #     one_focus.write(out_str + "\n")
-    # one_focus.close()
-    # update_focus_platform(1)
-    # import datetime
-    # end = datetime.date(2017, 2, 6)
-    # # start_date, end_date = DateUtil.get_last_week_date(end)
-    # # print start_date, end_date
-    # # update_focus_platform_weekly(start_date, end_date)
-    # start_date, end_date = DateUtil.get_last_month_date()
-    # print start_date, end_date
-    # update_focus_platform(1)
-    update_focus_platform_monthly()
-    # i = 9
-    # while i >= 1:
-    #     update_focus_platform(i)
-    #     i -= 1
+    update_focus_platform(3)
+
 

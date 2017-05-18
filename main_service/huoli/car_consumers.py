@@ -86,7 +86,7 @@ def update_car_newconsumers_daily(days=0):
     return __file__
 
 if __name__ == "__main__":
-    update_car_consumers_daily(2)
+    update_car_consumers_daily(1)
     # update_car_consumers_weekly()
     # for i in xrange(4, 0, -1):
     #     update_car_newconsumers_daily(i)

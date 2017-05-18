@@ -500,9 +500,4 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    update_profit_hb_income(1)
-    import requests
-    proxies = {
-        'http': 'http://120.133.0.164'
-    }
-    r = requests.get("http://120.133.0.164:8900/count/ticket/income", params={'sday': '2017-05-10'}, proxies=proxies)
+    update_profit_hotel_income(1)

@@ -61,6 +61,7 @@ def add_execute_job():
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_day_service(hb_partner.update_hb_partner_daily)
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
+    TimeService.add_day_service(hb_order.update_hb_gt_order_new_daily)
 
     TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
     TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_buy_cost)

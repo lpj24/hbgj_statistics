@@ -95,15 +95,43 @@ def update_operation_hbgj_order_detail_daily(days=0):
 
 def update_hb_gt_order_new_daily(days=0):
     """更新航班高铁订单(new), hbgj_order_detail_daily_new"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1643), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
+    total_order_sql = """
+        SELECT DATE_FORMAT(TICKET_ORDER.CREATETIME,'%%Y-%%m-%%d') s_day,
+        count(distinct TICKET_ORDERDETAIL.ORDERID) order_num,
+        count(TICKET_ORDERDETAIL.ORDERID) ticket_num,
+        count(distinct case when TICKET_ORDER.p like '%%gtgj%%' then TICKET_ORDERDETAIL.ORDERID END) order_num_gt,
+        count(case when TICKET_ORDER.p like '%%gtgj%%' then TICKET_ORDERDETAIL.ORDERID END) ticket_num_gt
+        FROM TICKET_ORDERDETAIL
+        join TICKET_ORDER
+        ON TICKET_ORDER.ORDERID = TICKET_ORDERDETAIL.ORDERID
+        where TICKET_ORDER.ORDERSTATUE not in (2,12,21,51,75)
+        and  TICKET_ORDER.CREATETIME >= %s
+        and  TICKET_ORDER.CREATETIME < %s
+        GROUP BY s_day
+    """
+
+    insert_total_sql = """
+        insert into hbgj_order_detail_daily_new
+        (s_day, order_num, ticket_num, order_num_gt, ticket_num_gt,
+        createtime, updatetime)
+        values (%s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        order_num = values(order_num),
+        ticket_num = values(ticket_num),
+        order_num_gt = values(order_num_gt),
+        ticket_num_gt = values(ticket_num_gt)
+    """
     hbgj_detail_sql = """
-        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,
+        SELECT
         sum(case when o.INTFLAG=0 then 1 else 0 END) ticket_inland,
         count(distinct case when o.INTFLAG=0 then o.ORDERID END) order_inland,
         sum(case when o.INTFLAG=1 then 1 else 0 END) ticket_inter,
-        count(distinct case when o.INTFLAG=1 then o.ORDERID END) order_inter
+        count(distinct case when o.INTFLAG=1 then o.ORDERID END) order_inter,
+        DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o
         on od.ORDERID=o.ORDERID
@@ -114,20 +142,16 @@ def update_hb_gt_order_new_daily(days=0):
         GROUP BY s_day
     """
 
-    insert_sql = """
-        insert into hbgj_order_detail_daily_new
-        (s_day, ticket_inland, order_inland, ticket_inter, order_inter,
-        createtime, updatetime)
-        values (%s, %s, %s, %s, %s, now(), now())
-        on duplicate key update updatetime = now(),
-        s_day = values(s_day),
-        ticket_inland = values(ticket_inland),
-        order_inland = values(order_inland),
-        ticket_inter = values(ticket_inter),
-        order_inter = values(order_inter)
+    update_sql = """
+        update hbgj_order_detail_daily_new
+        set inland_ticket_num=%s, inland_order_num=%s, inter_ticket_num=%s,
+        inter_order_num=%s where s_day=%s
     """
+    total_query_data = DBCli().sourcedb_cli.queryAll(total_order_sql, dto)
+    DBCli().targetdb_cli.batchInsert (insert_total_sql, total_query_data)
+
     query_data = DBCli().sourcedb_cli.queryAll(hbgj_detail_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    DBCli().targetdb_cli.batchInsert(update_sql, query_data)
     return __file__
 
 if __name__ == "__main__":

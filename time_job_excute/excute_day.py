@@ -8,7 +8,7 @@ from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, g
 from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
     hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users
 from main_service.huoli import car_orders, car_consumers, hotel_activeusers, \
-    hotel_newconsumers, hotel_order, hotel_consumers
+    hotel_newconsumers, hotel_order, hotel_consumers, hotel_newusers
 from time_job_excute.timeServiceList import TimeService
 
 
@@ -56,7 +56,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_insure_class_daily)
     TimeService.add_day_service(hb_order.update_operation_hbgj_order_detail_daily)
     TimeService.add_day_service(hb_insure.update_hb_boat)
-    # TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
+    TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_day_service(hb_partner.update_hb_partner_daily)
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)

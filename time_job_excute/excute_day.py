@@ -1,16 +1,15 @@
 # -*- coding: utf-8 *-
-from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
-    hb_coupon_ticket, hb_focus_newuser, hb_insure
-from main_service.huoli import car_orders, car_consumers, hotel_newusers, hotel_activeusers, \
-    hotel_newconsumers, hotel_order, hotel_consumers
-from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, \
-    gt_income_cost
-from main_service.tmp_task import hbgj_users
-from dbClient.db_client import DBCli
-from dbClient import utils
-from time_job_excute.timeServiceList import TimeService
-import sys
 import logging
+import sys
+
+from dbClient import utils
+from dbClient.db_client import DBCli
+from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb
+from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
+    hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users
+from main_service.huoli import car_orders, car_consumers, hotel_activeusers, \
+    hotel_newconsumers, hotel_order, hotel_consumers
+from time_job_excute.timeServiceList import TimeService
 
 
 def add_execute_job():

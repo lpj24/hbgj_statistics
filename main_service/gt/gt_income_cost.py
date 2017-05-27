@@ -8,7 +8,7 @@ def update_gt_income_cost(days=0):
     if days > 0:
         start_date = DateUtil.get_date_before_days(20 * int(days))
     else:
-        start_date = DateUtil.get_date_before_days(1 * int(days))
+        start_date = DateUtil.get_date_before_days(1)
     end_date = DateUtil.get_date_before_days(0)
 
     query_sql = """

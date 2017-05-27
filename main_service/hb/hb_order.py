@@ -95,7 +95,7 @@ def update_operation_hbgj_order_detail_daily(days=0):
 
 def update_hb_gt_order_new_daily(days=0):
     """更新航班高铁订单(new), hbgj_order_detail_daily_new"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1643), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
     total_order_sql = """
@@ -107,9 +107,10 @@ def update_hb_gt_order_new_daily(days=0):
         FROM TICKET_ORDERDETAIL
         join TICKET_ORDER
         ON TICKET_ORDER.ORDERID = TICKET_ORDERDETAIL.ORDERID
-        where TICKET_ORDER.ORDERSTATUE not in (2,12,21,51,75)
+        where TICKET_ORDER.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
         and  TICKET_ORDER.CREATETIME >= %s
         and  TICKET_ORDER.CREATETIME < %s
+        AND IFNULL(TICKET_ORDERDETAIL.`LINKTYPE`, 0) != 2
         GROUP BY s_day
     """
 

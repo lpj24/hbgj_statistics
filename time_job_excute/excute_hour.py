@@ -1,5 +1,5 @@
 from main_service.huoli import eat_activeusers, car_orders, car_consumers, hotel_order
-from main_service.gt import gt_order, gt_amount, gt_consumers, gt_neworder
+from main_service.gt import gt_order, gt_amount, gt_consumers, gt_neworder, gt_income_cost
 from time_job_excute.timeServiceList import TimeService
 import logging
 
@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     TimeService.add_hour_service(gt_neworder.update_gt_order_daily)
     TimeService.add_hour_service(hotel_order.update_hotel_orders_daily)
+    TimeService.add_hour_service(gt_income_cost.update_gt_income_cost)
     # TimeService.add_hour_service(gt_amount.update_gtgj_amount_daily)
 
     for fun in TimeService.get_hour_service():

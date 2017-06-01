@@ -56,7 +56,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_insure_class_daily)
     TimeService.add_day_service(hb_order.update_operation_hbgj_order_detail_daily)
     TimeService.add_day_service(hb_insure.update_hb_boat)
-    TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
+    # TimeService.add_day_service(hotel_newusers.update_hotel_newusers_daily)
     TimeService.add_day_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_day_service(hb_partner.update_hb_partner_daily)
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)

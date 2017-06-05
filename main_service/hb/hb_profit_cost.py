@@ -487,7 +487,7 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
         sale_type = 3
     elif pn_resouce == 'intsupply':
         sale_type = 4
-    elif saletype == 13 or pn_resouce == 'hlth':
+    elif saletype == 13 or pn_resouce == 'hlth' or saletype == 23:
         sale_type = 5
     elif pn_resouce == "supply" and (agaent_name is not None and len(agaent_name) > 0):
         new_channel_data[2] = agaent_name
@@ -500,4 +500,7 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    update_profit_hotel_income(1)
+    i = 1
+    while i <= 35:
+        update_operation_hbgj_channel_ticket_profit_daily(i)
+        i += 1

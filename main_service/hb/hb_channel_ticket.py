@@ -44,7 +44,7 @@ def update_hb_channel_ticket_daily(days=0):
             new_channel_data.append(3)
         elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
             new_channel_data.append(4)
-        elif saletype == 13 or pn_resouce == 'hlth':
+        elif saletype == 13 or pn_resouce == 'hlth' or saletype == 23:
             sale_data += 1
             new_channel_data.append(5)
         else:
@@ -113,7 +113,7 @@ def update_hb_channel_ticket_income_daily(days=0):
             new_channel_data[2] = agaent_name
             new_channel_data[3] = agaent_id
             new_channel_data.append(4)
-        elif saletype == 13 or pn_resouce == 'hlth':
+        elif saletype == 13 or pn_resouce == 'hlth' or saletype == 23:
             sale_data += 1
             new_channel_data.append(5)
         else:
@@ -453,7 +453,7 @@ def update_refund_ticket_channel_daily(days=0):
             pid = 3
         elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
             pid = 4
-        elif saletype == 13 or pn_resouce == 'hlth':
+        elif saletype == 13 or pn_resouce == 'hlth' or saletype == 23:
             sale_data += 1
             pid = 5
         else:
@@ -472,7 +472,7 @@ def update_refund_ticket_channel_daily(days=0):
             pid = 3
         elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
             pid = 4
-        elif saletype == 13 or pn_resouce == 'hlth':
+        elif saletype == 13 or pn_resouce == 'hlth' or saletype == 23:
             sale_data += 1
             pid = 5
         else:
@@ -491,42 +491,9 @@ def update_refund_ticket_channel_daily(days=0):
 
 
 if __name__ == "__main__":
-    # i = 4
-    # while i >= 1:
-    #     update_product_ticket_daily(i)
-    #     i -= 1
-    # update_refund_ticket_channel_daily(1)
-    # update_product_ticket_daily(1)
-
-    # update_refund_ticket_channel_daily(1)
-    # update_hb_channel_ticket_daily(1)
-    update_product_ticket_daily(1)
-    # update_product_ticket_daily(1)
-    # i = 90
-    # while i >= 1:
-    #     update_hb_channel_ticket_income_daily(i)
-    #     i -= 1
-    #
-    # check_sql = """
-    #     select sum(income_amount) from operation_hbgj_channel_ticket_income_daily where s_day=%s
-    # """
-    #
-    # check_sql_2 = """
-    #     select (inland_ticket_incometype0 + inland_ticket_incometype1 + inland_ticket_incometype2 + inter_ticket_income)
-    #     income from profit_hb_income where s_day=%s
-    # """
-    # import datetime
-    #
-    # a = datetime.date(2017, 1, 1)
-    # b = datetime.date(2017, 3, 31)
-    # while a <= b:
-    #     dto = [DateUtil.date2str(a, "%Y-%m-%d")]
-    #     income = DBCli().targetdb_cli.queryOne(check_sql, dto)
-    #     income_sum = DBCli().targetdb_cli.queryOne(check_sql_2, dto)
-    #
-    #     income = income[0]
-    #     income_sum = income_sum[0]
-    #     if income != income_sum:
-    #         print a
-    #         print income, income_sum
-    #     a = DateUtil.add_days(a, 1)
+    i = 1
+    while i <= 35:
+        update_hb_channel_ticket_income_daily(i)
+        update_hb_channel_ticket_daily(i)
+        update_refund_ticket_channel_daily(i)
+        i += 1

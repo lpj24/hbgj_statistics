@@ -99,5 +99,6 @@ if __name__ == "__main__":
 
     check_day_data()
     exception_table = cal_balance()
+
     if bool(exception_table):
         utils.sendMail("lipenju24@163.com", exception_table, "与前一天的数据有差异")

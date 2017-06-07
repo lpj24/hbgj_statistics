@@ -57,8 +57,8 @@ def cal_balance():
             # 差额相差30%
             try:
                 last_data = float(require_compare_data[0][0])
-                next_data = float(require_compare_data[0][0])
-                balance_num_boolean = operator.abs(last_data - next_data) / next_data > 0.3
+                next_data = float(require_compare_data[1][0])
+                balance_num_boolean = True if last_data == 0 else float(operator.abs(last_data - next_data)) / float(last_data) > 0.7
             except (Exception, ZeroDivisionError):
                 break
 

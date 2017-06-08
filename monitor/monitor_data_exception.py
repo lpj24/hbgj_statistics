@@ -58,6 +58,8 @@ def cal_balance():
             try:
                 last_data = float(require_compare_data[0][0])
                 next_data = float(require_compare_data[1][0])
+                if len(str(next_data)) <= 4:
+                    continue
                 balance_num_boolean = True if last_data == 0 else float(operator.abs(last_data - next_data)) / float(last_data) > 0.7
             except (Exception, ZeroDivisionError):
                 break
@@ -66,7 +68,7 @@ def cal_balance():
                 exception_table.append(table_name)
     return set(exception_table)
 
-#
+
 if __name__ == "__main__":
     print cal_balance()
 #

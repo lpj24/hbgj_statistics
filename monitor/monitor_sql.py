@@ -93,6 +93,9 @@ sql = [
     "select count(1) from hbdt_focus_platform_daily where s_day=%s",
 
     "select count(1) from hbgj_order_detail_daily_new where s_day=%s",
+
+    "select count(1) from hbgj_register_user_daily where s_day=%s",
+    "select count(1) from gtgj_register_user_daily where s_day=%s",
 ]
 
 week_sql = [

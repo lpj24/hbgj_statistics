@@ -59,28 +59,6 @@ def storage_execute_job(f_path, f_name, f_doc):
     DBCli().targetdb_cli.insert(insert_sql, [f_name, f_path, f_des.strip(), f_table.strip(), job_type, renewable])
 
 
-def handler_timeout():
-    raise Exception
-
-
-def time_out(fun):
-    def wrapper():
-        signal.signal(signal.SIGALRM, handler_timeout)
-        signal.alarm(1*60*60*1.5)
-        return fun()
-    return wrapper
-
-
-def exeTime(func):
-    def newFunc(*args, **kwargs):
-        start = time.time()
-        back = func(*args, **kwargs)
-        logging.warning("run time " + str(time.time() - start) + "s")
-        return back
-    return newFunc
-
-
-@exeTime
 def get_airplane_info(flightno, date, depcode, arrcode):
     url = "http://58.83.130.92:7070/pysrv/flightservice/airplane_by_flightno/"
 

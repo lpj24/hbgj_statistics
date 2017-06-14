@@ -4,7 +4,7 @@ import sys
 
 from dbClient import utils
 from dbClient.db_client import DBCli
-from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb
+from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, gt_register_user
 from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
     hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users
 from main_service.huoli import car_orders, car_consumers, hotel_activeusers, \
@@ -62,6 +62,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_partner.update_hb_partner_daily)
     TimeService.add_day_service(gt_amount.update_gtgj_amount_daily)
     TimeService.add_day_service(hb_order.update_hb_gt_order_new_daily)
+    TimeService.add_day_service(gt_register_user.update_gtgj_register_user_daily)
 
     TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
     TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_buy_cost)

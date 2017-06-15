@@ -12,22 +12,31 @@ def update_gtgj_register_user_daily(days=1):
     dto = [start_date, end_date]
     register_sql = """
         select DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
-        count(1) register_users,
-        sum(case when p_info like '%%ios%%' then 1 else 0 END)   register_users_ios,
-        sum(case when p_info like '%%android%%' then 1 else 0 END)   register_users_android
+        count(1) all_users,
+        sum(case when p_info like '%%ios%%' and (gt_user_name like 'W%%' or gt_user_name like 'H%%') then 1 else 0 END) ios_weixin_users,
+        sum(case when p_info like '%%android%%' and (gt_user_name like 'W%%' or gt_user_name like 'H%%')  then 1 else 0 END) android_weixin_users,
+        sum(case when p_info like '%%ios%%' and gt_user_name not like 'W%%' and gt_user_name not like 'H%%' then 1 else 0 END) ios_phone_users,
+        sum(case when p_info like '%%android%%' and gt_user_name not like 'W%%' and gt_user_name not like 'H%%' then 1 else 0 END) android_phone_users,
+        sum(case when p_info='p' then 1 else 0 end) weixin_users,
+        sum(case when p_info not like '%%ios%%' and p_info not like '%%android%%' and p_info!= 'p' then 1 else 0 end) else_users
         from account_gtgj
         where create_time>=%s
-        and create_time < %s
-        GROUP BY s_day
+        and create_time<%s
+        group by s_day
     """
 
     insert_sql = """
-        insert into gtgj_register_user_daily (s_day, register_users, register_users_ios, register_users_android,
-        createtime, updatetime) values (%s, %s, %s, %s, now(), now())
+        insert into gtgj_register_user_daily (s_day, all_users, ios_weixin_users, android_weixin_users,
+        ios_phone_users, android_phone_users, weixin_users, else_users,
+        createtime, updatetime) values (%s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
-        register_users = values(register_users),
-        register_users_ios = values(register_users_ios),
-        register_users_android = values(register_users_android)
+        all_users = values(all_users),
+        ios_weixin_users = values(ios_weixin_users),
+        android_weixin_users = values(android_weixin_users),
+        ios_phone_users = values(ios_phone_users),
+        android_phone_users = values(android_phone_users),
+        weixin_users = values(weixin_users),
+        else_users = values(else_users)
     """
 
     register_data = DBCli().gt_cli.queryAll(register_sql, dto)
@@ -65,5 +74,5 @@ def update_hbgj_register_user_daily(days=1):
     DBCli().targetdb_cli.batchInsert(insert_sql, register_data)
 
 if __name__ == "__main__":
-    # update_gtgj_register_user_daily(1420)
-    update_hbgj_register_user_daily(1750)
+    update_gtgj_register_user_daily(1421)
+    # update_hbgj_register_user_daily(1750)

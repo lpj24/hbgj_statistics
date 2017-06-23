@@ -246,7 +246,7 @@ def update_huoli_car_income_daily(days=0):
         income = VALUES(income)
     """
     import requests
-    url = "http://123.56.24.152:8070/mall/bi/income"
+    url = "https://car.rsscc.com/mall/bi/income"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"][0]

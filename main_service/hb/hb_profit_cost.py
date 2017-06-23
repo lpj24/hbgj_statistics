@@ -248,7 +248,7 @@ def update_huoli_car_income_daily(days=0):
     import requests
     url = "https://car.rsscc.com/mall/bi/income"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
-    car_result = requests.get(url, params=params).json()
+    car_result = requests.get(url, params=params, verify=False).json()
     car_result = car_result["result"][0]
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
     return __file__

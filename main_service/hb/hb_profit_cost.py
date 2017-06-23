@@ -216,10 +216,10 @@ def update_car_cost_detail(days=0):
         insert_car_cost.append((s_day, u"优惠券使用金额", coupon_in))
         insert_car_cost.append((s_day, u"返还积分金额", point_give_amount))
         insert_car_cost.append((s_day, u"赠送余额", balance_give_amount))
-        url = "https://car.rsscc.com/mall/bi/costdetail"
+        url = "http://120.133.0.170:8070/mall/bi/costdetail"
         params = {"beginDate": s_day,
                   "endDate": DateUtil.date2str(DateUtil.add_days(cost_data["s_day"], 1), '%Y-%m-%d')}
-        car_result = requests.get(url, params=params, verify=False).json()
+        car_result = requests.get(url, params=params).json()
         car_result = car_result["result"]
         for car_cost_data in car_result:
             try:
@@ -246,9 +246,9 @@ def update_huoli_car_income_daily(days=0):
         income = VALUES(income)
     """
     import requests
-    url = "https://car.rsscc.com/mall/bi/income"
+    url = "http://120.133.0.170:8070/mall/bi/income"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
-    car_result = requests.get(url, params=params, verify=False).json()
+    car_result = requests.get(url, params=params).json()
     car_result = car_result["result"][0]
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
     return __file__
@@ -268,9 +268,9 @@ def update_huoli_car_income_type(days=0):
         income = VALUES(income)
     """
     import requests
-    url = "https://car.rsscc.com/mall/bi/incomedetail"
+    url = "http://120.133.0.170:8070/mall/bi/incomedetail"
     params = {"beginDate": DateUtil.date2str(query_date, '%Y-%m-%d'), "endDate": DateUtil.date2str(today, '%Y-%m-%d')}
-    car_result = requests.get(url, params=params, verify=False).json()
+    car_result = requests.get(url, params=params).json()
     car_result = car_result["result"]
     insert_car_income = []
     for car_income_data in car_result:
@@ -500,4 +500,4 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    update_huoli_car_income_daily(1)
+    update_car_cost_detail(1)

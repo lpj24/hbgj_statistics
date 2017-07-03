@@ -20,9 +20,6 @@ if __name__ == "__main__":
 
     TimeService.add_hard_service(hb_flight_focus.update_flight_focus_user_daily)
 
-    TimeService.add_hard_service(hb_flight_details.update_dt_detail_uid)
-    TimeService.add_hard_service(hb_flight_search.update_dt_search_uid)
-    TimeService.add_hard_service(hb_search_focus.write_day)
     TimeService.add_hard_service(hb_flight_focus.update_hb_focus_inter_inland)
     TimeService.add_hard_service(hb_first_consumers.update_hbgj_newconsumers_type_daily)
     TimeService.add_hard_service(hb_first_consumers.update_new_register_user_daily)
@@ -54,8 +51,11 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)
     TimeService.add_hard_service(hb_activeusers.update_hbgj_newuser_daily)
 
-    TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
-    TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
+    # TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
+    # TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)
+    # TimeService.add_hard_service(hb_flight_details.update_dt_detail_uid)
+    # TimeService.add_hard_service(hb_flight_search.update_dt_search_uid)
+    # TimeService.add_hard_service(hb_search_focus.write_day)
 
     for fun in TimeService.get_hard_service():
         try:
@@ -70,7 +70,6 @@ if __name__ == "__main__":
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)
         except AssertionError as e:
             TimeService.add_hard_service(fun)
-            time.sleep(2 * 10)
             continue
         except Exception as e:
             logging.warning(str(e.message) + "---" + str(e.args) + "--" + str(fun))

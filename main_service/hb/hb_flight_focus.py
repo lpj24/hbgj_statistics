@@ -602,42 +602,4 @@ def tmp_cal_inter_inland(codes_city):
 
 
 if __name__ == "__main__":
-
-    inter_sql = """
-        select THREE_WORDS_CODE from AIRPORT_INTER_INFO where COUNTRY='日本'
-    """
-
-    inland_sql = """
-        select date_format(TICKET_ORDER.createtime, '%%Y-%%m-%%d') s_day, COUNT(TICKET_ORDER.ORDERID) TICKET_ORDER_NUM
-      from TICKET_ORDERDETAIL INNER JOIN  TICKET_ORDER ON TICKET_ORDER.ORDERID = TICKET_ORDERDETAIL.ORDERID
-      where TICKET_ORDER.ORDERSTATUE not in (2,12,21,51,75)
-      and TICKET_ORDER.createtime>'2017-03-31 00:00:00'
-      and TICKET_ORDER.createtime<'2017-05-01 00:00:00'
-        and TICKET_ORDERDETAIL.DEPCODE in ('CAN')
-        and TICKET_ORDERDETAIL.ARRCODE IN %s
-        group by s_day
-    """
-
-    inland2_sql = """
-        select date_format(TICKET_ORDER.createtime, '%%Y-%%m-%%d') s_day, COUNT(TICKET_ORDER.ORDERID) TICKET_ORDER_NUM
-      from TICKET_ORDERDETAIL INNER JOIN  TICKET_ORDER ON TICKET_ORDER.ORDERID = TICKET_ORDERDETAIL.ORDERID
-      where TICKET_ORDER.ORDERSTATUE not in (2,12,21,51,75)
-      and TICKET_ORDER.createtime>'2017-03-31 00:00:00'
-      and TICKET_ORDER.createtime<'2017-05-01 00:00:00'
-        and TICKET_ORDERDETAIL.DEPCODE in %s
-        and TICKET_ORDERDETAIL.ARRCODE='CAN'
-        group by s_day
-    """
-
-    inter_data = DBCli().oracle_cli.queryAll(inter_sql)
-    inter_data = [data[0] for data in inter_data]
-    inland_data = DBCli().sourcedb_cli.queryAll(inland_sql, [inter_data])
-    for x in inland_data:
-        print str(x[0]) + "\t" + str(x[1])
-
-
-    print "========================================================================"
-    inter_data = DBCli().sourcedb_cli.queryAll(inland2_sql, [inter_data])
-    for x in inter_data:
-        print str(x[0]) + "\t" + str(x[1])
-
+    update_hb_focus_inter_inland(1)

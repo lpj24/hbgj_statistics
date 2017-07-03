@@ -191,12 +191,10 @@ def update_hbgj_inter_inland_consumers_daily(days=0):
 
 
 if __name__ == "__main__":
-    i = 108
-    j = 1609
-    while i <= j:
-        update_hbgj_newconsumers_type_daily(i)
-        i += 1
-
+    i = 3
+    while i >= 1:
+        update_hbgj_inter_inland_consumers_daily(i)
+        i -= 1
     # update_new_register_user_daily(1)
 
     # update_hbgj_inter_inland_consumers_daily(1)

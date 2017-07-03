@@ -336,6 +336,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
         where i.type=0 and i.PNRSOURCE='supply'
         and i.INCOMEDATE >=%s and i.INCOMEDATE < %s
         and od.LINKTYPE is NULL and o.mode=0  and od.LINKDETAILID=0
+        and o.agentid is not null
         GROUP BY i.INCOMEDATE, o.agentid
     """
     supply_no_transfer_cost_sql = """
@@ -372,7 +373,10 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_profit_hb_supply_no_transfer_daily(1)
+    i = 3
+    while i >= 3:
+        update_hbgj_cost_type_daily(i)
+        i -= 1
     # i = 1
     # while i <= 113:
     #     update_hbgj_transfer_order_income_cost_daily(i)

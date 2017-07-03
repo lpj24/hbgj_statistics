@@ -53,7 +53,7 @@ class DButils(object):
 
     def queryAll(self, sql, params=None):
         cursor = self._conn.cursor()
-
+        logging.warning(type(self._conn))
         if params is None:
             cursor.execute(sql)
         else:
@@ -62,7 +62,7 @@ class DButils(object):
                 sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
-        # logging.warning("execute sql" + cursor._executed)
+        # logging.warning(cursor._executed)
         data = cursor.fetchall()
         cursor.close()
         return data

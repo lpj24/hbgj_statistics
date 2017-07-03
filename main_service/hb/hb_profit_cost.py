@@ -500,4 +500,7 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    update_car_cost_detail(1)
+    i = 13
+    while i >= 1:
+        update_operation_hbgj_channel_ticket_profit_daily(i)
+        i -= 1

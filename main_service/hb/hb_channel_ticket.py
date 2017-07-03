@@ -491,9 +491,10 @@ def update_refund_ticket_channel_daily(days=0):
 
 
 if __name__ == "__main__":
-    i = 1
-    while i <= 35:
+    i = 13
+    # update_hb_channel_ticket_income_daily(i)
+    # update_hb_channel_ticket_daily(i)
+    # update_refund_ticket_channel_daily(i)
+    while i >= 1:
         update_hb_channel_ticket_income_daily(i)
-        update_hb_channel_ticket_daily(i)
-        update_refund_ticket_channel_daily(i)
-        i += 1
+        i -= 1

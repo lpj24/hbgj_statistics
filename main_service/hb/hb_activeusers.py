@@ -71,6 +71,7 @@ if __name__ == "__main__":
     #     update_hbgj_activeusers_daily(i)
     #     i -= 1
     # update_hbgj_activeusers_daily(1)
+
     update_hbgj_activeusers_monthly()
     # i = 33
     # while i >= 1:

@@ -7,7 +7,6 @@ from main_service.gt import gt_income_cost
 from main_service.tmp_task.hb_search_focus import hb_search_focus
 from dbClient.db_client import DBCli
 from dbClient import utils
-import time
 
 
 if __name__ == "__main__":

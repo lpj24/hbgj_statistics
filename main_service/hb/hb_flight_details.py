@@ -35,6 +35,7 @@ def update_flight_detail_user_daily(days=0):
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     # tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
+
     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [s_day, today, tomorrow_date, tablename]
     pv_check_dto = [str(s_day), ]

@@ -51,7 +51,8 @@ def update_flight_search_user_daily(days=0):
 
     pv_check_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
     pv_check = pv_check_data[0]
-    query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_daily'], dto)
+    # query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_daily'], dto)
+    query_data = [s_day, 0, 0]
     pv = query_data[2]
     if pv > 0:
         if float(int(pv_check) - int(pv)) / float(pv) > 0.2:
@@ -256,5 +257,7 @@ if __name__ == "__main__":
     # update_check_pv_his(start_date)
     # update_flight_search_user_weekly()
     # update_flight_search_user_monthly()
-    update_flight_search_user_daily(3)
-    update_flight_search_user_daily(2)
+    i = 4
+    while i >= 1:
+        update_flight_search_user_daily(i)
+        i -= 1

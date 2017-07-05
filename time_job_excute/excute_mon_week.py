@@ -5,6 +5,7 @@ from main_service.gt import gt_activeusers, gt_consumers
 from time_job_excute.timeServiceList import TimeService
 from monitor import task
 import logging
+import threading
 
 
 def add_execute_job():
@@ -33,10 +34,18 @@ if __name__ == "__main__":
     print "monday excute week"
     service = add_execute_job()
     # TimeService.add_week_mon_service(eat_activeusers.update_eat_active_user_weekly)
+    threads = []
     for fun in service.get_week_mon_service():
         try:
-            fun()
+            t = threading.Thread(target=fun)
+            t.start()
+            threads.append(t)
         except Exception as e:
             logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
             continue
+
+    for t in threads:
+        t.join()
+
+    print "week data finished"
 

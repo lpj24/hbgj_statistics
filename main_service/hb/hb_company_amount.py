@@ -190,8 +190,4 @@ def update_operation_hbgj_qp_success(days=0):
 
 
 if __name__ == "__main__":
-    update_operation_hbgj_amount_monitor_hlth(1)
-    update_operation_hbgj_amount_monitor_hlth_szx(1)
     update_operation_hbgj_amount_monitor_cz(1)
-    update_operation_hbgj_amount_monitor_inter(1)
-    update_operation_hbgj_qp_success(1)

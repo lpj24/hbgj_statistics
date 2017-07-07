@@ -276,7 +276,7 @@ def update_unable_ticket():
             pn_name, ticket_num = (total_t_o[no_unable_key.lower()])[0], (total_t_o[no_unable_key.lower()])[1]
             tmp_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_unable_key, pn_name, 0, ticket_num]
             insert_data.append(tmp_data)
-        print insert_data
+
         no_intervention = defaultdict(list)
 
         for intervention_ticket in human_intervention_data:

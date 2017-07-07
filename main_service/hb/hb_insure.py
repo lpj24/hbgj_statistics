@@ -367,4 +367,7 @@ if __name__ == "__main__":
     # update_hb_boat(1)
     # update_insure_type_daily(1)
     # update_insure_class_daily(1)
-    update_insure_type_daily(5)
+    i = 123
+    while i <= 187:
+        update_insure_type_daily(i)
+        i += 1

@@ -150,7 +150,7 @@ def update_insure_class_daily(days=0):
 
 
 def update_insure_type_daily(days=0):
-    """更新航意险,退票险,延误险明细, operation_hbgj_insure_type_daily"""
+    """更新航意险 退票险 延误险明细, operation_hbgj_insure_type_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
@@ -367,4 +367,4 @@ if __name__ == "__main__":
     # update_hb_boat(1)
     # update_insure_type_daily(1)
     # update_insure_class_daily(1)
-    update_hb_boat(3)
+    update_insure_type_daily(5)

@@ -373,6 +373,5 @@ def update_profit_huoli_buy_cost(days=0):
     return __file__
 
 if __name__ == "__main__":
-    update_profit_huoli_fmall_cost(1)
-    update_profit_huoli_buy_cost(1)
+    update_common_coupon_daily(1)
     # update_huoli_hotel_coupon_daily(1)

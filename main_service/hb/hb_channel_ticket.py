@@ -2,6 +2,7 @@
 
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
+from collections import defaultdict
 
 
 def update_hb_channel_ticket_daily(days=0):
@@ -232,7 +233,6 @@ def update_unable_ticket():
         values (%s, %s, %s, %s, %s, now(), now())
     """
     insert_data = []
-    from collections import defaultdict
     insert_intervention_data = []
     while start_week < end_week:
         start_date = DateUtil.date2str(start_week)
@@ -490,11 +490,75 @@ def update_refund_ticket_channel_daily(days=0):
     return __file__
 
 
+def update_operation_hbgj_obsolete_order_daily(days=1):
+    """更新作废订单, operation_hbgj_obsolete_order_daily"""
+    start_date = DateUtil.get_date_before_days(days * 5)
+    end_date = DateUtil.get_date_after_days(1 - days)
+    dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
+    obsolete_sql = """
+        SELECT DATE_FORMAT(od.CREATETIME, '%%Y-%%m-%%d') s_day, o.PNRSOURCE, PC.name,
+        count(DISTINCT(o.ORDERID)) FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        left join PNRSOURCE_CONFIG PC ON o.PNRSOURCE=PC.PNRSOURCE where
+        od.CREATETIME >= %s and od.CREATETIME < %s  AND
+        o.ORDERSTATUE=12 GROUP BY o.PNRSOURCE, PC.name, s_day
+    """
+
+    total_ticket_sql = """
+        SELECT DATE_FORMAT(OD.CREATETIME, '%%Y-%%m-%%d') s_day,
+        O.PNRSOURCE pnrsource, PNRSOURCE_CONFIG.NAME,
+        count(DISTINCT OD.ORDERID) order_num FROM
+        TICKET_ORDERDETAIL OD
+        LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
+        INNER join PNRSOURCE_CONFIG ON
+        O.PNRSOURCE=PNRSOURCE_CONFIG.PNRSOURCE
+        WHERE
+        O.ORDERSTATUE  NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(OD.`LINKTYPE`, 0) != 2
+        AND OD.CREATETIME >= %s
+        AND OD.CREATETIME < %s
+        GROUP BY O.PNRSOURCE, PNRSOURCE_CONFIG.NAME, s_day
+    """
+
+    insert_sql = """
+        insert into operation_hbgj_obsolete_order_daily (s_day, pn_resouce, channel_name, obsolete_order_num,
+        total_order_num, createtime, updatetime) values (%s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        obsolete_order_num = values(obsolete_order_num),
+        total_order_num = values(total_order_num)
+    """
+
+    obsolete_data = DBCli().sourcedb_cli.queryAll(obsolete_sql, dto)
+    total_data = DBCli().sourcedb_cli.queryAll(total_ticket_sql, dto)
+    total_data_dict = defaultdict(list)
+    no_obsolete = defaultdict(list)
+    insert_data = []
+    for t_d in total_data:
+        total_data_dict[t_d[0] + ":" + t_d[1]] = [t_d[2], t_d[3]]
+
+    for ob_data in obsolete_data:
+        s_day, pn, pn_name, obsolete_order_num = ob_data
+        no_obsolete[s_day + ":" + pn] = []
+        try:
+            total_order = (total_data_dict[s_day + ":" + pn])[1]
+        except (IndexError, AttributeError, KeyError, TypeError):
+            continue
+        insert_data.append([s_day, pn, pn_name, obsolete_order_num, total_order])
+    no_obsolete_list = set(total_data_dict.keys()).difference(set(no_obsolete.keys()))
+
+    for no_ob_key in no_obsolete_list:
+        s_day, pn = no_ob_key.split(":")
+        insert_data.append([s_day, pn, total_data_dict[no_ob_key][0], 0, total_data_dict[no_ob_key][1]])
+
+    DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
+    return __file__
+
 if __name__ == "__main__":
     i = 13
+    update_operation_hbgj_obsolete_order_daily(1)
     # update_hb_channel_ticket_income_daily(i)
     # update_hb_channel_ticket_daily(i)
     # update_refund_ticket_channel_daily(i)
-    while i >= 1:
-        update_hb_channel_ticket_income_daily(i)
-        i -= 1
+    # while i >= 1:
+    #     update_hb_channel_ticket_income_daily(i)
+    #     i -= 1

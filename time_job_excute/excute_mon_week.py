@@ -31,7 +31,7 @@ def add_execute_job():
     return TimeService
 
 if __name__ == "__main__":
-    print "monday excute week"
+    print "monday execute week"
     service = add_execute_job()
     # TimeService.add_week_mon_service(eat_activeusers.update_eat_active_user_weekly)
     threads = []

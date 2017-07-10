@@ -94,7 +94,7 @@ if __name__ == "__main__":
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)
 
         except Exception as e:
-            logging.warning(str(fun) + "----" + str(e.message) + "---" + str(e.args))
+            logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
             continue
 
     check_day_data()

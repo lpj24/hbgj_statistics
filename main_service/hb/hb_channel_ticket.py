@@ -172,8 +172,9 @@ def update_hb_company_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
 
-def update_unable_ticket():
-    start_week, end_week = DateUtil.get_last_week_date()
+def update_unable_ticket(start_week, end_week):
+    # start_week, end_week = DateUtil.get_last_week_date(a)
+    # print start_week, end_week
     unable_ticket_sql = """
     select a_table.oldsource, a_table.name, sum(a_table.ticket_num * a_table.AMOUNT)/50
     from
@@ -191,7 +192,7 @@ def update_unable_ticket():
     """
 
     human_intervention_sql = """
-            SELECT t.PNRSOURCE, PNRSOURCE_CONFIG.NAME , COUNT(DISTINCT t.ORDERID) FROM
+            SELECT PNRSOURCE_CONFIG.SALETYPE, t.PNRSOURCE, PNRSOURCE_CONFIG.NAME , COUNT(DISTINCT t.ORDERID) FROM
             FLIGHT_TASK f
             LEFT JOIN TICKET_ORDER t ON f.ORDERID = t.ORDERID
             left join PNRSOURCE_CONFIG ON t.PNRSOURCE=
@@ -208,7 +209,8 @@ def update_unable_ticket():
     """
 
     total_ticket_sql = """
-        SELECT O.PNRSOURCE pnrsource, PNRSOURCE_CONFIG.NAME, count(*) ticket_num, count(DISTINCT OD.ORDERID) order_num FROM
+        SELECT PNRSOURCE_CONFIG.SALETYPE, O.PNRSOURCE pnrsource, PNRSOURCE_CONFIG.NAME, count(*) ticket_num,
+        count(DISTINCT OD.ORDERID) order_num FROM
         TICKET_ORDERDETAIL OD
         LEFT JOIN TICKET_ORDER O ON OD.ORDERID = O.ORDERID
         INNER join PNRSOURCE_CONFIG ON
@@ -228,9 +230,9 @@ def update_unable_ticket():
     """
 
     insert_intervention_sql = """
-        insert into operation_hbgj_human_intervention_ticket_weekly (s_day, pn_resouce, channel_name, intervention_ticket_num,
-        total_num, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, now(), now())
+        insert into operation_hbgj_human_intervention_ticket_weekly (s_day, saletype, pid, pn_resouce, channel_name,
+        intervention_ticket_num, total_num, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, now(), now())
     """
     insert_data = []
     insert_intervention_data = []
@@ -246,7 +248,7 @@ def update_unable_ticket():
         total_t_o = defaultdict(list)
 
         for total in total_ticket_data:
-            total_t_o[total[0].lower()] = [total[1], total[2], total[3]]
+            total_t_o[total[1].lower()] = [total[0], total[2], total[3], total[4]]
 
         no_unable = defaultdict(list)
         for unable_ticket in unable_ticket_data:
@@ -254,7 +256,6 @@ def update_unable_ticket():
             pn_resource, pn_name, ticket_num = tmp_unable_data
             no_unable[pn_resource] = [pn_name, ticket_num]
             try:
-                # total_num = total_t_o[pn_resource.lower()][1]
                 if pn_resource is None and pn_name is None:
                     tmp_unable_data = [u'空白', u'空白', ticket_num]
                     total_num = 0
@@ -262,7 +263,7 @@ def update_unable_ticket():
                     tmp_unable_data = [pn_resource, u'默认', ticket_num]
                     total_num = 0
                 else:
-                    total_num = (total_t_o.get(pn_resource.lower()))[1]
+                    total_num = (total_t_o.get(pn_resource.lower()))[2]
             except (IndexError, AttributeError, KeyError, TypeError):
                 total_num = 0
 
@@ -273,7 +274,7 @@ def update_unable_ticket():
         no_unable_list = set(total_t_o.keys()).difference(set(no_unable.keys()))
 
         for no_unable_key in no_unable_list:
-            pn_name, ticket_num = (total_t_o[no_unable_key.lower()])[0], (total_t_o[no_unable_key.lower()])[1]
+            pn_name, ticket_num = (total_t_o[no_unable_key.lower()])[1], (total_t_o[no_unable_key.lower()])[2]
             tmp_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_unable_key, pn_name, 0, ticket_num]
             insert_data.append(tmp_data)
 
@@ -281,27 +282,53 @@ def update_unable_ticket():
 
         for intervention_ticket in human_intervention_data:
             tmp_data = list(intervention_ticket)
-            pn_resource, pn_name, order_num = tmp_data
+
+            saletype, pn_resource, pn_name, order_num = tmp_data
             no_intervention[pn_resource].extend([pn_name, order_num])
             try:
-                total_num = (total_t_o.get(pn_resource.lower()))[2]
+                total_num = (total_t_o.get(pn_resource.lower()))[3]
             except (IndexError, AttributeError, KeyError, TypeError):
                 continue
+
             tmp_data.insert(0, DateUtil.date2str(start_week, '%Y-%m-%d'))
+
+            pid = get_pid_sale_type(saletype, pn_resource)
+            if pid:
+                tmp_data.insert(2, pid)
+            else:
+                continue
             tmp_data.append(total_num)
+
             insert_intervention_data.append(tmp_data)
 
         no_intervention_list = set(total_t_o.keys()).difference(set(no_intervention.keys()))
         for no_intervention_key in no_intervention_list:
-            pn_intervention_name, order_intervention_num = total_t_o[no_intervention_key][0], \
-                                                           total_t_o[no_intervention_key][2]
-            tmp_intervention_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_intervention_key,
+            no_saletype, pn_intervention_name, order_intervention_num = total_t_o[no_intervention_key][0], total_t_o[no_intervention_key][1], \
+                                                           total_t_o[no_intervention_key][3]
+            pid = get_pid_sale_type(no_saletype, no_intervention_key)
+            if not pid:
+                continue
+            tmp_intervention_data = [DateUtil.date2str(start_week, '%Y-%m-%d'), no_saletype, pid, no_intervention_key,
                                      pn_intervention_name, 0, order_intervention_num]
             insert_intervention_data.append(tmp_intervention_data)
         start_week = DateUtil.add_days(start_week, 1)
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
+    # DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
 
+
+def get_pid_sale_type(sale_type, pn_resource):
+    if sale_type in (10, 11, 14):
+        return 1
+    elif sale_type == 12 and pn_resource != 'supply' and pn_resource != 'hlth':
+        return 2
+    elif sale_type in (20, 21, 22) and pn_resource != 'intsupply':
+        return 3
+    elif pn_resource == 'intsupply' or pn_resource == 'supply':
+        return 4
+    elif sale_type == 13 or pn_resource == 'hlth' or sale_type == 23:
+        return 5
+    else:
+        return None
 
 def update_supplier_refused_order_weekly():
     start_week, end_week = DateUtil.get_last_week_date()
@@ -555,7 +582,16 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
 
 if __name__ == "__main__":
     i = 13
-    update_operation_hbgj_obsolete_order_daily(1)
+    import datetime
+    a = datetime.date(2017, 6, 6)
+    b = datetime.date(2014, 1, 6)
+    while a >= b:
+        start_week, end_week = DateUtil.get_last_week_date(a)
+        print start_week, end_week
+        update_unable_ticket(start_week, end_week)
+
+        a = start_week
+    # update_operation_hbgj_obsolete_order_daily(1)
     # update_hb_channel_ticket_income_daily(i)
     # update_hb_channel_ticket_daily(i)
     # update_refund_ticket_channel_daily(i)

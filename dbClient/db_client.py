@@ -108,3 +108,6 @@ class DBCli(object):
         return DButils("mysql", self._apibase)
 
 
+if __name__ == "__main__":
+    import logging
+    logging

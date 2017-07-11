@@ -97,7 +97,6 @@ sql = [
     "select count(1) from hbgj_register_user_daily where s_day=%s",
     "select count(1) from gtgj_register_user_daily where s_day=%s",
 
-    "select count(1) from operation_hbgj_human_intervention_ticket_weekly where s_day=%s",
     "select count(1) from operation_hbgj_obsolete_order_daily where s_day=%s",
 
 ]

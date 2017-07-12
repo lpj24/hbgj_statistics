@@ -84,7 +84,6 @@ if __name__ == "__main__":
                     fun_path = fun_path[0: -1]
                 utils.storage_execute_job(fun_path, fun_name, fun_doc)
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)
-
         except Exception as e:
             logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
             continue

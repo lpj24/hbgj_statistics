@@ -61,5 +61,5 @@ if __name__ == "__main__":
     for job in TimeService.get_hard_service():
         hard_tmp_q.put(job)
 
-    execute_job_thread_pool(len(TimeService.get_hard_service()), hard_tmp_q, days)
+    execute_job_thread_pool(hard_tmp_q, days)
     hard_tmp_q.join()

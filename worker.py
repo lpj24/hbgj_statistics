@@ -9,7 +9,11 @@ if __name__ == "__main__":
     hosts = ["https://www.baidu.com", "http://www.sina.com", "http://weibo.com", "http://apple.com"]
 
     start = time.time()
-    # grabs urls of hosts and prints first 1024 bytes of page
+    # grabs urls of hosts and prints fir
+    #
+    #
+    #
+    #    st 1024 bytes of page
     for host in hosts:
         print host
         html = requests.get(host)

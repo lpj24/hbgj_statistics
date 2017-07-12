@@ -1,12 +1,12 @@
-import sys, logging
+import sys
 from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
 from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount, \
     hb_channel_ticket, hb_profit_cost, hb_activeusers
 from main_service.gt import gt_income_cost
 from main_service.tmp_task.hb_search_focus import hb_search_focus
-from dbClient.db_client import DBCli
-from dbClient import utils
+import Queue
+from dbClient.utils import execute_job_thread_pool
 
 
 if __name__ == "__main__":
@@ -57,20 +57,9 @@ if __name__ == "__main__":
     # TimeService.add_hard_service(hb_flight_search.update_dt_search_uid)
     # TimeService.add_hard_service(hb_search_focus.write_day)
 
-    for fun in TimeService.get_hard_service():
-        try:
-            fun_path = fun(int(days))
-            fun_name = fun.__name__
-            fun_doc = fun.__doc__
-            check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
-            if not check_fun:
-                if fun_path and fun_path.endswith("pyc"):
-                    fun_path = fun_path[0: -1]
-                utils.storage_execute_job(fun_path, fun_name, fun_doc)
-                DBCli().redis_cli.sadd("execute_day_job", fun_name)
-        except AssertionError as e:
-            TimeService.add_hard_service(fun)
-            continue
-        except Exception as e:
-            logging.warning(str(e.message) + "---" + str(e.args) + "--" + str(fun))
-            continue
+    hard_tmp_q = Queue.Queue()
+    for job in TimeService.get_hard_service():
+        hard_tmp_q.put(job)
+
+    execute_job_thread_pool(len(TimeService.get_hard_service()), hard_tmp_q, days)
+    hard_tmp_q.join()

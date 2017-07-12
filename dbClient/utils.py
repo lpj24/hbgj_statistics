@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import conf
 import web
-import requests
-import signal
-import time, logging
+import threading, logging
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
@@ -59,18 +57,45 @@ def storage_execute_job(f_path, f_name, f_doc):
     DBCli().targetdb_cli.insert(insert_sql, [f_name, f_path, f_des.strip(), f_table.strip(), job_type, renewable])
 
 
-def get_airplane_info(flightno, date, depcode, arrcode):
-    url = "http://58.83.130.92:7070/pysrv/flightservice/airplane_by_flightno/"
+class ThreadExecuteJob(threading.Thread):
+    """Threaded Url Grab"""
 
-    params = {
-        "flightno": flightno,
-        "date": date,
-        "depcode": depcode,
-        "arrcode": arrcode
-    }
-    result = requests.post(url, data=params)
+    def __init__(self, queue, days):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        self.days = days
 
-    return result.json()
+    def run(self):
+        while True:
+            fun = self.queue.get()
+            try:
+                fun_path = fun(int(self.days))
+                fun_name = fun.__name__
+                fun_doc = fun.__doc__
+                check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
+                if not check_fun:
+                    if fun_path and fun_path.endswith("pyc"):
+                        fun_path = fun_path[0: -1]
+                    storage_execute_job(fun_path, fun_name, fun_doc)
+                    DBCli().redis_cli.sadd("execute_day_job", fun_name)
+                self.queue.task_done()
+            except Exception as e:
+                logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+
+
+def execute_job_thread_pool(pool_num, queue, arg):
+    """
+
+    :param pool_num: 线程数量
+    :param queue: 队列
+    :param arg:   函数的参数
+    :return:
+    """
+    for i in xrange(pool_num):
+        t = ThreadExecuteJob(queue, arg)
+        t.setDaemon(True)
+        t.start()
+
 
 if __name__ == "__main__":
     import argparse

@@ -172,9 +172,8 @@ def update_hb_company_ticket_weekly():
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
 
 
-def update_unable_ticket(start_week, end_week):
-    # start_week, end_week = DateUtil.get_last_week_date(a)
-    # print start_week, end_week
+def update_unable_ticket():
+    start_week, end_week = DateUtil.get_last_week_date()
     unable_ticket_sql = """
     select a_table.oldsource, a_table.name, sum(a_table.ticket_num * a_table.AMOUNT)/50
     from
@@ -303,8 +302,8 @@ def update_unable_ticket(start_week, end_week):
 
         no_intervention_list = set(total_t_o.keys()).difference(set(no_intervention.keys()))
         for no_intervention_key in no_intervention_list:
-            no_saletype, pn_intervention_name, order_intervention_num = total_t_o[no_intervention_key][0], total_t_o[no_intervention_key][1], \
-                                                           total_t_o[no_intervention_key][3]
+            no_saletype, pn_intervention_name, order_intervention_num = \
+                total_t_o[no_intervention_key][0], total_t_o[no_intervention_key][1], total_t_o[no_intervention_key][3]
             pid = get_pid_sale_type(no_saletype, no_intervention_key)
             if not pid:
                 continue
@@ -312,7 +311,7 @@ def update_unable_ticket(start_week, end_week):
                                      pn_intervention_name, 0, order_intervention_num]
             insert_intervention_data.append(tmp_intervention_data)
         start_week = DateUtil.add_days(start_week, 1)
-    # DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
+    DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
     DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
 
 
@@ -329,6 +328,7 @@ def get_pid_sale_type(sale_type, pn_resource):
         return 5
     else:
         return None
+
 
 def update_supplier_refused_order_weekly():
     start_week, end_week = DateUtil.get_last_week_date()
@@ -582,15 +582,16 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
 
 if __name__ == "__main__":
     i = 13
-    import datetime
-    a = datetime.date(2017, 6, 6)
-    b = datetime.date(2014, 1, 6)
-    while a >= b:
-        start_week, end_week = DateUtil.get_last_week_date(a)
-        print start_week, end_week
-        update_unable_ticket(start_week, end_week)
-
-        a = start_week
+    update_unable_ticket()
+    # import datetime
+    # a = datetime.date(2017, 6, 6)
+    # b = datetime.date(2014, 1, 6)
+    # while a >= b:
+    #     start_week, end_week = DateUtil.get_last_week_date(a)
+    #     print start_week, end_week
+    #     update_unable_ticket(start_week, end_week)
+    #
+    #     a = start_week
     # update_operation_hbgj_obsolete_order_daily(1)
     # update_hb_channel_ticket_income_daily(i)
     # update_hb_channel_ticket_daily(i)

@@ -1,14 +1,12 @@
-import logging
 import sys
-
-from dbClient import utils
-from dbClient.db_client import DBCli
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, gt_register_user
 from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
     hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users
 from main_service.huoli import car_orders, car_consumers, hotel_activeusers, \
     hotel_newconsumers, hotel_order, hotel_consumers, hotel_newusers
 from time_job_excute.timeServiceList import TimeService
+import Queue
+from dbClient.utils import execute_job_thread_pool
 
 
 def add_execute_job():
@@ -73,17 +71,9 @@ def add_execute_job():
 if __name__ == "__main__":
     days = sys.argv[1]
     service = add_execute_job()
-    for fun in service.get_day_service():
-        try:
-            fun_path = fun(int(days))
-            fun_name = fun.__name__
-            fun_doc = fun.__doc__
-            check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
-            if not check_fun:
-                if fun_path and fun_path.endswith("pyc"):
-                    fun_path = fun_path[0: -1]
-                utils.storage_execute_job(fun_path, fun_name, fun_doc)
-                DBCli().redis_cli.sadd("execute_day_job", fun_name)
-        except Exception as e:
-            logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
-            continue
+    day_q = Queue.Queue()
+    for job in service.get_day_service():
+        day_q.put(job)
+
+    execute_job_thread_pool(day_q, days)
+    day_q.join()

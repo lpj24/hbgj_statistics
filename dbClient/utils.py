@@ -66,7 +66,7 @@ class ThreadExecuteJob(threading.Thread):
         self.days = days
 
     def run(self):
-        while True:
+        while 1:
             fun = self.queue.get()
             try:
                 fun_path = fun(int(self.days))
@@ -91,6 +91,7 @@ def execute_job_thread_pool(queue, arg):
     """
     for i in xrange(6):
         t = ThreadExecuteJob(queue, arg)
+        t.setName("thread" + str(i))
         t.setDaemon(True)
         t.start()
 

@@ -70,6 +70,7 @@ def add_execute_job():
 
 if __name__ == "__main__":
     days = sys.argv[1]
+
     service = add_execute_job()
     day_q = Queue.Queue()
     for job in service.get_day_service():

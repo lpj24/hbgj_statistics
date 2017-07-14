@@ -8,7 +8,7 @@ hb_filght_detail_user_daily = """
 update_flight_detail_user_daily = """
     insert into hbdt_details_daily (s_day, detail_users, pv, check_pv, localytics_uv, localytics_pv,
     createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
-    on duplicate key update updatetime = now() ,
+    on duplicate key update updatetime = now(),
     s_day = VALUES(s_day),
     detail_users = VALUES(detail_users),
     pv = VALUES(pv),

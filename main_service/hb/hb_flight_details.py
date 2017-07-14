@@ -37,7 +37,6 @@ def update_flight_detail_user_daily(days=0):
     # tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
 
     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
-
     dto = [s_day, today, tomorrow_date, tablename]
     pv_check_dto = [str(s_day), ]
     pv_check_sql = """
@@ -78,7 +77,6 @@ def update_flight_detail_user_daily(days=0):
             localytics_check[i] += localytics_result
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])
-
     DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_daily'], query_data)
     return __file__
 
@@ -245,7 +243,8 @@ if __name__ == "__main__":
     #     # update_flight_detail_user_daily(i)
     #     update_dt_detail_uid(i)
     #     i -= 1
-    update_flight_detail_user_daily(7)
+
+    update_flight_detail_user_daily(1)
     # update_flight_detail_user_weekly()
     # i = 33
     # while i >= 1:

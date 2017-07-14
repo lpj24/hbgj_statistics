@@ -3,6 +3,7 @@ from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
 from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount, \
     hb_channel_ticket, hb_profit_cost, hb_activeusers
+from main_service.huoli import hotel_activeusers
 from main_service.gt import gt_income_cost
 from main_service.tmp_task.hb_search_focus import hb_search_focus
 import Queue
@@ -50,6 +51,7 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)
     TimeService.add_hard_service(hb_activeusers.update_hbgj_newuser_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_operation_hbgj_obsolete_order_daily)
+    TimeService.add_hard_service(hotel_activeusers.update_hotel_activeusers_daily)
 
     # TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     # TimeService.add_hard_service(hb_flight_details.update_flight_detail_user_daily)

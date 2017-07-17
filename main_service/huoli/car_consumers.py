@@ -86,10 +86,11 @@ def update_car_newconsumers_daily(days=0):
     return __file__
 
 if __name__ == "__main__":
-    i = 15
-    while i >= 1:
-        update_car_newconsumers_daily(i)
-        i -= 1
+    update_car_consumers_weekly()
+    # i = 15
+    # while i >= 1:
+    #     update_car_newconsumers_daily(i)
+    #     i -= 1
     # update_car_consumers_weekly()
     # for i in xrange(4, 0, -1):
     #     update_car_newconsumers_daily(i)

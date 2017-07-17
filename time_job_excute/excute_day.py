@@ -1,3 +1,4 @@
+# coding: utf-8
 import sys
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, gt_register_user
 from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
@@ -46,8 +47,6 @@ def add_execute_job():
     TimeService.add_day_service(hb_coupon_ticket.update_hotel_use_detail_daily)
     TimeService.add_day_service(hb_focus_newuser.update_fouces_dat_daily)
     TimeService.add_day_service(hb_coupon_ticket.update_gtgj_use_issue_detail_daily)
-    TimeService.add_day_service(hb_focus_newuser.update_focus_newuser)
-
     TimeService.add_day_service(hb_insure.update_hb_insure_daily)
 
     TimeService.add_day_service(hb_insure.update_insure_class_daily)
@@ -60,9 +59,6 @@ def add_execute_job():
     TimeService.add_day_service(hb_order.update_hb_gt_order_new_daily)
     TimeService.add_day_service(gt_register_user.update_gtgj_register_user_daily)
     TimeService.add_day_service(gt_register_user.update_hbgj_register_user_daily)
-
-    TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
-    TimeService.add_day_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
     TimeService.add_day_service(hb_insure.update_insure_type_daily)
     return TimeService
 
@@ -76,3 +72,4 @@ if __name__ == "__main__":
 
     execute_job_thread_pool(day_q, days)
     day_q.join()
+    print u"日任务结束"

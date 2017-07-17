@@ -67,6 +67,8 @@ class ThreadExecuteJob(threading.Thread):
 
     def run(self):
         while 1:
+            if self.queue.empty():
+                break
             fun = self.queue.get()
             try:
                 fun_path = fun(int(self.days))

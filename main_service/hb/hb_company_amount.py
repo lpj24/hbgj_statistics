@@ -189,5 +189,103 @@ def update_operation_hbgj_qp_success(days=0):
     return __file__
 
 
+def update_operation_hbgj_special_return_daily(days=1):
+    """更新自营特殊产品返现额, operation_hbgj_special_return"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
+    dto = [start_date, end_date]
+    insert_sql = """
+        insert into operation_hbgj_special_return
+        (s_day, type, name, amount, createtime, updatetime)
+        values
+        (%s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        type = values(type),
+        name = values(name),
+        amount = values(amount)
+    """
+    agency_fee_sql = """
+        SELECT left(od.CREATETIME,10), 'agency_fee' as type, '代理费' as name,
+        count(DISTINCT(eticket))*80 as '代理费' FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>=%s
+        and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and SUBSTR(`flyno`,1,2)='HU'
+        and od.eticket is not null
+        and pnrsource='hlth'
+        and cabin='W'
+        and o.ORDERSTATUE not like '%6%' GROUP BY left(od.CREATETIME,10),pnrsource;
+    """
+    agency_fee = DBCli().sourcedb_cli.queryAll(agency_fee_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, agency_fee)
+
+    zh_ryx_sql = """
+        SELECT left(createtime,10), 'ZH_ryx' as type, '深航商务如意行' name,sum(rtcash) as 返现总额
+        FROM `ticket_cashback` where SUBSTR(`flyno`,1,2)='ZH'
+        and CREATETIME>=%s
+        and CREATETIME<%s
+        and `status`<>0
+        and `status`<>4
+        GROUP BY left(createtime,10);
+    """
+
+    zh_ryx = DBCli().sourcedb_cli.queryAll(zh_ryx_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, zh_ryx)
+
+    ho_sw_sql = """
+        SELECT left(createtime,10),'ho_sw' as type, '吉祥商务优选' as name, sum(rtcash) as 返现总额
+        FROM `ticket_cashback` where SUBSTR(`flyno`,1,2)='HO'
+        and CREATETIME>=%s
+        and CREATETIME<%s
+        and `status`<>0 and `status`<>4
+        GROUP BY left(createtime,10);
+    """
+    ho_sw = DBCli().sourcedb_cli.queryAll(ho_sw_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, ho_sw)
+
+    u_w_sql = """
+            SELECT left(createtime,10),'3U_w' as type, '川航W舱' as name, sum(rtcash) as 返现总额
+            FROM `ticket_cashback` where SUBSTR(`flyno`,1,2)='3U'
+            and CREATETIME>=%s
+            and CREATETIME<%s
+            and `status`<>0 and `status`<>4
+            AND cabin='W'
+            GROUP BY left(createtime,10)
+    """
+    u_w = DBCli().sourcedb_cli.queryAll(u_w_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, u_w)
+
+    u_not_w_sql = """
+        SELECT left(createtime,10),'3U_!w' as type, '川航免改易行&里程多送' as name,
+        sum(rtcash) as 返现总额
+        FROM `ticket_cashback`
+        where SUBSTR(`flyno`,1,2)='3U'
+        and CREATETIME>=%s
+        and CREATETIME<%s
+        and `status`<>0 and `status`<>4
+        AND cabin!='W'
+        GROUP BY left(createtime,10)
+    """
+    u_not_w = DBCli().sourcedb_cli.queryAll(u_not_w_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, u_not_w)
+
+    gx_sql = """
+        SELECT left(createtime,10),'GX' AS type, '北部湾' as name,sum(rtcash)*0.4 as 返现总额
+        FROM `ticket_cashback`
+        where SUBSTR(`flyno`,1,2)='GX'
+        and CREATETIME>=%s
+        and CREATETIME<%s
+        and `status`<>0
+        and `status`<>4
+        GROUP BY left(createtime,10);
+    """
+    gx = DBCli().sourcedb_cli.queryAll(gx_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_sql, gx)
+    return __file__
+
 if __name__ == "__main__":
-    update_operation_hbgj_amount_monitor_cz(1)
+    # update_operation_hbgj_amount_monitor_cz(1)
+    update_operation_hbgj_special_return_daily(1)

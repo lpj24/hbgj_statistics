@@ -38,6 +38,7 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_qp_success)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_cz)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_inter)
+    TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_special_return_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_refund_ticket_channel_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_hb_channel_ticket_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_hb_channel_ticket_income_daily)

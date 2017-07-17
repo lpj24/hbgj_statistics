@@ -40,7 +40,6 @@ def update_hb_car_hotel_profit(days=0):
         select
         sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
         sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
         sum(case when AMOUNTTYPE in (2, 3) then AMOUNT else 0 end) inland_refund_new,
         sum(case when T_COST.INTFLAG=1 and AMOUNTTYPE in (0, 1) then AMOUNT else 0 end) inter_price_diff,
         COSTDATE
@@ -52,11 +51,28 @@ def update_hb_car_hotel_profit(days=0):
         ORDER BY COSTDATE
     """
 
+    inland_price_diff_type2_sql = """
+        SELECT sum(c.amount), c.COSTDATE
+        FROM `TICKET_ORDER_COST` c
+        join skyhotel.`TICKET_ORDERDETAIL` od on c.ODID=od.ODID
+        left join skyhotel.`TICKET_ORDER` o
+        on c.ORDERID=o.ORDERID
+        where  c.PNRSOURCE='hlth' and c.type=0
+        and c.COSTDATE>=%s
+        and c.COSTDATE<%s
+        and c.AMOUNTTYPE!=2
+        and od.LINKTYPE is NULL and o.mode=0
+        and od.LINKDETAILID=0 GROUP BY  COSTDATE;
+    """
+    inland_price_diff_type2 = DBCli().sourcedb_cli.queryAll(inland_price_diff_type2_sql, dto)
     other_result = DBCli().sourcedb_cli.queryAll(other_cost_sql, dto)
-
     update_other_cost_sql = """
-        update profit_hb_cost set inland_price_diff_type0=%s, inland_price_diff_type1=%s, inland_price_diff_type2=%s,
+        update profit_hb_cost set inland_price_diff_type0=%s, inland_price_diff_type1=%s,
         inland_refund_new=%s, inter_price_diff=%s where s_day=%s
+    """
+
+    update_inland_price_diff_type2_sql = """
+        update profit_hb_cost set inland_price_diff_type2=%s where s_day=%s
     """
 
     query_dft_cost_sql = """
@@ -100,6 +116,7 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, result)
     DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
     DBCli().targetdb_cli.batchInsert(update_dft_cost_sql, dft_result)
+    DBCli().targetdb_cli.batchInsert(update_inland_price_diff_type2_sql, inland_price_diff_type2)
 
     car_sql = """
         select distinct TRADE_TIME s_day,
@@ -500,7 +517,8 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    i = 13
-    while i >= 1:
-        update_operation_hbgj_channel_ticket_profit_daily(i)
-        i -= 1
+    update_hb_car_hotel_profit(1)
+    # i = 13
+    # while i >= 1:
+    #     update_operation_hbgj_channel_ticket_profit_daily(i)
+    #     i -= 1

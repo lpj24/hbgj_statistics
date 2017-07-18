@@ -256,4 +256,4 @@ if __name__ == "__main__":
     # update_check_pv_his(start_date)
     # update_flight_search_user_weekly()
     # update_flight_search_user_monthly()
-    update_flight_search_user_daily(1)
+    update_dt_search_uid(2)

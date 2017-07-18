@@ -83,6 +83,8 @@ class ThreadExecuteJob(threading.Thread):
                 self.queue.task_done()
             except Exception as e:
                 logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+                self.queue.task_done()
+                continue
 
 
 def execute_job_thread_pool(queue, arg):

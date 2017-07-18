@@ -5,7 +5,7 @@ import logging
 
 
 if __name__ == "__main__":
-    TimeService.add_hour_service(eat_activeusers.update_eat_active_user_daily)
+    # TimeService.add_hour_service(eat_activeusers.update_eat_active_user_daily)
     TimeService.add_hour_service(car_orders.update_car_orders_daily)
     TimeService.add_hour_service(car_consumers.update_car_consumers_daily)
     TimeService.add_hour_service(car_consumers.update_car_newconsumers_daily)

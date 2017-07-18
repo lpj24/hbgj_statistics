@@ -72,4 +72,4 @@ if __name__ == "__main__":
 
     execute_job_thread_pool(day_q, days)
     day_q.join()
-    print u"日任务结束"
+    print "job finish"

@@ -10,8 +10,7 @@ import Queue
 from dbClient.utils import execute_job_thread_pool
 
 
-if __name__ == "__main__":
-    days = sys.argv[1]
+def add_execute_job():
     TimeService.add_hard_service(hb_focus_newuser.update_focus_newuser)
     TimeService.add_hard_service(hb_consumers.update_hb_consumers_daily)
     TimeService.add_hard_service(hb_consumers.update_hb_newconsumers_daily)
@@ -61,10 +60,15 @@ if __name__ == "__main__":
     TimeService.add_hard_service(hb_search_focus.write_day)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
+    return TimeService
 
+if __name__ == "__main__":
+    days = sys.argv[1]
+    service = add_execute_job()
     hard_tmp_q = Queue.Queue()
-    for job in TimeService.get_hard_service():
+    for job in service.get_hard_service():
         hard_tmp_q.put(job)
 
     execute_job_thread_pool(hard_tmp_q, days)
     hard_tmp_q.join()
+    print "hard job finished"

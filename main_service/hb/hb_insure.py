@@ -256,7 +256,7 @@ def update_hb_boat(days=0):
         join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
         where i.CREATETIME>=%s
         and i.CREATETIME<%s
-        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG', 'A30_YG','A_QUNAYSFYJHS')
+        and i.insurecode in (select distinct id from INSURE_DATA where bigtype in (2))
         GROUP BY s_day;
     """
 
@@ -303,7 +303,7 @@ def update_hb_boat(days=0):
         join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
         where i.updatetime>=%s
         and i.updatetime<%s
-        and i.insurecode in ('PA_A','A','ABE','ABE30','ABE_HZ','ABE_YG', 'A30_YG', 'A_QUNAYSFYJHS')
+        and i.insurecode in (select distinct id from INSURE_DATA where bigtype in (2))
         and i.STATUS in ('21','2')
         GROUP BY s_day;
     """

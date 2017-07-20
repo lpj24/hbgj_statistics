@@ -151,7 +151,7 @@ def update_insure_class_daily(days=0):
 
 def update_insure_type_daily(days=0):
     """更新航意险 退票险 延误险明细, operation_hbgj_insure_type_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 2))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
     boat_sql = """
@@ -168,6 +168,14 @@ def update_insure_type_daily(days=0):
         insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, 0, 0, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        insure_order_num = values(insure_order_num),
+        insure_amount = values(insure_amount),
+        insure_claim_num = 0,
+        insure_claim_amount = 0
     """
     boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_boat_sql, boat_data)
@@ -191,14 +199,20 @@ def update_insure_type_daily(days=0):
             (select DISTINCT id from INSURE_DATA where bigtype in (3))
             and flydatetime>=%s and flydatetime<%s group BY left(flydatetime,10), insurecode
             ) A
-
-
     """
 
     insert_refund_sql = """
         insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        insure_order_num = values(insure_order_num),
+        insure_amount = values(insure_amount),
+        insure_claim_num = values(insure_claim_num),
+        insure_claim_amount = values(insure_claim_amount)
     """
     import datetime
     refund_start_date = datetime.date(2016, 8, 15)
@@ -226,6 +240,14 @@ def update_insure_type_daily(days=0):
         insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, 0, %s, 0, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        insure_order_num = values(insure_order_num),
+        insure_amount = 0,
+        insure_claim_num = values(insure_claim_num),
+        insure_claim_amount = 0
     """
     dto = [start_date, end_date]
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
@@ -367,7 +389,9 @@ if __name__ == "__main__":
     # update_hb_boat(1)
     # update_insure_type_daily(1)
     # update_insure_class_daily(1)
-    i = 123
-    while i <= 187:
-        update_insure_type_daily(i)
-        i += 1
+
+    update_insure_type_daily(1)
+    # i = 1
+    # while i <= 19:
+    #     update_insure_type_daily(i)
+    #     i += 1

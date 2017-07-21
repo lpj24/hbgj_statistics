@@ -4,7 +4,7 @@ from dbClient.dateutil import DateUtil
 from monitor_sql import sql, week_sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
-from main_service.hb import hb_profit_cost
+from main_service.hb import hb_profit_cost, hb_insure
 from monitor_data_exception import cal_balance
 from time_job_excute.timeServiceList import TimeService
 import logging
@@ -62,6 +62,7 @@ def execute_later_job():
     TimeService.add_later_service(hb_profit_cost.update_car_cost_detail)
     TimeService.add_later_service(hb_profit_cost.update_huoli_car_income_type)
     TimeService.add_later_service(hb_profit_cost.update_profit_hotel_income)
+    TimeService.add_later_service(hb_insure.update_insure_type_daily)
     return TimeService
 
 

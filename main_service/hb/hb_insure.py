@@ -151,7 +151,7 @@ def update_insure_class_daily(days=0):
 
 def update_insure_type_daily(days=0):
     """更新航意险 退票险 延误险明细, operation_hbgj_insure_type_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 2))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
     boat_sql = """

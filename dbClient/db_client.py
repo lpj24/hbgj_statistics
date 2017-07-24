@@ -96,6 +96,12 @@ class DBCli(object):
         return DButils("mysql", self._source_account_db)
 
     @property
+    def hb_sky_account_cli(self):
+        new_account = self._source_account_db
+        new_account["database"] = "account"
+        return DButils("mysql", new_account)
+
+    @property
     def tongji_skyhotel_cli(self):
         return DButils("mysql", self._tongji_skyhotel)
 

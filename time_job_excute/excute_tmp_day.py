@@ -16,6 +16,7 @@ def add_execute_job():
     TimeService.add_hard_service(hb_consumers.update_hb_newconsumers_daily)
     TimeService.add_hard_service(hb_consumers.update_hb_consumers_weekly)
     TimeService.add_hard_service(hb_consumers.update_hb_consumers_monthly)
+    TimeService.add_hard_service(hb_consumers.update_hbgj_newconsumers_inter_daily)
 
     TimeService.add_hard_service(hb_flight_focus.update_flight_focus_user_daily)
 

@@ -100,6 +100,7 @@ sql = [
     "select count(1) from operation_hbgj_obsolete_order_daily where s_day=%s",
     "select count(1) from operation_hbgj_special_return where s_day=%s",
     "select count(1) from hbgj_newconsumers_inter_daily where s_day=%s",
+    "select count(1) from hbgj_consumers_inter_daily where s_day=%s",
 
 ]
 

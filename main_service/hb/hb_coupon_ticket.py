@@ -377,16 +377,16 @@ def update_coupon_list(days=1):
     """同步skyhotl数据库中coupon_list表数据, coupon_list"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     sql = """
-        select amount, manager, start_time, end_time, type,
+        select id, amount, manager, start_time, end_time, type,
         createtime, bindtype, rules, txt, coupon_type, coupon_name,
         check_url, check_channeltype, turn_flag, costid
         from coupon_list where createtime >= %s
     """
     insert_sql = """
-        insert into coupon_list (amount, manager, start_time, end_time, type,
+        insert into coupon_list (id, amount, manager, start_time, end_time, type,
         createtime, bindtype, rules, txt, coupon_type, coupon_name,
         check_url, check_channeltype, turn_flag, costid)
-        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     query_data = DBCli().hb_sky_account_cli.queryAll(sql, [start_date])
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)

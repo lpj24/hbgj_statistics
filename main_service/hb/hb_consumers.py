@@ -104,6 +104,7 @@ def update_hbgj_newconsumers_inter_daily(days=0):
     """
     query_data = DBCli().sourcedb_cli.queryAll(inter_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    return __file__
 
 
 def update_hbgj_consumers_inter_daily(days=0):
@@ -140,9 +141,13 @@ def update_hbgj_consumers_inter_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
 
 if __name__ == "__main__":
-    i = 1
-    while i <= 1708:
-        update_hbgj_newconsumers_inter_daily(i)
+    i = 1151
+    while i <= 100000:
+        query_data = update_hbgj_newconsumers_inter_daily(i)
+        if query_data:
+            print query_data[0] + "\t" + str(query_data[1]) + "\t" + str(query_data[2]) + "\t" + str(query_data[3])
+        else:
+            break
         i += 1
     # update_hbgj_consumers_inter_daily(1)
     # update_hb_newconsumers_daily(1)

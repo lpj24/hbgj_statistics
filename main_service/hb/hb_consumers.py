@@ -58,7 +58,7 @@ def update_hbgj_newconsumers_inter_daily(days=0):
     """更新国际机票新增消费用户, hbgj_newconsumers_inter_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1), '%Y-%m-%d')
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
-    dto = [today, tomorrow, today, today]
+    dto = [today, tomorrow, today]
     inter_sql = """
         select A.s_day, A.consumers, A.consumers_ios, (A.consumers - A.consumers_ios) from (
         SELECT DATE_FORMAT(od.CREATETIME, '%%Y-%%m-%%d') s_day,count(DISTINCT PHONEID) consumers,
@@ -79,16 +79,6 @@ def update_hbgj_newconsumers_inter_daily(days=0):
             and INTFLAG=1
             and od.CREATETIME< %s
         )
-        and phoneid in (
-            SELECT distinct PHONEID
-            FROM `TICKET_ORDERDETAIL` od
-            INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
-            where  o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
-            AND IFNULL(od.`LINKTYPE`, 0) != 2
-            and INTFLAG=0
-            and od.CREATETIME<%s
-        )
-
         ) A
     """
     insert_sql = """
@@ -141,14 +131,18 @@ def update_hbgj_consumers_inter_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
 
 if __name__ == "__main__":
-    i = 1151
-    while i <= 100000:
-        query_data = update_hbgj_newconsumers_inter_daily(i)
-        if query_data:
-            print query_data[0] + "\t" + str(query_data[1]) + "\t" + str(query_data[2]) + "\t" + str(query_data[3])
-        else:
-            break
+    i = 1
+    while i <= 10:
+        update_hbgj_newconsumers_inter_daily(i)
         i += 1
+    # i = 1151
+    # while i <= 100000:
+    #     query_data = update_hbgj_newconsumers_inter_daily(i)
+    #     if query_data:
+    #         print query_data[0] + "\t" + str(query_data[1]) + "\t" + str(query_data[2]) + "\t" + str(query_data[3])
+    #     else:
+    #         break
+    #     i += 1
     # update_hbgj_consumers_inter_daily(1)
     # update_hb_newconsumers_daily(1)
     # update_hb_consumers_weekly()

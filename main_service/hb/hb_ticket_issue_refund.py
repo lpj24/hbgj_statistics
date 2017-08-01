@@ -6,9 +6,10 @@ from dbClient.dateutil import DateUtil
 
 def update_hbgj_income_issue_refund_daily(days=0):
     """机票收入按照客户端类型/出(退)票, profit_hb_income_type_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     hb_gt_sql = """
-        SELECT %s,
+        SELECT DATE_FORMAT(i.INCOMEDATE, '%%Y-%%m-%%d') s_day,
         count(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) hbgj_issue_ticket_num,
         sum(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.income end) hbgj_issue_income,
         count(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) gtgj_issue_ticket_num,
@@ -24,7 +25,9 @@ def update_hbgj_income_issue_refund_daily(days=0):
         FROM `TICKET_ORDER_INCOME` i
         join `TICKET_ORDER` o on i.orderid=o.orderid
         where i.type=0
-        and i.INCOMEDATE=%s
+        and i.INCOMEDATE>=%s
+        and i.INCOMEDATE<%s
+        GROUP BY s_day
     """
     insert_sql = """
         insert into profit_hb_income_type_daily (s_day, hbgj_issue_ticket_num, hbgj_issue_income,
@@ -50,8 +53,8 @@ def update_hbgj_income_issue_refund_daily(days=0):
         else_refund_ticket_num = VALUES(else_refund_ticket_num),
         else_refund_income = VALUES(else_refund_income)
     """
-    hb_gt_income_data = DBCli().sourcedb_cli.queryOne(hb_gt_sql, [start_date] * 2)
-    DBCli().targetdb_cli.insert(insert_sql, hb_gt_income_data)
+    hb_gt_income_data = DBCli().sourcedb_cli.queryAll(hb_gt_sql, [start_date, end_date])
+    DBCli().targetdb_cli.batchInsert(insert_sql, hb_gt_income_data)
     return __file__
 
 
@@ -373,10 +376,11 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    i = 1
-    while i <= 6:
-        update_hbgj_cost_type_daily(i)
-        i += 1
+    update_hbgj_income_issue_refund_daily(1)
+    # i = 1
+    # while i <= 6:
+    #     update_hbgj_cost_type_daily(i)
+    #     i += 1
     # i = 1
     # while i <= 113:
     #     update_hbgj_transfer_order_income_cost_daily(i)

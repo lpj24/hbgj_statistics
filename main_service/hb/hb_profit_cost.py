@@ -370,7 +370,9 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME),
         (select supplier_name
         from flow.sys_supplier
-        where channeltype=1 and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
+        where channeltype=1
+        and supplier_name!='杰成'
+        and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
         left join PNRSOURCE_CONFIG b ON a.PNRSOURCE = b.PNRSOURCE
         left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.INCOMEDATE >= %s and a.INCOMEDATE < %s
@@ -383,7 +385,9 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         select a.COSTDATE, P_C.SALETYPE,P_C.NAME, a.PNRSOURCE, SUM(AMOUNT) COST_AMOUNT,
         (select supplier_name
         from flow.sys_supplier
-        where channeltype=1 and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_COST a
+        where channeltype=1
+        and supplier_name!='杰成'
+        and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_COST a
         left join PNRSOURCE_CONFIG P_C ON a.PNRSOURCE=P_C.PNRSOURCE
         left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.COSTDATE >= %s and a.COSTDATE < %s
@@ -517,7 +521,10 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     return new_channel_data
 
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    i = 1
+    while i <= 33:
+        update_operation_hbgj_channel_ticket_profit_daily(i)
+        i += 1
     # i = 13
     # while i >= 1:
     #     update_operation_hbgj_channel_ticket_profit_daily(i)

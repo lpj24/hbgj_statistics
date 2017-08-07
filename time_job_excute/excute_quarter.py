@@ -14,6 +14,7 @@ if __name__ == "__main__":
     TimeService.add_quarter_first_service(car_consumers.update_car_consumers_quarterly)
 
     TimeService.add_quarter_first_service(gt_consumers.update_gtgj_consumers_quarterly)
+    TimeService.add_quarter_first_service(gt_consumers.storage_gt_consumers_quarter)
 
     for fun in TimeService.get_quarter_first_service():
         try:

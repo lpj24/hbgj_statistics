@@ -145,7 +145,7 @@ def update_hb_gt_order_new_daily(days=0):
 
 def update_hbgj_ticket_region_inter_daily(days=0):
     """更新国际航班各地区订票统计, hbgj_ticket_region_inter_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 6))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [start_date, end_date]
 
@@ -169,72 +169,106 @@ def update_hbgj_ticket_region_inter_daily(days=0):
         SA = values(SA)
     """
     query_sql = """
-        SELECT DATE_FORMAT(TICKET_ORDER.CREATETIME, '%%Y-%%m-%%d') s_day,
+        SELECT DATE_FORMAT(t.CREATETIME, '%%Y-%%m-%%d') s_day,
         sum(1) total,
         SUM(CASE WHEN
-            (TICKET_ORDERDETAIL.ARRCODE IN
+            (td.ARRCODE IN
             (SELECT THREE_WORDS_CODE FROM apibase.AIRPORT_NATION_INFO)
             and
-            TICKET_ORDERDETAIL.DEPCODE in (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('香港地区', '澳门地区', '中国台湾')
-            ) ) or 	(TICKET_ORDERDETAIL.DEPCODE IN
+            td.DEPCODE in (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('香港地区', '澳门地区', '中国台湾')
+            ) ) or 	(td.DEPCODE IN
             (SELECT THREE_WORDS_CODE FROM apibase.AIRPORT_NATION_INFO)
             and
-            TICKET_ORDERDETAIL.ARRCODE in (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('香港地区', '澳门地区', '中国台湾')
+            td.ARRCODE in (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('香港地区', '澳门地区', '中国台湾')
             ) )
         THEN 1 ELSE 0
         END) gat,
 
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO WHERE COUNTRY IN
-        ('越南', '泰国', '老挝', '柬埔寨', '缅甸', '马来西亚', '新加坡'
-        , '印度尼西亚', '文莱', '菲律宾', '东帝汶'
-        )) then 1 else 0 end) dny,
+        sum(
+            EXISTS
+                (
+                    select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO WHERE COUNTRY IN
+                        ('越南', '泰国', '老挝', '柬埔寨', '缅甸', '马来西亚', '新加坡'
+                        , '印度尼西亚', '文莱', '菲律宾', '东帝汶') and
+                        (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+                )
+        ) dny,
 
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('日本')
-        ) then 1 else 0 end) japan,
-
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='NA'
-        ) then 1 else 0 end) bm,
-
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='EU'
-        ) then 1 else 0 end) oz,
-
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('韩国')
-        ) then 1 else 0 end) hg,
-
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='OA'
-        ) then 1 else 0 end) az,
-
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where THREE_WORDS_CODE IN
-        ('AMM','HRG','YNB','ABS','BHH','BEY','NJF','TCP','ISU','HOD','SKV','ASW','AQI','ABT','ADE','AJF','TAI','DXB','SSH','MED','TIF','AHB','EBL','ETH','GIZ','AUH','OSM','BSR','RUH','VDA','RIY','AAN','SEW','DOH','KWI','RAH','HOF','XSB','BAH','SHW','TUI','RAE','DWD','DMM','DWC','ULH','URY','TLV','JED','SAH','AZI','BGW','WAE','RKT','GXF','ELQ','XMB','HBE','HMB','ATZ','SHJ','AQJ','KHS','ADJ','FJR','HAS','DAM','RMF','EJH','TUU','EAM','SLL'
+        sum(
+        EXISTS (
+                select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('日本')
+                    and
+                (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
         )
-        ) then 1 else 0 end) zd,
+        ) japan,
 
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='AF'
-        ) then 1 else 0 end) fz,
+        sum(
+         EXISTS
+         (
+            select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='NA'
+            AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+         )
+        ) bm,
 
-        sum(case when TICKET_ORDERDETAIL.ARRCODE or TICKET_ORDERDETAIL.DEPCODE in
-        (select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='SA'
-        ) then 1 else 0 end) NMZ
+        sum(
+        EXISTS
+        (
+          select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='EU'
+            AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+        )
+        ) oz,
 
-        FROM TICKET_ORDERDETAIL
-        join TICKET_ORDER
-        ON TICKET_ORDER.ORDERID = TICKET_ORDERDETAIL.ORDERID
+
+        sum(
+        EXISTS (
+            select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where COUNTRY in ('韩国')
+            AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+        )
+        ) hg,
+
+        sum(
+        EXISTS
+        (
+            select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='OA'
+            AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+
+        )
+        ) az,
+
+        sum(
+        EXISTS
+        (
+            select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where THREE_WORDS_CODE IN
+            ('AMM','HRG','YNB','ABS','BHH','BEY','NJF','TCP','ISU','HOD','SKV','ASW','AQI','ABT','ADE','AJF','TAI','DXB','SSH','MED','TIF','AHB','EBL','ETH','GIZ','AUH','OSM','BSR','RUH','VDA','RIY','AAN','SEW','DOH','KWI','RAH','HOF','XSB','BAH','SHW','TUI','RAE','DWD','DMM','DWC','ULH','URY','TLV','JED','SAH','AZI','BGW','WAE','RKT','GXF','ELQ','XMB','HBE','HMB','ATZ','SHJ','AQJ','KHS','ADJ','FJR','HAS','DAM','RMF','EJH','TUU','EAM','SLL'
+            ) AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+        )
+        ) zd,
+
+        sum(
+        EXISTS
+            (
+           select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='AF'
+             AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+        )
+        ) fz,
+
+        sum(
+        EXISTS (
+            select THREE_WORDS_CODE from apibase.AIRPORT_INTER_INFO where REGION_CODE='SA'
+            AND (td.DEPCODE=THREE_WORDS_CODE or td.ARRCODE=THREE_WORDS_CODE)
+         )
+        )NMZ
+
+        FROM TICKET_ORDERDETAIL as td
+        join TICKET_ORDER as t
+        ON t.ORDERID = td.ORDERID
         where
-        TICKET_ORDER.CREATETIME>=%s
-        and TICKET_ORDER.CREATETIME<=%s
-        and TICKET_ORDER.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
-        AND IFNULL(TICKET_ORDERDETAIL.`LINKTYPE`, 0) != 2
+        t.CREATETIME>=%s
+        and t.CREATETIME<=%s
+        and t.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(td.`LINKTYPE`, 0) != 2
         and INTFLAG=1
-        GROUP BY s_day
-        order BY TICKET_ORDERDETAIL.createtime;
+        GROUP BY s_day;
     """
 
     total_query_data = DBCli().sourcedb_cli.queryAll(query_sql, dto)
@@ -246,7 +280,9 @@ if __name__ == "__main__":
     # update_hb_gt_order_daily(1)
     # update_operation_hbgj_order_detail_daily(1)
     # update_hb_gt_order_daily_his()
-    i = 285
+    i = 1
     while 1:
         update_hbgj_ticket_region_inter_daily(i)
         i += 1
+
+    # update_hbgj_ticket_region_inter_daily(60)

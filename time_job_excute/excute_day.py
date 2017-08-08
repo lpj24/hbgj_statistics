@@ -35,6 +35,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_delay_insure.update_hb_deplay_insure)
     TimeService.add_day_service(hb_delay_insure.update_compensate_detail)
     TimeService.add_day_service(hb_order.update_hb_gt_order_daily)
+    TimeService.add_day_service(hb_order.update_hbgj_ticket_region_inter_daily)
 
     TimeService.add_day_service(hb_coupon_ticket.update_hbgj_coupon_tickt)
     TimeService.add_day_service(hb_coupon_ticket.update_gt_coupon_daily)

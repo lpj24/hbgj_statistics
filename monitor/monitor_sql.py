@@ -101,6 +101,8 @@ sql = [
     "select count(1) from operation_hbgj_special_return where s_day=%s",
     "select count(1) from hbgj_newconsumers_inter_daily where s_day=%s",
     "select count(1) from hbgj_consumers_inter_daily where s_day=%s",
+    "select count(1) from hbgj_ticket_region_inter_daily where s_day=%s",
+    "select count(1) from hbgj_newconsumers_inter_daily_nation where s_day=%s",
 
 ]
 

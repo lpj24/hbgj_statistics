@@ -183,7 +183,7 @@ def update_hbgj_newconsumers_inter_daily_nation(days=0):
     return __file__
 
 if __name__ == "__main__":
-    i = 1
+    i = 939
     while i <= 1284:
         update_hbgj_newconsumers_inter_daily_nation(i)
         i += 1

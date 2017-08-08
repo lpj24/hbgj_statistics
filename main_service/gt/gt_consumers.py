@@ -61,29 +61,31 @@ def storage_gt_consumers_quarter():
             ) as A
     """
     start_date, end_date = DateUtil.get_last_quarter_date()
-    start_date = DateUtil.date2str(start_date)
-    end_date = DateUtil.date2str(end_date)
-    # start_date = '2017-04-01'
-    # end_date = '2017-07-01'
+    # start_date = DateUtil.date2str(start_date)
+    # end_date = DateUtil.date2str(end_date)
+    start_date = '2017-01-01'
+    end_date = '2017-04-01'
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().gt_cli.queryAll(sql, dto)
-    g = BloomFilter(capacity=20000000, error_rate=0.00001)
+    g = BloomFilter(capacity=20000000)
 
     bloom_year_file = start_date + "_bloom_file.dat"
+    # p = DBCli().redis_cli.pipeline()
     for uid in query_data:
         uid = uid[0]
-        # DBCli().redis_cli.sadd("gt_consumers", uid)
-        g.add(uid)
-
-    with open(os.path.join("/home/huolibi/data/hbdt/gt", bloom_year_file), "wb") as new_file:
-        g.tofile(new_file)
+        DBCli().redis_dt_cli.sadd("gt_consumers", uid)
+        # p.pfadd("gt_hyper", uid)
+        # g.add(uid)
+    # p.execute()
+    # with open(os.path.join("./", bloom_year_file), "wb") as new_file:
+    #     g.tofile(new_file)
 
 
 def count_consumers():
-    four_quarter = ['2017-01-01', '2017-04-01']
+    four_quarter = ['2017-01-01']
     bloom_obj = []
     for q in four_quarter:
-        b_f = os.path.join("/home/huolibi/data/hbdt/gt", q + "_bloom_file.dat")
+        b_f = os.path.join("./", q + "_bloom_file.dat")
         with open(b_f, 'rb') as bloom_file:
             b_f = BloomFilter.fromfile(bloom_file)
             bloom_obj.append(b_f)
@@ -93,8 +95,12 @@ def count_consumers():
 
 if __name__ == "__main__":
     #每小时更新当天数据  凌晨更新前三天
-    # storage_gt_consumers_quarter()
-    print len(count_consumers())
+    storage_gt_consumers_quarter()
+    # p = DBCli().redis_cli.pipeline()
+    # p.pfadd("hyper_uid", 1, 2)
+    # p.execute()
+    # DBCli().redis_dt_cli.sadd("hyper_uid", 1, 2, 3)
+    # print len(count_consumers())
     # g = BloomFilter(capacity=20000000, error_rate=0.001)
     # with open("./bloom.txt", "rb") as bloom_f:
     #     gg = g.fromfile(bloom_f)

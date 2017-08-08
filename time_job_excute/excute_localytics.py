@@ -2,7 +2,7 @@ import logging
 import sys
 import time
 
-from main_service.localytics import hb_ticket_book, hb_pay_type
+from main_service.localytics import hb_ticket_book, hb_pay_type, hb_stages
 
 from dbClient import utils
 from dbClient.db_client import DBCli
@@ -16,6 +16,7 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(hbdt_event.hbdt_event)
     TimeService.add_localytics_service(hb_pay_type.hb_pay_type)
     TimeService.add_localytics_service(hb_ticket_book.update_ios_android_newuser_daily)
+    TimeService.add_localytics_service(hb_stages.update_hbgj_stages_daily)
 
     for fun in TimeService.get_localytics_service():
         try:

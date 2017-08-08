@@ -67,18 +67,18 @@ def storage_gt_consumers_quarter():
     end_date = '2017-04-01'
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().gt_cli.queryAll(sql, dto)
-    g = BloomFilter(capacity=20000000)
+    g = BloomFilter(capacity=15000000)
 
     bloom_year_file = start_date + "_bloom_file.dat"
-    # p = DBCli().redis_cli.pipeline()
+    p = DBCli().redis_cli.pipeline()
     for uid in query_data:
         uid = uid[0]
-        DBCli().redis_dt_cli.sadd("gt_consumers", uid)
-        # p.pfadd("gt_hyper", uid)
+        # DBCli().redis_dt_cli.sadd("gt_consumers", uid)
+        p.pfadd("gt_hyper", uid)
         # g.add(uid)
-    # p.execute()
+    p.execute()
     # with open(os.path.join("./", bloom_year_file), "wb") as new_file:
-    #     g.tofile(new_file)
+        # g.tofile(new_file)
 
 
 def count_consumers():

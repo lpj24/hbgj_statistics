@@ -151,8 +151,8 @@ def update_hbgj_ticket_region_inter_daily(days=0):
 
     insert_total_sql = """
         insert into hbgj_ticket_region_inter_daily
-        (s_day, total_ticket_num, gat, dny, japan, NA, EU, korea, OA, Middle_AISA, AF, SA,
-        createtime, updatetime)
+        (s_day, total_ticket_num, gat, dny, japan, NA, EU, korea, OA,
+        Middle_AISA, AF, SA, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
@@ -280,9 +280,11 @@ if __name__ == "__main__":
     # update_hb_gt_order_daily(1)
     # update_operation_hbgj_order_detail_daily(1)
     # update_hb_gt_order_daily_his()
-    i = 1
-    while 1:
-        update_hbgj_ticket_region_inter_daily(i)
-        i += 1
+    # i = 1
+    # while 1:
+    #     update_hbgj_ticket_region_inter_daily(i)
+    #     i += 1
 
     # update_hbgj_ticket_region_inter_daily(60)
+    # update_hbgj_ticket_region_inter_daily(157)
+    update_hbgj_ticket_region_inter_daily(423)

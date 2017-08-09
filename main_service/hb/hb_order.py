@@ -145,7 +145,7 @@ def update_hb_gt_order_new_daily(days=0):
 
 def update_hbgj_ticket_region_inter_daily(days=0):
     """更新国际航班各地区订票统计, hbgj_ticket_region_inter_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 60))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [start_date, end_date]
 

@@ -63,26 +63,26 @@ def storage_gt_consumers_quarter():
     start_date, end_date = DateUtil.get_last_quarter_date()
     # start_date = DateUtil.date2str(start_date)
     # end_date = DateUtil.date2str(end_date)
-    start_date = '2017-01-01'
-    end_date = '2017-04-01'
+    start_date = '2017-04-01'
+    end_date = '2017-07-01'
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().gt_cli.queryAll(sql, dto)
-    g = BloomFilter(capacity=15000000)
+    g = BloomFilter(capacity=20000000)
 
     bloom_year_file = start_date + "_bloom_file.dat"
-    p = DBCli().redis_cli.pipeline()
+
     for uid in query_data:
         uid = uid[0]
-        # DBCli().redis_dt_cli.sadd("gt_consumers", uid)
-        p.pfadd("gt_hyper", uid)
-        # g.add(uid)
-    p.execute()
-    # with open(os.path.join("./", bloom_year_file), "wb") as new_file:
-        # g.tofile(new_file)
+        DBCli().redis_dt_cli.sadd("gt_consumers_test", uid)
+        DBCli().redis_cli.pfadd("gt_hyper", uid)
+        g.add(uid)
+
+    with open(os.path.join("./", bloom_year_file), "wb") as new_file:
+        g.tofile(new_file)
 
 
 def count_consumers():
-    four_quarter = ['2017-01-01']
+    four_quarter = ['2017-01-01', '2017-04-01']
     bloom_obj = []
     for q in four_quarter:
         b_f = os.path.join("./", q + "_bloom_file.dat")

@@ -135,6 +135,7 @@ def update_hb_channel_ticket_income_daily(days=0):
 
 
 def update_hb_company_ticket_weekly():
+    """更新航班, operation_hbgj_company_ticket_weekly"""
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_week, end_week = DateUtil.get_last_week_date()
@@ -599,3 +600,10 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hb_channel_ticket_income_daily(i)
     #     i -= 1
+    hb_code_sql = """
+        select code,FOUR_NAME
+        from AIRLINES_NORMAl
+    """
+    hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
+    hb_info = dict(hb_info)
+    print hb_info

@@ -583,7 +583,7 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
 
 if __name__ == "__main__":
     i = 13
-    update_unable_ticket()
+    # update_unable_ticket()
     # import datetime
     # a = datetime.date(2017, 6, 6)
     # b = datetime.date(2014, 1, 6)

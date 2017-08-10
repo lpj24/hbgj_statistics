@@ -112,8 +112,3 @@ class DBCli(object):
     @property
     def apibase_cli(self):
         return DButils("mysql", self._apibase)
-
-
-if __name__ == "__main__":
-    import logging
-    logging

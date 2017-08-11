@@ -198,7 +198,7 @@ def update_hb_car_hotel_profit(days=0):
 
 def update_car_cost_detail(days=0):
     """更新专车成本明细, profit_huoli_car_cost_type"""
-    query_date = DateUtil.get_date_before_days(days * 41)
+    query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
     car_sql = """

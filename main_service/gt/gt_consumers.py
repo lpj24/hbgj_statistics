@@ -61,10 +61,10 @@ def storage_gt_consumers_quarter():
             ) as A
     """
     start_date, end_date = DateUtil.get_last_quarter_date()
-    # start_date = DateUtil.date2str(start_date)
-    # end_date = DateUtil.date2str(end_date)
-    start_date = '2017-07-01'
-    end_date = '2017-08-11'
+    start_date = DateUtil.date2str(start_date)
+    end_date = DateUtil.date2str(end_date)
+    # start_date = '2017-07-01'
+    # end_date = '2017-08-11'
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().gt_cli.queryAll(sql, dto)
     g = BloomFilter(capacity=20000000)

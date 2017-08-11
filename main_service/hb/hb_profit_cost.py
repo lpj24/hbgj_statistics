@@ -198,7 +198,7 @@ def update_hb_car_hotel_profit(days=0):
 
 def update_car_cost_detail(days=0):
     """更新专车成本明细, profit_huoli_car_cost_type"""
-    query_date = DateUtil.get_date_before_days(days * 7)
+    query_date = DateUtil.get_date_before_days(days * 41)
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
     car_sql = """
@@ -548,17 +548,14 @@ def update_profit_hb_income_official_website(days=0):
 
 if __name__ == "__main__":
     # update_profit_hb_income_official_website(1)
-    i = 1
-    while i <= 41:
-        update_huoli_car_income_daily(i)
-        update_huoli_car_income_type(i)
-        update_hb_car_hotel_profit(i)
-
-        i += 1
-    j = 1
-    while j <= 6:
-        update_car_cost_detail(j)
-        j += 1
+    # i = 1
+    # while i <= 41:
+    #     update_huoli_car_income_daily(i)
+    #     update_huoli_car_income_type(i)
+    #     update_hb_car_hotel_profit(i)
+    #     i += 1
+    # update_hb_car_hotel_profit(1)
+    update_car_cost_detail(1)
     # i = 13
     # while i >= 1:
     #     update_operation_hbgj_channel_ticket_profit_daily(i)

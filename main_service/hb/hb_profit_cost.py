@@ -549,8 +549,14 @@ def update_profit_hb_income_official_website(days=0):
 if __name__ == "__main__":
     # update_profit_hb_income_official_website(1)
     i = 1
-    while 1:
-        update_profit_hb_income_official_website(i)
+    while i <= 41:
+        update_huoli_car_income_daily(i)
+        update_huoli_car_income_type(i)
+        i += 1
+    j = 1
+    while j <= 6:
+        update_car_cost_detail(i)
+        update_hb_car_hotel_profit(i)
         i += 1
     # i = 13
     # while i >= 1:

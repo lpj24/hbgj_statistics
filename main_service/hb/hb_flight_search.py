@@ -246,7 +246,7 @@ if __name__ == "__main__":
     #     update_dt_search_uid(i)
     #     i -= 1
     # update_flight_search_user_daily(3)
-    update_flight_search_user_daily(41)
+    update_flight_search_user_daily(2)
     # i = 25
     # while i >= 19:
     #     update_flight_search_user_daily(i)
@@ -256,4 +256,4 @@ if __name__ == "__main__":
     # update_check_pv_his(start_date)
     # update_flight_search_user_weekly()
     # update_flight_search_user_monthly()
-    update_dt_search_uid(2)
+    # update_dt_search_uid(2)

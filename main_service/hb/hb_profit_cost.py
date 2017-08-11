@@ -520,10 +520,37 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
     new_channel_data.append(sale_type)
     return new_channel_data
 
+
+def update_profit_hb_income_official_website(days=0):
+    """更新官网航班收入, profit_hb_income_official_website"""
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1), '%Y-%m-%d')
+    today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    sql = """
+        SELECT create_date,CONCAT(module,'_',channel,'_',income_type) AS dataName, income_amount
+        FROM booking.income_statics_daily
+        where create_date >= %s and create_date< %s
+        GROUP BY create_date,module,channel,income_type
+        ORDER BY create_date ASC
+
+    """
+    insert_sql = """
+        insert into profit_hb_income_official_website (s_day, income_name, income_amount, createtime, updatetime)
+        values (%s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = VALUES(s_day),
+        income_name = VALUES(income_name),
+        income_amount = VALUES(income_amount)
+    """
+
+    hb_profit = DBCli().sourcedb_cli.queryAll(sql, [query_date, today])
+    DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
+    return __file__
+
 if __name__ == "__main__":
+    # update_profit_hb_income_official_website(1)
     i = 1
-    while i <= 33:
-        update_operation_hbgj_channel_ticket_profit_daily(i)
+    while 1:
+        update_profit_hb_income_official_website(i)
         i += 1
     # i = 13
     # while i >= 1:

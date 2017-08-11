@@ -49,6 +49,7 @@ def add_execute_job():
     TimeService.add_hard_service(hb_profit_cost.update_huoli_car_income_daily)
     TimeService.add_hard_service(hb_profit_cost.update_profit_hb_income)
     TimeService.add_hard_service(hb_profit_cost.update_operation_hbgj_channel_ticket_profit_daily)
+    TimeService.add_hard_service(hb_profit_cost.update_profit_hb_income_official_website)
     TimeService.add_hard_service(gt_income_cost.update_gt_income_cost)
 
     TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)

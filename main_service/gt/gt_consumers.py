@@ -77,7 +77,7 @@ def storage_gt_consumers_quarter():
         # DBCli().redis_cli.pfadd("gt_hyper", uid)
         g.add(uid)
 
-    with open(os.path.join("./", bloom_year_file), "wb") as new_file:
+    with open(os.path.join("/home/huolibi/data/hbdt/gt/", bloom_year_file), "wb") as new_file:
         g.tofile(new_file)
 
 

@@ -129,4 +129,4 @@ def hb_pay_type(days=0):
     return __file__
 
 if __name__ == "__main__":
-    hb_pay_type(1)
+    hb_pay_type(3)

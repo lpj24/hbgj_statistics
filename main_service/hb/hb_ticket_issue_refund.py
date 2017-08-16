@@ -6,7 +6,7 @@ from dbClient.dateutil import DateUtil
 
 def update_hbgj_income_issue_refund_daily(days=0):
     """机票收入按照客户端类型/出(退)票, profit_hb_income_type_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 5), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     hb_gt_sql = """
         SELECT DATE_FORMAT(i.INCOMEDATE, '%%Y-%%m-%%d') s_day,
@@ -376,7 +376,11 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hbgj_income_issue_refund_daily(1)
+    # update_hbgj_income_issue_refund_daily(1)
+    i = 1
+    while i <= 5:
+        update_hbgj_cost_type_daily(i)
+        i += 1
     # i = 1
     # while i <= 6:
     #     update_hbgj_cost_type_daily(i)

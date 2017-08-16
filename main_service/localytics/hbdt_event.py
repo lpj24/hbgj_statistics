@@ -99,8 +99,6 @@ if __name__ == "__main__":
     #         continue
     #     i += 1
 
-    s = hbdt_event(6)
-    print s
-
+    hbdt_event(3)
 
 

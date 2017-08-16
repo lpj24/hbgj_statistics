@@ -10,7 +10,7 @@ sys.setdefaultencoding('utf8')
 
 def update_hb_car_hotel_profit(days=0):
     """更新航班专车酒店成本, profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 3)
+    query_date = DateUtil.get_date_before_days(days * 5)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -301,7 +301,7 @@ def update_huoli_car_income_type(days=0):
 
 def update_profit_hb_income(days=0):
     """更新航班收入, profit_hb_income"""
-    query_date = DateUtil.get_date_before_days(days*3)
+    query_date = DateUtil.get_date_before_days(days*5)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
@@ -523,7 +523,7 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
 
 def update_profit_hb_income_official_website(days=0):
     """更新官网航班收入, profit_hb_income_official_website"""
-    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1), '%Y-%m-%d')
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days*5), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """
         SELECT create_date,CONCAT(module,'_',channel,'_',income_type) AS dataName, income_amount
@@ -547,6 +547,8 @@ def update_profit_hb_income_official_website(days=0):
     return __file__
 
 if __name__ == "__main__":
+    update_profit_hb_income(1)
+    # update_profit_hb_income(1)
     # update_profit_hb_income_official_website(1)
     # i = 1
     # while i <= 41:
@@ -555,7 +557,11 @@ if __name__ == "__main__":
     #     update_hb_car_hotel_profit(i)
     #     i += 1
     # update_hb_car_hotel_profit(1)
-    update_car_cost_detail(1)
+    # update_car_cost_detail(1)
+    # i = 1
+    # while i <= 5:
+    #     update_operation_hbgj_channel_ticket_profit_daily(i)
+    #     i += 1
     # i = 13
     # while i >= 1:
     #     update_operation_hbgj_channel_ticket_profit_daily(i)

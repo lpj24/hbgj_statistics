@@ -238,7 +238,7 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 
 def update_hb_city_rate(days=0):
-    """更新航班详情pv与uv, hbdt_details_daily"""
+    """更新航班准点率 延误率 取消率, hbgj_flightdyn_company_daily hbgj_flightdyn_depcity_daily"""
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))

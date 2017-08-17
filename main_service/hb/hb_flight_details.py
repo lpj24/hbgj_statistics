@@ -329,7 +329,7 @@ def update_hb_city_rate(days=0):
     DBCli().targetdb_cli.batchInsert(insert_city_sql, insert_city_list)
 
 
-def diff_days(one_date, two_date):
+def diff_days(one_date=None, two_date=None):
     dep_date, plan_date = DateUtil.str2date(one_date), DateUtil.str2date(two_date)
     if dep_date is None or plan_date is None:
         return -1

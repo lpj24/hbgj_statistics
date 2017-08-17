@@ -242,10 +242,11 @@ def update_hb_city_rate(days=0):
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 2))
-    s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    # s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     hb_sql = """
-        SELECT DTFS_FLIGHTCOMPANY,DTFS_FLIGHTNO,DTFS_FLIGHTDEPCODE,DTFS_FLIGHTARRCODE,
+        SELECT to_char(to_date(DTFS_FLIGHTDEPTIMEPLAN, 'yyyy-mm-dd hh24:mi:ss'), 'yyyy-mm-dd') s_day,
+        DTFS_FLIGHTCOMPANY,DTFS_FLIGHTNO,DTFS_FLIGHTDEPCODE,DTFS_FLIGHTARRCODE,
         DTFS_FLIGHTDEP,DTFS_FLIGHTARR,dtfs_flightdeptimeplan, DTFS_FLIGHTDEPTIME,DTFS_FLIGHTSTATE,
         (case when DTFS_FLIGHTSTATE='取消' then 1 else 0 end) state_code
         from DAY_FLY_DTINFO
@@ -287,28 +288,28 @@ def update_hb_city_rate(days=0):
             cancel_num = VALUES(cancel_num)
     """
     for data in query_data:
-        hb_company, fly_no, fly_depcode, fly_arrcode, \
+        s_day, hb_company, fly_no, fly_depcode, fly_arrcode, \
         fly_depcity, fly_arrcity, plan_dep_time, dep_time, fly_state, fly_state_code = data
         try:
             if int(fly_state_code) == 0:
                 diff_min = diff_days(dep_time, plan_dep_time)
                 if diff_min >= 30:
                     # 延误
-                    insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(1)
-                    insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(1)
+                    insert_company_data[s_day + ':' + company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(1)
+                    insert_city_data[city_dict[s_day + ':' + fly_depcode] + ':' + fly_depcode].append(1)
                 else:
                     # 准点
-                    insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(0)
-                    insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(0)
+                    insert_company_data[s_day + ':' + company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(0)
+                    insert_city_data[s_day + ':' + city_dict[fly_depcode] + ':' + fly_depcode].append(0)
             elif int(fly_state_code) == 1:
                 # 取消
-                insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(-1)
-                insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(-1)
+                insert_company_data[s_day + ':' + company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(-1)
+                insert_city_data[s_day + ':' + city_dict[fly_depcode] + ':' + fly_depcode].append(-1)
         except (KeyError, ):
             continue
     for k, v in Counter(insert_company_data).items():
         fly_num = Counter(v)
-        company, c_code = k.split(':')
+        s_day, company, c_code = k.split(':')
         delay_num = fly_num[1]
         time_num = fly_num[0]
         cancel_num = fly_num[-1]
@@ -316,7 +317,7 @@ def update_hb_city_rate(days=0):
 
     for k, v in Counter(insert_city_data).items():
         fly_num = Counter(v)
-        c_city, c_code = k.split(':')
+        s_day, c_city, c_code = k.split(':')
         delay_num = fly_num[1]
         time_num = fly_num[0]
         cancel_num = fly_num[-1]

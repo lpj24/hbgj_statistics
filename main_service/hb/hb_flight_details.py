@@ -296,7 +296,7 @@ def update_hb_city_rate(days=0):
                 if diff_min >= 30:
                     # 延误
                     insert_company_data[s_day + ':' + company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(1)
-                    insert_city_data[city_dict[s_day + ':' + fly_depcode] + ':' + fly_depcode].append(1)
+                    insert_city_data[s_day + ':' + city_dict[s_day + ':' + fly_depcode] + ':' + fly_depcode].append(1)
                 else:
                     # 准点
                     insert_company_data[s_day + ':' + company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(0)

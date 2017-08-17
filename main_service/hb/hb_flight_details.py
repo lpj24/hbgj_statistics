@@ -303,7 +303,7 @@ def update_hb_city_rate(days=0):
             elif int(fly_state_code) == 1:
                 # 取消
                 insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(-1)
-                insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(0)
+                insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(-1)
         except (KeyError, ):
             continue
     for k, v in Counter(insert_company_data).items():

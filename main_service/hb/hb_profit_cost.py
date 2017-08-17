@@ -10,7 +10,7 @@ sys.setdefaultencoding('utf8')
 
 def update_hb_car_hotel_profit(days=0):
     """更新航班专车酒店成本, profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 5)
+    query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -547,7 +547,7 @@ def update_profit_hb_income_official_website(days=0):
     return __file__
 
 if __name__ == "__main__":
-    update_profit_hb_income(1)
+    update_hb_car_hotel_profit(1)
     # update_profit_hb_income(1)
     # update_profit_hb_income_official_website(1)
     # i = 1

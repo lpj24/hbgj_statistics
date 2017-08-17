@@ -22,6 +22,7 @@ class DBCli(object):
         self._source_account_db = conf.source_account_db
         self._dynamic_focus = conf.dynamic_focus
         self._apibase = conf.hb_apibase
+        self._flight_oracle = conf.flight_oracle
         self.args = args if args else (list, )
 
     @property
@@ -104,6 +105,10 @@ class DBCli(object):
     @property
     def tongji_skyhotel_cli(self):
         return DButils("mysql", self._tongji_skyhotel)
+
+    @property
+    def flight_oracle_cli(self):
+        return DButils("oracle", self._flight_oracle)
 
     @property
     def dynamic_focus_cli(self):

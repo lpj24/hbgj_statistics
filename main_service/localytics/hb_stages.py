@@ -56,7 +56,6 @@ def update_hbgj_stages_daily(days=0):
 
                 r = requests.get(api_root, auth=(api_key, api_secret), params=data_params, timeout=240)
                 result = r.json()
-                print result
                 if r.status_code == 429:
                     raise AssertionError
                 insert_result.append((result["results"][0])[m])
@@ -64,7 +63,4 @@ def update_hbgj_stages_daily(days=0):
     return __file__
 
 if __name__ == "__main__":
-    i = 8
-    while 1:
-        update_hbgj_stages_daily(i)
-        i += 1
+    update_hbgj_stages_daily(1)

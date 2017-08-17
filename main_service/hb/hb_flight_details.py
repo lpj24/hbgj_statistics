@@ -7,6 +7,7 @@ import requests
 import json
 import time
 import datetime
+from collections import defaultdict, Counter
 
 
 def localytics_cli(app_id, event, metrics, start_date):
@@ -236,17 +237,120 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
         start_date = DateUtil.add_days(start_date, -1)
 
 
+def update_hb_city_rate(days=0):
+    """更新航班详情pv与uv, hbdt_details_daily"""
+    import os
+    os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))
+    s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
+    hb_sql = """
+        SELECT DTFS_FLIGHTCOMPANY,DTFS_FLIGHTNO,DTFS_FLIGHTDEPCODE,DTFS_FLIGHTARRCODE,
+        DTFS_FLIGHTDEP,DTFS_FLIGHTARR,dtfs_flightdeptimeplan, DTFS_FLIGHTDEPTIME,DTFS_FLIGHTSTATE,
+        (case when DTFS_FLIGHTSTATE='取消' then 1 else 0 end) state_code
+        from DAY_FLY_DTINFO_HIS
+        where DTFS_MARK = 0 AND DTFS_SHARE = 0 AND DTFS_STOP = '0'
+        AND DTFS_FLIGHTDEPTIMEPLAN>='2017-08-01 00:00:00'
+        AND DTFS_FLIGHTDEPTIMEPLAN<'2017-08-02 00:00:00'
+    """
+    city_dict = get_city_code_dict()
+    company_dict = get_aircompany_dict()
+    query_data = DBCli().flight_oracle_cli.queryAll(hb_sql)
+    insert_company_data = defaultdict(list)
+    insert_city_data = defaultdict(list)
+    insert_com_list = []
+    insert_company_sql = """
+        insert into hbgj_flightdyn_company_daily (s_day, company_name, company_code, time_num
+            delay_num, cancel_num, createtime, updatetime) values
+            (%s, %s, %s, %s, %s, %s, now(), now())
+            on duplicate key update updatetime = now() ,
+            s_day = VALUES(s_day),
+            company_name = VALUES(company_name),
+            company_code = VALUES(company_code),
+            time_num = VALUES(time_num),
+            delay_num = VALUES(delay_num),
+            cancel_num = VALUES(cancel_num),
+    """
+
+    insert_city_list = []
+
+    insert_city_sql = """
+        insert into hbgj_flightdyn_depcity_daily (s_day, dep_name, dep_code, time_num
+            delay_num, cancel_num, createtime, updatetime) values
+            (%s, %s, %s, %s, %s, %s, now(), now())
+            on duplicate key update updatetime = now() ,
+            s_day = VALUES(s_day),
+            dep_name = VALUES(dep_name),
+            dep_code = VALUES(dep_code),
+            time_num = VALUES(time_num),
+            delay_num = VALUES(delay_num),
+            cancel_num = VALUES(cancel_num),
+    """
+    for data in query_data:
+        hb_company, fly_no, fly_depcode, fly_arrcode, \
+        fly_depcity, fly_arrcity, plan_dep_time, dep_time, fly_state, fly_state_code = data
+        try:
+            if int(fly_state_code) == 0 and plan_dep_time is not None and dep_time is not None:
+                diff_min = diff_days(dep_time, plan_dep_time)
+                if diff_min >= 30:
+                    # 延误
+                    insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(1)
+                    insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(1)
+                else:
+                    # 准点
+                    insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(0)
+                    insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(0)
+            else:
+                # 取消
+                insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(-1)
+                insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(0)
+        except (KeyError, ):
+            continue
+    for k, v in Counter(insert_company_data).items():
+        fly_num = Counter(v)
+        company, c_code = k.split(':')
+        delay_num = fly_num[1]
+        time_num = fly_num[0]
+        cancel_num = fly_num[-1]
+        insert_com_list.append([s_day, company, c_code, time_num, delay_num, cancel_num])
+
+    for k, v in Counter(insert_city_data).items():
+        fly_num = Counter(v)
+        c_city, c_code = k.split(':')
+        delay_num = fly_num[1]
+        time_num = fly_num[0]
+        cancel_num = fly_num[-1]
+        insert_city_list.append([s_day, c_city, c_code, time_num, delay_num, cancel_num])
+
+    DBCli().targetdb_cli.batchInsert(insert_company_sql, insert_com_list)
+    DBCli().targetdb_cli.batchInsert(insert_city_sql, insert_city_list)
+
+
+def diff_days(one_date, two_date):
+    dep_date, plan_date = DateUtil.str2date(one_date), DateUtil.str2date(two_date)
+    if dep_date >= plan_date:
+        return (dep_date - plan_date).seconds/60
+    else:
+        return -1
+
+
+def get_aircompany_dict():
+    hb_code_sql = """
+        select code,FOUR_NAME
+        from AIRLINES_NORMAl
+    """
+    hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
+    hb_info = dict(hb_info)
+    return hb_info
+
+
+def get_city_code_dict():
+    city_sql = """
+        select THREE_WORDS_CODE , CITY_NAME from apibase.AIRPORT_NATION_INFO
+    """
+    city_dict = DBCli().sourcedb_cli.queryAll(city_sql)
+    return dict(city_dict)
+
 if __name__ == "__main__":
-    # for x in xrange(6, 0, -1):
-    # i = 6
-    # while i >= 1:
-    #     # update_flight_detail_user_daily(i)
-    #     update_dt_detail_uid(i)
-    #     i -= 1
-    update_flight_detail_user_daily(2)
-    # update_dt_detail_uid(6)
-    # update_flight_detail_user_weekly()
-    # i = 33
-    # while i >= 1:
-    #     update_dt_detail_uid(i)
-    #     i -= 1
+    update_hb_city_rate(1)
+    # print get_city_code_dict()

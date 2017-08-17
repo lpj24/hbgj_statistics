@@ -242,7 +242,8 @@ def update_hb_city_rate(days=0):
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))
-    s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    # s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    s_day = '2017-08-02'
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     hb_sql = """
         SELECT DTFS_FLIGHTCOMPANY,DTFS_FLIGHTNO,DTFS_FLIGHTDEPCODE,DTFS_FLIGHTARRCODE,
@@ -250,8 +251,8 @@ def update_hb_city_rate(days=0):
         (case when DTFS_FLIGHTSTATE='取消' then 1 else 0 end) state_code
         from DAY_FLY_DTINFO_HIS
         where DTFS_MARK = 0 AND DTFS_SHARE = 0 AND DTFS_STOP = '0'
-        AND DTFS_FLIGHTDEPTIMEPLAN>='2017-08-01 00:00:00'
-        AND DTFS_FLIGHTDEPTIMEPLAN<'2017-08-02 00:00:00'
+        AND DTFS_FLIGHTDEPTIMEPLAN>='2017-08-02 00:00:00'
+        AND DTFS_FLIGHTDEPTIMEPLAN<'2017-08-03 00:00:00'
     """
     city_dict = get_city_code_dict()
     company_dict = get_aircompany_dict()

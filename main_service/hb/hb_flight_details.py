@@ -291,7 +291,7 @@ def update_hb_city_rate(days=0):
         hb_company, fly_no, fly_depcode, fly_arrcode, \
         fly_depcity, fly_arrcity, plan_dep_time, dep_time, fly_state, fly_state_code = data
         try:
-            if int(fly_state_code) == 0 and plan_dep_time is not None and dep_time is not None:
+            if int(fly_state_code) == 0:
                 diff_min = diff_days(dep_time, plan_dep_time)
                 if diff_min >= 30:
                     # 延误
@@ -301,7 +301,7 @@ def update_hb_city_rate(days=0):
                     # 准点
                     insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(0)
                     insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(0)
-            else:
+            elif int(fly_state_code) == 1:
                 # 取消
                 insert_company_data[company_dict[fly_no[:2]] + ':' + fly_no[:2]].append(-1)
                 insert_city_data[city_dict[fly_depcode] + ':' + fly_depcode].append(0)
@@ -323,13 +323,17 @@ def update_hb_city_rate(days=0):
         cancel_num = fly_num[-1]
         insert_city_list.append([s_day, c_city, c_code, time_num, delay_num, cancel_num])
 
+    insert_com_list = sorted(insert_com_list, keys=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
+    insert_city_list = sorted(insert_city_list, keys=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
     DBCli().targetdb_cli.batchInsert(insert_company_sql, insert_com_list)
     DBCli().targetdb_cli.batchInsert(insert_city_sql, insert_city_list)
 
 
 def diff_days(one_date, two_date):
     dep_date, plan_date = DateUtil.str2date(one_date), DateUtil.str2date(two_date)
-    if dep_date >= plan_date:
+    if dep_date is None or plan_date is None:
+        return -1
+    elif dep_date >= plan_date:
         return (dep_date - plan_date).seconds/60
     else:
         return -1

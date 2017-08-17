@@ -248,7 +248,7 @@ def update_hb_city_rate(days=0):
         SELECT DTFS_FLIGHTCOMPANY,DTFS_FLIGHTNO,DTFS_FLIGHTDEPCODE,DTFS_FLIGHTARRCODE,
         DTFS_FLIGHTDEP,DTFS_FLIGHTARR,dtfs_flightdeptimeplan, DTFS_FLIGHTDEPTIME,DTFS_FLIGHTSTATE,
         (case when DTFS_FLIGHTSTATE='取消' then 1 else 0 end) state_code
-        from DAY_FLY_DTINFO_HIS
+        from DAY_FLY_DTINFO
         where DTFS_MARK = 0 AND DTFS_SHARE = 0 AND DTFS_STOP = '0'
         AND DTFS_FLIGHTDEPTIMEPLAN>=:start_date
         AND DTFS_FLIGHTDEPTIMEPLAN<:end_date
@@ -357,9 +357,8 @@ def get_city_code_dict():
     return dict(city_dict)
 
 if __name__ == "__main__":
-    i = 47
-    while i >= 2:
-        print i
+    i = 2
+    while i >= 1:
         update_hb_city_rate(i)
         i -= 1
     # print get_city_code_dict()

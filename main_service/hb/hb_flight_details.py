@@ -241,7 +241,7 @@ def update_hb_city_rate(days=0):
     """更新航班准点率 延误率 取消率, hbgj_flightdyn_company_daily hbgj_flightdyn_depcity_daily"""
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 2))
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     hb_sql = """
@@ -357,8 +357,9 @@ def get_city_code_dict():
     return dict(city_dict)
 
 if __name__ == "__main__":
-    i = 2
-    while i >= 1:
-        update_hb_city_rate(i)
-        i -= 1
+    update_hb_city_rate(1)
+    # i = 2
+    # while i >= 1:
+    #     update_hb_city_rate(i)
+    #     i -= 1
     # print get_city_code_dict()

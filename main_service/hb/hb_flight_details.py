@@ -323,8 +323,8 @@ def update_hb_city_rate(days=0):
         cancel_num = fly_num[-1]
         insert_city_list.append([s_day, c_city, c_code, time_num, delay_num, cancel_num])
 
-    insert_com_list = sorted(insert_com_list, keys=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
-    insert_city_list = sorted(insert_city_list, keys=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
+    insert_com_list = sorted(insert_com_list, key=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
+    insert_city_list = sorted(insert_city_list, key=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
     DBCli().targetdb_cli.batchInsert(insert_company_sql, insert_com_list)
     DBCli().targetdb_cli.batchInsert(insert_city_sql, insert_city_list)
 

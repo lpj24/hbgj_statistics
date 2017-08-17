@@ -242,7 +242,6 @@ def update_hb_city_rate(days=0):
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 2), '%Y-%m-%d')
-    # s_day = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     hb_sql = """
         SELECT to_char(to_date(DTFS_FLIGHTDEPTIMEPLAN, 'yyyy-mm-dd hh24:mi:ss'), 'yyyy-mm-dd') s_day,
@@ -291,10 +290,10 @@ def update_hb_city_rate(days=0):
         delete from hbgj_flightdyn_company_daily where s_day >= %s and s_day < %s
     """
     delete_dep_sql = """
-        delete from hbgj_flightdyn_company_daily where s_day >= %s and s_day < %s
+        delete from hbgj_flightdyn_depcity_daily where s_day >= %s and s_day < %s
     """
-    DBCli().targetdb_cli.batchInsert(delete_company_sql, [start_date, end_date])
-    DBCli().targetdb_cli.batchInsert(delete_dep_sql, [start_date, end_date])
+    DBCli().targetdb_cli.insert(delete_company_sql, [start_date, end_date])
+    DBCli().targetdb_cli.insert(delete_dep_sql, [start_date, end_date])
     for data in query_data:
         s_day, hb_company, fly_no, fly_depcode, fly_arrcode, \
         fly_depcity, fly_arrcity, plan_dep_time, dep_time, fly_state, fly_state_code = data
@@ -367,6 +366,7 @@ def get_city_code_dict():
 
 if __name__ == "__main__":
     update_hb_city_rate(1)
+    # DBCli().targetdb_cli.batchInsert(delete_dep_sql, [start_date, end_date])
     # i = 2
     # while i >= 1:
     #     update_hb_city_rate(i)

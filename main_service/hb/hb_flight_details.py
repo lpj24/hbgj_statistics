@@ -260,8 +260,8 @@ def update_hb_city_rate(days=0):
     insert_city_data = defaultdict(list)
     insert_com_list = []
     insert_company_sql = """
-        insert into hbgj_flightdyn_company_daily (s_day, company_name, company_code, time_num
-            delay_num, cancel_num, createtime, updatetime) values
+        insert into hbgj_flightdyn_company_daily
+        (s_day, company_name, company_code, time_num, delay_num, cancel_num, createtime, updatetime) values
             (%s, %s, %s, %s, %s, %s, now(), now())
             on duplicate key update updatetime = now() ,
             s_day = VALUES(s_day),
@@ -269,13 +269,13 @@ def update_hb_city_rate(days=0):
             company_code = VALUES(company_code),
             time_num = VALUES(time_num),
             delay_num = VALUES(delay_num),
-            cancel_num = VALUES(cancel_num),
+            cancel_num = VALUES(cancel_num)
     """
 
     insert_city_list = []
 
     insert_city_sql = """
-        insert into hbgj_flightdyn_depcity_daily (s_day, dep_name, dep_code, time_num
+        insert into hbgj_flightdyn_depcity_daily (s_day, dep_name, dep_code, time_num,
             delay_num, cancel_num, createtime, updatetime) values
             (%s, %s, %s, %s, %s, %s, now(), now())
             on duplicate key update updatetime = now() ,
@@ -284,7 +284,7 @@ def update_hb_city_rate(days=0):
             dep_code = VALUES(dep_code),
             time_num = VALUES(time_num),
             delay_num = VALUES(delay_num),
-            cancel_num = VALUES(cancel_num),
+            cancel_num = VALUES(cancel_num)
     """
     for data in query_data:
         hb_company, fly_no, fly_depcode, fly_arrcode, \

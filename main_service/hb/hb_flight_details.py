@@ -330,10 +330,11 @@ def update_hb_city_rate(days=0):
 
 
 def diff_days(one_date=None, two_date=None):
-    dep_date, plan_date = DateUtil.str2date(one_date), DateUtil.str2date(two_date)
-    if dep_date is None or plan_date is None:
+    if one_date is None or two_date is None:
         return -1
-    elif dep_date >= plan_date:
+    dep_date, plan_date = DateUtil.str2date(one_date), DateUtil.str2date(two_date)
+
+    if dep_date >= plan_date:
         return (dep_date - plan_date).seconds/60
     else:
         return -1

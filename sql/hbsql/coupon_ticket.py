@@ -4,7 +4,7 @@ hbgj_use_coupon_sql = """
         sum(case when TRADE_TYPE=1 THEN price ELSE 0 END) use_coupon_amount_in,
         sum(case when TRADE_TYPE=4 THEN 1 ELSE 0 END) use_coupon_count_return,
         sum(case when TRADE_TYPE=4 THEN price ELSE 0 END) use_coupon_amount_return
-        from TRADE_RECORD
+        from skyhotel.TRADE_RECORD
         where productid=0
         and PAYSOURCE LIKE '%%coupon%%'
         and createtime>=%s
@@ -16,8 +16,8 @@ hbgj_issue_coupon_sql = """
         sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
         sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
         sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
-        from coupon C
-        left join coupon_list CL on C.coupon_id = CL.id
+        from account.coupon C
+        left join account.coupon_list CL on C.coupon_id = CL.id
         where C.bindtype=1
         and C.createtime>=%s
         and C.createtime<%s
@@ -78,7 +78,7 @@ huoli_car_use_coupon_sql = """
     sum(case when TRADE_TYPE=1 THEN price ELSE 0 END) use_coupon_amount_in,
     sum(case when TRADE_TYPE=4 THEN 1 ELSE 0 END) use_coupon_count_return,
     sum(case when TRADE_TYPE=4 THEN price ELSE 0 END) use_coupon_amount_return
-    from TRADE_RECORD
+    from skyhotel.TRADE_RECORD
     where productid=7
     and PAYSOURCE LIKE '%%coupon%%'
     and createtime>=%s
@@ -90,8 +90,8 @@ huoli_car_issue_coupon_sql = """
     sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
     sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
     sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
-    from coupon C
-    left join coupon_list CL on C.coupon_id = CL.id
+    from account.coupon C
+    left join account.coupon_list CL on C.coupon_id = CL.id
     where C.bindtype=3
     and C.createtime>=%s
     and C.createtime<%s
@@ -119,7 +119,7 @@ huoli_hotel_use_coupon_sql = """
     sum(case when TRADE_TYPE=1 THEN price ELSE 0 END) use_coupon_amount_in,
     sum(case when TRADE_TYPE=4 THEN 1 ELSE 0 END) use_coupon_count_return,
     sum(case when TRADE_TYPE=4 THEN price ELSE 0 END) use_coupon_amount_return
-    from TRADE_RECORD
+    from skyhotel.TRADE_RECORD
     where productid=36
     and PAYSOURCE LIKE '%%coupon%%'
     and createtime>=%s
@@ -131,8 +131,8 @@ huoli_hotel_issue_coupon_sql = """
     sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
     sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
     sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
-    from coupon C
-    left join coupon_list CL on C.coupon_id = CL.id
+    from account.coupon C
+    left join account.coupon_list CL on C.coupon_id = CL.id
     where C.bindtype=9
     and C.createtime>=%s
     and C.createtime<%s
@@ -157,8 +157,8 @@ common_coupon_sql = """
     sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
     sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
     sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
-    from coupon C
-    left join coupon_list CL on C.coupon_id = CL.id
+    from account.coupon C
+    left join account.coupon_list CL on C.coupon_id = CL.id
     where C.bindtype=0
     and C.createtime>=%s
     and C.createtime<%s
@@ -244,8 +244,8 @@ coupon_issue_detail_sql = """
     sum(case when CL.amount>1 then 1 else 0 end) issue_coupon_count,
     sum(case when CL.amount>1 then C.amount else 0 end) issue_coupon_amount,
     sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
-    from coupon C
-    left join coupon_list CL on C.coupon_id = CL.id
+    from account.coupon C
+    left join account.coupon_list CL on C.coupon_id = CL.id
     where C.createtime>=%s
     and C.createtime<%s
     group by s_day, bindtype,coupon_id

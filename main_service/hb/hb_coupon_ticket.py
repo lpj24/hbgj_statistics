@@ -395,4 +395,4 @@ def update_coupon_list(days=1):
 if __name__ == "__main__":
     # update_common_coupon_daily(1)
     # update_huoli_hotel_coupon_daily(1)
-    update_coupon_list(1)
+    update_huoli_hotel_coupon_daily(1)

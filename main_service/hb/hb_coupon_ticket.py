@@ -33,7 +33,6 @@ def update_huoli_car_coupon_daily(days=0):
     """专车优惠券发放与使用数量, coupon_huoli_car"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
-
     dto = [start_date, end_date]
     use_coupon_data = DBCli().sourcedb_cli.queryOne(coupon_sql["huoli_car_use_coupon_sql"], dto)
     issue_coupon_data = DBCli().hb_source_account_cli.queryOne(coupon_sql["huoli_car_issue_coupon_sql"], dto)
@@ -395,4 +394,7 @@ def update_coupon_list(days=1):
 if __name__ == "__main__":
     # update_common_coupon_daily(1)
     # update_huoli_hotel_coupon_daily(1)
-    update_huoli_hotel_coupon_daily(1)
+    # update_huoli_car_coupon_daily(1)
+    # update_hbgj_coupon_tickt(4)
+    # update_huoli_hotel_coupon_daily(4)
+    update_coupon_use_detail_daily(4)

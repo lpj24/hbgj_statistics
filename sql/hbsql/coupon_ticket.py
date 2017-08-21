@@ -92,7 +92,7 @@ huoli_car_issue_coupon_sql = """
     sum(case when CL.amount=1.0 then 1 else 0 end) issue_discount_coupon_count
     from account.coupon C
     left join account.coupon_list CL on C.coupon_id = CL.id
-    where C.bindtype=3
+    where C.bindtype=7
     and C.createtime>=%s
     and C.createtime<%s
     group by s_day

@@ -17,6 +17,7 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(hb_pay_type.hb_pay_type)
     TimeService.add_localytics_service(hb_ticket_book.update_ios_android_newuser_daily)
     TimeService.add_localytics_service(hb_stages.update_hbgj_stages_daily)
+    TimeService.add_localytics_service(hb_stages.update_weex_activated_type_daily)
 
     for fun in TimeService.get_localytics_service():
         try:
@@ -30,7 +31,7 @@ if __name__ == "__main__":
                 utils.storage_execute_job(fun_path, fun_name, fun_doc)
                 DBCli().redis_cli.sadd("execute_day_job", fun_name)
 
-            time.sleep(1 * 60 * 61)
+            time.sleep(1 * 60 * 20)
         except (Exception, AssertionError) as e:
             TimeService.add_localytics_service(fun)
             logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))

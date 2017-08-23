@@ -46,15 +46,23 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
     os.remove("tmp_py.py")
 
 
-def storage_execute_job(f_path, f_name, f_doc):
-    renewable = 1 if f_path else 0
-    job_type = 5 if f_name == "hbgj_user" else 1
-    f_des, f_table = f_doc.split(",")
-    insert_sql = """
-        insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
-        values (%s, %s, %s, %s, %s, %s, now(), now())
-    """
-    DBCli().targetdb_cli.insert(insert_sql, [f_name, f_path, f_des.strip(), f_table.strip(), job_type, renewable])
+def storage_execute_job(fun, fun_path):
+    fun_name = fun.__name__
+    fun_doc = fun.__doc__
+    check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
+    if not check_fun:
+        if fun_path and fun_path.endswith("pyc"):
+            fun_path = fun_path[0: -1]
+        renewable = 1 if fun_path else 0
+        job_type = 5 if fun_name == "hbgj_user" else 1
+        f_des, f_table = fun_doc.split(",")
+        insert_sql = """
+            insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
+            values (%s, %s, %s, %s, %s, %s, now(), now())
+        """
+        DBCli().targetdb_cli.insert(insert_sql,
+                                    [fun_name, fun_path, f_des.strip(), f_table.strip(), job_type, renewable])
+        DBCli().redis_cli.sadd("execute_day_job", fun_name)
 
 
 class ThreadExecuteJob(threading.Thread):
@@ -72,14 +80,7 @@ class ThreadExecuteJob(threading.Thread):
             fun = self.queue.get()
             try:
                 fun_path = fun(int(self.days))
-                fun_name = fun.__name__
-                fun_doc = fun.__doc__
-                check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
-                if not check_fun:
-                    if fun_path and fun_path.endswith("pyc"):
-                        fun_path = fun_path[0: -1]
-                    storage_execute_job(fun_path, fun_name, fun_doc)
-                    DBCli().redis_cli.sadd("execute_day_job", fun_name)
+                storage_execute_job(fun, fun_path)
                 self.queue.task_done()
             except Exception as e:
                 logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))

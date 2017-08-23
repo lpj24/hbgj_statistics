@@ -85,14 +85,7 @@ if __name__ == "__main__":
     for fun in later_service.get_later_service():
         try:
             fun_path = fun(1)
-            fun_name = fun.__name__
-            fun_doc = fun.__doc__
-            check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
-            if not check_fun:
-                if fun_path.endswith("pyc"):
-                    fun_path = fun_path[0: -1]
-                utils.storage_execute_job(fun_path, fun_name, fun_doc)
-                DBCli().redis_cli.sadd("execute_day_job", fun_name)
+            utils.storage_execute_job(fun, fun_path)
 
         except Exception as e:
             logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))

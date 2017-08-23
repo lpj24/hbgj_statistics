@@ -70,10 +70,26 @@ def add_execute_job():
 if __name__ == "__main__":
     days = sys.argv[1]
     service = add_execute_job()
-    hard_tmp_q = Queue.Queue()
-    for job in service.get_hard_service():
-        hard_tmp_q.put(job)
+    # hard_tmp_q = Queue.Queue()
+    # for job in service.get_hard_service():
+    #     hard_tmp_q.put(job)
+    #
+    # execute_job_thread_pool(hard_tmp_q, days)
+    # hard_tmp_q.join()
+    # print "hard job finished"
+    import time
+    import logging
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    start = time.time()
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
-    execute_job_thread_pool(hard_tmp_q, days)
-    hard_tmp_q.join()
-    print "hard job finished"
+    with ThreadPoolExecutor(max_workers=7) as executor:
+        future_list = {executor.submit(job, days): job for job in service.get_day_service()}
+
+        for future in as_completed(future_list):
+            job_name = future_list[future]
+            exception = future.exception()
+            if exception:
+                logging.warning(str(job_name) + ":" + str(future.exception()))
+
+    print "Cost hard job time:" + str(time.time() - start)

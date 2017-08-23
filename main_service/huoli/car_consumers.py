@@ -6,7 +6,6 @@ from dbClient.dateutil import DateUtil
 
 def update_car_consumers_daily(days=0):
     """更新专车消费(日), huoli_car_consumers_daily"""
-
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), DateUtil.date2str(tomorrow)] * 3

@@ -191,7 +191,6 @@ def is_contains(val):
     return DBCli().redis_dt_cli.getbit("bit_focus_his_uid", bit_location)
 
 
-@profile
 def test1():
     f = open("C:\\Users\\Administrator\\Documents\\access.log_20160905", 'r')
     for i in f:
@@ -199,7 +198,6 @@ def test1():
     f.close()
 
 
-@profile
 def test2():
     f = open("C:\\Users\\Administrator\\Documents\\access.log_20160905", 'r')
     for i in f.xreadlines():
@@ -207,20 +205,49 @@ def test2():
     f.close()
 
 if __name__ == "__main__":
-    # 计算redis原始比较的
-    import time
-    # start = time.time()
-    # # collect_his_phone_uid()
-    # # update_focus_newuser(2)
-    # print time.time() - start
-    # #
-    # # print "========================="
-    # start = time.time()
-    # # collect_his_phone_uid_bit()
-    # covent_bit_file(1)
-    # update_focus_newuser_bit_2(1)
-    # print time.time() - start
-    # print hash_fun("35400638_3869643")
-    test1()
-    test2()
+    import tornado.httpserver
+    import tornado.ioloop
+    import tornado.options
+    import tornado.web
+    import tornado.httpclient
+    from tornado import gen
+    from sql.huoli_sqlHandlers import car_consumers_sql
+    from tornado.options import define, options
+    from tornado.concurrent import run_on_executor
+    from concurrent.futures import ThreadPoolExecutor
+
+    define("port", default=8000, help="run on the given port", type=int)
+
+
+    class SleepHandler(tornado.web.RequestHandler):
+        executor = ThreadPoolExecutor(1)
+
+        @run_on_executor
+        def testApp(self):
+            today = DateUtil.get_date_before_days(int(1))
+            dto = []
+            for i in xrange(3):
+                dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
+                dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
+                dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
+            result = DBCli().car_cli.queryOne(car_consumers_sql['car_newconsumers_daily'], dto)
+            return result
+
+        @tornado.gen.coroutine
+        def get(self):
+            a = yield self.testApp()
+            self.write('haha')
+
+    class JustNowHandler(tornado.web.RequestHandler):
+        def get(self):
+            self.write("i hope just now see you")
+
+
+    if __name__ == "__main__":
+        tornado.options.parse_command_line()
+        app = tornado.web.Application(handlers=[
+            (r"/sleep", SleepHandler), (r"/justnow", JustNowHandler)])
+        http_server = tornado.httpserver.HTTPServer(app)
+        http_server.listen(options.port)
+        tornado.ioloop.IOLoop.instance().start()
 

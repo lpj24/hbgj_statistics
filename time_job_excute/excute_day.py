@@ -25,7 +25,6 @@ def add_execute_job():
 
     TimeService.add_day_service(hotel_newconsumers.update_hotel_newconsumers_daily)
     TimeService.add_day_service(hotel_order.update_hotel_orders_daily)
-
     TimeService.add_day_service(hotel_consumers.update_hotel_consumers_daily)
     TimeService.add_day_service(hbgj_users.hbgj_user)
 
@@ -61,7 +60,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_order.update_hb_gt_order_new_daily)
     TimeService.add_day_service(gt_register_user.update_gtgj_register_user_daily)
     TimeService.add_day_service(gt_register_user.update_hbgj_register_user_daily)
-    # TimeService.add_day_service(hb_insure.update_insure_type_daily)
+    TimeService.add_day_service(hb_insure.update_insure_type_daily)
     return TimeService
 
 
@@ -73,5 +72,5 @@ if __name__ == "__main__":
         day_q.put(job)
 
     execute_job_thread_pool(day_q, days)
-    day_q.join()
+    day_q.join()  # 等待队里为空之后再执行以下操作
     print "job finish"

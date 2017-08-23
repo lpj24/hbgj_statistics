@@ -2,7 +2,7 @@
 from dbClient.dateutil import DateUtil
 from dbClient.db_client import DBCli
 from collections import defaultdict
-from core import *
+from .core import *
 
 
 def update_hbgj_stages_daily(days=0):

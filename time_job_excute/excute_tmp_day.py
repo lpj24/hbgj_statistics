@@ -1,4 +1,4 @@
-import sys
+# coding: utf-8
 from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
 from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount, \

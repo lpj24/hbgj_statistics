@@ -6,8 +6,8 @@ from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amo
 from main_service.huoli import hotel_activeusers
 from main_service.gt import gt_income_cost
 from main_service.tmp_task.hb_search_focus import hb_search_focus
-import Queue
-from dbClient.utils import execute_job_thread_pool
+# import Queue
+# from dbClient.utils import execute_job_thread_pool
 
 
 def add_execute_job():

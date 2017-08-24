@@ -17,8 +17,9 @@ class DButils(object):
         elif dbtype.lower() == "oracle":
             self._pool = PooledDB(cx_Oracle, user=conf["user"], password=conf["password"],
                                   dsn=cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"]),
-                                  mincached=0, maxcached=50, maxshared=10, maxusage=0)
-        self._cursor = self._pool.connection().cursor()
+                                  mincached=1, maxcached=50, maxshared=10, maxusage=0)
+        self._conn = self._pool.connection()
+        self._cursor = self._conn.cursor()
 
     @staticmethod
     def log_str(sql, params):

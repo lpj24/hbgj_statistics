@@ -6,18 +6,18 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
-def getMailServer():
+def get_mail_server():
     web.config.smtp_server = conf.mail["mail_server"]
     web.config.smtp_port = conf.mail["port"]
     web.config.smtp_username = conf.mail["username"]
     web.config.smtp_password = conf.mail["password"]
     web.config.smtp_starttls = True
-    mailSer = web
-    return mailSer
+    mail_server = web
+    return mail_server
 
 
 def sendMail(mail, msgText, subject):
-    mailSer = getMailServer()
+    mailSer = get_mail_server()
     send_address = "<"+mailSer.config.smtp_username+">"
     mailSer.sendmail(send_address, mail, subject, msgText,
                      headers=({'Content-Type': 'text/html;charset=utf-8', 'User-Agent': 'webpy.sendmail',

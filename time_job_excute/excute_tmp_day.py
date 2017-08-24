@@ -6,6 +6,7 @@ from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amo
 from main_service.huoli import hotel_activeusers
 from main_service.gt import gt_income_cost
 from main_service.tmp_task.hb_search_focus import hb_search_focus
+import sys
 # import Queue
 # from dbClient.utils import execute_job_thread_pool
 from dbClient.utils import storage_execute_job
@@ -69,8 +70,10 @@ def add_execute_job():
     return TimeService
 
 if __name__ == "__main__":
-    days = 1
+    days = sys.argv[1]
     service = add_execute_job()
+    # import Queue
+    # from dbClient.utils import execute_job_thread_pool
     # hard_tmp_q = Queue.Queue()
     # for job in service.get_hard_service():
     #     hard_tmp_q.put(job)
@@ -88,12 +91,12 @@ if __name__ == "__main__":
         future_list = {executor.submit(job, days): job for job in service.get_hard_service()}
 
         for future in as_completed(future_list):
-            job_name = future_list[future]
+            job = future_list[future]
             exception = future.exception()
             if exception:
-                logging.warning(str(job_name) + ":" + str(future.exception()))
+                logging.warning(str(job) + ":" + str(future.exception()))
             else:
                 fun_path = future.result()
-                storage_execute_job(job_name, fun_path)
+                storage_execute_job(job, fun_path)
 
-    print "Cost hard job time:" + str(time.time() - start)
+    logging.warning("Cost hard job time:" + str(time.time() - start))

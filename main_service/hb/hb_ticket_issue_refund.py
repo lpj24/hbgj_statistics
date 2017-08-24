@@ -10,17 +10,17 @@ def update_hbgj_income_issue_refund_daily(days=0):
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     hb_gt_sql = """
         SELECT DATE_FORMAT(i.INCOMEDATE, '%%Y-%%m-%%d') s_day,
-        count(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) hbgj_issue_ticket_num,
+        count(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then 1 end) hbgj_issue_ticket_num,
         sum(case when p like '%%hbgj%%' and i.INCOMEITEM=0 then i.income end) hbgj_issue_income,
-        count(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) gtgj_issue_ticket_num,
+        count(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then 1 end) gtgj_issue_ticket_num,
         sum(case when p like '%%gtgj%%' and i.INCOMEITEM=0 then i.income end) gtgj_issue_income,
-        count(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) hbgj_refund_ticket_num,
+        count(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then 1 end) hbgj_refund_ticket_num,
         sum(case when p like '%%hbgj%%' and i.INCOMEITEM=1 then i.income end) hbgj_refund_income,
-        count(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) gtgj_refund_ticket_num,
+        count(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then 1 end) gtgj_refund_ticket_num,
         sum(case when p like '%%gtgj%%' and i.INCOMEITEM=1 then i.income end) gtgj_refund_income,
-        count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then i.TICKETNO end) else_issue_ticket_num,
+        count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then 1 end) else_issue_ticket_num,
         sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=0 then i.income end) else_issue_income,
-        count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.TICKETNO end) else_refund_ticket_num,
+        count(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then 1 end) else_refund_ticket_num,
         sum(case when p not like '%%hbgj%%' and p not like '%%gtgj%%' and i.INCOMEITEM=1 then i.income else 0 end) else_refund_income
         FROM `TICKET_ORDER_INCOME` i
         join `TICKET_ORDER` o on i.orderid=o.orderid
@@ -376,11 +376,11 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    # update_hbgj_income_issue_refund_daily(1)
+    update_hbgj_income_issue_refund_daily(1)
     i = 1
-    while i <= 5:
-        update_hbgj_cost_type_daily(i)
-        i += 1
+    # while i <= 5:
+    #     update_hbgj_cost_type_daily(i)
+    #     i += 1
     # i = 1
     # while i <= 6:
     #     update_hbgj_cost_type_daily(i)

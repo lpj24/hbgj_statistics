@@ -129,6 +129,7 @@ def update_hbgj_consumers_inter_daily(days=0):
     """
     query_data = DBCli().sourcedb_cli.queryAll(inter_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    return __file__
 
 
 def update_hbgj_newconsumers_inter_daily_nation(days=0):

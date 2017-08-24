@@ -49,6 +49,8 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
 def storage_execute_job(fun, fun_path):
     fun_name = fun.__name__
     fun_doc = fun.__doc__
+    if fun_doc is None:
+        return
     check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
     if not check_fun:
         if fun_path and fun_path.endswith("pyc"):

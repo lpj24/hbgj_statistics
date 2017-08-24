@@ -2,7 +2,7 @@
 from dbClient.conf import localytics
 import requests
 import json
-
+__all__ = ['request_pv', 'request_uv']
 
 _api_key = localytics['api_key']
 _api_secret = localytics['api_secret']

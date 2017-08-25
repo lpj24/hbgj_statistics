@@ -96,7 +96,7 @@ def update_dt_detail_uid(days=0):
     dto = [start_date, end_date, tablename]
     uids = DBCli().Apilog_cli.queryAll(sql, dto)
     for uid in uids:
-        DBCli().redis_dt_cli.sadd(start_date + "_hbdt_detail", int(uid[0]))
+        DBCli().redis_dt_cli.sadd(start_date + "_hbdt_detail", uid[0])
 
 
 def update_flight_detail_user_weekly():

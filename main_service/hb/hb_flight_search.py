@@ -239,21 +239,4 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
         start_date = DateUtil.add_days(start_date, -1)
 
 if __name__ == "__main__":
-    # for x in xrange(6, 0, -1):
-    # start_date = datetime.date(2016, 1, 31)
-    # i = 6
-    # while i >= 1:
-    #     update_dt_search_uid(i)
-    #     i -= 1
-    # update_flight_search_user_daily(3)
-    update_flight_search_user_daily(1)
-    # i = 25
-    # while i >= 19:
-    #     update_flight_search_user_daily(i)
-    #     i -= 1
-    # s = dict()
-    # s.update()
-    # update_check_pv_his(start_date)
-    # update_flight_search_user_weekly()
-    # update_flight_search_user_monthly()
-    # update_dt_search_uid(2)
+    update_dt_search_uid(1)

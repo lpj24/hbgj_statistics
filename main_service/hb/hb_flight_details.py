@@ -366,10 +366,4 @@ def get_city_code_dict():
     return dict(city_dict)
 
 if __name__ == "__main__":
-    update_hb_city_rate(1)
-    # DBCli().targetdb_cli.batchInsert(delete_dep_sql, [start_date, end_date])
-    # i = 2
-    # while i >= 1:
-    #     update_hb_city_rate(i)
-    #     i -= 1
-    # print get_city_code_dict()
+    update_dt_detail_uid(1)

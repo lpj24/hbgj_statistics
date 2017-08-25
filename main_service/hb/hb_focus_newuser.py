@@ -176,6 +176,6 @@ def collect_inland_inter_flyid_daily(days=0):
 
 
 if __name__ == "__main__":
-    collect_his_phone_uid(2)
+    update_focus_newuser(1)
 
 

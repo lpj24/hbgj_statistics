@@ -62,9 +62,13 @@ def storage_execute_job(fun, fun_path):
             insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
             values (%s, %s, %s, %s, %s, %s, now(), now())
         """
-        DBCli().targetdb_cli.insert(insert_sql,
+        try:
+            DBCli().targetdb_cli.insert(insert_sql,
                                     [fun_name, fun_path, f_des.strip(), f_table.strip(), job_type, renewable])
-        DBCli().redis_cli.sadd("execute_day_job", fun_name)
+        except Exception:
+            return
+        else:
+            DBCli().redis_cli.sadd("execute_day_job", fun_name)
 
 
 class ThreadExecuteJob(threading.Thread):

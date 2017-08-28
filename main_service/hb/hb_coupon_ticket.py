@@ -67,7 +67,7 @@ def update_common_coupon_daily(days=0):
 
 
 def update_hb_coupon_use_detail_daily(days=0):
-    """航班优惠券使用详情, coupon_hbgj_ticket_use_detail"""
+    """航班优惠券使用详情, coupon_hbgj_ticket_use_detail coupon_hbgj_ticket_use_detail_client"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 

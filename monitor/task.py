@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
-from monitor_sql import sql, week_sql
+from monitor_sql import week_sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
 from main_service.hb import hb_profit_cost, hb_insure
@@ -19,14 +19,18 @@ def check_day_data():
         insert into error_update_table_daily (s_day, job_table)
         values(%s, %s)
     """
-    for execute_sql in sql:
-        dto = [query_date]
-        data = DBCli().targetdb_cli.queryOne(execute_sql, dto)
+    day_sql = DBCli().targetdb_cli.queryAll('select job_table from bi_execute_job where job_type !=5')
+    for execute_sql in day_sql:
+        format_sql = 'select count(1) from {} where s_day=%s'.format(execute_sql[0])
+        try:
+            data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
+        except Exception:
+            continue
 
         if data[0] < 1:
             # error
-            insert_msg.append([query_date, execute_sql.split(" ")[3]])
-            msg += execute_sql.split(" ")[3] + "<br/>"
+            insert_msg.append([query_date, execute_sql[0]])
+            msg += execute_sql[0] + "<br/>"
         else:
             pass
     if len(msg) > 0:
@@ -81,18 +85,18 @@ def check_execute_job():
         print week_job
 
 if __name__ == "__main__":
-    later_service = execute_later_job()
-    for fun in later_service.get_later_service():
-        try:
-            fun_path = fun(1)
-            utils.storage_execute_job(fun, fun_path)
-
-        except Exception as e:
-            logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
-            continue
+    # later_service = execute_later_job()
+    # for fun in later_service.get_later_service():
+    #     try:
+    #         fun_path = fun(1)
+    #         utils.storage_execute_job(fun, fun_path)
+    #
+    #     except Exception as e:
+    #         logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+    #         continue
 
     check_day_data()
-    exception_table = cal_balance()
-
-    if bool(exception_table):
-        utils.sendMail("lipenju24@163.com", exception_table, "与前一天的数据有差异")
+    # exception_table = cal_balance()
+    #
+    # if bool(exception_table):
+    #     utils.sendMail("lipenju24@163.com", exception_table, "与前一天的数据有差异")

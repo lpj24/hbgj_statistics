@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from monitor_sql import day_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 import operator
@@ -7,9 +6,9 @@ import operator
 
 def get_all_monitor_table_name():
     all_monitor_table = []
+    day_sql = DBCli().targetdb_cli.queryAll('select job_table from bi_execute_job where job_type !=5')
     for sql_str in day_sql:
-        monitor_table = sql_str.split(" ")[3]
-        all_monitor_table.append(monitor_table)
+        all_monitor_table.append(sql_str[0])
 
     return all_monitor_table
 

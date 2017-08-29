@@ -60,7 +60,6 @@ def add_execute_job():
     TimeService.add_day_service(hb_order.update_hb_gt_order_new_daily)
     TimeService.add_day_service(gt_register_user.update_gtgj_register_user_daily)
     TimeService.add_day_service(gt_register_user.update_hbgj_register_user_daily)
-    TimeService.add_day_service(hb_insure.update_insure_type_daily)
     return TimeService
 
 

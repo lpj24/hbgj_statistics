@@ -35,3 +35,7 @@ class LocalyticsRequest(object):
 
 request_pv = partial(LocalyticsRequest.do_http, metrics='sessions_per_event')
 request_uv = partial(LocalyticsRequest.do_http, metrics='users')
+
+
+if __name__ == '__main__':
+    print request_pv('2017-08-28', '2017-08-29', 'ios.weex.installment.pay.start', 'day')

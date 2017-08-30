@@ -53,16 +53,19 @@ def update_hbgj_stages_daily(days=0):
         for e in event_list:
             pv_data = request_pv(query_date, query_date, p + e, 'day')
             uv_data = request_uv(query_date, query_date, p + e, 'day')
-
-            if len(pv_data) > 1:
+            print p+e
+            print pv_data
+            print uv_data
+            if len(pv_data) >= 1:
                 insert_result[query_date].append(pv_data[0]['sessions_per_event'])
             else:
                 insert_result[query_date].append(0)
 
-            if len(uv_data) > 1:
+            if len(uv_data) >= 1:
                 insert_result[query_date].append(uv_data[0]['users'])
             else:
                 insert_result[query_date].append(0)
+    print insert_result
     for k, v in insert_result.items():
         v.insert(0, k)
         insert_data.append(v)
@@ -110,14 +113,14 @@ def update_weex_activated_type_daily(days=0):
         for e in event_list:
             pv_data = request_pv(query_date, query_date, p + e, 'day, a:type')
             uv_data = request_uv(query_date, query_date, p + e, 'day, a:type')
-            if len(pv_data) > 1:
+            if len(pv_data) >= 1:
                 insert_result[query_date].append(pv_data[0]['sessions_per_event'])
                 insert_result[query_date].append(pv_data[1]['sessions_per_event'])
             else:
                 insert_result[query_date].append(0)
                 insert_result[query_date].append(0)
 
-            if len(uv_data) > 1:
+            if len(uv_data) >= 1:
                 insert_result[query_date].append(uv_data[0]['users'])
                 insert_result[query_date].append(uv_data[1]['users'])
             else:
@@ -132,7 +135,5 @@ def update_weex_activated_type_daily(days=0):
 
 if __name__ == "__main__":
     # update_hbgj_stages_daily(1)
-    i = 27
-    while i >= 1:
-        update_weex_activated_type_daily(i)
-        i -= 1
+    # update_hbgj_stages_daily(1)
+    update_weex_activated_type_daily(1)

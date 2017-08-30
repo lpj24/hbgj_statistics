@@ -5,11 +5,16 @@ import operator
 
 
 def get_all_monitor_table_name():
-    all_monitor_table = []
-    day_sql = DBCli().targetdb_cli.queryAll('select job_table from bi_execute_job where job_type !=5')
-    for sql_str in day_sql:
-        all_monitor_table.append(sql_str[0])
 
+    sql = """
+        select GROUP_CONCAT(A.jobTable) from (select
+        case when
+        LOCATE(' ', job_table) > 0 then CONCAT_ws(',', SUBSTRING_INDEX(job_table, ' ', 1),SUBSTRING_INDEX(job_table, ' ', -1)) ELSE
+        job_table end as jobTable
+        from bi_execute_job where job_type !=5) A;
+    """
+    day_sql = DBCli().targetdb_cli.queryOne(sql)
+    all_monitor_table = day_sql[0].split(',')
     return all_monitor_table
 
 
@@ -45,8 +50,10 @@ def cal_balance():
     exception_table = []
 
     for tab_name in all_table:
-
-        require_query_column = get_table_column_info(tab_name)
+        try:
+            require_query_column = get_table_column_info(tab_name)
+        except Exception:
+            continue
         for require_query_dto in require_query_column:
             s_day_sql = "select {} from {} where s_day=%s union select {} from {} where s_day=%s"
             column, table_name, last_day, column_name, table_name, next_day = require_query_dto

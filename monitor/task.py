@@ -19,9 +19,18 @@ def check_day_data():
         insert into error_update_table_daily (s_day, job_table)
         values(%s, %s)
     """
-    day_sql = DBCli().targetdb_cli.queryAll('select job_table from bi_execute_job where job_type !=5')
-    for execute_sql in day_sql:
-        format_sql = 'select count(1) from {} where s_day=%s'.format(execute_sql[0])
+    query_table_sql = """
+        select GROUP_CONCAT(A.jobTable) from (select
+        case when
+            LOCATE(' ', job_table) > 0 then CONCAT_ws(',', SUBSTRING_INDEX(job_table, ' ', 1),SUBSTRING_INDEX(job_table, ' ', -1)) ELSE
+            job_table end as jobTable
+        from bi_execute_job where job_type !=5) A;
+    """
+    day_sql = DBCli().targetdb_cli.queryOne(query_table_sql)
+    day_table = day_sql[0].split(',')
+    for execute_sql in day_table:
+
+        format_sql = 'select count(1) from {} where s_day=%s'.format(execute_sql)
         try:
             data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
         except Exception:

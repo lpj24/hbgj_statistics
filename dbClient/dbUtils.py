@@ -1,8 +1,8 @@
 import pymysql as MySQLdb
 from DBUtils.PooledDB import PooledDB
 from logging.config import dictConfig
-from job_log import LOGGING
 import logging
+from conf import LOGGING
 import time
 import cx_Oracle
 import re

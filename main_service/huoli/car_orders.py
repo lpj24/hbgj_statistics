@@ -22,8 +22,8 @@ def update_car_orders_daily(days=0):
 
 if __name__ == "__main__":
     # for i in xrange(4, 0, -1):
+    update_car_orders_daily(1)
+    # i = 15
+    # while i >= 1:
     #     update_car_orders_daily(i)
-    i = 15
-    while i >= 1:
-        update_car_orders_daily(i)
-        i -= 1
+    #     i -= 1

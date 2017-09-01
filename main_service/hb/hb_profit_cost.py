@@ -9,7 +9,8 @@ sys.setdefaultencoding('utf8')
 
 
 def update_hb_car_hotel_profit(days=0):
-    """更新航班专车酒店成本, profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
+    """更新航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
+    profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -77,7 +78,11 @@ def update_hb_car_hotel_profit(days=0):
 
     query_dft_cost_sql = """
         SELECT
-        sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
+        case when
+            DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') >= '2017-09-01'
+                then sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018
+            else sum(od.REALPRICE +  od.AIRPORTFEE)*0.005
+        end as dft_amount,
         DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
@@ -95,7 +100,6 @@ def update_hb_car_hotel_profit(days=0):
         update profit_hb_cost set dft_cost=%s where s_day=%s
     """
     dft_result = DBCli().sourcedb_cli.queryAll(query_dft_cost_sql, dto)
-
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         else_coupon_in, else_coupon_return, delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
@@ -414,7 +418,11 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     hlth_cost_sql = """
         SELECT
-        sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018 as dft_amount,
+        case when
+            DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') >= '2017-09-01'
+                then sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018
+            else sum(od.REALPRICE +  od.AIRPORTFEE)*0.005
+        end as dft_amount,
         DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
@@ -547,7 +555,7 @@ def update_profit_hb_income_official_website(days=0):
     return __file__
 
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    # update_hb_car_hotel_profit(1)
     # update_profit_hb_income(1)
     # update_profit_hb_income_official_website(1)
     # i = 1
@@ -566,3 +574,4 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_operation_hbgj_channel_ticket_profit_daily(i)
     #     i -= 1
+    update_hb_car_hotel_profit(1)

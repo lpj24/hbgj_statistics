@@ -10,7 +10,7 @@ sys.setdefaultencoding('utf8')
 
 def update_hb_car_hotel_profit(days=0):
     """更新航班专车酒店成本, profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 7)
+    query_date = DateUtil.get_date_before_days(days * 1)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -77,7 +77,7 @@ def update_hb_car_hotel_profit(days=0):
 
     query_dft_cost_sql = """
         SELECT
-        sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
+        sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018 as dft_amount,
         DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
@@ -414,7 +414,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     hlth_cost_sql = """
         SELECT
-        sum(od.REALPRICE +  od.AIRPORTFEE)*0.005 as dft_amount,
+        sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018 as dft_amount,
         DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID

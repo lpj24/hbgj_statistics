@@ -53,9 +53,6 @@ def update_hbgj_stages_daily(days=0):
         for e in event_list:
             pv_data = request_pv(query_date, query_date, p + e, 'day')
             uv_data = request_uv(query_date, query_date, p + e, 'day')
-            print p+e
-            print pv_data
-            print uv_data
             if len(pv_data) >= 1:
                 insert_result[query_date].append(pv_data[0]['sessions_per_event'])
             else:

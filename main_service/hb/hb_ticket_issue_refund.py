@@ -212,7 +212,7 @@ def update_profit_hb_self_transfer_daily(days=0):
     transfer_income_sql = """
         SELECT
         sum(case when i.INCOMEITEM=0 and od.LINKTYPE is NULL then i.INCOME else 0 end) one_issue_income1,
-        sum(case when i.INCOMEITEM=0 and od.LINKTYPE is NULL then od.REALPRICE +  od.AIRPORTFEE else 0 end) * 0.005 one_issue_income2,
+        sum(case when i.INCOMEITEM=0 and od.LINKTYPE is NULL then od.REALPRICE +  od.AIRPORTFEE else 0 end) * 0.0018 one_issue_income2,
         sum(case when i.INCOMEITEM=1 and od.LINKTYPE is NULL then i.INCOME else 0 end) one_refund_income,
         sum(case when i.INCOMEITEM=0 and od.LINKTYPE=1 then i.INCOME else 0 end) two_issue_income,
         sum(case when i.INCOMEITEM=1 and od.LINKTYPE=1 then i.INCOME else 0 end) two_refund_income
@@ -273,7 +273,7 @@ def update_profit_hb_supply_transfer_daily(days=0):
     supply_transfer_income_sql = """
         SELECT i.INCOMEDATE, o.agentid,
         sum(case when i.INCOMEITEM=0 and od.LINKTYPE is NULL then i.INCOME else 0 end) one_issue_income1,
-        sum(case when i.INCOMEITEM=0 and od.LINKTYPE is NULL then od.REALPRICE +  od.AIRPORTFEE else 0 end) * 0.005 one_issue_income2,
+        sum(case when i.INCOMEITEM=0 and od.LINKTYPE is NULL then od.REALPRICE +  od.AIRPORTFEE else 0 end) * 0.0018 one_issue_income2,
         sum(case when i.INCOMEITEM=1 and od.LINKTYPE is NULL then i.INCOME else 0 end) one_refund_income,
         sum(case when i.INCOMEITEM=0 and od.LINKTYPE=1 then i.INCOME else 0 end) two_issue_income,
         sum(case when i.INCOMEITEM=1 and od.LINKTYPE=1 then i.INCOME else 0 end) two_refund_income

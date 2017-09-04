@@ -3,6 +3,20 @@ from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 from collections import defaultdict
 from dbClient import utils
+from mako.template import Template
+from mako.lookup import TemplateLookup
+
+
+def mako_render(data, mako_file, directories=['email']):
+    mylookup = TemplateLookup(directories=directories, input_encoding='utf-8',
+                              output_encoding='utf-8',
+                              default_filters=['decode.utf_8'])
+    mytemplate = Template('<%include file="{}"/>'.format(mako_file),
+                          lookup=mylookup, input_encoding='utf-8',
+                          default_filters=['decode.utf_8'],
+                          output_encoding='utf-8')
+    content = mytemplate.render(**data)
+    return content
 
 
 def hbgj_user(days=0):
@@ -64,10 +78,6 @@ def hbgj_user(days=0):
             order by order_num desc
 
     """
-    # insert_sql = """
-    #     insert into hbgj_users_info (s_day, source, new_users, active_users, ticket_order, ticket_count,ticket_amount)
-    #     values (%s, %s, %s ,%s ,%s ,%s, %s)
-    # """
 
     while start_date < end_date:
         last_data = []
@@ -123,7 +133,6 @@ def hbgj_user(days=0):
         for k, v in insert_data.items():
             result_data = []
             if k:
-                result_data.append(query_start_date)
                 result_data.append(k)
                 for num in v:
                     result_data.append(num)
@@ -135,46 +144,15 @@ def hbgj_user(days=0):
         sum_data = DBCli().sourcedb_cli.queryOne(other_sum, other_dto)
 
         subject = DateUtil.date2str(start_date, "%Y-%m-%d") + " 航班管家用户统计"
-        msgtext = "<table> <tr>" \
-                  "<th align='left'>渠道</th>" \
-                  "<th align='left'>新用户</th>" \
-                  "<th align='left'>活跃用户</th>" \
-                  "<th align='left'>订单数</th>" \
-                  "<th align='left'>机票数</th>" \
-                  "<th align='left'>订单金额</th>" \
-                  "</tr>" \
-                  "<tr>" \
-                  "<td>总计</td>" \
-                  "<td>"+str(new_users_sum)+"</td>" \
-                  "<td>"+str(active_users_sum)+"</td>" \
-                  "<td>"+str(sum_data[1])+"</td>" \
-                  "<td>"+str(sum_data[2])+"</td>" \
-                  "<td>"+str(sum_data[3])+"</td>" \
-                  "</tr>"
-        # msgtext = msgtext + "<table border='1'>"
-        for i in last_data:
-            msg = "".join(["<tr>",
-                           "<td width='15%'>",
-                           str(i[1]),
-                           "</td>",
-                           "<td width='15%'>",
-                           str(i[2]),
-                           "</td>",
-                           "<td width='15%'>",
-                           str(i[3]),
-                           "</td>",
-                           "<td width='15%'>",
-                           str(i[4]),
-                           "</td>",
-                           "<td width='15%'>",
-                           str(i[5]),
-                           "</td>",
-                           "<td width='15%'>",
-                           str(i[6]),
-                           "</td>",
-                           "</tr>"])
-            msgtext += msg
-        msgtext += "</table>"
+        rows = ['渠道', '新用户', '活跃用户', '订单数', '机票数', '订单金额']
+        rows_headers = ['总计', str(new_users_sum), str(active_users_sum), str(sum_data[1]),
+                        str(sum_data[2]), str(sum_data[3])]
+        data = {
+            'rows': rows,
+            'rows_headers': rows_headers,
+            'rows_data': last_data
+        }
+        msgtext = mako_render(data, 'email_template.txt')
         utils.sendMail('lipenju24@163.com', msgtext, subject)
         utils.sendMail('zhangchao_notice@sina.com', msgtext, subject)
         utils.sendMail('dingqq@133.cn', msgtext, subject)
@@ -186,4 +164,4 @@ def hbgj_user(days=0):
     return __file__
 
 if __name__ == "__main__":
-    hbgj_user(2)
+    hbgj_user(1)

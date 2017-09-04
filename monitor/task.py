@@ -35,7 +35,6 @@ def check_day_data():
             data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
         except Exception:
             continue
-
         if data[0] < 1:
             # error
             insert_msg.append([query_date, execute_sql[0]])

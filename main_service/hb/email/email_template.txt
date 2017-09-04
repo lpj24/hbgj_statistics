@@ -1,0 +1,19 @@
+<table>
+    <tr>
+    % for column in rows:
+      <th align='left'>${column}</th>
+    % endfor
+    </tr>
+    <tr>
+       % for head in rows_headers:
+            <td>${head}</td>
+       % endfor
+    </tr>
+    % for data in rows_data:
+        <tr>
+            % for el in data:
+                <td width='15%'>${el}</td>
+            % endfor
+        </tr>
+    % endfor
+</table>

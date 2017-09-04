@@ -61,6 +61,13 @@ def storage_execute_job(fun, fun_path):
         insert_sql = """
             insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
             values (%s, %s, %s, %s, %s, %s, now(), now())
+            on duplicate key update updatetime = now(),
+            job_name = values(job_name),
+            job_path = values(job_path),
+            job_doc = values(job_doc),
+            job_table = values(job_table),
+            job_type = values(job_type),
+            renewable = values(renewable)
         """
         try:
             DBCli().targetdb_cli.insert(insert_sql,

@@ -71,13 +71,15 @@ if __name__ == "__main__":
     service = add_execute_job()
     import Queue
     from dbClient.utils import execute_job_thread_pool
+    import time
+    start = time.time()
     hard_tmp_q = Queue.Queue()
     for job in service.get_hard_service():
         hard_tmp_q.put(job)
 
     execute_job_thread_pool(hard_tmp_q, days)
     hard_tmp_q.join()
-    print "hard job finished"
+    print "hard job finished " + str(time.time() - start)
     # import time
     # import logging
     # print "++++++++++++++++++++++++++++++++++++++++++++++++"

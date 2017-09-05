@@ -62,7 +62,6 @@ def update_hbgj_stages_daily(days=0):
                 insert_result[query_date].append(uv_data[0]['users'])
             else:
                 insert_result[query_date].append(0)
-    print insert_result
     for k, v in insert_result.items():
         v.insert(0, k)
         insert_data.append(v)

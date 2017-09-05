@@ -29,7 +29,6 @@ def check_day_data():
     for table in day_sql:
         query_table.extend(table[0].split(' '))
     for table in query_table:
-        print table
         format_sql = 'select count(1) from {} where s_day=%s'.format(table)
         try:
             data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])

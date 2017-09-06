@@ -8,14 +8,14 @@ from mako.lookup import TemplateLookup
 
 
 def mako_render(data, mako_file, directories=['./email']):
-    mylookup = TemplateLookup(directories=directories, input_encoding='utf-8',
-                              output_encoding='utf-8',
-                              default_filters=['decode.utf_8'])
-    mytemplate = Template('<%include file="{}"/>'.format(mako_file),
-                          lookup=mylookup, input_encoding='utf-8',
-                          default_filters=['decode.utf_8'],
-                          output_encoding='utf-8')
-    content = mytemplate.render(**data)
+    mako_lookup = TemplateLookup(directories=directories, input_encoding='utf-8',
+                                 output_encoding='utf-8',
+                                 default_filters=['decode.utf_8'])
+    mako_template = Template('<%include file="{}"/>'.format(mako_file),
+                             lookup=mako_lookup, input_encoding='utf-8',
+                             default_filters=['decode.utf_8'],
+                             output_encoding='utf-8')
+    content = mako_template.render(**data)
     return content
 
 
@@ -152,14 +152,14 @@ def hbgj_user(days=0):
             'rows_headers': rows_headers,
             'rows_data': last_data
         }
-        msgtext = mako_render(data, 'email_template.txt')
-        utils.sendMail('lipenju24@163.com', msgtext, subject)
-        utils.sendMail('zhangchao_notice@sina.com', msgtext, subject)
-        utils.sendMail('dingqq@133.cn', msgtext, subject)
-        utils.sendMail('liangyjy@133.cn', msgtext, subject)
-        utils.sendMail('liyang@133.cn', msgtext, subject)
-        utils.sendMail('hongb@133.cn', msgtext, subject)
-        utils.sendMail('zhangchao@133.cn', msgtext, subject)
+        msg_text = mako_render(data, 'email_template.txt')
+        utils.sendMail('lipenju24@163.com', msg_text, subject)
+        utils.sendMail('zhangchao_notice@sina.com', msg_text, subject)
+        utils.sendMail('dingqq@133.cn', msg_text, subject)
+        utils.sendMail('liangyjy@133.cn', msg_text, subject)
+        utils.sendMail('liyang@133.cn', msg_text, subject)
+        utils.sendMail('hongb@133.cn', msg_text, subject)
+        utils.sendMail('zhangchao@133.cn', msg_text, subject)
         start_date = DateUtil.add_days(start_date, 1)
     return __file__
 

@@ -153,7 +153,7 @@ def hbgj_user(days=0):
             'rows_data': last_data
         }
         msgtext = mako_render(data, 'email_template.txt')
-        # utils.sendMail('lipenju24@163.com', msgtext, subject)
+        utils.sendMail('lipenju24@163.com', msgtext, subject)
         # utils.sendMail('zhangchao_notice@sina.com', msgtext, subject)
         # utils.sendMail('dingqq@133.cn', msgtext, subject)
         # utils.sendMail('liangyjy@133.cn', msgtext, subject)

@@ -7,7 +7,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 
-def mako_render(data, mako_file, directories=['email']):
+def mako_render(data, mako_file, directories=['./email']):
     mylookup = TemplateLookup(directories=directories, input_encoding='utf-8',
                               output_encoding='utf-8',
                               default_filters=['decode.utf_8'])
@@ -153,13 +153,13 @@ def hbgj_user(days=0):
             'rows_data': last_data
         }
         msgtext = mako_render(data, 'email_template.txt')
-        utils.sendMail('lipenju24@163.com', msgtext, subject)
-        utils.sendMail('zhangchao_notice@sina.com', msgtext, subject)
-        utils.sendMail('dingqq@133.cn', msgtext, subject)
-        utils.sendMail('liangyjy@133.cn', msgtext, subject)
-        utils.sendMail('liyang@133.cn', msgtext, subject)
-        utils.sendMail('hongb@133.cn', msgtext, subject)
-        utils.sendMail('zhangchao@133.cn', msgtext, subject)
+        # utils.sendMail('lipenju24@163.com', msgtext, subject)
+        # utils.sendMail('zhangchao_notice@sina.com', msgtext, subject)
+        # utils.sendMail('dingqq@133.cn', msgtext, subject)
+        # utils.sendMail('liangyjy@133.cn', msgtext, subject)
+        # utils.sendMail('liyang@133.cn', msgtext, subject)
+        # utils.sendMail('hongb@133.cn', msgtext, subject)
+        # utils.sendMail('zhangchao@133.cn', msgtext, subject)
         start_date = DateUtil.add_days(start_date, 1)
     return __file__
 

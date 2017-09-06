@@ -180,6 +180,20 @@ def update_insure_type_daily(days=0):
     boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_boat_sql, boat_data)
 
+    travel_sql = """
+        SELECT left(i.createtime,10), i.insurecode,
+        (SELECT DISTINCT bigtype from INSURE_DATA where id=i.insurecode) bigtype,
+        count(*),sum(i.price)
+        FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
+        on i.outorderid=o.orderid
+        where i.createtime >=%s and i.createtime < %s
+        and i.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (5))
+        GROUP BY left(i.createtime,10), i.insurecode
+    """
+
+    travel_data = DBCli().sourcedb_cli.queryAll(travel_sql, dto)
+    DBCli().targetdb_cli.batchInsert(insert_boat_sql, travel_data)
+
     refund_order_amount_sql = """
             SELECT A.s_day,
                     ifnull(A.insurecode, 0),

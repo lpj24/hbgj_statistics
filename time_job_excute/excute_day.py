@@ -4,7 +4,7 @@ from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, g
 from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
     hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users
 from main_service.huoli import car_orders, car_consumers, hotel_activeusers, \
-    hotel_newconsumers, hotel_order, hotel_consumers, hotel_newusers
+    hotel_newconsumers, hotel_order, hotel_consumers, hotel_newusers, huoli_buy_consumers
 from time_job_excute.timeServiceList import TimeService
 import Queue
 from dbClient.utils import execute_job_thread_pool
@@ -60,6 +60,10 @@ def add_execute_job():
     TimeService.add_day_service(hb_order.update_hb_gt_order_new_daily)
     TimeService.add_day_service(gt_register_user.update_gtgj_register_user_daily)
     TimeService.add_day_service(gt_register_user.update_hbgj_register_user_daily)
+
+    TimeService.add_day_service(huoli_buy_consumers.update_huoli_buy_orders_daily)
+    TimeService.add_day_service(huoli_buy_consumers.update_huoli_buy_consumers_daily)
+    TimeService.add_day_service(huoli_buy_consumers.update_huoli_buy_newconsumers_daily)
     return TimeService
 
 

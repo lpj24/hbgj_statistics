@@ -23,6 +23,7 @@ class DBCli(object):
         self._dynamic_focus = conf.dynamic_focus
         self._apibase = conf.hb_apibase
         self._flight_oracle = conf.flight_oracle
+        self._huoli_buy = conf.huoli_buy
         self.args = args if args else (list, )
 
     @property
@@ -117,3 +118,7 @@ class DBCli(object):
     @property
     def apibase_cli(self):
         return DButils("mysql", self._apibase)
+
+    @property
+    def huoli_buy_cli(self):
+        return DButils("mysql", self._huoli_buy)

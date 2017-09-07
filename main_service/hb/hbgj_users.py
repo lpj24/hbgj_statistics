@@ -152,14 +152,14 @@ def hbgj_user(days=0):
             'rows_headers': rows_headers,
             'rows_data': last_data
         }
-        msg_text = mako_render(data, 'email_template.txt')
-        utils.sendMail('lipenju24@163.com', msg_text, subject)
-        utils.sendMail('zhangchao_notice@sina.com', msg_text, subject)
-        utils.sendMail('dingqq@133.cn', msg_text, subject)
-        utils.sendMail('liangyjy@133.cn', msg_text, subject)
-        utils.sendMail('liyang@133.cn', msg_text, subject)
-        utils.sendMail('hongb@133.cn', msg_text, subject)
-        utils.sendMail('zhangchao@133.cn', msg_text, subject)
+        msgText = mako_render(data, 'email_template.txt')
+        utils.sendMail('lipenju24@163.com', msgText, subject)
+        utils.sendMail('zhangchao_notice@sina.com', msgText, subject)
+        utils.sendMail('dingqq@133.cn', msgText, subject)
+        utils.sendMail('liangyjy@133.cn', msgText, subject)
+        utils.sendMail('liyang@133.cn', msgText, subject)
+        utils.sendMail('hongb@133.cn', msgText, subject)
+        utils.sendMail('zhangchao@133.cn', msgText, subject)
         start_date = DateUtil.add_days(start_date, 1)
     return __file__
 

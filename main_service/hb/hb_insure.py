@@ -372,40 +372,4 @@ def update_hb_boat(days=0):
 
 
 if __name__ == "__main__":
-    # import datetime
-    # min_date = datetime.date(2013, 4, 26)
-    # start_date, end_date = DateUtil.get_last_week_date()
-    # while start_date >= min_date:
-    #     start_date, end_date = DateUtil.get_last_week_date(start_date)
-    #     update_hb_insure_daily(start_date, end_date)
-    #     print start_date, end_date
-    # update_hb_insure_daily()
-    # update_insure_class_daily(2)
-    # update_hb_insure_daily(5)
-    # i = 802
-    # while i >= 29:
-    #     # update_hb_insure_daily(i)
-    #     # update_insure_class_daily(i)
-    #     update_insure_type_daily(i)
-    #     i -= 1
-
-    # update_hb_insure_daily(2)
-    # i = 1
-    # while i <= 1440:
-    #     # update_insure_class_daily(i)
-    #     update_insure_type_daily(i)
-    #     i += 1
-
-    # update_hb_boat(1)
-    # update_hb_insure_daily(1)
-    # update_insure_class_daily(1)
-    # update_insure_type_daily(1)
-    # update_hb_boat(1)
-    # update_insure_type_daily(1)
-    # update_insure_class_daily(1)
-
     update_insure_type_daily(1)
-    # i = 1
-    # while i <= 19:
-    #     update_insure_type_daily(i)
-    #     i += 1

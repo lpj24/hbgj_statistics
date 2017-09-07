@@ -7,14 +7,13 @@ import operator
 def get_all_monitor_table_name():
 
     sql = """
-        select GROUP_CONCAT(A.jobTable) from (select
-        case when
-        LOCATE(' ', job_table) > 0 then CONCAT_ws(',', SUBSTRING_INDEX(job_table, ' ', 1),SUBSTRING_INDEX(job_table, ' ', -1)) ELSE
-        job_table end as jobTable
-        from bi_execute_job where job_type !=5) A;
+        select job_table
+        from bi_execute_job where job_type !=5;
     """
-    day_sql = DBCli().targetdb_cli.queryOne(sql)
-    all_monitor_table = day_sql[0].split(',')
+    day_sql = DBCli().targetdb_cli.queryAll(sql)
+    all_monitor_table = []
+    for table in day_sql:
+        all_monitor_table.extend(table[0].split(' '))
     return all_monitor_table
 
 

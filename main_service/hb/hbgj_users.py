@@ -158,12 +158,12 @@ def hbgj_user(days=0):
         try:
             msgText = mako_render(data, 'email_template.txt')
             utils.sendMail('lipenju24@163.com', msgText, subject)
-            # utils.sendMail('zhangchao_notice@sina.com', msgText, subject)
-            # utils.sendMail('dingqq@133.cn', msgText, subject)
-            # utils.sendMail('liangyjy@133.cn', msgText, subject)
-            # utils.sendMail('liyang@133.cn', msgText, subject)
-            # utils.sendMail('hongb@133.cn', msgText, subject)
-            # utils.sendMail('zhangchao@133.cn', msgText, subject)
+            utils.sendMail('zhangchao_notice@sina.com', msgText, subject)
+            utils.sendMail('dingqq@133.cn', msgText, subject)
+            utils.sendMail('liangyjy@133.cn', msgText, subject)
+            utils.sendMail('liyang@133.cn', msgText, subject)
+            utils.sendMail('hongb@133.cn', msgText, subject)
+            utils.sendMail('zhangchao@133.cn', msgText, subject)
         except Exception as e:
             logging.warning('hbgj send email error ' + str(e.message))
         start_date = DateUtil.add_days(start_date, 1)

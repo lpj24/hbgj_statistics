@@ -173,7 +173,4 @@ if __name__ == '__main__':
     #     update_huoli_buy_consumers_monthly(start_date)
     #     start_date, end_date = DateUtil.get_last_month_date(start_date)
 
-    i = 1
-    while 1:
-        update_huoli_buy_newconsumers_daily(i)
-        i += 1
+    update_huoli_buy_newconsumers_daily(1)

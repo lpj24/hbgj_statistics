@@ -27,7 +27,7 @@ class DButils(object):
         self._cursor = self._conn.cursor()
 
     @staticmethod
-    def log_str(sql, params):
+    def _log_str(sql, params):
         sql = sql.strip()
         func = sql.split(' ')[1] if sql.find("update") == 0 else sql.split(' ')[2]
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + " update " + func + " :" + str(params)
@@ -35,7 +35,7 @@ class DButils(object):
     def batchInsert(self, sql, params):
         cursor = self._cursor
         try:
-            logging.warning(self.log_str(sql, params))
+            logging.warning(self._log_str(sql, params))
             cursor.executemany(sql, params)
             self._conn.commit()
         except MySQLdb.Error, e:
@@ -45,7 +45,7 @@ class DButils(object):
     def insert(self, sql, params):
         cursor = self._cursor
         try:
-            logging.warning(self.log_str(sql, params))
+            logging.warning(self._log_str(sql, params))
             cursor.execute(sql, params)
             # logging.warning(dir(cursor))
             self._conn.commit()

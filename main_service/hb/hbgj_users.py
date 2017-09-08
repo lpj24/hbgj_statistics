@@ -5,9 +5,12 @@ from collections import defaultdict
 from dbClient import utils
 from mako.template import Template
 from mako.lookup import TemplateLookup
+import logging
+import os
 
 
-def mako_render(data, mako_file, directories=['./email']):
+def mako_render(data, mako_file):
+    directories = os.path.join(os.path.dirname(__file__), 'email')
     mako_lookup = TemplateLookup(directories=directories, input_encoding='utf-8',
                                  output_encoding='utf-8',
                                  default_filters=['decode.utf_8'])
@@ -152,16 +155,22 @@ def hbgj_user(days=0):
             'rows_headers': rows_headers,
             'rows_data': last_data
         }
-        msgText = mako_render(data, 'email_template.txt')
-        utils.sendMail('lipenju24@163.com', msgText, subject)
-        utils.sendMail('zhangchao_notice@sina.com', msgText, subject)
-        utils.sendMail('dingqq@133.cn', msgText, subject)
-        utils.sendMail('liangyjy@133.cn', msgText, subject)
-        utils.sendMail('liyang@133.cn', msgText, subject)
-        utils.sendMail('hongb@133.cn', msgText, subject)
-        utils.sendMail('zhangchao@133.cn', msgText, subject)
+        try:
+            msgText = mako_render(data, 'email_template.txt')
+            utils.sendMail('lipenju24@163.com', msgText, subject)
+            # utils.sendMail('zhangchao_notice@sina.com', msgText, subject)
+            # utils.sendMail('dingqq@133.cn', msgText, subject)
+            # utils.sendMail('liangyjy@133.cn', msgText, subject)
+            # utils.sendMail('liyang@133.cn', msgText, subject)
+            # utils.sendMail('hongb@133.cn', msgText, subject)
+            # utils.sendMail('zhangchao@133.cn', msgText, subject)
+        except Exception as e:
+            logging.warning('hbgj send email error ' + str(e.message))
         start_date = DateUtil.add_days(start_date, 1)
     return __file__
 
 if __name__ == "__main__":
     hbgj_user(1)
+    # import os
+    # print os.path.dirname(__file__)
+    # print os.path.join(os.path.dirname(__file__), 'email')

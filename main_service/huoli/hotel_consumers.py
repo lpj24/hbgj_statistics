@@ -16,6 +16,7 @@ def update_hotel_consumers_daily(days=0):
 
 
 def update_hotel_consumers_weekly():
+    """更新酒店消费用户, hotel_consumers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]

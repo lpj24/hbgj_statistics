@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
 class TimeService:
+    def __init__(self):
+        pass
+
     __hour_service = []
     __day_service = []
     __week_mon_service = []
@@ -9,6 +13,7 @@ class TimeService:
     __hard_service = []
     __localytics_service = []
     __later_service = []
+    week_job_table = []
 
     @staticmethod
     def add_hour_service(job_fun):
@@ -21,6 +26,9 @@ class TimeService:
     @staticmethod
     def add_week_mon_service(job_fun):
         TimeService.__week_mon_service.append(job_fun)
+        if job_fun.__doc__:
+            _, table = job_fun.__doc__.split(",")
+            TimeService.week_job_table.extend(table.strip().split(' '))
 
     @staticmethod
     def add_quarter_first_service(job_fun):

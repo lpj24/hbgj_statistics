@@ -1,13 +1,42 @@
 # -*- coding: utf-8 -*-
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
-from monitor_sql import week_sql
 from dbClient import utils
 from main_service.gt import gt_income_cost
 from main_service.hb import hb_profit_cost, hb_insure
 from monitor_data_exception import cal_balance
 from time_job_excute.timeServiceList import TimeService
 import logging
+
+
+# def check_day_data(table_list):
+#     query_date = DateUtil.get_date_before_days(1)
+#     query_date = DateUtil.date2str(query_date, '%Y-%m-%d')
+#     msg = ""
+#     insert_msg = []
+#     insert_sql = """
+#         insert into error_update_table_daily (s_day, job_table)
+#         values(%s, %s)
+#     """
+#
+#     for table in table_list:
+#         if table.endswith('weekly'):
+#             continue
+#         format_sql = 'select count(1) from {} where s_day=%s'.format(table)
+#         try:
+#             data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
+#         except Exception:
+#             continue
+#         if data[0] < 1:
+#             # error
+#             insert_msg.append([query_date, table])
+#             msg += table + "<br/>"
+#
+#     if len(msg) > 0:
+#         DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
+#         utils.sendMail("762575190@qq.com", msg, "数据查询异常")
+#     else:
+#         utils.sendMail("762575190@qq.com", "数据查询正常", "数据查询正常")
 
 
 def check_day_data():
@@ -40,31 +69,29 @@ def check_day_data():
             msg += table + "<br/>"
         else:
             pass
+    msg = 'hbdt_flight_partnerapi<br/>'
     if len(msg) > 0:
         DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
-        utils.sendMail("lipenju24@163.com", msg, "数据查询异常")
+        utils.sendMail("762575190@qq.com", msg, u"数据查询异常")
     else:
-        utils.sendMail("lipenju24@163.com", "数据查询正常", "数据查询正常")
+        utils.sendMail("762575190@qq.com", u"数据查询正常", u"数据查询正常")
 
 
-def check_week_data():
-    start_week, end_week = DateUtil.get_last_week_date()
+def check_week_data(table_list):
+    start_week, _ = DateUtil.get_last_week_date()
     query_date = DateUtil.date2str(start_week, '%Y-%m-%d')
-
     msg = ""
-    for execute_sql in week_sql:
-        dto = [query_date]
-        data = DBCli().targetdb_cli.queryOne(execute_sql, dto)
-
+    for table in table_list:
+        execute_sql = 'select count(1) from {} where s_day = %s'.format(table)
+        data = DBCli().targetdb_cli.queryOne(execute_sql, [query_date])
         if data[0] < 1:
             # error
-            msg += execute_sql.split(" ")[3] + "<br/>"
-        else:
-            pass
+            msg += table + "<br/>"
+
     if len(msg) > 0:
-        utils.sendMail("lipenju24@163.com", msg, "周数据查询异常")
+        utils.sendMail("762575190@qq.com", msg, u"周数据查询异常")
     else:
-        utils.sendMail("lipenju24@163.com", "周数据查询正常", "周数据查询正常")
+        utils.sendMail("762575190@qq.com", u"周数据查询正常", u"周数据查询正常")
 
 
 def execute_later_job():
@@ -83,13 +110,20 @@ def check_execute_job():
     week_service = excute_mon_week.add_execute_job()
     month_service = excute_month.add_execute_job()
     for job in day_service.get_day_service():
-        print job
+        if not job.__doc__:
+            raise AttributeError(str(job.__name__) + ' 没有doc描述')
+        else:
+            logging.warning(job)
 
     for week_job in week_service.get_week_mon_service():
-        print week_job
+        if not week_job.__doc__:
+            raise AttributeError(str(week_job.__name__) + ' 没有doc描述')
+        else:
+            logging.warning(week_job)
 
-    for week_job in month_service.get_month_first_service():
-        print week_job
+    for month_job in month_service.get_month_first_service():
+        logging.warning(month_job)
+
 
 if __name__ == "__main__":
     later_service = execute_later_job()
@@ -101,8 +135,7 @@ if __name__ == "__main__":
         except Exception as e:
             logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
             continue
-
     check_day_data()
     exception_table = cal_balance()
     if exception_table:
-        utils.sendMail("lipenju24@163.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")
+        utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")

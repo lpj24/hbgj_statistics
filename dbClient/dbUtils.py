@@ -58,9 +58,9 @@ class DButils(object):
         if params is None:
             cursor.execute(sql)
         else:
-            if sql.count("tablename") > 0:
-                rx = re.compile("tablename")
-                sql, num = rx.subn(params.pop(), sql)
+            # if sql.count("tablename") > 0:
+            #     rx = re.compile("tablename")
+            #     sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
         # logging.warning(cursor._executed)
@@ -73,9 +73,9 @@ class DButils(object):
             if params is None:
                 cursor.execute(sql)
             else:
-                if sql.count("tablename") > 0:
-                    rx = re.compile("tablename")
-                    sql, num = rx.subn(params.pop(), sql)
+                # if sql.count("tablename") > 0:
+                #     rx = re.compile("tablename")
+                #     sql, num = rx.subn(params.pop(), sql)
                 cursor.execute(sql, params)
             # logging.warning("execute sql" + cursor._executed)
             data = cursor.fetchone()

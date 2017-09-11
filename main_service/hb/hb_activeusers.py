@@ -15,6 +15,7 @@ def update_hbgj_activeusers_daily(days=0):
 
 
 def update_hbgj_activeusers_weekly():
+    """更新航班活跃用户周, hbgj_activeusers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')

@@ -21,6 +21,7 @@ def update_gtgj_consumers_daily(days=0):
 
 
 def update_gtgj_consumers_weekly():
+    """更新高铁消费用户周, gtgj_consumers_weekly"""
     start_date = DateUtil.date2str(DateUtil.get_last_week_date(DateUtil.get_last_week_date()[0])[0])
     end_date = DateUtil.date2str(DateUtil.get_last_week_date()[1])
     dto = [start_date, end_date, start_date, end_date]

@@ -19,6 +19,7 @@ def update_gtgj_activeusers_daily(days=0):
 
 
 def update_gtgj_activeusers_weekly():
+    """更新高铁活跃用户周, gtgj_activeusers_weekly"""
     start_date = DateUtil.get_last_week_date(DateUtil.get_last_week_date()[0])[0]
     end_date = DateUtil.get_last_week_date()[1]
     dto = [start_date, end_date]

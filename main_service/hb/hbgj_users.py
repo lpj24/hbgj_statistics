@@ -146,7 +146,7 @@ def hbgj_user(days=0):
 
         sum_data = DBCli().sourcedb_cli.queryOne(other_sum, other_dto)
 
-        subject = DateUtil.date2str(start_date, "%Y-%m-%d") + " 航班管家用户统计"
+        subject = DateUtil.date2str(start_date, "%Y-%m-%d") + u' 航班管家用户统计'
         rows = ['渠道', '新用户', '活跃用户', '订单数', '机票数', '订单金额']
         rows_headers = ['总计', str(new_users_sum), str(active_users_sum), str(sum_data[1]),
                         str(sum_data[2]), str(sum_data[3])]
@@ -157,7 +157,7 @@ def hbgj_user(days=0):
         }
         try:
             msgText = mako_render(data, 'email_template.txt')
-            utils.sendMail('lipenju24@163.com', msgText, subject)
+            utils.sendMail('762575190@qq.com', msgText, subject)
             utils.sendMail('zhangchao_notice@sina.com', msgText, subject)
             utils.sendMail('dingqq@133.cn', msgText, subject)
             utils.sendMail('liangyjy@133.cn', msgText, subject)

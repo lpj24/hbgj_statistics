@@ -15,6 +15,7 @@ def update_car_consumers_daily(days=0):
 
 
 def update_car_consumers_weekly():
+    """更新专车消费用户周, huoli_car_consumers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     dto = []
     # for i in xrange(4):

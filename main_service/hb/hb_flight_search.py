@@ -55,7 +55,7 @@ def update_flight_search_user_daily(days=0):
     pv = query_data[2]
     if pv > 0:
         if float(int(pv_check) - int(pv)) / float(pv) > 0.2:
-            utils.sendMail("lipenju24@163.com", str(pv_check) + ":" + str(pv), "航班搜索数据错误")
+            # utils.sendMail("lipenju24@163.com", str(pv_check) + ":" + str(pv), "航班搜索数据错误")
             query_data = [query_data[0], query_data[1], int(pv)]
 
     query_data = list(query_data)
@@ -100,6 +100,7 @@ def update_dt_search_uid(days=0):
 
 
 def update_flight_search_user_weekly():
+    """更新航班搜索用户周, hbdt_search_weekly"""
     start_week, end_week = DateUtil.get_last_week_date()
     s_day = DateUtil.date2str(start_week, '%Y-%m-%d')
     dto = [start_week, end_week]

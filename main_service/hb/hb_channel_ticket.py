@@ -174,6 +174,7 @@ def update_hb_company_ticket_weekly():
 
 
 def update_unable_ticket():
+    """更新无法出票和人工干预出票数量周, operation_hbgj_unable_ticket_weekly operation_hbgj_human_intervention_ticket_weekly"""
     start_week, end_week = DateUtil.get_last_week_date()
     unable_ticket_sql = """
     select a_table.oldsource, a_table.name, sum(a_table.ticket_num * a_table.AMOUNT)/50
@@ -332,6 +333,7 @@ def get_pid_sale_type(sale_type, pn_resource):
 
 
 def update_supplier_refused_order_weekly():
+    """更新供应商退票订单周, operation_hbgj_company_ticket_weekly"""
     start_week, end_week = DateUtil.get_last_week_date()
     week_sql = """
             select a_table.s_day, a_table.agentid, b_table.order_num,

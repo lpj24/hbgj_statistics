@@ -53,6 +53,7 @@ def get_focus_new_user(days=0):
 
 
 def update_flight_focus_user_weekly():
+    """更新航班关注用户周, hbdt_focus_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')

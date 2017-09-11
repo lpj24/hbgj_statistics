@@ -44,11 +44,11 @@ def update_huoli_buy_consumers_daily(days=0):
     """
 
     insert_sql = """
-        insert into huoli_buy_consumers_daily (s_day, consumers_num, consumers_amount, createtime, updatetime)
+        insert into huoli_buy_consumers_daily (s_day, consumers, consumers_amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
-        consumers_num = values(consumers_num),
+        consumers = values(consumers),
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, end_date]
@@ -58,6 +58,7 @@ def update_huoli_buy_consumers_daily(days=0):
 
 
 def update_huoli_buy_consumers_weekly():
+    """更新伙力精选消费用户周, huoli_buy_consumers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     huoli_consumers_sql = """
         select %s, count(DISTINCT po.userid),
@@ -69,11 +70,11 @@ def update_huoli_buy_consumers_weekly():
     """
 
     insert_sql = """
-        insert into huoli_buy_consumers_weekly (s_day, consumers_num, consumers_amount, createtime, updatetime)
+        insert into huoli_buy_consumers_weekly (s_day, consumers, consumers_amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
-        consumers_num = values(consumers_num),
+        consumers = values(consumers),
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, start_date, end_date]
@@ -93,11 +94,11 @@ def update_huoli_buy_consumers_monthly():
     """
 
     insert_sql = """
-        insert into huoli_buy_consumers_monthly (s_day, consumers_num, consumers_amount, createtime, updatetime)
+        insert into huoli_buy_consumers_monthly (s_day, consumers, consumers_amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
-        consumers_num = values(consumers_num),
+        consumers = values(consumers),
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, start_date, end_date]
@@ -117,11 +118,11 @@ def update_huoli_buy_consumers_quarterly():
     """
 
     insert_sql = """
-        insert into huoli_buy_consumers_quarterly (s_day, consumers_num, consumers_amount, createtime, updatetime)
+        insert into huoli_buy_consumers_quarterly (s_day, consumers, consumers_amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
-        consumers_num = values(consumers_num),
+        consumers = values(consumers),
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, end_date]
@@ -147,11 +148,11 @@ def update_huoli_buy_newconsumers_daily(days=0):
     """
 
     insert_sql = """
-        insert into huoli_buy_newconsumers_daily (s_day, new_consumers_num, new_consumers_amount, createtime, updatetime)
+        insert into huoli_buy_newconsumers_daily (s_day, new_consumers, new_consumers_amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
-        new_consumers_num = values(new_consumers_num),
+        new_consumers = values(new_consumers),
         new_consumers_amount = values(new_consumers_amount)
     """
     dto = [start_date, end_date, start_date]
@@ -173,4 +174,4 @@ if __name__ == '__main__':
     #     update_huoli_buy_consumers_monthly(start_date)
     #     start_date, end_date = DateUtil.get_last_month_date(start_date)
 
-    update_huoli_buy_newconsumers_daily(1)
+    update_huoli_buy_orders_daily(1)

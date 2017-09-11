@@ -76,4 +76,3 @@ if __name__ == "__main__":
 
     execute_job_thread_pool(day_q, days)
     day_q.join()  # 等待队里为空之后再执行以下操作
-    print "job finish"

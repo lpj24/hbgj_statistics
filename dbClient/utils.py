@@ -96,7 +96,7 @@ class ThreadExecuteJob(threading.Thread):
                 storage_execute_job(fun, fun_path)
                 self.queue.task_done()
             except Exception as e:
-                logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+                logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))
                 self.queue.task_done()
                 continue
 

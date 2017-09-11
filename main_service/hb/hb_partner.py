@@ -37,7 +37,7 @@ def update_hb_partner_daily(days=0):
         pv = VALUES(pv),
         uv = VALUES(uv)
     """
-    query_data = DBCli().hb_partner_cli.queryAll(sql, [start_date, end_date])
+    query_data = DBCli().dynamic_focus_cli.queryAll(sql, [start_date, end_date])
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
     return __file__
 

@@ -10,7 +10,6 @@ import logging
 
 def add_execute_job():
     TimeService.add_week_mon_service(car_consumers.update_car_consumers_weekly)
-
     TimeService.add_week_mon_service(gt_activeusers.update_gtgj_activeusers_weekly)
     TimeService.add_week_mon_service(gt_consumers.update_gtgj_consumers_weekly)
 

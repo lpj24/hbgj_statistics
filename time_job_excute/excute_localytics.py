@@ -26,6 +26,6 @@ if __name__ == "__main__":
             time.sleep(1 * 60 * 20)
         except (Exception, AssertionError) as e:
             TimeService.add_localytics_service(fun)
-            logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
+            logging.error(e.message + "---" + str(e.args) + "--" + str(fun))
             continue
 

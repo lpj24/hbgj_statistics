@@ -33,10 +33,10 @@ if __name__ == "__main__":
     logging.warning("monday execute week data")
     service = add_execute_job()
     for fun in service.get_week_mon_service():
-        try:
+        try: 
             fun()
         except Exception as e:
-            logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
+            logging.error(e.message + "---" + str(e.args) + "--" + str(fun))
             continue
 
     message.sub('execute_week_job', task.check_week_data)

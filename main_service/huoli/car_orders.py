@@ -44,14 +44,16 @@ def update_gt_car():
         select
         account_gtgj.hbgj_phoneid,
         account_gtgj.gt_user_name,
-        CONCAT_WS(' ', depart_date, depart_time), CONCAT_WS(' ', depart_date, arrive_time),
-        user_order.arrive_name, user_order.depart_name
-        from user_order
-        left JOIN account_gtgj on user_order.userid = account_gtgj.userid
-        where CONCAT_WS(' ', depart_date, arrive_time)>='2017-09-12 12:00'
-        and CONCAT_WS(' ', depart_date, arrive_time) < '2017-09-15 00:00'
-        and i_status=3
-        and arrive_name in %s
+        CONCAT_WS(' ', depart_date, depart_time),
+        CONCAT_WS(' ', depart_date, arrive_time),
+        us.depart_name, us.arrive_name
+        from user_sub_order us
+        left JOIN account_gtgj on us.userid = account_gtgj.userid
+        where CONCAT_WS(' ', depart_date, depart_time)>='2017-09-12 12:00'
+        and CONCAT_WS(' ', depart_date, depart_time) <= '2017-09-14 23:59'
+        and us.status not in ('取消订单','取消改签')
+        and (arrive_name in %s
+        or depart_name in %s)
     """
 
     gt_dict_sql = """
@@ -73,18 +75,20 @@ def update_gt_car():
     gt_dict_data = DBCli().car_cli.queryAll(gt_dict_sql)
     new_gt_dict = dict(gt_dict_data)
 
-    gt_data = DBCli().gt_cli.queryAll(sql, [gt_list])
+    gt_data = DBCli().gt_cli.queryAll(sql, [gt_list]*2)
     result = []
     for gt in gt_data:
-        phoneid, phone, arrtime, departtime, arrname, depname = gt
+        phoneid, phone, departtime, arrtime, depname, arrname = gt
+        depcode = new_gt_dict.get(depname, '')
         arrcode = new_gt_dict.get(arrname, '')
         if not phoneid:
             phoneid = ""
         if not phone:
             phone = ""
-        result.append([phoneid, phone, arrtime, departtime, arrname, arrcode, depname, "\n"])
+        result.append([phoneid, phone, departtime, arrtime, depname, depcode, arrname, arrcode, "\n"])
 
     f = open('gt.dat', 'a')
+    print len(result)
     for t in result:
         out_str = "\t".join(t)
         f.write(out_str)

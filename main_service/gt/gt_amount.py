@@ -109,4 +109,4 @@ def int_round(num):
 
 
 if __name__ == "__main__":
-    update_gtgj_amount_daily()
+    update_gtgj_amount_daily(1)

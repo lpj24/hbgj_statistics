@@ -367,4 +367,4 @@ def get_city_code_dict():
     return dict(city_dict)
 
 if __name__ == "__main__":
-    update_flight_detail_user_daily(1)
+    update_dt_detail_uid(1)

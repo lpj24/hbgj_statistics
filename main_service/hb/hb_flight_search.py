@@ -240,4 +240,5 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
         start_date = DateUtil.add_days(start_date, -1)
 
 if __name__ == "__main__":
+    # update_flight_search_user_daily(1)
     update_dt_search_uid(1)

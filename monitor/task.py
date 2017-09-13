@@ -125,16 +125,16 @@ def check_execute_job():
 
 
 if __name__ == "__main__":
-    # later_service = execute_later_job()
-    # for fun in later_service.get_later_service():
-    #     try:
-    #         fun_path = fun(1)
-    #         utils.storage_execute_job(fun, fun_path)
-    #
-    #     except Exception as e:
-    #         logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
-    #         continue
+    later_service = execute_later_job()
+    for fun in later_service.get_later_service():
+        try:
+            fun_path = fun(1)
+            utils.storage_execute_job(fun, fun_path)
+
+        except Exception as e:
+            logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+            continue
     check_day_data()
-    # exception_table = cal_balance()
-    # if exception_table:
-    #     utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")
+    exception_table = cal_balance()
+    if exception_table:
+        utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")

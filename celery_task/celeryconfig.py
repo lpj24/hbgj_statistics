@@ -11,6 +11,7 @@ CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24  # 任务结果结果保存24小时
 
 CELERYBEAT_SCHEDULE = {
     # 'add': {

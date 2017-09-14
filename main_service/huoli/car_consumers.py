@@ -11,7 +11,7 @@ def update_car_consumers_daily(days=0):
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), DateUtil.date2str(tomorrow)] * 3
     query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_daily"], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_daily"], query_data)
-    return __file__
+    pass
 
 
 def update_car_consumers_weekly():
@@ -83,7 +83,7 @@ def update_car_newconsumers_daily(days=0):
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
     query_data = DBCli().car_cli.queryOne(car_consumers_sql['car_newconsumers_daily'], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql['update_car_newconsumers_daily'], query_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     update_car_consumers_weekly()

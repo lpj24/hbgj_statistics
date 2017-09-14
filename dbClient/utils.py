@@ -4,6 +4,7 @@ import web
 import threading, logging
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
+import inspect
 
 
 def get_mail_server():
@@ -46,9 +47,10 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
     os.remove("tmp_py.py")
 
 
-def storage_execute_job(fun, fun_path):
+def storage_execute_job(fun):
     fun_name = fun.__name__
-    fun_doc = fun.__doc__
+    fun_doc = inspect.getdoc(fun)
+    fun_path = inspect.getfile(fun)
     if fun_doc is None:
         return
     check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
@@ -92,8 +94,8 @@ class ThreadExecuteJob(threading.Thread):
                 break
             fun = self.queue.get()
             try:
-                fun_path = fun(int(self.days))
-                storage_execute_job(fun, fun_path)
+                fun(int(self.days))
+                storage_execute_job(fun)
                 self.queue.task_done()
             except Exception as e:
                 logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))

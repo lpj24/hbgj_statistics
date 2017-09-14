@@ -11,7 +11,7 @@ def update_hbgj_activeusers_daily(days=0):
     dto = [today, today, tomorrow]
     query_data = DBCli().apibase_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_daily"], query_data)
-    return __file__
+    pass
 
 
 def update_hbgj_activeusers_weekly():
@@ -63,7 +63,7 @@ def update_hbgj_newuser_daily(days=1):
     """
     query_data = DBCli().apibase_cli.queryAll(new_user_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):

@@ -15,7 +15,7 @@ def update_gtgj_activeusers_daily(days=0):
     dto = [tomorrow, today]
     query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_activeusers_daily"], query_data)
-    return __file__
+    pass
 
 
 def update_gtgj_activeusers_weekly():
@@ -45,7 +45,7 @@ def update_gtgj_newusers_daily(days=0):
     dto = [tomorrow, today]
     query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_newusers_daily"], dto)
     DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_newusers_daily"], query_data)
-    return __file__
+    pass
 
 
 def update_gtgj_activeusers_quarterly():

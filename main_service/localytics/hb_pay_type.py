@@ -126,7 +126,7 @@ def hb_pay_type(days=0):
             DBCli().targetdb_cli.insert(sql, insert_data)
         time.sleep(100*2)
         start_date = DateUtil.add_days(start_date, 1)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     hb_pay_type(1)

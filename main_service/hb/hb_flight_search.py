@@ -79,7 +79,7 @@ def update_flight_search_user_daily(days=0):
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])
     DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_daily'], query_data)
-    return __file__
+    pass
 
 
 def update_dt_search_uid(days=0):

@@ -12,7 +12,7 @@ def update_hotel_consumers_daily(days=0):
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
     query_data = DBCli().tongji_skyhotel_cli.queryOne(hotel_consumers_sql["hotel_consumers_daily"], dto)
     DBCli().targetdb_cli.insert(hotel_consumers_sql["update_hotel_consumers_daily"], query_data)
-    return __file__
+    pass
 
 
 def update_hotel_consumers_weekly():

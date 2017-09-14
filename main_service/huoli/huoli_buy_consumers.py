@@ -27,7 +27,7 @@ def update_huoli_buy_orders_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().huoli_buy_cli.queryAll(huoli_order_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 def update_huoli_buy_consumers_daily(days=0):
@@ -54,7 +54,7 @@ def update_huoli_buy_consumers_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 def update_huoli_buy_consumers_weekly():
@@ -158,7 +158,7 @@ def update_huoli_buy_newconsumers_daily(days=0):
     dto = [start_date, end_date, start_date]
     query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 if __name__ == '__main__':

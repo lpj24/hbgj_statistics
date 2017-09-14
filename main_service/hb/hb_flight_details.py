@@ -79,7 +79,7 @@ def update_flight_detail_user_daily(days=0):
     query_data.append(localytics_check["users"])
     query_data.append(localytics_check["sessions"])
     DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_daily'], query_data)
-    return __file__
+    pass
 
 
 def update_dt_detail_uid(days=0):
@@ -335,7 +335,7 @@ def update_hb_city_rate(days=0):
     insert_city_list = sorted(insert_city_list, key=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
     DBCli().targetdb_cli.batchInsert(insert_company_sql, insert_com_list)
     DBCli().targetdb_cli.batchInsert(insert_city_sql, insert_city_list)
-    return __file__
+    pass
 
 
 def diff_days(one_date=None, two_date=None):

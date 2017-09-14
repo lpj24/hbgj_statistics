@@ -117,7 +117,7 @@ def update_hbgj_newconsumers_type_daily(days=0):
                               str(inland_user_num), str(inter_ticket_num), str(inland_ticket_num)]
     DBCli().targetdb_cli.insert(insert_sql, hbgj_newconsumers_data)
 
-    return __file__
+    pass
 
 
 def update_new_register_user_daily(days=0):
@@ -152,7 +152,7 @@ def update_new_register_user_daily(days=0):
     dto = [start_date, end_date]
     register_data = DBCli().sourcedb_cli.queryOne(register_sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, register_data)
-    return __file__
+    pass
 
 
 def update_hbgj_inter_inland_consumers_daily(days=0):
@@ -187,7 +187,7 @@ def update_hbgj_inter_inland_consumers_daily(days=0):
     dto = [start_date, end_date]
     inter_inland_data = DBCli().sourcedb_cli.queryOne(inter_inland_sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, inter_inland_data)
-    return __file__
+    pass
 
 
 if __name__ == "__main__":

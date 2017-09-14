@@ -69,7 +69,7 @@ def update_hb_insure_daily(days=0):
 
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(update_delay_sql, delay_data)
-    return __file__
+    pass
 
 
 def update_insure_class_daily(days=0):
@@ -146,7 +146,7 @@ def update_insure_class_daily(days=0):
 
     other_data = DBCli().sourcedb_cli.queryAll(other_insure_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, other_data)
-    return __file__
+    pass
 
 
 def update_insure_type_daily(days=0):
@@ -266,7 +266,7 @@ def update_insure_type_daily(days=0):
     dto = [start_date, end_date]
     delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
-    return __file__
+    pass
 
 
 def update_hb_boat(days=0):
@@ -368,7 +368,7 @@ def update_hb_boat(days=0):
     """
     detail_refund_data = DBCli().sourcedb_cli.queryAll(detail_refund_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, detail_refund_data)
-    return __file__
+    pass
 
 
 if __name__ == "__main__":

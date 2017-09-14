@@ -16,7 +16,7 @@ def update_hotel_orders_daily(days=0):
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().tongji_skyhotel_cli.queryAll(hotel_orders_sql["hotel_orders_daily"], dto)
     DBCli().targetdb_cli.batchInsert(hotel_orders_sql["update_hotel_orders_daily"], query_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     update_hotel_orders_daily(1)

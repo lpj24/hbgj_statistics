@@ -14,7 +14,7 @@ def update_gtgj_from_hb(days=0):
 
     query_data = [query_data_order[0], query_data_order[1], query_data_ticket[1]]
     DBCli().targetdb_cli.insert(gt_order_sql["insert_gtgj_from_hb"], query_data)
-    return __file__
+    pass
 
 
 # def update_gtgj_from_hb_his():

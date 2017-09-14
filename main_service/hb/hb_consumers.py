@@ -11,7 +11,7 @@ def update_hb_consumers_daily(days=0):
     dto = [today_date, end_date, today_date, end_date]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_consumers_daily'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_daily'], query_data)
-    return __file__
+    pass
 
 
 def update_hb_consumers_weekly(days=0):
@@ -22,7 +22,7 @@ def update_hb_consumers_weekly(days=0):
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_consumers_weekly'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_weekly'], query_data)
-    return __file__
+    pass
 
 
 def update_hb_consumers_monthly(days=0):
@@ -33,7 +33,7 @@ def update_hb_consumers_monthly(days=0):
     dto = [start_monthdate, end_enddate, start_monthdate, end_enddate]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_consumers_monthly'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_monthly'], query_data)
-    return __file__
+    pass
 
 
 def update_hb_consumers_quarterly():
@@ -51,7 +51,7 @@ def update_hb_newconsumers_daily(days=0):
     dto = [yesterday, yesterday, yesterday, yesterday]
     query_data = DBCli().sourcedb_cli.queryOne(hb_consumers_sql['hb_newconsumers_daily'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_newconsumers_daily'], query_data)
-    return __file__
+    pass
 
 
 def update_hbgj_newconsumers_inter_daily(days=0):
@@ -94,7 +94,7 @@ def update_hbgj_newconsumers_inter_daily(days=0):
     """
     query_data = DBCli().sourcedb_cli.queryAll(inter_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 def update_hbgj_consumers_inter_daily(days=0):
@@ -129,7 +129,7 @@ def update_hbgj_consumers_inter_daily(days=0):
     """
     query_data = DBCli().sourcedb_cli.queryAll(inter_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 def update_hbgj_newconsumers_inter_daily_nation(days=0):
@@ -181,7 +181,7 @@ def update_hbgj_newconsumers_inter_daily_nation(days=0):
     """
     query_data = DBCli().sourcedb_cli.queryAll(inter_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     i = 939

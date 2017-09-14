@@ -72,7 +72,7 @@ def update_gt_income_cost(days=0):
         insert_gt_coupon.append([gt_coupon["s_day"], "coupon_in_return", coupon_in_return])
 
     DBCli().targetdb_cli.batchInsert(insert_cost_sql, insert_gt_coupon)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     update_gt_income_cost(1)

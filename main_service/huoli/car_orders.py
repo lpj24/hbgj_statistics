@@ -21,8 +21,6 @@ def update_car_orders_daily(days=0):
     query_data = DBCli().car_cli.queryOne(car_orders_sql["car_orders_jz_daily"], dto)
     DBCli().targetdb_cli.insert(car_orders_sql["update_car_orders_jz_daily"], query_data)
 
-    return __file__
-
 
 def update_gt_car():
     open_car_gt_sql = """
@@ -49,8 +47,8 @@ def update_gt_car():
         us.depart_name, us.arrive_name
         from user_sub_order us
         left JOIN account_gtgj on us.userid = account_gtgj.userid
-        where CONCAT_WS(' ', depart_date, depart_time)>='2017-09-12 12:00'
-        and CONCAT_WS(' ', depart_date, depart_time) <= '2017-09-14 23:59'
+        where CONCAT_WS(' ', depart_date, depart_time)>='2017-09-15 9:00'
+        and CONCAT_WS(' ', depart_date, depart_time) <= '2017-09-18 23:59'
         and us.status not in ('取消订单','取消改签')
         and (arrive_name in %s
         or depart_name in %s)

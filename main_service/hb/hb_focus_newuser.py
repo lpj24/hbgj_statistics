@@ -89,7 +89,7 @@ def update_fouces_dat_daily(days=0):
         hbdt_focus_file.write("\t".join(q_list) + "\n")
 
     hbdt_focus_file.close()
-    return __file__
+    pass
 
 
 def update_focus_inland_inter_daily(days=0):

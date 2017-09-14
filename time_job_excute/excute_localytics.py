@@ -1,13 +1,11 @@
 import logging
 import sys
 import time
-
 from main_service.localytics import hb_ticket_book, hb_pay_type, hb_stages
-
 from dbClient import utils
-from dbClient.db_client import DBCli
 from main_service.localytics import hbdt_event
 from time_job_excute.timeServiceList import TimeService
+
 
 if __name__ == "__main__":
     days = sys.argv[1]
@@ -22,7 +20,7 @@ if __name__ == "__main__":
     for fun in TimeService.get_localytics_service():
         try:
             fun_path = fun(int(days))
-            utils.storage_execute_job(fun, fun_path)
+            utils.storage_execute_job(fun)
             time.sleep(1 * 60 * 20)
         except (Exception, AssertionError) as e:
             TimeService.add_localytics_service(fun)

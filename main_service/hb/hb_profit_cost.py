@@ -197,7 +197,7 @@ def update_hb_car_hotel_profit(days=0):
         balance_give_amount = VALUES(balance_give_amount)
     """
     DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
-    return __file__
+    pass
 
 
 def update_car_cost_detail(days=0):
@@ -251,7 +251,7 @@ def update_car_cost_detail(days=0):
             except KeyError:
                 continue
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_car_cost)
-    return __file__
+    pass
 
 
 def update_huoli_car_income_daily(days=0):
@@ -272,7 +272,7 @@ def update_huoli_car_income_daily(days=0):
     car_result = requests.get(url, params=params).json()
     car_result = car_result["result"][0]
     DBCli().targetdb_cli.insert(insert_car_sql, [car_result['date'], car_result['income']])
-    return __file__
+    pass
 
 
 def update_huoli_car_income_type(days=0):
@@ -300,7 +300,7 @@ def update_huoli_car_income_type(days=0):
         income_amount = car_income_data["amount"]
         insert_car_income.append((car_date, income_type, income_amount))
     DBCli().targetdb_cli.batchInsert(insert_car_sql, insert_car_income)
-    return __file__
+    pass
 
 
 def update_profit_hb_income(days=0):
@@ -340,7 +340,7 @@ def update_profit_hb_income(days=0):
     if hb_profit is None:
         return
     DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
-    return __file__
+    pass
 
 
 def update_profit_hotel_income(days=0):
@@ -362,7 +362,7 @@ def update_profit_hotel_income(days=0):
         income = VALUES(income)
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, hotel_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_channel_ticket_profit_daily(days=0):
@@ -502,7 +502,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     """
     DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
-    return __file__
+    pass
 
 
 def get_sale_type(saletype, pn_resouce, new_channel_data):
@@ -552,7 +552,7 @@ def update_profit_hb_income_official_website(days=0):
 
     hb_profit = DBCli().sourcedb_cli.queryAll(sql, [query_date, today])
     DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     # update_hb_car_hotel_profit(1)

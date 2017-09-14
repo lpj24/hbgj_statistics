@@ -56,7 +56,7 @@ def update_hb_channel_ticket_daily(days=0):
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week,  u'航班管家', 'HBGJ'])
 
-    return __file__
+    pass
 
 
 def update_hb_channel_ticket_income_daily(days=0):
@@ -131,7 +131,7 @@ def update_hb_channel_ticket_income_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_date, u'航班管家', 'HBGJ'])
-    return __file__
+    pass
 
 
 def update_hb_company_ticket_weekly():
@@ -424,7 +424,7 @@ def update_product_ticket_daily(days=0):
     dto = [start_week, end_week]
     supplier_data = DBCli().sourcedb_cli.queryAll(product_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, supplier_data)
-    return __file__
+    pass
 
 
 def update_refund_ticket_channel_daily(days=0):
@@ -517,7 +517,7 @@ def update_refund_ticket_channel_daily(days=0):
         insert_data.append(new_insert_data)
 
     DBCli().targetdb_cli.batchInsert(update_refund_sql, insert_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_obsolete_order_daily(days=1):
@@ -581,7 +581,7 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
         insert_data.append([s_day, pn, total_data_dict[no_ob_key][0], 0, total_data_dict[no_ob_key][1]])
 
     DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     i = 13

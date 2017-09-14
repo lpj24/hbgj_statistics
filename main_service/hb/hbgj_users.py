@@ -167,7 +167,7 @@ def hbgj_user(days=0):
         except Exception as e:
             logging.warning('hbgj send email error ' + str(e.message))
         start_date = DateUtil.add_days(start_date, 1)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     hbgj_user(1)

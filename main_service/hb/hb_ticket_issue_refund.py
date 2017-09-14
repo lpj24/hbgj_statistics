@@ -55,7 +55,7 @@ def update_hbgj_income_issue_refund_daily(days=0):
     """
     hb_gt_income_data = DBCli().sourcedb_cli.queryAll(hb_gt_sql, [start_date, end_date])
     DBCli().targetdb_cli.batchInsert(insert_sql, hb_gt_income_data)
-    return __file__
+    pass
 
 
 def update_hbgj_cost_type_daily(days=0):
@@ -159,7 +159,7 @@ def update_hbgj_cost_type_daily(days=0):
             else:
                 DBCli().targetdb_cli.insert(update_sql, refund_data)
         # DBCli().targetdb_cli.batchInsert(update_sql, refund_cost)
-    return __file__
+    pass
 
 
 def update_profit_hb_self_no_transfer_daily(days=0):
@@ -200,7 +200,7 @@ def update_profit_hb_self_no_transfer_daily(days=0):
     cost_data = DBCli().sourcedb_cli.queryOne(transfer_cost_sql, dto)
     insert_data = [start_date] + list(income_data) + list(cost_data)
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
-    return __file__
+    pass
 
 
 def update_profit_hb_self_transfer_daily(days=0):
@@ -262,7 +262,7 @@ def update_profit_hb_self_transfer_daily(days=0):
     cost_data = DBCli().sourcedb_cli.queryOne(transfer_cost_sql, dto)
     insert_data = [start_date, ] + list(income_data) + list(cost_data)
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
-    return __file__
+    pass
 
 
 def update_profit_hb_supply_transfer_daily(days=0):
@@ -322,7 +322,7 @@ def update_profit_hb_supply_transfer_daily(days=0):
     DBCli().targetdb_cli.batchInsert(insert_sql, income_data)
     cost_data = DBCli().sourcedb_cli.queryAll(supply_transfer_cost_sql, dto)
     DBCli().targetdb_cli.batchInsert(update_sql, cost_data)
-    return __file__
+    pass
 
 
 def update_profit_hb_supply_no_transfer_daily(days=0):
@@ -372,7 +372,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
     cost_data = DBCli().sourcedb_cli.queryAll(supply_no_transfer_cost_sql, dto)
     DBCli().targetdb_cli.batchInsert(update_sql, cost_data)
 
-    return __file__
+    pass
 
 
 if __name__ == "__main__":

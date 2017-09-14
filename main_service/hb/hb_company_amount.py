@@ -44,7 +44,7 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
     dto = [start_date, end_date]
     cz_data = DBCli().sourcedb_cli.queryAll(cz_inter_inland_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_cz_sql, cz_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_amount_monitor_hlth(days=0):
@@ -82,7 +82,7 @@ def update_operation_hbgj_amount_monitor_hlth(days=0):
     dto = [start_date, end_date]
     hlth_data = DBCli().sourcedb_cli.queryAll(hlth_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_hlth_sql, hlth_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
@@ -123,7 +123,7 @@ def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
     dto = [start_date, end_date]
     szx_data = DBCli().sourcedb_cli.queryAll(szx_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_szx_sql, szx_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_amount_monitor_inter(days=0):
@@ -158,7 +158,7 @@ def update_operation_hbgj_amount_monitor_inter(days=0):
     dto = [start_date, end_date]
     inter_company_data = DBCli().sourcedb_cli.queryAll(pn_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, inter_company_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_qp_success(days=0):
@@ -186,7 +186,7 @@ def update_operation_hbgj_qp_success(days=0):
     """
     qp_data = DBCli().sourcedb_cli.queryAll(qp_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, qp_data)
-    return __file__
+    pass
 
 
 def update_operation_hbgj_special_return_daily(days=1):
@@ -284,7 +284,7 @@ def update_operation_hbgj_special_return_daily(days=1):
     """
     gx = DBCli().sourcedb_cli.queryAll(gx_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, gx)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     # update_operation_hbgj_amount_monitor_cz(1)

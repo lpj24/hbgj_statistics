@@ -15,7 +15,7 @@ def update_hbgj_coupon_tickt(days=0):
     issue_coupon_data = DBCli().hb_source_account_cli.queryOne(coupon_sql["hbgj_issue_coupon_sql"], dto)
     insert_data = issue_coupon_data + use_coupon_data
     DBCli().targetdb_cli.insert(coupon_sql["insert_hbgj_coupon_sql"], insert_data)
-    return __file__
+    pass
 
 
 def update_gt_coupon_daily(days=0):
@@ -26,7 +26,7 @@ def update_gt_coupon_daily(days=0):
     dto = [start_date, end_date, start_date, end_date]
     gtgj_coupon_data = DBCli().gt_cli.queryOne(coupon_sql["gtgj_use_issue_coupon_sql"], dto)
     DBCli().targetdb_cli.insert(coupon_sql["insert_gtgj_coupon_sql"], gtgj_coupon_data)
-    return __file__
+    pass
 
 
 def update_huoli_car_coupon_daily(days=0):
@@ -38,7 +38,7 @@ def update_huoli_car_coupon_daily(days=0):
     issue_coupon_data = DBCli().hb_source_account_cli.queryOne(coupon_sql["huoli_car_issue_coupon_sql"], dto)
     insert_data = issue_coupon_data + use_coupon_data
     DBCli().targetdb_cli.insert(coupon_sql["insert_huoli_car_sql"], insert_data)
-    return __file__
+    pass
 
 
 def update_huoli_hotel_coupon_daily(days=0):
@@ -53,7 +53,7 @@ def update_huoli_hotel_coupon_daily(days=0):
     issue_coupon_data = issue_coupon_data if issue_coupon_data[0] else (0, 0, 0)
     insert_data = (DateUtil.date2str(start_date, '%Y-%m-%d'), ) + issue_coupon_data + use_coupon_data
     DBCli().targetdb_cli.insert(coupon_sql["insert_huoli_hotel_sql"], insert_data)
-    return __file__
+    pass
 
 
 def update_common_coupon_daily(days=0):
@@ -63,7 +63,7 @@ def update_common_coupon_daily(days=0):
     dto = [start_date, end_date]
     common_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["common_coupon_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_common_coupon_sql"], common_coupon_data)
-    return __file__
+    pass
 
 
 def update_hb_coupon_use_detail_daily(days=0):
@@ -76,7 +76,7 @@ def update_hb_coupon_use_detail_daily(days=0):
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_sql"], use_detail_coupon_data)
     use_detail_noclient_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["hbdj_use_detail_noclient_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_hbgj_use_detail_noclient_sql"], use_detail_noclient_coupon_data)
-    return __file__
+    pass
 
 
 def update_coupon_use_detail_daily(days=0):
@@ -86,7 +86,7 @@ def update_coupon_use_detail_daily(days=0):
     dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().hb_source_account_cli.queryAll(coupon_sql["coupon_issue_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_coupon_issue_detail_sql"], use_detail_coupon_data)
-    return __file__
+    pass
 
 
 def update_car_use_detail_daily(days=0):
@@ -96,7 +96,7 @@ def update_car_use_detail_daily(days=0):
     dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["huoli_car_coupon_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_coupon_car_use_detail_sql"], use_detail_coupon_data)
-    return __file__
+    pass
 
 
 def update_hotel_use_detail_daily(days=0):
@@ -106,7 +106,7 @@ def update_hotel_use_detail_daily(days=0):
     dto = [start_date, end_date]
     use_detail_coupon_data = DBCli().sourcedb_cli.queryAll(coupon_sql["huoli_hotel_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_huoli_hotel_use_detail_sql"], use_detail_coupon_data)
-    return __file__
+    pass
 
 
 def update_gtgj_use_issue_detail_daily(days=0):
@@ -119,7 +119,7 @@ def update_gtgj_use_issue_detail_daily(days=0):
 
     use_detail_coupon_data = DBCli().gt_cli.queryAll(coupon_sql["gtgj_coupon_use_detail_sql"], dto)
     DBCli().targetdb_cli.batchInsert(coupon_sql["insert_gtgj_coupon_use_detail_sql"], use_detail_coupon_data)
-    return __file__
+    pass
 
 
 def update_coupon_use_detail_daily_his(days=0):
@@ -329,7 +329,7 @@ def update_profit_huoli_fmall_cost(days=0):
     """
     fmall_data = DBCli().pay_cost_cli.queryAll(fmall_coupon_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, fmall_data)
-    return __file__
+    pass
 
 
 def update_profit_huoli_buy_cost(days=0):
@@ -369,7 +369,7 @@ def update_profit_huoli_buy_cost(days=0):
     """
     buy_data = DBCli().pay_cost_cli.queryAll(buy_coupon_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, buy_data)
-    return __file__
+    pass
 
 
 def update_coupon_list(days=1):
@@ -389,7 +389,7 @@ def update_coupon_list(days=1):
     """
     query_data = DBCli().hb_sky_account_cli.queryAll(sql, [start_date])
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     # update_common_coupon_daily(1)
@@ -397,4 +397,4 @@ if __name__ == "__main__":
     # update_huoli_car_coupon_daily(1)
     # update_hbgj_coupon_tickt(4)
     # update_huoli_hotel_coupon_daily(4)
-    update_coupon_use_detail_daily(4)
+    update_profit_huoli_fmall_cost(1)

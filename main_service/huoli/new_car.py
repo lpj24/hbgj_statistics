@@ -122,7 +122,7 @@ def update_huoli_car_orders_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().car_cli.queryAll(order_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 def update_huoli_car_consumers_daily(days=0):
@@ -244,7 +244,7 @@ def update_huoli_car_consumers_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().car_cli.queryAll(order_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 
 def update_huoli_car_newconsumers_daily(days=0):
@@ -366,7 +366,7 @@ def update_huoli_car_newconsumers_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().car_cli.queryAll(order_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 if __name__ == '__main__':
     update_huoli_car_orders_daily(1)

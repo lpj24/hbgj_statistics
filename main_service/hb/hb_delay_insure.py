@@ -81,7 +81,7 @@ def update_hb_deplay_insure(days=0):
 
         DBCli().targetdb_cli.insert(insert_sql, insert_data)
         days += 1
-    return __file__
+    pass
 
 
 def update_compensate_detail(days=0):
@@ -108,7 +108,7 @@ def update_compensate_detail(days=0):
     compensate_detail = DBCli().sourcedb_cli.queryAll(compensate_detail_sql, [query_start, query_end])
     DBCli().targetdb_cli.batchInsert(compensate_detail_insert_sql, compensate_detail)
 
-    return __file__
+    pass
 
 if __name__ == "__main__":
     # update_hb_deplay_insure(2)

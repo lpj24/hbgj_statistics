@@ -39,7 +39,7 @@ def update_hb_partner_daily(days=0):
     """
     query_data = DBCli().dynamic_focus_cli.queryAll(sql, [start_date, end_date])
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    return __file__
+    pass
 
 if __name__ == "__main__":
     # update_his()

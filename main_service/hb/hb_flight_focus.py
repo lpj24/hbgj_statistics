@@ -31,7 +31,7 @@ def update_flight_focus_user_daily(days=0):
     query_data = (query_data[0], query_data[1], int(query_pv[0]) + int(query_his_pv[0]))
 
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_data)
-    return __file__
+    pass
 
 
 def get_focus_new_user(days=0):
@@ -513,7 +513,7 @@ def update_hb_focus_inter_inland(days=0):
 
     DBCli().targetdb_cli.insert(insert_sql, [DateUtil.date2str(start_date, '%Y-%m-%d'),
                                              inland_pv_num, inter_pv_num, inland_uv_num, inter_uv_num, len(fly_uv)])
-    return __file__
+    pass
 
 
 def tmp_cal_inter_inland(codes_city):

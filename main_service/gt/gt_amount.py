@@ -101,7 +101,7 @@ def update_gtgj_amount_daily(days=0):
         query_data.append(int_round(amount_grab.pop()[0]))
         query_date = DateUtil.add_days(query_date, 1)
         DBCli().targetdb_cli.insert(gt_amount_sql["update_gtgj_amount_daily"], query_data)
-    return __file__
+    pass
 
 
 def int_round(num):

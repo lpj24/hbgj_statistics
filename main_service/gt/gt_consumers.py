@@ -17,7 +17,6 @@ def update_gtgj_consumers_daily(days=0):
     dto = [today, tomorrow]
     query_data = DBCli().gt_cli.queryAll(gtgj_consumers_sql["gtgj_consumers_daily"], dto)
     DBCli().targetdb_cli.batchInsert(gtgj_consumers_sql["update_gtgj_consumers_daily"], query_data)
-    pass
 
 
 def update_gtgj_consumers_weekly():

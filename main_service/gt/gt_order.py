@@ -23,7 +23,6 @@ def update_gt_order_daily(days=0):
         query_data = DBCli().gt_cli.queryAll(gt_order_sql["gtgj_order_daily"], dto)
 
     DBCli().targetdb_cli.batchInsert(gt_order_sql["update_gtgj_order_daily"], query_data)
-    pass
 
 
 def update_gt_order_hourly(days=0):

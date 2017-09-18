@@ -8,9 +8,12 @@ def update_huoli_buy_orders_daily(days=0):
     start_date = DateUtil.get_date_before_days(int(days) * 3)
     end_date = DateUtil.get_date_after_days(1-int(days))
     huoli_order_sql = """
-        select DATE_FORMAT(po.createtime, '%%Y-%%m-%%d') s_day, count(DISTINCT po.id), sum(po.totalprice) from product_order po
+        select DATE_FORMAT(po.createtime, '%%Y-%%m-%%d') s_day, count(DISTINCT po.id),
+        sum(po.totalprice) from product_order po
         left join pay on po.pay_id=pay.id
         where pay.paysource!='FREE' and po.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and po.createtime >= %s
         and po.createtime < %s
         GROUP BY s_day
@@ -27,7 +30,6 @@ def update_huoli_buy_orders_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().huoli_buy_cli.queryAll(huoli_order_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    pass
 
 
 def update_huoli_buy_consumers_daily(days=0):
@@ -38,6 +40,8 @@ def update_huoli_buy_consumers_daily(days=0):
         select DATE_FORMAT(po.createtime, '%%Y-%%m-%%d') s_day, count(DISTINCT po.userid), sum(po.totalprice) from product_order po
         left join pay on po.pay_id=pay.id
         where pay.paysource!='FREE' and po.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and po.createtime >= %s
         and po.createtime < %s
         GROUP BY s_day
@@ -54,7 +58,6 @@ def update_huoli_buy_consumers_daily(days=0):
     dto = [start_date, end_date]
     query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    pass
 
 
 def update_huoli_buy_consumers_weekly():
@@ -65,6 +68,8 @@ def update_huoli_buy_consumers_weekly():
         sum(po.totalprice) from product_order po
         left join pay on po.pay_id=pay.id
         where pay.paysource!='FREE' and po.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and po.createtime >= %s
         and po.createtime < %s
     """
@@ -89,6 +94,8 @@ def update_huoli_buy_consumers_monthly():
         sum(po.totalprice) from product_order po
         left join pay on po.pay_id=pay.id
         where pay.paysource!='FREE' and po.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and po.createtime >= %s
         and po.createtime < %s
     """
@@ -113,6 +120,8 @@ def update_huoli_buy_consumers_quarterly():
         sum(po.totalprice) from product_order po
         left join pay on po.pay_id=pay.id
         where pay.paysource!='FREE' and po.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and po.createtime >= %s
         and po.createtime < %s
     """
@@ -139,11 +148,15 @@ def update_huoli_buy_newconsumers_daily(days=0):
         sum(po.totalprice) from product_order po
         left join pay on po.pay_id=pay.id
         where pay.paysource!='FREE' and po.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and po.createtime >= %s
         and po.createtime < %s
         and not EXISTS (select pp.userid from product_order pp
         left join pay on pp.pay_id=pay.id
         where pay.paysource!='FREE' and pp.account_type='hl'
+        and po.status = 30
+        and po.pid !=0
         and pp.createtime<%s and pp.userid=po.userid);
     """
 
@@ -158,12 +171,13 @@ def update_huoli_buy_newconsumers_daily(days=0):
     dto = [start_date, end_date, start_date]
     query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
     DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
-    pass
 
 
 if __name__ == '__main__':
+    import datetime
     # start_date, end_date = DateUtil.get_last_week_date()
-    # while 1:
+    # while start_date >= datetime.date(2017, 1, 16):
+    #     print start_date
     #     update_huoli_buy_consumers_weekly(start_date)
     #     start_date, end_date = DateUtil.get_last_week_date(start_date)
     # update_huoli_buy_consumers_monthly()
@@ -173,5 +187,14 @@ if __name__ == '__main__':
     # while 1:
     #     update_huoli_buy_consumers_monthly(start_date)
     #     start_date, end_date = DateUtil.get_last_month_date(start_date)
+    # update_huoli_buy_consumers_weekly()
+    # update_huoli_buy_orders_daily(1)
+    # i = 1
+    # while i <= 236:
+    #     update_huoli_buy_newconsumers_daily(i)
+    #     i += 1
 
-    update_huoli_buy_orders_daily(1)
+    s = datetime.date(2017, 4, 1)
+    # update_huoli_buy_consumers_quarterly(s)
+    # update_huoli_buy_orders_daily(1)
+    # update_huoli_buy_consumers_daily(1)

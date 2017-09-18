@@ -102,7 +102,6 @@ def hb_ticket_book(days=0):
             sql_data.append(num)
 
         DBCli().targetdb_cli.insert(sql, sql_data)
-    pass
 
 
 def update_booke_ticket_event_hourly(days=0):
@@ -201,7 +200,6 @@ def update_booke_ticket_event_hourly(days=0):
         hour_data.append(new_tmp_data)
 
     DBCli().targetdb_cli.batchInsert(sql, hour_data)
-    pass
 
 
 def update_ios_android_newuser_daily(days=0):
@@ -248,7 +246,6 @@ def update_ios_android_newuser_daily(days=0):
             insert_data.append(result["users"])
 
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
-    pass
 
 
 if __name__ == "__main__":

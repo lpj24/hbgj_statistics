@@ -82,7 +82,6 @@ def hbdt_event(days=0):
             sql_data.append(num)
 
         DBCli().targetdb_cli.insert(sql, sql_data)
-    pass
 
 if __name__ == "__main__":
     # import time

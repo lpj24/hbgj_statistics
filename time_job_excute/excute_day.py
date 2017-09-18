@@ -64,6 +64,7 @@ def add_execute_job():
     TimeService.add_day_service(huoli_buy_consumers.update_huoli_buy_orders_daily)
     TimeService.add_day_service(huoli_buy_consumers.update_huoli_buy_consumers_daily)
     TimeService.add_day_service(huoli_buy_consumers.update_huoli_buy_newconsumers_daily)
+    TimeService.add_day_service(huoli_buy_consumers.update_huoli_edj_newconsumers_daily)
     return TimeService
 
 

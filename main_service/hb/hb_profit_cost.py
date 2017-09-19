@@ -100,6 +100,26 @@ def update_hb_car_hotel_profit(days=0):
         update profit_hb_cost set dft_cost=%s where s_day=%s
     """
     dft_result = DBCli().sourcedb_cli.queryAll(query_dft_cost_sql, dto)
+
+    cut_point_sql = """
+        SELECT
+        -sum(case when CHANNELTYPE=5 then ud.POINTS else 0 end)/1000 point_type5_amount,
+        -sum(case when CHANNELTYPE=6 then ud.POINTS else 0 end)/1000 point_type6_amount,
+        DATE_FORMAT(ud.CREATE_TIME,'%Y-%m-%d') s_day
+        FROM USER_POINTS_DETAIL ud
+        LEFT JOIN USER_POINTS u on ud.POINT_ID=u.ID
+        WHERE u.TYPE=1 AND ud.TYPE='2'
+        AND ud.CREATE_TIME>=%s
+        AND ud.CREATE_TIME<%s
+        GROUP BY s_day
+    """
+
+    update_cut_point_cost_sql = """
+        update profit_hb_cost set point_type5_amount=%s, point_type6_amount=%s
+        where s_day=%s
+    """
+
+    cut_point_amount = DBCli().sourcedb_cli.queryAll(cut_point_sql, dto)
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         else_coupon_in, else_coupon_return, delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
@@ -121,6 +141,7 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
     DBCli().targetdb_cli.batchInsert(update_dft_cost_sql, dft_result)
     DBCli().targetdb_cli.batchInsert(update_inland_price_diff_type2_sql, inland_price_diff_type2)
+    DBCli().targetdb_cli.batchInsert(update_cut_point_cost_sql, cut_point_amount)
 
     car_sql = """
         select distinct TRADE_TIME s_day,
@@ -197,7 +218,6 @@ def update_hb_car_hotel_profit(days=0):
         balance_give_amount = VALUES(balance_give_amount)
     """
     DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
-    pass
 
 
 def update_car_cost_detail(days=0):

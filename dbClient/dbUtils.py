@@ -40,7 +40,7 @@ class DButils(object):
             self._conn.commit()
         except MySQLdb.Error, e:
             warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
-            logging.warning(warning_time + ":" + str(sql)+"--"+str(e.args[1]))
+            logging.error(warning_time + ":" + str(sql)+"--"+str(e.args[1]))
 
     def insert(self, sql, params):
         cursor = self._cursor
@@ -51,7 +51,7 @@ class DButils(object):
             self._conn.commit()
         except MySQLdb.Error, e:
             warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
-            logging.warning(warning_time + ":" + str(sql) + "--" + str(e.args[1]))
+            logging.error(warning_time + ":" + str(sql) + "--" + str(e.args[1]))
 
     def queryAll(self, sql, params=None):
         cursor = self._cursor
@@ -80,5 +80,5 @@ class DButils(object):
             # logging.warning("execute sql" + cursor._executed)
             data = cursor.fetchone()
         except MySQLdb.OperationalError:
-            logging.warning("error")
+            logging.error("error")
         return data

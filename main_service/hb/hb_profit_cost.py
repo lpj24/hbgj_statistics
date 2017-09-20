@@ -105,7 +105,7 @@ def update_hb_car_hotel_profit(days=0):
         SELECT
         -sum(case when CHANNELTYPE=5 then ud.POINTS else 0 end)/1000 point_type5_amount,
         -sum(case when CHANNELTYPE=6 then ud.POINTS else 0 end)/1000 point_type6_amount,
-        DATE_FORMAT(ud.CREATE_TIME,'%Y-%m-%d') s_day
+        DATE_FORMAT(ud.CREATE_TIME,'%%Y-%%m-%%d') s_day
         FROM USER_POINTS_DETAIL ud
         LEFT JOIN USER_POINTS u on ud.POINT_ID=u.ID
         WHERE u.TYPE=1 AND ud.TYPE='2'

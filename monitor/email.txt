@@ -13,7 +13,7 @@
         % for item in rows_data:
             <tr>
                % for el in item:
-                 <td width='15%'>${el}</td>
+                 <td width='5%'>${el}</td>
                % endfor
             </tr>
         % endfor

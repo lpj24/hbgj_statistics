@@ -33,13 +33,10 @@ def monitor_hb_channel_ticket():
         and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
         IFNULL(od.`LINKTYPE`, 0) != 2 GROUP BY DATE_FORMAT(od.CREATETIME, '%%Y-%%m-%%d'), o.PNRSOURCE;
     """
-    start_date = DateUtil.get_date_before_days(1)
-    end_date = DateUtil.get_date_after_days(0)
-    dto = [start_date, end_date]
-    # rows_heads = [u'渠道']
+    start_date = DateUtil.get_date_before_days(10)
     channel_list = []
 
-    head = map(lambda x: DateUtil.add_days(start_date, -x), xrange(1, 4))
+    head = map(lambda x: DateUtil.add_days(start_date, -x), xrange(1, 7))
     result_ticket_num = {}
     for index, start in enumerate(head):
         end_date = DateUtil.add_days(start, 1)
@@ -59,15 +56,25 @@ def monitor_hb_channel_ticket():
                 else:
                     result_ticket_num[pn_name][index] = ticket_num
 
-    rows = [''] + head + ['前7天的平均票数', '前7天最少票数', ]
-    rows_headers = [u'渠道'] + [u'票数'] * len(head)
+    rows = [''] + head + ['较5天的平均票数', '前5天最少票数']
+    rows_headers = [u'渠道'] + [u'票数'] * len(head) + [u'百分比'] * 2
 
     rows_data = []
     for k, v in sorted(result_ticket_num.items(), key=lambda a: a[1], reverse=True):
-        avg_num = float(v[1:]/len(v[1:]))
+        avg_num = float(sum(v[1:])/len(v[1:]))
         min_num = min(v[1:])
-        rows_data.append([k] + v + [avg_num, min_num])
-    print rows_data
+        today_num = v[0]
+        avg_num_per = 0 if avg_num == 0 else (float(today_num) - avg_num)/avg_num * 100
+        min_num_per = 0 if min_num == 0 else (float(today_num) - min_num) / min_num * 100
+        if avg_num_per < -20 and min_num_per < -20:
+            avg_num_per = '<font color="#FF0000">{0:.2f}%</font> (平均数: {1})'.format(avg_num_per, avg_num)
+            min_num_per = '<font color="#FF0000">{0:.2f}%</font> (最小票数: {1})'.format(min_num_per, min_num)
+        else:
+            avg_num_per = '{0:.2f}% (平均数: {1})'.format(avg_num_per, avg_num)
+            min_num_per = '{0:.2f}% (最小票数: {1})'.format(min_num_per, min_num)
+
+        rows_data.append([k] + v + [avg_num_per, min_num_per])
+
     data = {
         'rows': rows,
         'rows_headers': rows_headers,
@@ -77,9 +84,11 @@ def monitor_hb_channel_ticket():
     from dbClient import utils
     utils.sendMail('762575190@qq.com', text, '航班订票渠道数据')
 
-    # for d in query_data:
-    #     print d
 
+def get_median(data):
+    data.sort()
+    half = len(data) // 2
+    return float(data[half] + data[~half])/2
 
 if __name__ == '__main__':
     monitor_hb_channel_ticket()

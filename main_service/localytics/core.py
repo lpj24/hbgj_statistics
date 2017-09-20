@@ -3,6 +3,7 @@ from dbClient.conf import localytics
 import requests
 import json
 from functools import partial
+# from collections import namedtuple
 
 __all__ = ['request_pv', 'request_uv']
 api_key = localytics['api_key']
@@ -29,8 +30,16 @@ class LocalyticsRequest(object):
             raise e
         if return_data.status_code != 200:
             raise return_data.raise_for_status()
-        return_data = return_data.json()
-        return return_data['results']
+        return_data = return_data.json()['results']
+        #
+        # def map_error_key(key):
+        #     if len(key.split(':')) > 1:
+        #         return key.split(':')[1]
+        #     return key
+        # result = namedtuple('Result', map(map_error_key, return_data[0].keys()))
+
+        # return [result(*(v.values())) for v in return_data]
+        return return_data
 
 
 request_pv = partial(LocalyticsRequest.do_http, metrics='sessions_per_event')
@@ -38,4 +47,5 @@ request_uv = partial(LocalyticsRequest.do_http, metrics='users')
 
 
 if __name__ == '__main__':
-    print request_pv('2017-08-28', '2017-08-29', 'ios.weex.installment.pay.start', 'day')
+    # print request_pv('2017-08-28', '2017-08-29', 'ios.weex.installment.pay.start', 'day')
+    print request_pv('2017-08-28', '2017-08-29', 'ios.weex.installment.activated', 'day, a:type')

@@ -7,6 +7,7 @@ from main_service.hb import hb_profit_cost, hb_insure
 from monitor_data_exception import cal_balance
 from time_job_excute.timeServiceList import TimeService
 import logging
+from itertools import chain
 
 
 # def check_day_data(table_list):
@@ -54,10 +55,10 @@ def check_day_data():
         from bi_execute_job where job_type !=5;
     """
     day_sql = DBCli().targetdb_cli.queryAll(query_table_sql)
-    query_table = []
-    for table in day_sql:
-        query_table.extend(table[0].split(' '))
-    for table in query_table:
+
+    query_table = [table[0].split(' ') for table in day_sql]
+
+    for table in chain(*query_table):
         format_sql = 'select count(1) from {} where s_day=%s'.format(table)
         try:
             data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
@@ -67,8 +68,7 @@ def check_day_data():
             # error
             insert_msg.append([query_date, table])
             msg += table + "<br/>"
-        else:
-            pass
+
     if len(msg) > 0:
         DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
         utils.sendMail("762575190@qq.com", msg, u"数据查询异常")

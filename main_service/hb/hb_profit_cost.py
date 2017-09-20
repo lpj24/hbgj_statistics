@@ -320,7 +320,6 @@ def update_huoli_car_income_type(days=0):
         income_amount = car_income_data["amount"]
         insert_car_income.append((car_date, income_type, income_amount))
     DBCli().targetdb_cli.batchInsert(insert_car_sql, insert_car_income)
-    pass
 
 
 def update_profit_hb_income(days=0):

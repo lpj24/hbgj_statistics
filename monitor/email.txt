@@ -6,7 +6,7 @@
     </tr>
     <tr>
        % for head in rows_headers:
-            <td>${head}</td>
+            <td><strong>${head}</strong></td>
        % endfor
     </tr>
 

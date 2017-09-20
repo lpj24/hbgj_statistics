@@ -129,10 +129,10 @@ if __name__ == "__main__":
     for fun in later_service.get_later_service():
         try:
             fun_path = fun(1)
-            utils.storage_execute_job(fun, fun_path)
+            utils.storage_execute_job(fun)
 
         except Exception as e:
-            logging.warning(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+            logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))
             continue
     check_day_data()
     exception_table = cal_balance()

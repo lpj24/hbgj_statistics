@@ -13,7 +13,7 @@ def update_flight_focus_user_daily(days=0):
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(today, '%Y-%m-%d')] + \
-          [DateUtil.date2str(tomorrow, '%Y-%m-%d'), DateUtil.date2str(today, '%Y-%m-%d')] * 4
+          [DateUtil.date2str(tomorrow, '%Y-%m-%d'), DateUtil.date2str(today, '%Y-%m-%d')]
 
     query_data = DBCli().dynamic_focus_cli.queryOne(hb_flight_focus_user_sql['hb_flight_focus_users_daily'], dto)
     pv_sql = """
@@ -31,7 +31,6 @@ def update_flight_focus_user_daily(days=0):
     query_data = (query_data[0], query_data[1], int(query_pv[0]) + int(query_his_pv[0]))
 
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_data)
-    pass
 
 
 def get_focus_new_user(days=0):
@@ -603,4 +602,4 @@ def tmp_cal_inter_inland(codes_city):
 
 
 if __name__ == "__main__":
-    update_hb_focus_inter_inland(1)
+    update_flight_focus_user_daily(1)

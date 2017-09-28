@@ -11,7 +11,6 @@ def update_hbgj_activeusers_daily(days=0):
     dto = [today, today, tomorrow]
     query_data = DBCli().apibase_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_daily"], query_data)
-    pass
 
 
 def update_hbgj_activeusers_weekly():

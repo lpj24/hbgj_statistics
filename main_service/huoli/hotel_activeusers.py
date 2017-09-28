@@ -17,7 +17,6 @@ def update_hotel_activeusers_daily(days=0):
     if activeusers_num > 0:
         dto = [DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y-%m-%d"), activeusers_num]
         DBCli().targetdb_cli.insert(activeusers_daily_sql, dto)
-    pass
 
 
 def update_hotel_activeusers_weekly(days=0):

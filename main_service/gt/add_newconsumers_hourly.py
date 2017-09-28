@@ -38,8 +38,8 @@ def gt_newconsumers_hourly():
                   and pay_time<=%s
 
         """
-    query_data_ios = DBCli().gt_cli.queryAll(hourly_sql_ios, dto)
-    query_data_android = DBCli().gt_cli.queryAll(hourly_sql_android, dto)
+    query_data_ios = DBCli().gt_cli.query_all(hourly_sql_ios, dto)
+    query_data_android = DBCli().gt_cli.query_all(hourly_sql_android, dto)
 
     res_ios = map(lambda x: x[0], query_data_ios)
     res_android = map(lambda x: x[0], query_data_android)

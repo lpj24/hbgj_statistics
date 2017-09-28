@@ -9,7 +9,7 @@ def update_car_consumers_daily(days=0):
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(today, '%Y-%m-%d'), DateUtil.date2str(today), DateUtil.date2str(tomorrow)] * 3
-    query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_daily"], dto)
+    query_data = DBCli().car_cli.query_one(car_consumers_sql["car_consumers_jz_daily"], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_daily"], query_data)
     pass
 
@@ -23,7 +23,7 @@ def update_car_consumers_weekly():
     #     dto.append(DateUtil.date2str(start_date))
     #     dto.append(DateUtil.date2str(end_date))
     #
-    # query_data = car_cli.queryOne(car_consumers_sql['car_consumers_weekly'], dto)
+    # query_data = car_cli.query_one(car_consumers_sql['car_consumers_weekly'], dto)
     # targetdb_cli.insert(car_consumers_sql['update_car_consumers_weekly'], query_data)
 
     for i in xrange(3):
@@ -31,7 +31,7 @@ def update_car_consumers_weekly():
         dto.append(DateUtil.date2str(start_date))
         dto.append(DateUtil.date2str(end_date))
 
-    query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_weekly"], dto)
+    query_data = DBCli().car_cli.query_one(car_consumers_sql["car_consumers_jz_weekly"], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_weekly"], query_data)
 
 
@@ -42,14 +42,14 @@ def update_car_consumers_monthly():
     #     dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
     #     dto.append(DateUtil.date2str(start_date))
     #     dto.append(DateUtil.date2str(end_date))
-    # query_data = car_cli.queryOne(car_consumers_sql['car_consumers_monthly'], dto)
+    # query_data = car_cli.query_one(car_consumers_sql['car_consumers_monthly'], dto)
     # targetdb_cli.insert(car_consumers_sql['update_car_consumers_monthly'], query_data)
 
     for i in xrange(3):
         dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
         dto.append(DateUtil.date2str(start_date))
         dto.append(DateUtil.date2str(end_date))
-    query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_monthly"], dto)
+    query_data = DBCli().car_cli.query_one(car_consumers_sql["car_consumers_jz_monthly"], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_monthly"], query_data)
 
 
@@ -61,7 +61,7 @@ def update_car_consumers_quarterly():
     #     dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
     #     dto.append(DateUtil.date2str(start_date))
     #     dto.append(DateUtil.date2str(end_date))
-    # query_data = car_cli.queryOne(car_consumers_sql['car_consumers_quarterly'], dto)
+    # query_data = car_cli.query_one(car_consumers_sql['car_consumers_quarterly'], dto)
     # targetdb_cli.insert(car_consumers_sql['update_car_consumers_quarterly'], query_data)
 
     for i in xrange(3):
@@ -69,7 +69,7 @@ def update_car_consumers_quarterly():
         dto.append(DateUtil.date2str(start_date, '%Y-%m-%d'))
         dto.append(DateUtil.date2str(start_date))
         dto.append(DateUtil.date2str(end_date))
-    query_data = DBCli().car_cli.queryOne(car_consumers_sql["car_consumers_jz_quarterly"], dto)
+    query_data = DBCli().car_cli.query_one(car_consumers_sql["car_consumers_jz_quarterly"], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql["update_car_consumers_jz_quarterly"], query_data)
 
 
@@ -81,7 +81,7 @@ def update_car_newconsumers_daily(days=0):
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-    query_data = DBCli().car_cli.queryOne(car_consumers_sql['car_newconsumers_daily'], dto)
+    query_data = DBCli().car_cli.query_one(car_consumers_sql['car_newconsumers_daily'], dto)
     DBCli().targetdb_cli.insert(car_consumers_sql['update_car_newconsumers_daily'], query_data)
     pass
 

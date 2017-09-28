@@ -230,7 +230,7 @@ if __name__ == "__main__":
                 dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
                 dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
                 dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-            result = DBCli().car_cli.queryOne(car_consumers_sql['car_newconsumers_daily'], dto)
+            result = DBCli().car_cli.query_one(car_consumers_sql['car_newconsumers_daily'], dto)
             return result
 
         @tornado.gen.coroutine

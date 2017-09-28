@@ -15,7 +15,7 @@ def update_flight_focus_user_daily(days=0):
     dto = [DateUtil.date2str(today, '%Y-%m-%d')] + \
           [DateUtil.date2str(tomorrow, '%Y-%m-%d'), DateUtil.date2str(today, '%Y-%m-%d')]
 
-    query_data = DBCli().dynamic_focus_cli.queryOne(hb_flight_focus_user_sql['hb_flight_focus_users_daily'], dto)
+    query_data = DBCli().dynamic_focus_cli.query_one(hb_flight_focus_user_sql['hb_flight_focus_users_daily'], dto)
     pv_sql = """
         SELECT count(*) FROM FLY_USERFOCUS_TBL
         where FOCUSTIME<%s
@@ -26,8 +26,8 @@ def update_flight_focus_user_daily(days=0):
         where FOCUSTIME<%s
         and FOCUSTIME>=%s
     """
-    query_pv = DBCli().dynamic_focus_cli.queryOne(pv_sql, [DateUtil.date2str(tomorrow), DateUtil.date2str(today)])
-    query_his_pv = DBCli().dynamic_focus_cli.queryOne(pv_his_sql, [DateUtil.date2str(tomorrow), DateUtil.date2str(today)])
+    query_pv = DBCli().dynamic_focus_cli.query_one(pv_sql, [DateUtil.date2str(tomorrow), DateUtil.date2str(today)])
+    query_his_pv = DBCli().dynamic_focus_cli.query_one(pv_his_sql, [DateUtil.date2str(tomorrow), DateUtil.date2str(today)])
     query_data = (query_data[0], query_data[1], int(query_pv[0]) + int(query_his_pv[0]))
 
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_daily'], query_data)
@@ -57,7 +57,7 @@ def update_flight_focus_user_weekly():
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"s_day": start_date, "start_date": start_date, "end_date": end_date}
-    query_data = DBCli().oracle_cli.queryOne(hb_flight_focus_user_sql['hb_flight_focus_users_weekly'], dto)
+    query_data = DBCli().oracle_cli.query_one(hb_flight_focus_user_sql['hb_flight_focus_users_weekly'], dto)
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_weekly'], query_data)
 
 
@@ -66,7 +66,7 @@ def update_flight_focus_user_monthly():
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"s_day": start_date, "start_date": start_date, "end_date": end_date}
-    query_data = DBCli().oracle_cli.queryOne(hb_flight_focus_user_sql['hb_flight_focus_users_monthly'], dto)
+    query_data = DBCli().oracle_cli.query_one(hb_flight_focus_user_sql['hb_flight_focus_users_monthly'], dto)
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_monthly'], query_data)
 
 
@@ -75,7 +75,7 @@ def update_flight_focus_user_quarterly():
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = {"s_day": start_date, "start_date": start_date, "end_date": end_date}
-    query_data = DBCli().oracle_cli.queryOne(hb_flight_focus_user_sql['hb_flight_focus_users_quarterly'], dto)
+    query_data = DBCli().oracle_cli.query_one(hb_flight_focus_user_sql['hb_flight_focus_users_quarterly'], dto)
     DBCli().targetdb_cli.insert(hb_flight_focus_user_sql['update_flight_focus_user_quarterly'], query_data)
 
 
@@ -138,7 +138,7 @@ def update_flight_focus_user_quarterly():
 #         dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'),
 #                "end_date":  DateUtil.date2str(tomorrow, '%Y-%m-%d')}
 #         s_day = DateUtil.date2str(start_date, '%Y-%m-%d')
-#         query_data = DBCli().oracle_cli.queryAll(uv_sql, dto)
+#         query_data = DBCli().oracle_cli.query_all(uv_sql, dto)
 #         for platform_data in query_data:
 #             platform_type, uv = platform_data[0].lower(), platform_data[1]
 #             if platform_type in platform_uv:
@@ -146,8 +146,8 @@ def update_flight_focus_user_quarterly():
 #             elif platform_type.find("iphone") >= 0:
 #                 platform_uv["iphone"] += 0
 #
-#         query_pv = DBCli().oracle_cli.queryAll(pv_sql, dto)
-#         query_his_pv = DBCli().oracle_cli.queryAll(pv_his_sql, dto)
+#         query_pv = DBCli().oracle_cli.query_all(pv_sql, dto)
+#         query_his_pv = DBCli().oracle_cli.query_all(pv_his_sql, dto)
 #
 #         for k, v in dict(query_pv).items():
 #             if k in platform_pv:
@@ -397,7 +397,7 @@ def update_focus_platform(days=0):
         while start_date < end_date:
             next_day = DateUtil.date2str(DateUtil.add_days(start_date, 1), '%Y-%m-%d')
             dto = {"start_date": DateUtil.date2str(start_date, '%Y-%m-%d'), "end_date": next_day}
-            # app_data = DBCli().oracle_cli.queryAll(app_sql, dto)
+            # app_data = DBCli().oracle_cli.query_all(app_sql, dto)
             # iphone_num = 0
             # android_num = 0
             # for app in app_data:
@@ -406,13 +406,13 @@ def update_focus_platform(days=0):
             #         iphone_num += app_num
             #     else:
             #         android_num = app_num
-            # weixin_data = DBCli().oracle_cli.queryOne(weixin_sql, dto)
-            # gtgj_data = DBCli().oracle_cli.queryOne(gtgj_sql, dto)
-            jieji_data = DBCli().oracle_cli.queryOne(jieji_sql, dto)
-            # total_data = DBCli().oracle_cli.queryOne(total_sql, dto)
-            duanxin_data = DBCli().oracle_cli.queryOne(duanxin_sql, dto)
+            # weixin_data = DBCli().oracle_cli.query_one(weixin_sql, dto)
+            # gtgj_data = DBCli().oracle_cli.query_one(gtgj_sql, dto)
+            jieji_data = DBCli().oracle_cli.query_one(jieji_sql, dto)
+            # total_data = DBCli().oracle_cli.query_one(total_sql, dto)
+            duanxin_data = DBCli().oracle_cli.query_one(duanxin_sql, dto)
 
-            # app_data_pv = DBCli().oracle_cli.queryAll(app_sql_pv, dto)
+            # app_data_pv = DBCli().oracle_cli.query_all(app_sql_pv, dto)
             # iphone_num_pv = 0
             # android_num_pv = 0
             # for app in app_data_pv:
@@ -421,10 +421,10 @@ def update_focus_platform(days=0):
             #         iphone_num_pv += app_num
             #     else:
             #         android_num_pv = app_num
-            # weixin_data_pv = DBCli().oracle_cli.queryOne(weixin_sql_pv, dto)
-            # gtgj_data_pv = DBCli().oracle_cli.queryOne(gtgj_sql_pv, dto)
-            jieji_data_pv = DBCli().oracle_cli.queryOne(jieji_sql_pv, dto)
-            duanxin_data_pv = DBCli().oracle_cli.queryOne(duanxin_sql_pv, dto)
+            # weixin_data_pv = DBCli().oracle_cli.query_one(weixin_sql_pv, dto)
+            # gtgj_data_pv = DBCli().oracle_cli.query_one(gtgj_sql_pv, dto)
+            jieji_data_pv = DBCli().oracle_cli.query_one(jieji_sql_pv, dto)
+            duanxin_data_pv = DBCli().oracle_cli.query_one(duanxin_sql_pv, dto)
 
             # out_str = DateUtil.date2str(start_date, '%Y-%m-%d') + "\t" + str(android_num) + \
             #           "\t" + str(iphone_num)+ "\t" + str(weixin_data[0]) + "\t" + \
@@ -471,10 +471,10 @@ def update_hb_focus_inter_inland(days=0):
         uv = VALUES(uv)
     """
 
-    inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
+    inter_codes = DBCli().oracle_cli.query_all(inter_sql)
     inter_codes = [code[0] for code in inter_codes]
     dto = [start_date, end_date, start_date, end_date]
-    inter_inland_data = DBCli().dynamic_focus_cli.queryAll(inter_inland_sql, dto)
+    inter_inland_data = DBCli().dynamic_focus_cli.query_all(inter_inland_sql, dto)
 
     fly_uv = defaultdict(list)
     inter_uv_num = 0
@@ -534,16 +534,16 @@ def tmp_cal_inter_inland(codes_city):
     inland_sql = """
         select THREE_WORDS_CODE from AIRPORT_NATION_INFO
     """
-    inter_codes = DBCli().oracle_cli.queryAll(inter_sql)
+    inter_codes = DBCli().oracle_cli.query_all(inter_sql)
     inter_codes = [code[0] for code in inter_codes]
 
-    inland_codes = DBCli().oracle_cli.queryAll(inland_sql)
+    inland_codes = DBCli().oracle_cli.query_all(inland_sql)
     inland_codes = [code[0] for code in inland_codes]
 
     # NAY与PEK 是北京机场
     # SHA与PVG 是上海机场
 
-    fly_info = DBCli().dynamic_focus_cli.queryAll(sql, dto)
+    fly_info = DBCli().dynamic_focus_cli.query_all(sql, dto)
     fly_line = defaultdict(list)
     fly_line_inland = defaultdict(list)
     fly_line_result = defaultdict(int)

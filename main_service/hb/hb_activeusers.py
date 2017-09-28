@@ -9,7 +9,7 @@ def update_hbgj_activeusers_daily(days=0):
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today, today, tomorrow]
-    query_data = DBCli().apibase_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
+    query_data = DBCli().apibase_cli.query_one(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_daily"], query_data)
 
 
@@ -19,7 +19,7 @@ def update_hbgj_activeusers_weekly():
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = [start_date, end_date]
-    query_data = DBCli().apibase_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_weekly"], dto)
+    query_data = DBCli().apibase_cli.query_one(hb_activeusers_sql["hbgj_activeusers_weekly"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_weekly"], query_data)
 
 
@@ -28,7 +28,7 @@ def update_hbgj_activeusers_monthly():
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     dto = [start_date, end_date]
-    query_data = DBCli().apibase_cli.queryOne(hb_activeusers_sql["hbgj_activeusers_monthly"], dto)
+    query_data = DBCli().apibase_cli.query_one(hb_activeusers_sql["hbgj_activeusers_monthly"], dto)
     DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_monthly"], query_data)
 
 
@@ -60,8 +60,8 @@ def update_hbgj_newuser_daily(days=1):
         new_users_ios = values(new_users_ios),
         new_users_android = values(new_users_android)
     """
-    query_data = DBCli().apibase_cli.queryAll(new_user_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().apibase_cli.query_all(new_user_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
     pass
 
 if __name__ == "__main__":

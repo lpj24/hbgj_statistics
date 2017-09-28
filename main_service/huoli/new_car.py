@@ -120,8 +120,8 @@ def update_huoli_car_orders_daily(days=0):
         orders_else = VALUES(orders_else)
     """
     dto = [start_date, end_date]
-    query_data = DBCli().car_cli.queryAll(order_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().car_cli.query_all(order_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_car_consumers_daily(days=0):
@@ -241,8 +241,8 @@ def update_huoli_car_consumers_daily(days=0):
         consumers_else = VALUES(consumers_else)
     """
     dto = [start_date, end_date]
-    query_data = DBCli().car_cli.queryAll(order_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().car_cli.query_all(order_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_car_newconsumers_daily(days=0):
@@ -362,8 +362,8 @@ def update_huoli_car_newconsumers_daily(days=0):
         consumers_else = VALUES(consumers_else)
     """
     dto = [start_date, end_date]
-    query_data = DBCli().car_cli.queryAll(order_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().car_cli.query_all(order_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 if __name__ == '__main__':
     update_huoli_car_orders_daily(1)

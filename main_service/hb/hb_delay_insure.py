@@ -52,13 +52,13 @@ def update_hb_deplay_insure(days=0):
         query_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
         dto = [query_date]
 
-        fly_order_num = DBCli().sourcedb_cli.queryOne(fly_order_num_sql, dto)
-        activity_order_num = DBCli().sourcedb_cli.queryOne(activity_order_num_sql, dto)
-        compensate_order_num = DBCli().sourcedb_cli.queryOne(compensate_order_num_sql, dto)
-        compensate_refund_num = DBCli().sourcedb_cli.queryOne(compensate_refund_order_num_sql, dto)
-        compensate_amount_one = DBCli().sourcedb_cli.queryOne(compensate_amount_one_sql, dto)
-        compensate_amount_two = DBCli().sourcedb_cli.queryOne(compensate_amount_two_sql, dto)
-        compensate_exception_num = DBCli().sourcedb_cli.queryOne(compensate_exception_sql, dto)
+        fly_order_num = DBCli().sourcedb_cli.query_one(fly_order_num_sql, dto)
+        activity_order_num = DBCli().sourcedb_cli.query_one(activity_order_num_sql, dto)
+        compensate_order_num = DBCli().sourcedb_cli.query_one(compensate_order_num_sql, dto)
+        compensate_refund_num = DBCli().sourcedb_cli.query_one(compensate_refund_order_num_sql, dto)
+        compensate_amount_one = DBCli().sourcedb_cli.query_one(compensate_amount_one_sql, dto)
+        compensate_amount_two = DBCli().sourcedb_cli.query_one(compensate_amount_two_sql, dto)
+        compensate_exception_num = DBCli().sourcedb_cli.query_one(compensate_exception_sql, dto)
 
         insert_sql = """
             insert into operation_hbgj_delay_treasure_daily (s_day, fly_order_num, activity_order_num, compensate_order_num,
@@ -105,8 +105,8 @@ def update_compensate_detail(days=0):
 
     query_start = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 15), '%Y-%m-%d')
     query_end = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
-    compensate_detail = DBCli().sourcedb_cli.queryAll(compensate_detail_sql, [query_start, query_end])
-    DBCli().targetdb_cli.batchInsert(compensate_detail_insert_sql, compensate_detail)
+    compensate_detail = DBCli().sourcedb_cli.query_all(compensate_detail_sql, [query_start, query_end])
+    DBCli().targetdb_cli.batch_insert(compensate_detail_insert_sql, compensate_detail)
 
     pass
 

@@ -46,9 +46,9 @@ def update_gt_income_cost(days=0):
 
     query_dto = [start_date, end_date]
 
-    result_income_cost = DBCli(dict).gt_cli.queryAll(query_sql, query_dto)
+    result_income_cost = DBCli(dict).gt_cli.query_all(query_sql, query_dto)
 
-    income_cost_type = DBCli().gt_cli.queryAll("select COLUMN_NAME from information_schema.COLUMNS "
+    income_cost_type = DBCli().gt_cli.query_all("select COLUMN_NAME from information_schema.COLUMNS "
                                                "where table_name = 'income_and_cost'")
     income_cost_type = [i[0] for i in income_cost_type]
     income_cost_type.pop(0)
@@ -65,13 +65,13 @@ def update_gt_income_cost(days=0):
                 DBCli().targetdb_cli.insert(insert_income_sql, dto)
             elif i_c_type.startswith("cost"):
                 DBCli().targetdb_cli.insert(insert_cost_sql, dto)
-    gt_coupon_data = DBCli(dict).pay_cost_cli.queryAll(gt_coupon_use_sql, query_dto)
+    gt_coupon_data = DBCli(dict).pay_cost_cli.query_all(gt_coupon_use_sql, query_dto)
     insert_gt_coupon = []
     for gt_coupon in gt_coupon_data:
         coupon_in_return = gt_coupon["coupon_in"] - gt_coupon["coupon_return"]
         insert_gt_coupon.append([gt_coupon["s_day"], "coupon_in_return", coupon_in_return])
 
-    DBCli().targetdb_cli.batchInsert(insert_cost_sql, insert_gt_coupon)
+    DBCli().targetdb_cli.batch_insert(insert_cost_sql, insert_gt_coupon)
 
 if __name__ == "__main__":
     update_gt_income_cost(1)

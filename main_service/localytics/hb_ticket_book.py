@@ -199,7 +199,7 @@ def update_booke_ticket_event_hourly(days=0):
         new_tmp_data.extend(sql_data_v)
         hour_data.append(new_tmp_data)
 
-    DBCli().targetdb_cli.batchInsert(sql, hour_data)
+    DBCli().targetdb_cli.batch_insert(sql, hour_data)
 
 
 def update_ios_android_newuser_daily(days=0):

@@ -53,8 +53,8 @@ def update_hbgj_income_issue_refund_daily(days=0):
         else_refund_ticket_num = VALUES(else_refund_ticket_num),
         else_refund_income = VALUES(else_refund_income)
     """
-    hb_gt_income_data = DBCli().sourcedb_cli.queryAll(hb_gt_sql, [start_date, end_date])
-    DBCli().targetdb_cli.batchInsert(insert_sql, hb_gt_income_data)
+    hb_gt_income_data = DBCli().sourcedb_cli.query_all(hb_gt_sql, [start_date, end_date])
+    DBCli().targetdb_cli.batch_insert(insert_sql, hb_gt_income_data)
     pass
 
 
@@ -147,18 +147,18 @@ def update_hbgj_cost_type_daily(days=0):
         else:
             issue_cost_sql = else_cost_sql
             refund_cost_sql = else_cost_sql
-        issue_cost = DBCli().sourcedb_cli.queryAll(issue_cost_sql, dto)
-        DBCli().targetdb_cli.batchInsert(insert_sql, issue_cost)
+        issue_cost = DBCli().sourcedb_cli.query_all(issue_cost_sql, dto)
+        DBCli().targetdb_cli.batch_insert(insert_sql, issue_cost)
 
-        refund_cost = DBCli().sourcedb_cli.queryAll(refund_cost_sql, query_refund_dto[index])
+        refund_cost = DBCli().sourcedb_cli.query_all(refund_cost_sql, query_refund_dto[index])
         for refund_data in refund_cost:
             check_dto = refund_data[2:]
-            income_count = DBCli().targetdb_cli.queryOne(check_income_sql, check_dto)
+            income_count = DBCli().targetdb_cli.query_one(check_income_sql, check_dto)
             if income_count[0] == 0:
                 DBCli().targetdb_cli.insert(insert_refund_cost_sql, refund_data)
             else:
                 DBCli().targetdb_cli.insert(update_sql, refund_data)
-        # DBCli().targetdb_cli.batchInsert(update_sql, refund_cost)
+        # DBCli().targetdb_cli.batch_insert(update_sql, refund_cost)
     pass
 
 
@@ -196,8 +196,8 @@ def update_profit_hb_self_no_transfer_daily(days=0):
         createtime, updatetime) values (%s, %s, %s, %s, %s, now(), now())
     """
     dto = [start_date, end_date]
-    income_data = DBCli().sourcedb_cli.queryOne(transfer_income_sql, dto)
-    cost_data = DBCli().sourcedb_cli.queryOne(transfer_cost_sql, dto)
+    income_data = DBCli().sourcedb_cli.query_one(transfer_income_sql, dto)
+    cost_data = DBCli().sourcedb_cli.query_one(transfer_cost_sql, dto)
     insert_data = [start_date] + list(income_data) + list(cost_data)
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
     pass
@@ -258,8 +258,8 @@ def update_profit_hb_self_transfer_daily(days=0):
         transfer_refund_two_cost = values(transfer_refund_two_cost)
     """
     dto = [start_date, end_date]
-    income_data = DBCli().sourcedb_cli.queryOne(transfer_income_sql, dto)
-    cost_data = DBCli().sourcedb_cli.queryOne(transfer_cost_sql, dto)
+    income_data = DBCli().sourcedb_cli.query_one(transfer_income_sql, dto)
+    cost_data = DBCli().sourcedb_cli.query_one(transfer_cost_sql, dto)
     insert_data = [start_date, ] + list(income_data) + list(cost_data)
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
     pass
@@ -318,10 +318,10 @@ def update_profit_hb_supply_transfer_daily(days=0):
         where s_day=%s and agentid=%s
     """
     dto = [start_date, end_date]
-    income_data = DBCli().sourcedb_cli.queryAll(supply_transfer_income_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, income_data)
-    cost_data = DBCli().sourcedb_cli.queryAll(supply_transfer_cost_sql, dto)
-    DBCli().targetdb_cli.batchInsert(update_sql, cost_data)
+    income_data = DBCli().sourcedb_cli.query_all(supply_transfer_income_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
+    cost_data = DBCli().sourcedb_cli.query_all(supply_transfer_cost_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_sql, cost_data)
     pass
 
 
@@ -367,10 +367,10 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
         no_transfer_refund_cost=%s where s_day=%s and agentid=%s
     """
     dto = [start_date, end_date]
-    income_data = DBCli().sourcedb_cli.queryAll(supply_no_transfer_income_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, income_data)
-    cost_data = DBCli().sourcedb_cli.queryAll(supply_no_transfer_cost_sql, dto)
-    DBCli().targetdb_cli.batchInsert(update_sql, cost_data)
+    income_data = DBCli().sourcedb_cli.query_all(supply_no_transfer_income_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
+    cost_data = DBCli().sourcedb_cli.query_all(supply_no_transfer_cost_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_sql, cost_data)
 
     pass
 

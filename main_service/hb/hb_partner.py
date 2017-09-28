@@ -14,8 +14,8 @@ def update_his():
         (%s, %s, %s, %s, now(), now())
     """
 
-    query_data = DBCli().hb_partner_cli.queryAll(sql)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().hb_partner_cli.query_all(sql)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_hb_partner_daily(days=0):
@@ -37,8 +37,8 @@ def update_hb_partner_daily(days=0):
         pv = VALUES(pv),
         uv = VALUES(uv)
     """
-    query_data = DBCli().dynamic_focus_cli.queryAll(sql, [start_date, end_date])
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().dynamic_focus_cli.query_all(sql, [start_date, end_date])
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 if __name__ == "__main__":
     # update_his()

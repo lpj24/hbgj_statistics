@@ -49,9 +49,9 @@ def update_flight_search_user_daily(days=0):
             where tmp.time = %s
     """
 
-    pv_check_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
+    pv_check_data = DBCli().sourcedb_cli.query_one(pv_check_sql, pv_check_dto)
     pv_check = pv_check_data[0]
-    query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_daily'], dto)
+    query_data = DBCli().Apilog_cli.query_one(hb_flight_search_user_sql['hb_filght_search_user_daily'], dto)
     pv = query_data[2]
     if pv > 0:
         if float(int(pv_check) - int(pv)) / float(pv) > 0.2:
@@ -94,7 +94,7 @@ def update_dt_search_uid(days=0):
 
     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [start_date, end_date, tablename]
-    uids = DBCli().Apilog_cli.queryAll(sql, dto)
+    uids = DBCli().Apilog_cli.query_all(sql, dto)
     for uid in uids:
         DBCli().redis_dt_cli.sadd(start_date + "_hbdt_search", uid[0])
 
@@ -114,7 +114,7 @@ def update_flight_search_user_weekly():
             select pv from hbdt_search_daily where s_day>=%s and s_day<%s
         """
 
-    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_data = DBCli().targetdb_cli.query_all(pv_sql, dto)
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
@@ -131,7 +131,7 @@ def update_flight_search_user_weekly():
     # else:
     #     dto = [start_week, end_week, start_week, end_table]
     #     sql = hb_flight_search_user_sql['hb_filght_search_user_weekly']
-    # query_data = DBCli().Apilog_cli.queryOne(sql, dto)
+    # query_data = DBCli().Apilog_cli.query_one(sql, dto)
     # DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_weekly'], query_data)
 
 
@@ -149,7 +149,7 @@ def update_flight_search_user_monthly():
             select pv from hbdt_search_daily where s_day>=%s and s_day<%s
         """
 
-    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_data = DBCli().targetdb_cli.query_all(pv_sql, dto)
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
@@ -160,7 +160,7 @@ def update_flight_search_user_monthly():
     # dto = [last_month_start]
     # for i in table_list:
     #     dto.append(i)
-    # query_data = DBCli().Apilog_cli.queryOne(hb_flight_search_user_sql['hb_filght_search_user_monthly'], dto)
+    # query_data = DBCli().Apilog_cli.query_one(hb_flight_search_user_sql['hb_filght_search_user_monthly'], dto)
     # DBCli().targetdb_cli.insert(hb_flight_search_user_sql['update_flight_search_user_monthly'], query_data)
 
 
@@ -178,7 +178,7 @@ def update_flight_search_user_quarterly():
             select pv from hbdt_search_daily where s_day>=%s and s_day<%s
         """
 
-    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_data = DBCli().targetdb_cli.query_all(pv_sql, dto)
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
@@ -214,7 +214,7 @@ def update_check_pv_his(start_date=(datetime.date(2016, 5, 31))):
         insert_data = []
         s_day = DateUtil.date2str(start_date, '%Y-%m-%d')
         pv_check_dto = [str(s_day), ]
-        # query_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
+        # query_data = DBCli().sourcedb_cli.query_one(pv_check_sql, pv_check_dto)
 
         app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
         app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"

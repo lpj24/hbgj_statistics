@@ -14,8 +14,8 @@ def update_hotel_orders_daily(days=0):
         start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
 
     dto = [start_date, end_date, start_date, end_date]
-    query_data = DBCli().tongji_skyhotel_cli.queryAll(hotel_orders_sql["hotel_orders_daily"], dto)
-    DBCli().targetdb_cli.batchInsert(hotel_orders_sql["update_hotel_orders_daily"], query_data)
+    query_data = DBCli().tongji_skyhotel_cli.query_all(hotel_orders_sql["hotel_orders_daily"], dto)
+    DBCli().targetdb_cli.batch_insert(hotel_orders_sql["update_hotel_orders_daily"], query_data)
     pass
 
 if __name__ == "__main__":

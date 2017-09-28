@@ -13,7 +13,7 @@ def update_focus_newuser(days=0):
         select count(*) from hbdt_focus_newusers_daily where s_day = %s
     """
 
-    check_data = DBCli().targetdb_cli.queryOne(check_last_sql, [check_s_day])
+    check_data = DBCli().targetdb_cli.query_one(check_last_sql, [check_s_day])
     if int(check_data[0]) < 1:
         return
 
@@ -83,7 +83,7 @@ def update_fouces_dat_daily(days=0):
     hbdt_focus_file = DateUtil.date2str(start_date, '%Y-%m-%d') + "_hbdt_focus.dat"
     hbdt_focus_file = open("/home/huolibi/data/hbdt/hbdt_focus/" + hbdt_focus_file, 'a')
     dto = [DateUtil.date2str(start_date), end_date] * 2
-    query_data = DBCli().dynamic_focus_cli.queryAll(sql, dto)
+    query_data = DBCli().dynamic_focus_cli.query_all(sql, dto)
     for q in query_data:
         q_list = [str(d) for d in list(q)]
         hbdt_focus_file.write("\t".join(q_list) + "\n")
@@ -99,7 +99,7 @@ def update_focus_inland_inter_daily(days=0):
         select count(*) from hbdt_focus_users_inland_inter_daily where s_day = %s
     """
 
-    check_data = DBCli().targetdb_cli.queryOne(check_last_sql, [check_s_day])
+    check_data = DBCli().targetdb_cli.query_one(check_last_sql, [check_s_day])
     if int(check_data[0]) < 1:
         return
 
@@ -140,9 +140,9 @@ def collect_inland_inter_flyid_his():
     inland_code_sql = """
         select THREE_WORDS_CODE from AIRPORT_NATION_INFO
     """
-    inland_code = DBCli().oracle_cli.queryAll(inland_code_sql)
+    inland_code = DBCli().oracle_cli.query_all(inland_code_sql)
     inland_code = [in_code[0] for in_code in inland_code]
-    fly_info = DBCli().oracle_cli.queryAll(fly_info_sql)
+    fly_info = DBCli().oracle_cli.query_all(fly_info_sql)
     for fly in fly_info:
         flyid, depcode, arrcode = fly
         if depcode in inland_code or arrcode in inland_code:
@@ -164,9 +164,9 @@ def collect_inland_inter_flyid_daily(days=0):
     inland_code_sql = """
         select THREE_WORDS_CODE from AIRPORT_NATION_INFO
     """
-    inland_code = DBCli().oracle_cli.queryAll(inland_code_sql)
+    inland_code = DBCli().oracle_cli.query_all(inland_code_sql)
     inland_code = [in_code[0] for in_code in inland_code]
-    fly_info = DBCli().oracle_cli.queryAll(fly_info_sql, dto)
+    fly_info = DBCli().oracle_cli.query_all(fly_info_sql, dto)
     for fly in fly_info:
         flyid, depcode, arrcode = fly
         if depcode in inland_code or arrcode in inland_code:

@@ -50,9 +50,9 @@ def update_flight_detail_user_daily(days=0):
             where tmp.time = %s
     """
 
-    pv_check_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
+    pv_check_data = DBCli().sourcedb_cli.query_one(pv_check_sql, pv_check_dto)
     pv_check = pv_check_data[0]
-    query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
+    query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
     pv = query_data[2]
     if int(pv) > 0:
         if float(int(pv_check) - int(pv))/float(pv) > 0.2:
@@ -93,7 +93,7 @@ def update_dt_detail_uid(days=0):
 
     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
     dto = [start_date, end_date, tablename]
-    uids = DBCli().Apilog_cli.queryAll(sql, dto)
+    uids = DBCli().Apilog_cli.query_all(sql, dto)
     for uid in uids:
         DBCli().redis_dt_cli.sadd(start_date + "_hbdt_detail", uid[0])
 
@@ -113,7 +113,7 @@ def update_flight_detail_user_weekly():
         select pv from hbdt_details_daily where s_day>=%s and s_day<%s
     """
 
-    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_data = DBCli().targetdb_cli.query_all(pv_sql, dto)
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
@@ -129,7 +129,7 @@ def update_flight_detail_user_weekly():
     # else:
     #     dto = [start_week, end_week, start_week, end_table]
     #     sql = hb_flight_detail_user_sql['hb_filght_detail_user_weekly']
-    # query_data = DBCli().Apilog_cli.queryOne(sql, dto)
+    # query_data = DBCli().Apilog_cli.query_one(sql, dto)
     # DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_weekly'], query_data)
 
 
@@ -147,7 +147,7 @@ def update_flight_detail_user_monthly():
         select pv from hbdt_details_daily where s_day>=%s and s_day<%s
     """
 
-    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_data = DBCli().targetdb_cli.query_all(pv_sql, dto)
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
@@ -157,7 +157,7 @@ def update_flight_detail_user_monthly():
     # dto = [last_month_start]
     # for i in table_list:
     #     dto.append(i)
-    # query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_sql['hb_filght_detail_user_monthly'], dto)
+    # query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_sql['hb_filght_detail_user_monthly'], dto)
     # DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_monthly'], query_data)
 
 
@@ -175,7 +175,7 @@ def update_flight_detail_user_quarterly():
             select pv from hbdt_details_daily where s_day>=%s and s_day<%s
         """
 
-    pv_data = DBCli().targetdb_cli.queryAll(pv_sql, dto)
+    pv_data = DBCli().targetdb_cli.query_all(pv_sql, dto)
     pv_sum = 0
     for pv in pv_data:
         pv_sum += pv[0]
@@ -211,7 +211,7 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
         insert_data = []
         s_day = DateUtil.date2str(start_date, '%Y-%m-%d')
         pv_check_dto = [str(s_day), ]
-        query_data = DBCli().sourcedb_cli.queryOne(pv_check_sql, pv_check_dto)
+        query_data = DBCli().sourcedb_cli.query_one(pv_check_sql, pv_check_dto)
 
         app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
         app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
@@ -255,7 +255,7 @@ def update_hb_city_rate(days=0):
     """
     city_dict = get_city_code_dict()
     company_dict = get_aircompany_dict()
-    query_data = DBCli().flight_oracle_cli.queryAll(hb_sql, [start_date, end_date])
+    query_data = DBCli().flight_oracle_cli.query_all(hb_sql, [start_date, end_date])
     insert_company_data = defaultdict(list)
     insert_city_data = defaultdict(list)
     insert_com_list = []
@@ -332,8 +332,8 @@ def update_hb_city_rate(days=0):
 
     insert_com_list = sorted(insert_com_list, key=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
     insert_city_list = sorted(insert_city_list, key=lambda x: x[-1] + x[-2] + x[-3], reverse=True)
-    DBCli().targetdb_cli.batchInsert(insert_company_sql, insert_com_list)
-    DBCli().targetdb_cli.batchInsert(insert_city_sql, insert_city_list)
+    DBCli().targetdb_cli.batch_insert(insert_company_sql, insert_com_list)
+    DBCli().targetdb_cli.batch_insert(insert_city_sql, insert_city_list)
 
 
 def diff_days(one_date=None, two_date=None):
@@ -352,7 +352,7 @@ def get_aircompany_dict():
         select code,FOUR_NAME
         from AIRLINES_NORMAl
     """
-    hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
+    hb_info = DBCli().oracle_cli.query_all(hb_code_sql)
     hb_info = dict(hb_info)
     return hb_info
 
@@ -361,7 +361,7 @@ def get_city_code_dict():
     city_sql = """
         select THREE_WORDS_CODE , CITY_NAME from apibase.AIRPORT_NATION_INFO
     """
-    city_dict = DBCli().sourcedb_cli.queryAll(city_sql)
+    city_dict = DBCli().sourcedb_cli.query_all(city_sql)
     return dict(city_dict)
 
 if __name__ == "__main__":

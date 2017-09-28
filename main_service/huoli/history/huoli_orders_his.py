@@ -11,9 +11,9 @@ def update_hotel_orders_daily():
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    # query_data = DBCli().sourcedb_cli.queryAll(hotel_orders_sql["hotel_orders_daily_history"], dto)
-    query_data = DBCli().sky_hotel_cli.queryAll(hotel_orders_sql["hotel_orders_daily_history"], dto)
-    DBCli().targetdb_cli.batchInsert(hotel_orders_sql["update_hotel_orders_daily"], query_data)
+    # query_data = DBCli().sourcedb_cli.query_all(hotel_orders_sql["hotel_orders_daily_history"], dto)
+    query_data = DBCli().sky_hotel_cli.query_all(hotel_orders_sql["hotel_orders_daily_history"], dto)
+    DBCli().targetdb_cli.batch_insert(hotel_orders_sql["update_hotel_orders_daily"], query_data)
 
 
 def update_hotel_consumers_daily_his():
@@ -23,9 +23,9 @@ def update_hotel_consumers_daily_his():
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    # query_data = DBCli().sourcedb_cli.queryAll(hotel_consumers_sql["hotel_consumers_daily"], dto)
-    query_data = DBCli().sky_hotel_cli.queryAll(hotel_consumers_sql["hotel_consumers_daily"], dto)
-    DBCli().targetdb_cli.batchInsert(hotel_consumers_sql["update_hotel_consumers_daily"], query_data)
+    # query_data = DBCli().sourcedb_cli.query_all(hotel_consumers_sql["hotel_consumers_daily"], dto)
+    query_data = DBCli().sky_hotel_cli.query_all(hotel_consumers_sql["hotel_consumers_daily"], dto)
+    DBCli().targetdb_cli.batch_insert(hotel_consumers_sql["update_hotel_consumers_daily"], query_data)
 
 
 def update_hotel_consumers_weekly_his():
@@ -35,9 +35,9 @@ def update_hotel_consumers_weekly_his():
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    # query_data = DBCli().sourcedb_cli.queryAll(hotel_consumers_sql["hotel_consumers_weekly_his"], dto)
-    query_data = DBCli().sky_hotel_cli.queryAll(hotel_consumers_sql["hotel_consumers_weekly"], dto)
-    DBCli().targetdb_cli.batchInsert(hotel_consumers_sql["update_hotel_consumers_weekly"], query_data)
+    # query_data = DBCli().sourcedb_cli.query_all(hotel_consumers_sql["hotel_consumers_weekly_his"], dto)
+    query_data = DBCli().sky_hotel_cli.query_all(hotel_consumers_sql["hotel_consumers_weekly"], dto)
+    DBCli().targetdb_cli.batch_insert(hotel_consumers_sql["update_hotel_consumers_weekly"], query_data)
 
 
 def update_hotel_consumers_monthly_his():
@@ -47,9 +47,9 @@ def update_hotel_consumers_monthly_his():
     # dto = [DateUtil.date2str(end_date), DateUtil.date2str(end_date)]
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    # query_data = DBCli().sourcedb_cli.queryAll(hotel_consumers_sql["hotel_consumers_monthly_his"], dto)
-    query_data = DBCli().sky_hotel_cli.queryAll(hotel_consumers_sql["hotel_consumers_monthly"], dto)
-    DBCli().targetdb_cli.batchInsert(hotel_consumers_sql["update_hotel_consumers_monthly"], query_data)
+    # query_data = DBCli().sourcedb_cli.query_all(hotel_consumers_sql["hotel_consumers_monthly_his"], dto)
+    query_data = DBCli().sky_hotel_cli.query_all(hotel_consumers_sql["hotel_consumers_monthly"], dto)
+    DBCli().targetdb_cli.batch_insert(hotel_consumers_sql["update_hotel_consumers_monthly"], query_data)
 
 if __name__ == "__main__":
     # update_hotel_consumers_daily_his()

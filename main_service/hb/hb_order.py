@@ -10,8 +10,8 @@ def update_hb_gt_order_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
-    query_data = DBCli().sourcedb_cli.queryAll(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
-    DBCli().targetdb_cli.batchInsert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
+    query_data = DBCli().sourcedb_cli.query_all(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
+    DBCli().targetdb_cli.batch_insert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
 
 
 def update_hb_gt_order_daily_his():
@@ -19,8 +19,8 @@ def update_hb_gt_order_daily_his():
     start_date = datetime.date(2012, 11, 22)
     end_date = datetime.date(2017, 2, 6)
     dto = [start_date, end_date]
-    query_data = DBCli().sourcedb_cli.queryAll(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
-    DBCli().targetdb_cli.batchInsert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
+    query_data = DBCli().sourcedb_cli.query_all(hb_orders_date_sql["hb_gt_order_daily_sql"], dto)
+    DBCli().targetdb_cli.batch_insert(hb_orders_date_sql["update_hb_gt_order_daily_sql"], query_data)
 
 
 def update_operation_hbgj_order_detail_daily(days=0):
@@ -87,7 +87,7 @@ def update_operation_hbgj_order_detail_daily(days=0):
         gmv_inter = values(gmv_inter)
 
     """
-    query_data = DBCli().sourcedb_cli.queryOne(sql, dto)
+    query_data = DBCli().sourcedb_cli.query_one(sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, query_data)
 
 
@@ -135,8 +135,8 @@ def update_hb_gt_order_new_daily(days=0):
         GROUP BY s_day;
     """
 
-    total_query_data = DBCli().sourcedb_cli.queryAll(hbgj_detail_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_total_sql, total_query_data)
+    total_query_data = DBCli().sourcedb_cli.query_all(hbgj_detail_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_total_sql, total_query_data)
 
 
 def update_hbgj_ticket_region_inter_daily(days=0):
@@ -267,8 +267,8 @@ def update_hbgj_ticket_region_inter_daily(days=0):
         GROUP BY s_day;
     """
 
-    total_query_data = DBCli().sourcedb_cli.queryAll(query_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_total_sql, total_query_data)
+    total_query_data = DBCli().sourcedb_cli.query_all(query_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_total_sql, total_query_data)
 
 
 if __name__ == "__main__":

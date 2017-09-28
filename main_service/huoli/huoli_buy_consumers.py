@@ -28,8 +28,8 @@ def update_huoli_buy_orders_daily(days=0):
         orders_amount = values(orders_amount)
     """
     dto = [start_date, end_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_order_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_order_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_buy_consumers_daily(days=0):
@@ -56,8 +56,8 @@ def update_huoli_buy_consumers_daily(days=0):
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, end_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_consumers_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_buy_consumers_weekly():
@@ -83,8 +83,8 @@ def update_huoli_buy_consumers_weekly():
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, start_date, end_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_consumers_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_buy_consumers_monthly():
@@ -109,8 +109,8 @@ def update_huoli_buy_consumers_monthly():
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, start_date, end_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_consumers_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_buy_consumers_quarterly():
@@ -135,8 +135,8 @@ def update_huoli_buy_consumers_quarterly():
         consumers_amount = values(consumers_amount)
     """
     dto = [start_date, end_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_consumers_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_buy_newconsumers_daily(days=0):
@@ -169,8 +169,8 @@ def update_huoli_buy_newconsumers_daily(days=0):
         new_consumers_amount = values(new_consumers_amount)
     """
     dto = [start_date, end_date, start_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_consumers_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_huoli_edj_newconsumers_daily(days=0):
@@ -203,8 +203,8 @@ def update_huoli_edj_newconsumers_daily(days=0):
         new_consumers_amount = values(new_consumers_amount)
     """
     dto = [start_date, end_date, start_date]
-    query_data = DBCli().huoli_buy_cli.queryAll(huoli_consumers_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().huoli_buy_cli.query_all(huoli_consumers_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 if __name__ == '__main__':

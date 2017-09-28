@@ -42,8 +42,8 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
         CZ_inter_amount_return = values(CZ_inter_amount_return)
     """
     dto = [start_date, end_date]
-    cz_data = DBCli().sourcedb_cli.queryAll(cz_inter_inland_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_cz_sql, cz_data)
+    cz_data = DBCli().sourcedb_cli.query_all(cz_inter_inland_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_cz_sql, cz_data)
 
 
 def update_operation_hbgj_amount_monitor_hlth(days=0):
@@ -79,8 +79,8 @@ def update_operation_hbgj_amount_monitor_hlth(days=0):
         used_amount = values(used_amount)
     """
     dto = [start_date, end_date]
-    hlth_data = DBCli().sourcedb_cli.queryAll(hlth_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_hlth_sql, hlth_data)
+    hlth_data = DBCli().sourcedb_cli.query_all(hlth_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_hlth_sql, hlth_data)
 
 
 def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
@@ -119,8 +119,8 @@ def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
         used_amount = values(used_amount)
     """
     dto = [start_date, end_date]
-    szx_data = DBCli().sourcedb_cli.queryAll(szx_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_szx_sql, szx_data)
+    szx_data = DBCli().sourcedb_cli.query_all(szx_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_szx_sql, szx_data)
 
 
 def update_operation_hbgj_amount_monitor_inter(days=0):
@@ -153,8 +153,8 @@ def update_operation_hbgj_amount_monitor_inter(days=0):
         amount = values(amount)
     """
     dto = [start_date, end_date]
-    inter_company_data = DBCli().sourcedb_cli.queryAll(pn_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, inter_company_data)
+    inter_company_data = DBCli().sourcedb_cli.query_all(pn_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, inter_company_data)
 
 
 def update_operation_hbgj_qp_success(days=0):
@@ -180,8 +180,8 @@ def update_operation_hbgj_qp_success(days=0):
         qp_count = values(qp_count),
         qp_success_count = values(qp_success_count)
     """
-    qp_data = DBCli().sourcedb_cli.queryAll(qp_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, qp_data)
+    qp_data = DBCli().sourcedb_cli.query_all(qp_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, qp_data)
 
 
 def update_operation_hbgj_special_return_daily(days=1):
@@ -214,8 +214,8 @@ def update_operation_hbgj_special_return_daily(days=1):
         and cabin='W'
         and o.ORDERSTATUE not like '%6%' GROUP BY left(od.CREATETIME,10),pnrsource;
     """
-    agency_fee = DBCli().sourcedb_cli.queryAll(agency_fee_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, agency_fee)
+    agency_fee = DBCli().sourcedb_cli.query_all(agency_fee_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, agency_fee)
 
     zh_ryx_sql = """
         SELECT left(createtime,10), 'ZH_ryx' as type, '深航商务如意行' name,sum(rtcash) as 返现总额
@@ -227,8 +227,8 @@ def update_operation_hbgj_special_return_daily(days=1):
         GROUP BY left(createtime,10);
     """
 
-    zh_ryx = DBCli().sourcedb_cli.queryAll(zh_ryx_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, zh_ryx)
+    zh_ryx = DBCli().sourcedb_cli.query_all(zh_ryx_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, zh_ryx)
 
     ho_sw_sql = """
         SELECT left(createtime,10),'ho_sw' as type, '吉祥商务优选' as name, sum(rtcash) as 返现总额
@@ -238,8 +238,8 @@ def update_operation_hbgj_special_return_daily(days=1):
         and `status`<>0 and `status`<>4
         GROUP BY left(createtime,10);
     """
-    ho_sw = DBCli().sourcedb_cli.queryAll(ho_sw_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, ho_sw)
+    ho_sw = DBCli().sourcedb_cli.query_all(ho_sw_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, ho_sw)
 
     u_w_sql = """
             SELECT left(createtime,10),'3U_w' as type, '川航W舱' as name, sum(rtcash) as 返现总额
@@ -250,8 +250,8 @@ def update_operation_hbgj_special_return_daily(days=1):
             AND cabin='W'
             GROUP BY left(createtime,10)
     """
-    u_w = DBCli().sourcedb_cli.queryAll(u_w_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, u_w)
+    u_w = DBCli().sourcedb_cli.query_all(u_w_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, u_w)
 
     u_not_w_sql = """
         SELECT left(createtime,10),'3U_!w' as type, '川航免改易行&里程多送' as name,
@@ -264,8 +264,8 @@ def update_operation_hbgj_special_return_daily(days=1):
         AND cabin!='W'
         GROUP BY left(createtime,10)
     """
-    u_not_w = DBCli().sourcedb_cli.queryAll(u_not_w_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, u_not_w)
+    u_not_w = DBCli().sourcedb_cli.query_all(u_not_w_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, u_not_w)
 
     gx_sql = """
         SELECT left(createtime,10),'GX' AS type, '北部湾' as name,sum(rtcash)*0.4 as 返现总额
@@ -277,8 +277,8 @@ def update_operation_hbgj_special_return_daily(days=1):
         and `status`<>4
         GROUP BY left(createtime,10);
     """
-    gx = DBCli().sourcedb_cli.queryAll(gx_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, gx)
+    gx = DBCli().sourcedb_cli.query_all(gx_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, gx)
 
 if __name__ == "__main__":
     # update_operation_hbgj_amount_monitor_cz(1)

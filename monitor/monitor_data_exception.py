@@ -10,7 +10,7 @@ def get_all_monitor_table_name():
         select job_table
         from bi_execute_job where job_type !=5;
     """
-    day_sql = DBCli().targetdb_cli.queryAll(sql)
+    day_sql = DBCli().targetdb_cli.query_all(sql)
     all_monitor_table = []
     for table in day_sql:
         all_monitor_table.extend(table[0].split(' '))
@@ -23,7 +23,7 @@ def get_table_column_info(table_name):
         WHERE table_name=%s AND table_schema = "bi" and
         column_name != 'updatetime' and column_name != 'createtime';
     """
-    column_info_data = DBCli().targetdb_cli.queryAll(info_sql, [table_name])
+    column_info_data = DBCli().targetdb_cli.query_all(info_sql, [table_name])
     cal_column = []
 
     l_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
@@ -58,7 +58,7 @@ def cal_balance():
             column, table_name, last_day, column_name, table_name, next_day = require_query_dto
             s_day_sql = s_day_sql.format(column, table_name, column_name, table_name)
             dto = [last_day, next_day]
-            require_compare_data = DBCli().targetdb_cli.queryAll(s_day_sql, dto)
+            require_compare_data = DBCli().targetdb_cli.query_all(s_day_sql, dto)
             # 差额相差30%
             try:
                 last_data = float(require_compare_data[0][0])

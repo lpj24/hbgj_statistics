@@ -11,12 +11,12 @@ class DButils(object):
             self._cursor = cx_Oracle.connect(user=conf["user"], password=conf["password"],
                                         dsn=cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"])).cursor()
 
-    def queryAll(self, sql, params=None):
+    def query_all(self, sql, params=None):
         self._execute(sql, params)
         data = self._cursor.fetchall()
         return data
 
-    def queryOne(self, sql, params=None):
+    def query_one(self, sql, params=None):
         self._execute(sql, params)
         data = self._cursor.fetchone()
         return data

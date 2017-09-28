@@ -32,7 +32,7 @@ class DButils(object):
         func = sql.split(' ')[1] if sql.find("update") == 0 else sql.split(' ')[2]
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + " update " + func + " :" + str(params)
 
-    def batchInsert(self, sql, params):
+    def batch_insert(self, sql, params):
         cursor = self._cursor
         try:
             logging.warning(self._log_str(sql, params))
@@ -53,7 +53,7 @@ class DButils(object):
             warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
             logging.error(warning_time + ":" + str(sql) + "--" + str(e.args[1]))
 
-    def queryAll(self, sql, params=None):
+    def query_all(self, sql, params=None):
         cursor = self._cursor
         if params is None:
             cursor.execute(sql)
@@ -67,7 +67,7 @@ class DButils(object):
         data = cursor.fetchall()
         return data
 
-    def queryOne(self, sql, params=None):
+    def query_one(self, sql, params=None):
         cursor = self._cursor
         try:
             if params is None:

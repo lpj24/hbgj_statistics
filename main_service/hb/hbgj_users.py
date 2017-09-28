@@ -93,7 +93,7 @@ def hbgj_user(days=0):
         insert_data = defaultdict(list)
 
         new_users_dto = [query_start_date, query_end_date]
-        new_users_data = DBCli().apibase_cli.queryAll(new_users, new_users_dto)
+        new_users_data = DBCli().apibase_cli.query_all(new_users, new_users_dto)
 
         new_users_sum = 0
         active_users_sum = 0
@@ -103,7 +103,7 @@ def hbgj_user(days=0):
             insert_data[user_data[1]].append(user_data[2])
 
         active_users_dto = [other_start_date, other_end_date]
-        active_users_data = DBCli().apibase_cli.queryAll(active_users, active_users_dto)
+        active_users_data = DBCli().apibase_cli.query_all(active_users, active_users_dto)
 
         for active_data in active_users_data:
             active_users_sum += active_data[2]
@@ -118,7 +118,7 @@ def hbgj_user(days=0):
                 insert_data[k].append(0)
 
         other_dto = [other_start_date, other_end_date]
-        other_data = DBCli().sourcedb_cli.queryAll(other_sql, other_dto)
+        other_data = DBCli().sourcedb_cli.query_all(other_sql, other_dto)
 
         for other_data in other_data:
             if not insert_data.has_key(other_data[1]):
@@ -144,7 +144,7 @@ def hbgj_user(days=0):
 
         last_data.sort(cmp=lambda x, y: cmp(x[2], y[2]), reverse=True)
 
-        sum_data = DBCli().sourcedb_cli.queryOne(other_sum, other_dto)
+        sum_data = DBCli().sourcedb_cli.query_one(other_sum, other_dto)
 
         subject = DateUtil.date2str(start_date, "%Y-%m-%d") + u' 航班管家用户统计'
         rows = ['渠道', '新用户', '活跃用户', '订单数', '机票数', '订单金额']

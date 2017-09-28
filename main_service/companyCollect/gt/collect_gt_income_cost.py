@@ -19,9 +19,9 @@ def collect_income_cost():
         insert into profit_gt_cost (s_day, type, amount, createtime, updatetime)
         values (%s, %s, %s, now(), now())
     """
-    result_income_cost = DBCli(dict).gt_cli.queryAll(query_sql)
+    result_income_cost = DBCli(dict).gt_cli.query_all(query_sql)
 
-    income_cost_type = DBCli().gt_cli.queryAll("select COLUMN_NAME from information_schema.COLUMNS "
+    income_cost_type = DBCli().gt_cli.query_all("select COLUMN_NAME from information_schema.COLUMNS "
                                                "where table_name = 'income_and_cost'")
     income_cost_type = [i[0] for i in income_cost_type]
     income_cost_type.pop(0)

@@ -89,9 +89,9 @@ def mysql_his():
         dto.append(start_date)
         dto.append(end_date)
 
-    query_data = DBCli().gt_cli.queryAll(gt_new_order_sql["gt_neworder_daily"], dto)
+    query_data = DBCli().gt_cli.query_all(gt_new_order_sql["gt_neworder_daily"], dto)
     print query_data
-    # DBCli().targetdb_cli.batchInsert(gt_new_order_sql["update_gtgj_new_order_daily"], query_data)
+    # DBCli().targetdb_cli.batch_insert(gt_new_order_sql["update_gtgj_new_order_daily"], query_data)
 
 
 def query_gt():
@@ -113,11 +113,11 @@ def query_gt():
         select userid, gt_user_name, uid, date_format(create_time, '%%Y/%%m/%%d'), extend_col1,
         real_name, card from account_gtgj where userid = %s
     """
-    # q_uids = DBCli().gt_cli.queryAll(sql, dto)
+    # q_uids = DBCli().gt_cli.query_all(sql, dto)
 
     for uid in uids:
         u_dto = [str(uid)]
-        q_u = DBCli().gt_cli.queryOne(sql, u_dto)
+        q_u = DBCli().gt_cli.query_one(sql, u_dto)
         u = list(q_u)
 
         tmp_start_date = int(DateUtil.date2str(start_date, "%Y%m%d"))
@@ -215,7 +215,7 @@ def get_hb():
 
     for u in uids:
         dto = [str(u)]
-        query_data = DBCli().sourcedb_cli.queryOne(sql, dto)
+        query_data = DBCli().sourcedb_cli.query_one(sql, dto)
 
         result = []
 
@@ -242,7 +242,7 @@ def get_hb():
             phoneid = query_data[0]
 
             card_dto = [phoneid]
-            card = DBCli().sourcedb_cli.queryOne(card_sql, card_dto)
+            card = DBCli().sourcedb_cli.query_one(card_sql, card_dto)
 
             phone = query_data[1]
 
@@ -273,13 +273,13 @@ def get_hb():
                     age = str(2016 - int(age))
 
             order_dto = [phoneid]
-            order = DBCli().sourcedb_cli.queryAll(order_sql, order_dto)
+            order = DBCli().sourcedb_cli.query_all(order_sql, order_dto)
             if order:
                 # continue
                 order = list(order)
                 # order = [o[0] for o in order]
                 ticket_dto = [order]
-                ticket = DBCli().sourcedb_cli.queryAll(ticket_sql, ticket_dto)
+                ticket = DBCli().sourcedb_cli.query_all(ticket_sql, ticket_dto)
 
                 for t in ticket:
                     amount = t[0]
@@ -319,7 +319,7 @@ def update_hb_city():
     update_sql = """
         update hb_test set city=%s where uid=%s
     """
-    phone = DBCli().targetdb_cli.queryAll(sql)
+    phone = DBCli().targetdb_cli.query_all(sql)
     # req_params = {
     #     "appkey": "10003",
     #     "sign": "b59bc3ef6191eb9f747dd4e83c99f2a4",

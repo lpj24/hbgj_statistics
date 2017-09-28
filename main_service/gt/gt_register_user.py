@@ -39,8 +39,8 @@ def update_gtgj_register_user_daily(days=1):
         else_users = values(else_users)
     """
 
-    register_data = DBCli().gt_cli.queryAll(register_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, register_data)
+    register_data = DBCli().gt_cli.query_all(register_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, register_data)
 
 
 def update_hbgj_register_user_daily(days=1):
@@ -70,8 +70,8 @@ def update_hbgj_register_user_daily(days=1):
         register_users_android = values(register_users_android)
     """
 
-    register_data = DBCli().sourcedb_cli.queryAll(register_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, register_data)
+    register_data = DBCli().sourcedb_cli.query_all(register_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, register_data)
 
 if __name__ == "__main__":
     update_gtgj_register_user_daily(1421)

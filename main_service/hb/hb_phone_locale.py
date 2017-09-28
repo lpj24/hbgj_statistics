@@ -23,9 +23,9 @@ import re
 #     insert_sql = """
 #         insert into hbgj_consumers_phone (city, num) values (%s, %s)
 #     """
-#     query_data = DBCli().sourcedb_cli.queryAll(consumers_phone)
+#     query_data = DBCli().sourcedb_cli.query_all(consumers_phone)
 #
-#     phone_city = DBCli().targetdb_cli.queryAll(locals_phone)
+#     phone_city = DBCli().targetdb_cli.query_all(locals_phone)
 #     phone_locale = {}
 #     phone_error = {"error_num": 0}
 #     result_phone_city_count = {}
@@ -67,13 +67,13 @@ def get_phone_locale_txt():
         select phoneid, PHONE from phone_user
     """
     phoneid_map_phone_dict = {}
-    phone_user_data = DBCli().sourcedb_cli.queryAll(phoneid_map_phone)
+    phone_user_data = DBCli().sourcedb_cli.query_all(phoneid_map_phone)
     for x in phone_user_data:
         phoneid_map_phone_dict[str(x[0])] = (x[1]).strip()
 
     # phoneid_map_phone_dict['3029007'] = '15059515865'
 
-    phone_city = DBCli().targetdb_cli.queryAll(locals_phone)
+    phone_city = DBCli().targetdb_cli.query_all(locals_phone)
 
     phone_error = {"error_num": 0}
     phone_sum = 0

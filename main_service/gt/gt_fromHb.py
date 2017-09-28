@@ -9,8 +9,8 @@ def update_gtgj_from_hb(days=0):
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [today, tomorrow]
-    query_data_order = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_order_from_hb"], dto)
-    query_data_ticket = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_ticket_from_hb"], dto)
+    query_data_order = DBCli().gt_cli.query_one(gt_order_sql["gtgj_order_from_hb"], dto)
+    query_data_ticket = DBCli().gt_cli.query_one(gt_order_sql["gtgj_ticket_from_hb"], dto)
 
     query_data = [query_data_order[0], query_data_order[1], query_data_ticket[1]]
     DBCli().targetdb_cli.insert(gt_order_sql["insert_gtgj_from_hb"], query_data)
@@ -23,8 +23,8 @@ def update_gtgj_from_hb(days=0):
 #     while start_date < end_date:
 #         query_end = DateUtil.add_days(start_date, 1)
 #         dto = [DateUtil.date2str(start_date), DateUtil.date2str(query_end)]
-#         query_data_order = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_order_from_hb"], dto)
-#         query_data_ticket = DBCli().gt_cli.queryOne(gt_order_sql["gtgj_ticket_from_hb"], dto)
+#         query_data_order = DBCli().gt_cli.query_one(gt_order_sql["gtgj_order_from_hb"], dto)
+#         query_data_ticket = DBCli().gt_cli.query_one(gt_order_sql["gtgj_ticket_from_hb"], dto)
 #
 #         order_num = query_data_order[1] if query_data_order else 0
 #         ticket_num = query_data_ticket[1] if query_data_ticket else 0

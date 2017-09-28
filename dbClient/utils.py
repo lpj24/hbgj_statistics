@@ -42,7 +42,7 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
     if job_type != 5:
         for table in table_name:
             delete_sql = "delete from " + table + " where s_day=%s"
-            DBCli().targetdb_cli.batchInsert(delete_sql, [s_day])
+            DBCli().targetdb_cli.batch_insert(delete_sql, [s_day])
     os.system("python ./tmp_py.py")
     os.remove("tmp_py.py")
 

@@ -48,8 +48,8 @@ def gt_newconsumers_daily(days=0):
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(DateUtil.add_days(start_date, 1))]
     print dto
 
-    # query_data_ios = gt_cli.queryAll(new_consumers_daily_ios, dto)
-    # query_data_android = gt_cli.queryAll(new_consumers_daily_android, dto)
+    # query_data_ios = gt_cli.query_all(new_consumers_daily_ios, dto)
+    # query_data_android = gt_cli.query_all(new_consumers_daily_android, dto)
     # res_ios = map(lambda x: x[0], query_data_ios)
     # res_android = map(lambda x: x[0], query_data_android)
     #
@@ -120,8 +120,8 @@ def gt_newconsumers_hourly():
                       and pay_time<=%s
 
             """
-        query_data_ios = gt_cli.queryAll(hourly_sql_ios, dto)
-        query_data_android = gt_cli.queryAll(hourly_sql_android, dto)
+        query_data_ios = gt_cli.query_all(hourly_sql_ios, dto)
+        query_data_android = gt_cli.query_all(hourly_sql_android, dto)
 
         res_ios = map(lambda x: x[0], query_data_ios)
         res_android = map(lambda x: x[0], query_data_android)

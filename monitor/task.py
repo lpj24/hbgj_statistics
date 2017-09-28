@@ -25,7 +25,7 @@ from itertools import chain
 #             continue
 #         format_sql = 'select count(1) from {} where s_day=%s'.format(table)
 #         try:
-#             data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
+#             data = DBCli().targetdb_cli.query_one(format_sql, [query_date])
 #         except Exception:
 #             continue
 #         if data[0] < 1:
@@ -34,7 +34,7 @@ from itertools import chain
 #             msg += table + "<br/>"
 #
 #     if len(msg) > 0:
-#         DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
+#         DBCli().targetdb_cli.batch_insert(insert_sql, insert_msg)
 #         utils.sendMail("762575190@qq.com", msg, "数据查询异常")
 #     else:
 #         utils.sendMail("762575190@qq.com", "数据查询正常", "数据查询正常")
@@ -54,14 +54,14 @@ def check_day_data():
         select job_table
         from bi_execute_job where job_type !=5;
     """
-    day_sql = DBCli().targetdb_cli.queryAll(query_table_sql)
+    day_sql = DBCli().targetdb_cli.query_all(query_table_sql)
 
     query_table = [table[0].split(' ') for table in day_sql]
 
     for table in chain(*query_table):
         format_sql = 'select count(1) from {} where s_day=%s'.format(table)
         try:
-            data = DBCli().targetdb_cli.queryOne(format_sql, [query_date])
+            data = DBCli().targetdb_cli.query_one(format_sql, [query_date])
         except Exception:
             continue
         if data[0] < 1:
@@ -70,7 +70,7 @@ def check_day_data():
             msg += table + "<br/>"
 
     if len(msg) > 0:
-        DBCli().targetdb_cli.batchInsert(insert_sql, insert_msg)
+        DBCli().targetdb_cli.batch_insert(insert_sql, insert_msg)
         utils.sendMail("762575190@qq.com", msg, u"数据查询异常")
     else:
         utils.sendMail("762575190@qq.com", u"数据查询正常", u"数据查询正常")
@@ -82,7 +82,7 @@ def check_week_data(table_list):
     msg = ""
     for table in table_list:
         execute_sql = 'select count(1) from {} where s_day = %s'.format(table)
-        data = DBCli().targetdb_cli.queryOne(execute_sql, [query_date])
+        data = DBCli().targetdb_cli.query_one(execute_sql, [query_date])
         if data[0] < 1:
             # error
             msg += table + "<br/>"

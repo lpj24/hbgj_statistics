@@ -13,9 +13,9 @@ def insert_hbdt_details_history():
         yes_date = DateUtil.add_days(today, -1)
         tablename = DateUtil.get_table(yes_date)
         dto = [DateUtil.date2str(yes_date), DateUtil.date2str(today), tablename]
-        # query_data = Apilog_cli.queryOne(hb_flight_detail_user_history_sql['hb_filght_detail_user_daily_history'], dto)
+        # query_data = Apilog_cli.query_one(hb_flight_detail_user_history_sql['hb_filght_detail_user_daily_history'], dto)
         # targetdb_cli.insert(hb_flight_detail_user_history_sql['update_flight_detail_user_daily_history'], query_data)
-        query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_history_sql["flight_detail_user_query_daily_his"], dto)
+        query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_history_sql["flight_detail_user_query_daily_his"], dto)
         print query_data
         DBCli().targetdb_cli.insert(hb_flight_detail_user_history_sql["update_flight_detail_user_query_daily_his"], query_data)
         today = DateUtil.add_days(today, -1)
@@ -30,7 +30,7 @@ def insert_hbdt_details_weekly_history():
         if start_table != end_table:
             dto = [DateUtil.date2str(last_mon, '%Y-%m-%d'), DateUtil.date2str(last_mon), DateUtil.date2str(this_mon),
                    DateUtil.date2str(last_mon), DateUtil.date2str(this_mon), start_table, end_table]
-            query_data = DBCli().Apilog_cli.queryOne(
+            query_data = DBCli().Apilog_cli.query_one(
                 hb_flight_detail_user_history_sql['hb_filght_detail_user_difftable_weekly'], dto)
             print query_data
             DBCli().targetdb_cli.insert(hb_flight_detail_user_history_sql['update_flight_detail_user_query_weekly_his'],
@@ -38,7 +38,7 @@ def insert_hbdt_details_weekly_history():
         else:
             dto = [DateUtil.date2str(last_mon, '%Y-%m-%d'), DateUtil.date2str(last_mon),
                    DateUtil.date2str(this_mon), start_table]
-            query_data = DBCli().Apilog_cli.queryOne(
+            query_data = DBCli().Apilog_cli.query_one(
                 hb_flight_detail_user_history_sql['hb_filght_detail_user_weeky_history'], dto)
             print query_data
             DBCli().targetdb_cli.insert(hb_flight_detail_user_history_sql['update_flight_detail_user_query_weekly_his'],
@@ -52,7 +52,7 @@ def insert_hbdt_details_monthly_history():
     while start_date >= table_start_date:
         table_list = DateUtil.get_all_table(start_date.year, start_date.month)
         dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), table_list[0], table_list[1], table_list[2]]
-        query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_history_sql['hb_filght_detail_user_monthly_history'], dto)
+        query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_history_sql['hb_filght_detail_user_monthly_history'], dto)
         print query_data
         DBCli().targetdb_cli.insert(hb_flight_detail_user_history_sql["update_flight_detail_user_query_monthly_his"], query_data)
         start_date, end_date = DateUtil.get_last_month_date(start_date)
@@ -71,7 +71,7 @@ def insert_hbdt_details_quarterly_history():
         for tablelist in xrange(start_index, end_index):
             table_list = DateUtil.get_all_table(start_date.year, tablelist)
             dto.extend(table_list)
-        query_data = DBCli().Apilog_cli.queryOne(hb_flight_detail_user_history_sql['hb_filght_detail_user_quarterly_history'], dto)
+        query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_history_sql['hb_filght_detail_user_quarterly_history'], dto)
         DBCli().targetdb_cli.insert(hb_flight_detail_user_history_sql["update_flight_detail_user_query_quarterly_his"], query_data)
         start_date, end_date = DateUtil.get_last_quarter_date(start_date)
 

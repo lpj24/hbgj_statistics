@@ -7,29 +7,29 @@ from dbClient.dateutil import DateUtil
 def getGtAmountSuccess(dto, days):
     if days > 0:
         success_sql = gt_amount_sql["gtgj_amount_success"]
-        amount_success = DBCli().gt_cli.queryAll(success_sql, dto)
+        amount_success = DBCli().gt_cli.query_all(success_sql, dto)
     else:
         success_sql = gt_amount_sql["gtgj_amount_success_daily"]
-        amount_success = DBCli().targetdb_cli.queryAll(success_sql, dto)
+        amount_success = DBCli().targetdb_cli.query_all(success_sql, dto)
     return list(amount_success)
 
 
 def getGtAmountCreate(dto):
-    amount_create = DBCli().targetdb_cli.queryAll(gt_amount_sql["gtgj_amount_create"], dto)
+    amount_create = DBCli().targetdb_cli.query_all(gt_amount_sql["gtgj_amount_create"], dto)
     return list(amount_create)
 
 
 def getGtAmountgrab(dto):
-    amount_grab = DBCli().targetdb_cli.queryAll(gt_amount_sql["gtgj_amount_grab"], dto)
+    amount_grab = DBCli().targetdb_cli.query_all(gt_amount_sql["gtgj_amount_grab"], dto)
     return list(amount_grab)
 
 
 def getGtAmountChange(start_date, end_date):
     change_amount = 0
     dto = [start_date, end_date]
-    query_ids = DBCli().gt_cli.queryAll(gt_amount_sql["gtgj_change_oids"], dto)
+    query_ids = DBCli().gt_cli.query_all(gt_amount_sql["gtgj_change_oids"], dto)
     for oid in query_ids:
-        change_order_info = DBCli().gt_cli.queryAll(gt_amount_sql["gtgj_change_info"], [oid])
+        change_order_info = DBCli().gt_cli.query_all(gt_amount_sql["gtgj_change_info"], [oid])
         info_list = []
         for order_info in change_order_info:
             order_info = list(order_info)

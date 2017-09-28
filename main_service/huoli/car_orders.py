@@ -18,7 +18,7 @@ def update_car_orders_daily(days=0):
         dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
         dto.append(DateUtil.date2str(today))
         dto.append(DateUtil.date2str(tomorrow))
-    query_data = DBCli().car_cli.queryOne(car_orders_sql["car_orders_jz_daily"], dto)
+    query_data = DBCli().car_cli.query_one(car_orders_sql["car_orders_jz_daily"], dto)
     DBCli().targetdb_cli.insert(car_orders_sql["update_car_orders_jz_daily"], query_data)
 
 
@@ -67,13 +67,13 @@ def update_gt_car():
         and  t1.depot_type = 1
         and stat_flag=0;
     """
-    gt_city = DBCli().car_cli.queryAll(open_car_gt_sql)
+    gt_city = DBCli().car_cli.query_all(open_car_gt_sql)
     import itertools
     gt_list = list(itertools.chain(*[g[1].split(',') for g in gt_city]))
-    gt_dict_data = DBCli().car_cli.queryAll(gt_dict_sql)
+    gt_dict_data = DBCli().car_cli.query_all(gt_dict_sql)
     new_gt_dict = dict(gt_dict_data)
 
-    gt_data = DBCli().gt_cli.queryAll(sql, [gt_list]*2)
+    gt_data = DBCli().gt_cli.query_all(sql, [gt_list]*2)
     result = []
     for gt in gt_data:
         phoneid, phone, departtime, arrtime, depname, arrname = gt

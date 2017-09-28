@@ -15,8 +15,8 @@ def update_gtgj_consumers_daily(days=0):
         today = DateUtil.date2str(DateUtil.get_date_before_days(days))
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1))
     dto = [today, tomorrow]
-    query_data = DBCli().gt_cli.queryAll(gtgj_consumers_sql["gtgj_consumers_daily"], dto)
-    DBCli().targetdb_cli.batchInsert(gtgj_consumers_sql["update_gtgj_consumers_daily"], query_data)
+    query_data = DBCli().gt_cli.query_all(gtgj_consumers_sql["gtgj_consumers_daily"], dto)
+    DBCli().targetdb_cli.batch_insert(gtgj_consumers_sql["update_gtgj_consumers_daily"], query_data)
 
 
 def update_gtgj_consumers_weekly():
@@ -24,15 +24,15 @@ def update_gtgj_consumers_weekly():
     start_date = DateUtil.date2str(DateUtil.get_last_week_date(DateUtil.get_last_week_date()[0])[0])
     end_date = DateUtil.date2str(DateUtil.get_last_week_date()[1])
     dto = [start_date, end_date, start_date, end_date]
-    query_data = DBCli().gt_cli.queryAll(gtgj_consumers_sql["gtgj_consumers_weekly"], dto)
-    DBCli().targetdb_cli.batchInsert(gtgj_consumers_sql["update_gtgj_consumers_weekly"], query_data)
+    query_data = DBCli().gt_cli.query_all(gtgj_consumers_sql["gtgj_consumers_weekly"], dto)
+    DBCli().targetdb_cli.batch_insert(gtgj_consumers_sql["update_gtgj_consumers_weekly"], query_data)
 
 
 def update_gtgj_consumers_monthly():
     start_date, end_date = DateUtil.get_last_month_date()
     dto = [DateUtil.date2str(start_date, "%Y-%m-%d"), DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]
-    query_data = DBCli().gt_cli.queryOne(gtgj_consumers_sql["gtgj_consumers_monthly"], dto)
+    query_data = DBCli().gt_cli.query_one(gtgj_consumers_sql["gtgj_consumers_monthly"], dto)
     DBCli().targetdb_cli.insert(gtgj_consumers_sql["update_gtgj_consumers_monthly"], query_data)
 
 
@@ -41,7 +41,7 @@ def update_gtgj_consumers_quarterly():
     start_date = DateUtil.date2str(start_date)
     end_date = DateUtil.date2str(end_date)
     dto = [start_date, start_date, start_date, end_date, start_date, end_date]
-    query_data = DBCli().gt_cli.queryOne(gtgj_consumers_sql["gtgj_consumers_quarterly"], dto)
+    query_data = DBCli().gt_cli.query_one(gtgj_consumers_sql["gtgj_consumers_quarterly"], dto)
     DBCli().targetdb_cli.insert(gtgj_consumers_sql["update_gtgj_consumers_quarterly"], query_data)
 
 
@@ -66,7 +66,7 @@ def storage_gt_consumers_quarter():
     # start_date = '2017-07-01'
     # end_date = '2017-08-11'
     dto = [start_date, end_date, start_date, end_date]
-    query_data = DBCli().gt_cli.queryAll(sql, dto)
+    query_data = DBCli().gt_cli.query_all(sql, dto)
     g = BloomFilter(capacity=20000000)
 
     bloom_year_file = start_date + "_bloom_file.dat"

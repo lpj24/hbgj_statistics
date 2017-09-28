@@ -29,7 +29,7 @@ def update_hb_channel_ticket_daily(days=0):
         insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
         createtime, updatetime) values (%s, 13, %s, %s, 0, 0, 5, now(), now())
     """
-    channel_all_data = DBCli().sourcedb_cli.queryAll(channel_sql, [start_week, start_week, end_week])
+    channel_all_data = DBCli().sourcedb_cli.query_all(channel_sql, [start_week, start_week, end_week])
     # new_channel_data = [list(channel_data).insert(0, s_day) for channel_data in channel_all_data]
 
     insert_channel_data = []
@@ -52,7 +52,7 @@ def update_hb_channel_ticket_daily(days=0):
             continue
         insert_channel_data.append(new_channel_data)
 
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_week,  u'航班管家', 'HBGJ'])
 
@@ -80,7 +80,7 @@ def update_hb_channel_ticket_income_daily(days=0):
     """
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
 
-    income_data = DBCli().sourcedb_cli.queryAll(sql, dto)
+    income_data = DBCli().sourcedb_cli.query_all(sql, dto)
     insert_sql = """
         insert into operation_hbgj_channel_ticket_income_daily (s_day, saletype, channel_name, pn_resouce,
         income_amount, pid,
@@ -128,7 +128,7 @@ def update_hb_channel_ticket_income_daily(days=0):
     for income_k, income_v in pn_resouce_amount_dict.items():
         insert_channel_data.append(income_v)
 
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_channel_data)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_date, u'航班管家', 'HBGJ'])
     pass
@@ -151,10 +151,10 @@ def update_hb_company_ticket_weekly():
         select code,FOUR_NAME
         from AIRLINES_NORMAl
     """
-    hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
+    hb_info = DBCli().oracle_cli.query_all(hb_code_sql)
     hb_info = dict(hb_info)
 
-    hb_company_data = DBCli().sourcedb_cli.queryAll(hb_sql, [start_week, start_week, end_week])
+    hb_company_data = DBCli().sourcedb_cli.query_all(hb_sql, [start_week, start_week, end_week])
     insert_hb_company = []
     for hb_data in hb_company_data:
         if hb_data[1] in hb_info:
@@ -170,7 +170,7 @@ def update_hb_company_ticket_weekly():
         insert into operation_hbgj_company_ticket_weekly (s_day, hb_comany, hb_code, ticket_num, amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
     """
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_hb_company)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_hb_company)
 
 
 def update_unable_ticket():
@@ -241,10 +241,10 @@ def update_unable_ticket():
         start_date = DateUtil.date2str(start_week)
         next_date = DateUtil.date2str(DateUtil.add_days(start_week, 1))
         dto = [start_date, next_date]
-        unable_ticket_data = DBCli().sourcedb_cli.queryAll(unable_ticket_sql, dto)
+        unable_ticket_data = DBCli().sourcedb_cli.query_all(unable_ticket_sql, dto)
 
-        human_intervention_data = DBCli().sourcedb_cli.queryAll(human_intervention_sql, dto)
-        total_ticket_data = DBCli().sourcedb_cli.queryAll(total_ticket_sql, dto)
+        human_intervention_data = DBCli().sourcedb_cli.query_all(human_intervention_sql, dto)
+        total_ticket_data = DBCli().sourcedb_cli.query_all(total_ticket_sql, dto)
 
         total_t_o = defaultdict(list)
 
@@ -313,8 +313,8 @@ def update_unable_ticket():
                                      pn_intervention_name, 0, order_intervention_num]
             insert_intervention_data.append(tmp_intervention_data)
         start_week = DateUtil.add_days(start_week, 1)
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
-    DBCli().targetdb_cli.batchInsert(insert_intervention_sql, insert_intervention_data)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_data)
+    DBCli().targetdb_cli.batch_insert(insert_intervention_sql, insert_intervention_data)
 
 
 def get_pid_sale_type(sale_type, pn_resource):
@@ -379,8 +379,8 @@ def update_supplier_refused_order_weekly():
     """
     dto = [DateUtil.date2str(start_week, '%Y-%m-%d'), start_week,
            end_week, DateUtil.date2str(start_week, '%Y-%m-%d'), start_week, end_week]
-    query_data = DBCli().sourcedb_cli.queryAll(week_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, query_data)
+    query_data = DBCli().sourcedb_cli.query_all(week_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def do_exception_sale():
@@ -399,7 +399,7 @@ def do_exception_sale():
     min_date = datetime.date(2013, 2, 19)
     end_date = datetime.date(2017, 2, 27)
     while min_date < end_date:
-        query_data = DBCli().targetdb_cli.queryOne(check_sql, [min_date])
+        query_data = DBCli().targetdb_cli.query_one(check_sql, [min_date])
         if query_data[0] == 0:
             DBCli().targetdb_cli.insert(do_sale_exception_sql, [DateUtil.date2str(min_date, '%Y-%m-%d'), u'航班管家', 'HBGJ'])
         min_date = DateUtil.add_days(min_date, 1)
@@ -422,8 +422,8 @@ def update_product_ticket_daily(days=0):
         values (%s, %s, %s, %s, now(), now())
     """
     dto = [start_week, end_week]
-    supplier_data = DBCli().sourcedb_cli.queryAll(product_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, supplier_data)
+    supplier_data = DBCli().sourcedb_cli.query_all(product_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, supplier_data)
     pass
 
 
@@ -463,8 +463,8 @@ def update_refund_ticket_channel_daily(days=0):
     """
     sale_data = 0
     dto = [query_date, query_date, today]
-    channel_refund_data = DBCli().sourcedb_cli.queryAll(refund_channel_ticket_sql, dto)
-    channel_ticket_data = DBCli().sourcedb_cli.queryAll(ticket_sql, dto)
+    channel_refund_data = DBCli().sourcedb_cli.query_all(refund_channel_ticket_sql, dto)
+    channel_ticket_data = DBCli().sourcedb_cli.query_all(ticket_sql, dto)
 
     from collections import defaultdict
     pid_channel_refund_ticket_num = defaultdict(list)
@@ -516,7 +516,7 @@ def update_refund_ticket_channel_daily(days=0):
                            sum(pid_channel_ticket_num.get(i, [0])), sum(pid_channel_ticket_amount.get(i, [0.0]))]
         insert_data.append(new_insert_data)
 
-    DBCli().targetdb_cli.batchInsert(update_refund_sql, insert_data)
+    DBCli().targetdb_cli.batch_insert(update_refund_sql, insert_data)
     pass
 
 
@@ -558,8 +558,8 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
         total_order_num = values(total_order_num)
     """
 
-    obsolete_data = DBCli().sourcedb_cli.queryAll(obsolete_sql, dto)
-    total_data = DBCli().sourcedb_cli.queryAll(total_ticket_sql, dto)
+    obsolete_data = DBCli().sourcedb_cli.query_all(obsolete_sql, dto)
+    total_data = DBCli().sourcedb_cli.query_all(total_ticket_sql, dto)
     total_data_dict = defaultdict(list)
     no_obsolete = defaultdict(list)
     insert_data = []
@@ -580,7 +580,7 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
         s_day, pn = no_ob_key.split(":")
         insert_data.append([s_day, pn, total_data_dict[no_ob_key][0], 0, total_data_dict[no_ob_key][1]])
 
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_data)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_data)
     pass
 
 if __name__ == "__main__":
@@ -606,6 +606,6 @@ if __name__ == "__main__":
         select code,FOUR_NAME
         from AIRLINES_NORMAl
     """
-    hb_info = DBCli().oracle_cli.queryAll(hb_code_sql)
+    hb_info = DBCli().oracle_cli.query_all(hb_code_sql)
     hb_info = dict(hb_info)
     print hb_info

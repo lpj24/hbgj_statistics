@@ -130,7 +130,7 @@ def update_focus_platform(days=0):
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
-    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto*2)
+    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto*2)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -142,16 +142,16 @@ def update_focus_platform(days=0):
         else:
             weixin_applate_uv += app_uv
 
-    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*3)
-    duanxin_data = DBCli().dynamic_focus_cli.queryOne(duanxin_sql, dto*2)
+    jieji_data = DBCli().dynamic_focus_cli.query_one(jieji_sql, dto*3)
+    duanxin_data = DBCli().dynamic_focus_cli.query_one(duanxin_sql, dto*2)
     jieji_uv = jieji_data[0]
     duanxin_uv = duanxin_data[0]
-    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto*4)
+    gtgj_data = DBCli().dynamic_focus_cli.query_one(gtgj_sql, dto*4)
     gtgj_uv = gtgj_data[0]
 
     total_uv = iphone_uv + android_uv + weixin_uv + gtgj_uv + jieji_uv + duanxin_uv + weixin_applate_uv
 
-    app_data_pv = DBCli().dynamic_focus_cli.queryAll(pv_sql, dto)
+    app_data_pv = DBCli().dynamic_focus_cli.query_all(pv_sql, dto)
     for app in app_data_pv:
         platform, app_pv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -163,7 +163,7 @@ def update_focus_platform(days=0):
         else:
             weixin_applate_pv += app_pv
 
-    app_data_pv = DBCli().dynamic_focus_cli.queryAll(pv_his_sql, dto)
+    app_data_pv = DBCli().dynamic_focus_cli.query_all(pv_his_sql, dto)
     for app in app_data_pv:
         platform, app_pv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -175,11 +175,11 @@ def update_focus_platform(days=0):
         else:
             weixin_applate_pv += app_pv
 
-    jieji_data_pv = DBCli().dynamic_focus_cli.queryOne(jieji_sql_pv, dto*3)
-    duanxin_data_pv = DBCli().dynamic_focus_cli.queryOne(duanxin_sql_pv, dto*2)
+    jieji_data_pv = DBCli().dynamic_focus_cli.query_one(jieji_sql_pv, dto*3)
+    duanxin_data_pv = DBCli().dynamic_focus_cli.query_one(duanxin_sql_pv, dto*2)
     jieji_pv = jieji_data_pv[0]
     duanxin_pv = duanxin_data_pv[0]
-    gtgj_data_pv = DBCli().dynamic_focus_cli.queryOne(gtgj_sql_pv, dto*4)
+    gtgj_data_pv = DBCli().dynamic_focus_cli.query_one(gtgj_sql_pv, dto*4)
     gtgj_pv = gtgj_data_pv[0]
     total_pv = iphone_pv + android_pv + weixin_pv + gtgj_pv + jieji_pv + duanxin_pv + weixin_applate_pv
 
@@ -272,7 +272,7 @@ def update_focus_platform_weekly():
     start_date, end_date = DateUtil.get_last_week_date()
 
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
-    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto*2)
+    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto*2)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -284,12 +284,12 @@ def update_focus_platform_weekly():
         else:
             weixin_applate_uv += app_uv
 
-    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*3)
+    jieji_data = DBCli().dynamic_focus_cli.query_one(jieji_sql, dto*3)
     jieji_uv = jieji_data[0]
-    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto*2)
+    gtgj_data = DBCli().dynamic_focus_cli.query_one(gtgj_sql, dto*2)
     gtgj_uv = gtgj_data[0]
 
-    sms_uv = (DBCli().dynamic_focus_cli.queryOne(sms_sql, dto*2))[0]
+    sms_uv = (DBCli().dynamic_focus_cli.query_one(sms_sql, dto*2))[0]
 
     total_uv = iphone_uv + android_uv + weixin_uv + gtgj_uv + jieji_uv + weixin_applate_uv + sms_uv
 
@@ -369,7 +369,7 @@ def update_focus_platform_monthly():
 
     start_date, end_date = DateUtil.get_last_month_date()
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
-    app_data_uv = DBCli().dynamic_focus_cli.queryAll(all_platform_sql_uv, dto*2)
+    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto*2)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:
@@ -381,12 +381,12 @@ def update_focus_platform_monthly():
         else:
             weixin_applate_uv += app_uv
 
-    jieji_data = DBCli().dynamic_focus_cli.queryOne(jieji_sql, dto*3)
+    jieji_data = DBCli().dynamic_focus_cli.query_one(jieji_sql, dto*3)
     jieji_uv = jieji_data[0]
-    gtgj_data = DBCli().dynamic_focus_cli.queryOne(gtgj_sql, dto*2)
+    gtgj_data = DBCli().dynamic_focus_cli.query_one(gtgj_sql, dto*2)
     gtgj_uv = gtgj_data[0]
 
-    sms_uv = (DBCli().dynamic_focus_cli.queryOne(sms_sql, dto*2))[0]
+    sms_uv = (DBCli().dynamic_focus_cli.query_one(sms_sql, dto*2))[0]
 
     total_uv = iphone_uv + android_uv + weixin_uv + gtgj_uv + jieji_uv + weixin_applate_uv + sms_uv
 

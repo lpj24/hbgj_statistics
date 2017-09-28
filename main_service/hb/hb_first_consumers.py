@@ -38,7 +38,7 @@ def update_hbgj_newconsumers_type_daily(days=0):
         values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
     """
 
-    query_all_data = DBCli().sourcedb_cli.queryAll(ticket_sql, dto)
+    query_all_data = DBCli().sourcedb_cli.query_all(ticket_sql, dto)
     user_casecabin = {}
 
     discount_user = defaultdict(list)
@@ -150,7 +150,7 @@ def update_new_register_user_daily(days=0):
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [start_date, end_date]
-    register_data = DBCli().sourcedb_cli.queryOne(register_sql, dto)
+    register_data = DBCli().sourcedb_cli.query_one(register_sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, register_data)
     pass
 
@@ -185,7 +185,7 @@ def update_hbgj_inter_inland_consumers_daily(days=0):
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [start_date, end_date]
-    inter_inland_data = DBCli().sourcedb_cli.queryOne(inter_inland_sql, dto)
+    inter_inland_data = DBCli().sourcedb_cli.query_one(inter_inland_sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, inter_inland_data)
     pass
 

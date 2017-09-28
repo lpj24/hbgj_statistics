@@ -58,17 +58,17 @@ def update_hb_insure_daily(days=0):
         update operation_hbgj_insure set delay_order_num=%s where s_day=%s
     """
     dto = [start_date, end_date]
-    platform_data = DBCli().sourcedb_cli.queryOne(platform_sql, dto)
+    platform_data = DBCli().sourcedb_cli.query_one(platform_sql, dto)
     DBCli().targetdb_cli.insert(update_platform_sql, platform_data)
 
-    boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
-    DBCli().targetdb_cli.batchInsert(update_boat_sql, boat_data)
+    boat_data = DBCli().sourcedb_cli.query_all(boat_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_boat_sql, boat_data)
 
-    refund_data = DBCli().sourcedb_cli.queryAll(refund_sql, dto)
-    DBCli().targetdb_cli.batchInsert(update_refund_ticket_sql, refund_data)
+    refund_data = DBCli().sourcedb_cli.query_all(refund_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_refund_ticket_sql, refund_data)
 
-    delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
-    DBCli().targetdb_cli.batchInsert(update_delay_sql, delay_data)
+    delay_data = DBCli().sourcedb_cli.query_all(delay_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_delay_sql, delay_data)
     pass
 
 
@@ -138,14 +138,14 @@ def update_insure_class_daily(days=0):
     """
 
     dto = [start_date, end_date]
-    hbgj_data = DBCli().sourcedb_cli.queryAll(hbgj_insure_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, hbgj_data)
+    hbgj_data = DBCli().sourcedb_cli.query_all(hbgj_insure_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, hbgj_data)
 
-    gtgj_data = DBCli().sourcedb_cli.queryAll(gtgj_insure_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, gtgj_data)
+    gtgj_data = DBCli().sourcedb_cli.query_all(gtgj_insure_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, gtgj_data)
 
-    other_data = DBCli().sourcedb_cli.queryAll(other_insure_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, other_data)
+    other_data = DBCli().sourcedb_cli.query_all(other_insure_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, other_data)
     pass
 
 
@@ -177,8 +177,8 @@ def update_insure_type_daily(days=0):
         insure_claim_num = 0,
         insure_claim_amount = 0
     """
-    boat_data = DBCli().sourcedb_cli.queryAll(boat_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_boat_sql, boat_data)
+    boat_data = DBCli().sourcedb_cli.query_all(boat_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_boat_sql, boat_data)
 
     travel_sql = """
         SELECT left(i.createtime,10), i.insurecode,
@@ -191,8 +191,8 @@ def update_insure_type_daily(days=0):
         GROUP BY left(i.createtime,10), i.insurecode
     """
 
-    travel_data = DBCli().sourcedb_cli.queryAll(travel_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_boat_sql, travel_data)
+    travel_data = DBCli().sourcedb_cli.query_all(travel_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_boat_sql, travel_data)
 
     refund_order_amount_sql = """
             SELECT A.s_day,
@@ -232,8 +232,8 @@ def update_insure_type_daily(days=0):
     refund_start_date = datetime.date(2016, 8, 15)
     refund_start_date = DateUtil.date2str(refund_start_date, '%Y-%m-%d')
     dto = [refund_start_date, end_date, start_date, end_date]
-    refund_data = DBCli().sourcedb_cli.queryAll(refund_order_amount_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_refund_sql, refund_data)
+    refund_data = DBCli().sourcedb_cli.query_all(refund_order_amount_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_refund_sql, refund_data)
 
     delay_sql = """
         select A.s_day, A.insurecode,
@@ -264,8 +264,8 @@ def update_insure_type_daily(days=0):
         insure_claim_amount = 0
     """
     dto = [start_date, end_date]
-    delay_data = DBCli().sourcedb_cli.queryAll(delay_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_delay_sql, delay_data)
+    delay_data = DBCli().sourcedb_cli.query_all(delay_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_delay_sql, delay_data)
     pass
 
 
@@ -318,8 +318,8 @@ def update_hb_boat(days=0):
                 insuer_inter_amount = values(insuer_inter_amount)
 
     """
-    detail_data = DBCli().sourcedb_cli.queryAll(detail_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, detail_data)
+    detail_data = DBCli().sourcedb_cli.query_all(detail_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, detail_data)
 
     detail_refund_sql = """
         SELECT DATE_FORMAT(i.updatetime, '%%Y-%%m-%%d') s_day,
@@ -366,8 +366,8 @@ def update_hb_boat(days=0):
             insuer_refund_inland_amount = values(insuer_refund_inland_amount),
             insuer_refund_inter_amount = values(insuer_refund_inter_amount)
     """
-    detail_refund_data = DBCli().sourcedb_cli.queryAll(detail_refund_sql, dto)
-    DBCli().targetdb_cli.batchInsert(insert_sql, detail_refund_data)
+    detail_refund_data = DBCli().sourcedb_cli.query_all(detail_refund_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, detail_refund_data)
     pass
 
 

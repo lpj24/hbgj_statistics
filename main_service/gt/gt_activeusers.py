@@ -13,8 +13,8 @@ def update_gtgj_activeusers_daily(days=0):
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1), '%Y-%m-%d')
         today = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     dto = [tomorrow, today]
-    query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_activeusers_daily"], dto)
-    DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_activeusers_daily"], query_data)
+    query_data = DBCli().gt_cli.query_all(gtgj_activeusers_sql["gtgj_activeusers_daily"], dto)
+    DBCli().targetdb_cli.batch_insert(gtgj_activeusers_sql["update_gtgj_activeusers_daily"], query_data)
     pass
 
 
@@ -23,14 +23,14 @@ def update_gtgj_activeusers_weekly():
     start_date = DateUtil.get_last_week_date(DateUtil.get_last_week_date()[0])[0]
     end_date = DateUtil.get_last_week_date()[1]
     dto = [start_date, end_date]
-    query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_activeusers_weekly"], dto)
-    DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_activeusers_weekly"], query_data)
+    query_data = DBCli().gt_cli.query_all(gtgj_activeusers_sql["gtgj_activeusers_weekly"], dto)
+    DBCli().targetdb_cli.batch_insert(gtgj_activeusers_sql["update_gtgj_activeusers_weekly"], query_data)
 
 
 def update_gtgj_activeusers_monthly():
     start_date, end_date = DateUtil.get_last_month_date()
     dto = [start_date, end_date]
-    query_data = DBCli().gt_cli.queryOne(gtgj_activeusers_sql["gtgj_activeusers_monthly"], dto)
+    query_data = DBCli().gt_cli.query_one(gtgj_activeusers_sql["gtgj_activeusers_monthly"], dto)
     DBCli().targetdb_cli.insert(gtgj_activeusers_sql["update_gtgj_activeusers_monthly"], query_data)
 
 
@@ -43,8 +43,8 @@ def update_gtgj_newusers_daily(days=0):
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1), '%Y-%m-%d')
         today = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     dto = [tomorrow, today]
-    query_data = DBCli().gt_cli.queryAll(gtgj_activeusers_sql["gtgj_newusers_daily"], dto)
-    DBCli().targetdb_cli.batchInsert(gtgj_activeusers_sql["update_gtgj_newusers_daily"], query_data)
+    query_data = DBCli().gt_cli.query_all(gtgj_activeusers_sql["gtgj_newusers_daily"], dto)
+    DBCli().targetdb_cli.batch_insert(gtgj_activeusers_sql["update_gtgj_newusers_daily"], query_data)
     pass
 
 
@@ -78,7 +78,7 @@ def update_gtgj_activeusers_quarterly():
     # start_date = DateUtil.date2str(start_date)
     # end_date = DateUtil.date2str(end_date)
     # dto = [start_date, end_date]
-    # uids = gt_cli.queryAll(gtgj_activeusers_month_uids, dto)
+    # uids = gt_cli.query_all(gtgj_activeusers_month_uids, dto)
     # uid_key = "Gt_"+key_str+"_month_uids"
     # for uid in uids:
     #     redis_cli.sadd(uid_key, uid)

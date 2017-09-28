@@ -40,7 +40,7 @@ def monitor_hb_channel_ticket():
     result_ticket_num = {}
     for index, start in enumerate(head):
         end_date = DateUtil.add_days(start, 1)
-        query_data = DBCli().sourcedb_cli.queryAll(now_hour_sql, [start, end_date])
+        query_data = DBCli().sourcedb_cli.query_all(now_hour_sql, [start, end_date])
 
         for data in query_data:
             pn_name, ticket_num = data

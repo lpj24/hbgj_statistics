@@ -36,7 +36,7 @@ def update_hb_car_hotel_profit(days=0):
         group by TRADE_TIME
     """
     dto = [query_date, today]
-    result = DBCli().pay_cost_cli.queryAll(sql, dto)
+    result = DBCli().pay_cost_cli.query_all(sql, dto)
     other_cost_sql = """
         select
         sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
@@ -65,8 +65,8 @@ def update_hb_car_hotel_profit(days=0):
         and od.LINKTYPE is NULL and o.mode=0
         and od.LINKDETAILID=0 GROUP BY  COSTDATE;
     """
-    inland_price_diff_type2 = DBCli().sourcedb_cli.queryAll(inland_price_diff_type2_sql, dto)
-    other_result = DBCli().sourcedb_cli.queryAll(other_cost_sql, dto)
+    inland_price_diff_type2 = DBCli().sourcedb_cli.query_all(inland_price_diff_type2_sql, dto)
+    other_result = DBCli().sourcedb_cli.query_all(other_cost_sql, dto)
     update_other_cost_sql = """
         update profit_hb_cost set inland_price_diff_type0=%s, inland_price_diff_type1=%s,
         inland_refund_new=%s, inter_price_diff=%s where s_day=%s
@@ -99,7 +99,7 @@ def update_hb_car_hotel_profit(days=0):
     update_dft_cost_sql = """
         update profit_hb_cost set dft_cost=%s where s_day=%s
     """
-    dft_result = DBCli().sourcedb_cli.queryAll(query_dft_cost_sql, dto)
+    dft_result = DBCli().sourcedb_cli.query_all(query_dft_cost_sql, dto)
 
     cut_point_sql = """
         SELECT
@@ -119,7 +119,7 @@ def update_hb_car_hotel_profit(days=0):
         where s_day=%s
     """
 
-    cut_point_amount = DBCli().sourcedb_cli.queryAll(cut_point_sql, dto)
+    cut_point_amount = DBCli().sourcedb_cli.query_all(cut_point_sql, dto)
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         else_coupon_in, else_coupon_return, delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
@@ -137,11 +137,11 @@ def update_hb_car_hotel_profit(days=0):
         point_give_amount = VALUES(point_give_amount),
         balance_give_amount = VALUES(balance_give_amount)
     """
-    DBCli().targetdb_cli.batchInsert(insert_sql, result)
-    DBCli().targetdb_cli.batchInsert(update_other_cost_sql, other_result)
-    DBCli().targetdb_cli.batchInsert(update_dft_cost_sql, dft_result)
-    DBCli().targetdb_cli.batchInsert(update_inland_price_diff_type2_sql, inland_price_diff_type2)
-    DBCli().targetdb_cli.batchInsert(update_cut_point_cost_sql, cut_point_amount)
+    DBCli().targetdb_cli.batch_insert(insert_sql, result)
+    DBCli().targetdb_cli.batch_insert(update_other_cost_sql, other_result)
+    DBCli().targetdb_cli.batch_insert(update_dft_cost_sql, dft_result)
+    DBCli().targetdb_cli.batch_insert(update_inland_price_diff_type2_sql, inland_price_diff_type2)
+    DBCli().targetdb_cli.batch_insert(update_cut_point_cost_sql, cut_point_amount)
 
     car_sql = """
         select distinct TRADE_TIME s_day,
@@ -161,7 +161,7 @@ def update_hb_car_hotel_profit(days=0):
         group by s_day
     """
 
-    result = DBCli().pay_cost_cli.queryAll(car_sql, dto)
+    result = DBCli().pay_cost_cli.query_all(car_sql, dto)
     insert_car_sql = """
         insert into profit_huoli_car_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         else_coupon_in, else_coupon_return, point_give_amount, balance_give_amount,
@@ -179,7 +179,7 @@ def update_hb_car_hotel_profit(days=0):
         point_give_amount = VALUES(point_give_amount),
         balance_give_amount = VALUES(balance_give_amount)
     """
-    DBCli().targetdb_cli.batchInsert(insert_car_sql, result)
+    DBCli().targetdb_cli.batch_insert(insert_car_sql, result)
 
     hotel_sql = """
         select distinct TRADE_TIME s_day,
@@ -199,7 +199,7 @@ def update_hb_car_hotel_profit(days=0):
         group by s_day
     """
 
-    result = DBCli().pay_cost_cli.queryAll(hotel_sql, dto)
+    result = DBCli().pay_cost_cli.query_all(hotel_sql, dto)
     insert_hotel_sql = """
         insert into profit_huoli_hotel_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         else_coupon_in, else_coupon_return, point_give_amount, balance_give_amount,
@@ -217,7 +217,7 @@ def update_hb_car_hotel_profit(days=0):
         point_give_amount = VALUES(point_give_amount),
         balance_give_amount = VALUES(balance_give_amount)
     """
-    DBCli().targetdb_cli.batchInsert(insert_hotel_sql, result)
+    DBCli().targetdb_cli.batch_insert(insert_hotel_sql, result)
 
 
 def update_car_cost_detail(days=0):
@@ -246,7 +246,7 @@ def update_car_cost_detail(days=0):
         amount = values(amount)
     """
     insert_car_cost = []
-    result = DBCli(dict).pay_cost_cli.queryAll(car_sql, dto)
+    result = DBCli(dict).pay_cost_cli.query_all(car_sql, dto)
     for cost_data in result:
         pay_cost_in = float(cost_data["paycost_in"]) - float(cost_data["paycost_return"])
         coupon_in = cost_data["coupon_in"] - cost_data["coupon_return"]
@@ -270,7 +270,7 @@ def update_car_cost_detail(days=0):
                 insert_car_cost.append((car_date, cost_type, cost_amount))
             except KeyError:
                 continue
-    DBCli().targetdb_cli.batchInsert(insert_sql, insert_car_cost)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_car_cost)
     pass
 
 
@@ -319,7 +319,7 @@ def update_huoli_car_income_type(days=0):
         income_type = car_income_data["type"]
         income_amount = car_income_data["amount"]
         insert_car_income.append((car_date, income_type, income_amount))
-    DBCli().targetdb_cli.batchInsert(insert_car_sql, insert_car_income)
+    DBCli().targetdb_cli.batch_insert(insert_car_sql, insert_car_income)
 
 
 def update_profit_hb_income(days=0):
@@ -355,10 +355,10 @@ def update_profit_hb_income(days=0):
         inter_insure_income = VALUES(inter_insure_income)
     """
 
-    hb_profit = DBCli().sourcedb_cli.queryAll(sql, [query_date, today])
+    hb_profit = DBCli().sourcedb_cli.query_all(sql, [query_date, today])
     if hb_profit is None:
         return
-    DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
+    DBCli().targetdb_cli.batch_insert(insert_sql, hb_profit)
     pass
 
 
@@ -370,7 +370,7 @@ def update_profit_hotel_income(days=0):
         select date, total_profit from hotel_order_profit where date>=%s
         and date<%s
     """
-    hotel_data = DBCli().tongji_skyhotel_cli.queryAll(sql, [query_start, query_end])
+    hotel_data = DBCli().tongji_skyhotel_cli.query_all(sql, [query_start, query_end])
     if hotel_data is None:
         return
     insert_sql = """
@@ -380,7 +380,7 @@ def update_profit_hotel_income(days=0):
         s_day = VALUES(s_day),
         income = VALUES(income)
     """
-    DBCli().targetdb_cli.batchInsert(insert_sql, hotel_data)
+    DBCli().targetdb_cli.batch_insert(insert_sql, hotel_data)
     pass
 
 
@@ -403,7 +403,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         GROUP BY a.PNRSOURCE, a.INCOMEDATE, agaent_name, TICKET_ORDER.agentid order by a.INCOMEDATE
     """
     dto = [DateUtil.date2str(query_start, "%Y-%m-%d"), DateUtil.date2str(query_end, "%Y-%m-%d")]
-    income_data = DBCli().sourcedb_cli.queryAll(income_sql, dto)
+    income_data = DBCli().sourcedb_cli.query_all(income_sql, dto)
     cost_sql = """
         select a.COSTDATE, P_C.SALETYPE,P_C.NAME, a.PNRSOURCE, SUM(AMOUNT) COST_AMOUNT,
         (select supplier_name
@@ -417,7 +417,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         and AMOUNTTYPE!=2
         GROUP BY a.PNRSOURCE, a.COSTDATE, agaent_name, TICKET_ORDER.agentid
     """
-    cost_data = DBCli().sourcedb_cli.queryAll(cost_sql, dto)
+    cost_data = DBCli().sourcedb_cli.query_all(cost_sql, dto)
 
     cost_data_dict = {}
 
@@ -454,7 +454,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         od.ETICKET is not null
         group by s_day
     """
-    hlth_cost_data = DBCli().sourcedb_cli.queryAll(hlth_cost_sql, dto)
+    hlth_cost_data = DBCli().sourcedb_cli.query_all(hlth_cost_sql, dto)
     hlth_cost_data = hlth_cost_data[0]
     profit_data = []
 
@@ -520,7 +520,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         pid = values(pid)
 
     """
-    DBCli().targetdb_cli.batchInsert(insert_sql, profit_data)
+    DBCli().targetdb_cli.batch_insert(insert_sql, profit_data)
     pass
 
 
@@ -569,8 +569,8 @@ def update_profit_hb_income_official_website(days=0):
         income_amount = VALUES(income_amount)
     """
 
-    hb_profit = DBCli().sourcedb_cli.queryAll(sql, [query_date, today])
-    DBCli().targetdb_cli.batchInsert(insert_sql, hb_profit)
+    hb_profit = DBCli().sourcedb_cli.query_all(sql, [query_date, today])
+    DBCli().targetdb_cli.batch_insert(insert_sql, hb_profit)
     pass
 
 if __name__ == "__main__":

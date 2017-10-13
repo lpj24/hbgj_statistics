@@ -41,13 +41,8 @@ def update_operation_hbgj_order_detail_daily(days=0):
         count(DISTINCT case when o.P like '%%gtgj%%' and o.INTFLAG=0 then o.ORDERID END) order_gtgj_inland,
         count(DISTINCT case when o.P like '%%gtgj%%' and o.INTFLAG=1 then o.ORDERID END) order_gtgj_inter,
         count(DISTINCT case when o.INTFLAG=0 then o.ORDERID END) order_inland,
-        count(DISTINCT case when o.INTFLAG=1 then o.ORDERID END) order_inter,
-        sum(case when o.P like '%%hbgj%%' and o.INTFLAG=0 then o.PAYPRICE else 0 END) gmv_hbgj_inland,
-        sum(case when o.P like '%%hbgj%%' and o.INTFLAG=1 then o.PAYPRICE else 0 END) gmv_hbgj_inter,
-        sum(case when o.P like '%%gtgj%%' and o.INTFLAG=0 then o.PAYPRICE else 0 END) gmv_gtgj_inland,
-        sum(case when o.P like '%%gtgj%%' and o.INTFLAG=1 then o.PAYPRICE else 0 END) gmv_gtgj_inter,
-        sum(case when o.INTFLAG=0 then o.PAYPRICE else 0 END) gmv_inland,
-        sum(case when o.INTFLAG=1 then o.PAYPRICE else 0 END) gmv_inter
+        count(DISTINCT case when o.INTFLAG=1 then o.ORDERID END) order_inter
+
         FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o
         on od.ORDERID=o.ORDERID
@@ -59,12 +54,36 @@ def update_operation_hbgj_order_detail_daily(days=0):
 
     """
 
+    gmv_sql = """
+        select sum(gmv_hbgj_inland), sum(gmv_hbgj_inter), sum(gmv_gtgj_inland),
+        sum(gmv_gtgj_inter), sum(gmv_inland), sum(gmv_inter), A.s_day from (
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,
+        case when o.P like '%%hbgj%%' and o.INTFLAG=0 then o.PAYPRICE else 0 END gmv_hbgj_inland,
+        case when o.P like '%%hbgj%%' and o.INTFLAG=1 then o.PAYPRICE else 0 END gmv_hbgj_inter,
+        case when o.P like '%%gtgj%%' and o.INTFLAG=0 then o.PAYPRICE else 0 END gmv_gtgj_inland,
+        case when o.P like '%%gtgj%%' and o.INTFLAG=1 then o.PAYPRICE else 0 END gmv_gtgj_inter,
+        case when o.INTFLAG=0 then o.PAYPRICE else 0 END gmv_inland,
+        case when o.INTFLAG=1 then o.PAYPRICE else 0 END gmv_inter
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o
+        on od.ORDERID=o.ORDERID
+        where od.CREATETIME>=%s
+        and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        GROUP BY o.ORDERID, s_day) A GROUP BY A.s_day
+    """
+
+    update_sql = """
+        update operation_hbgj_order_detail_daily set gmv_hbgj_inland = %s, gmv_hbgj_inter=%s,
+        gmv_gtgj_inland = %s, gmv_gtgj_inter = %s, gmv_inland=%s, gmv_inter=%s where s_day=%s
+    """
+
     insert_sql = """
         insert into operation_hbgj_order_detail_daily (s_day, ticket_hbgj_inland, ticket_hbgj_inter, ticket_gtgj_inland,
             ticket_gtgj_inter, ticket_inland, ticket_inter, order_hbgj_inland, order_hbgj_inter, order_gtgj_inland,
-            order_gtgj_inter, order_inland, order_inter, gmv_hbgj_inland,
-            gmv_hbgj_inter, gmv_gtgj_inland, gmv_gtgj_inter, gmv_inland, gmv_inter, createtime, updatetime
-        ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+            order_gtgj_inter, order_inland, order_inter, createtime, updatetime
+        ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         ticket_hbgj_inland = values(ticket_hbgj_inland),
@@ -78,17 +97,14 @@ def update_operation_hbgj_order_detail_daily(days=0):
         order_gtgj_inland = values(order_gtgj_inland),
         order_gtgj_inter = values(order_gtgj_inter),
         order_inland = values(order_inland),
-        order_inter = values(order_inter),
-        gmv_hbgj_inland = values(gmv_hbgj_inland),
-        gmv_hbgj_inter = values(gmv_hbgj_inter),
-        gmv_gtgj_inland = values(gmv_gtgj_inland),
-        gmv_gtgj_inter = values(gmv_gtgj_inter),
-        gmv_inland = values(gmv_inland),
-        gmv_inter = values(gmv_inter)
-
+        order_inter = values(order_inter)
     """
+
     query_data = DBCli().sourcedb_cli.query_one(sql, dto)
     DBCli().targetdb_cli.insert(insert_sql, query_data)
+
+    gmv_data = DBCli().sourcedb_cli.query_one(gmv_sql, dto)
+    DBCli().targetdb_cli.insert(update_sql, gmv_data)
 
 
 def update_hb_gt_order_new_daily(days=0):
@@ -271,6 +287,35 @@ def update_hbgj_ticket_region_inter_daily(days=0):
     DBCli().targetdb_cli.batch_insert(insert_total_sql, total_query_data)
 
 
+def update_hb_order_daily_minute(days=0):
+    if days > 0:
+        start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d %H:%M')
+        end_date = DateUtil.date2str(DateUtil.get_date_before_days(0), '%Y-%m-%d %H:%M')
+    else:
+        end_date = DateUtil.get_today('%Y-%m-%d %H:%M')
+        start_date = DateUtil.get_date_before_days()
+        start_date = DateUtil.date2str(start_date, '%Y-%m-%d %H:%M')
+
+    print start_date, end_date
+    sql = """
+      select DATE_FORMAT(TICKET_ORDER.createtime, '%%Y-%%m-%%d %%H:%%i') s_day, count(TICKET_ORDERDETAIL.ORDERID)
+      from TICKET_ORDERDETAIL INNER JOIN  TICKET_ORDER ON TICKET_ORDER.ORDERID = TICKET_ORDERDETAIL.ORDERID
+      where TICKET_ORDER.ORDERSTATUE not in (2,12,21,51,75)
+      and TICKET_ORDER.createtime>=%s
+      and TICKET_ORDER.createtime<%s
+      group by s_day;
+    """
+
+    insert_sql = """
+        insert into hbgj_order_minute (s_day, ticket_num, createtime, updatetime)
+        values (%s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        ticket_num = values(ticket_num)
+    """
+    query_data = DBCli().sourcedb_cli.query_all(sql, [start_date, end_date])
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
+
 if __name__ == "__main__":
     # update_hb_gt_order_daily(1)
     # update_operation_hbgj_order_detail_daily(1)
@@ -282,4 +327,5 @@ if __name__ == "__main__":
 
     # update_hbgj_ticket_region_inter_daily(60)
     # update_hbgj_ticket_region_inter_daily(157)
-    update_hbgj_ticket_region_inter_daily(423)
+    # update_hbgj_ticket_region_inter_daily(423)
+    update_operation_hbgj_order_detail_daily(1)

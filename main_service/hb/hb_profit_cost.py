@@ -355,11 +355,33 @@ def update_profit_hb_income(days=0):
         inter_insure_income = VALUES(inter_insure_income)
     """
 
+    inter_inland_sql = """
+        SELECT
+        sum(case when INTFLAG=0 then total_price else 0 end) diff_nation,
+        sum(case when INTFLAG=1 then total_price else 0 end) diff_inter,
+        DATE_FORMAT(f.create_time,'%%Y-%%m-%%d') s_day
+        FROM fcode.`activity_order` f
+        join TICKET_ORDER o
+        on f.ref_order_id=o.ORDERID
+        WHERE pay_product_id=60
+        and f.`status`=1
+        and f.create_time >= %s
+        and f.create_time < %s
+        group by s_day
+        order by s_day
+    """
+
+    update_inter_inland_sql = """
+        update profit_hb_income set diff_nation = %s, diff_inter=%s, updatetime=now()
+        where s_day=%s
+    """
+
     hb_profit = DBCli().sourcedb_cli.query_all(sql, [query_date, today])
     if hb_profit is None:
         return
     DBCli().targetdb_cli.batch_insert(insert_sql, hb_profit)
-    pass
+    inter_inland_data = DBCli().sourcedb_cli.query_all(inter_inland_sql, [query_date, today])
+    DBCli().targetdb_cli.batch_insert(update_inter_inland_sql, inter_inland_data)
 
 
 def update_profit_hotel_income(days=0):
@@ -593,4 +615,5 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_operation_hbgj_channel_ticket_profit_daily(i)
     #     i -= 1
-    update_hb_car_hotel_profit(1)
+    # update_hb_car_hotel_profit(1)
+    update_profit_hb_income(1)

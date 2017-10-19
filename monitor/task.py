@@ -139,5 +139,5 @@ if __name__ == "__main__":
     exception_table = cal_balance()
     if exception_table:
         utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")
-    subprocess.Popen("ps -A -opid, etime, args | grep excute_tmp_day*| grep -v grep|awk '{print $1}'|xargs kill -9",
+    subprocess.Popen("ps aux | grep excute_tmp_day*| grep -v grep|awk '{print $2}'|xargs kill -9",
                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)

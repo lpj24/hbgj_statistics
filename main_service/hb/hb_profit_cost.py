@@ -101,6 +101,33 @@ def update_hb_car_hotel_profit(days=0):
     """
     dft_result = DBCli().sourcedb_cli.query_all(query_dft_cost_sql, dto)
 
+    query_dft_cost_fund_sql = """
+        SELECT
+        case when
+            DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') >= '2017-09-01'
+                then -sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018
+            else -sum(od.REALPRICE +  od.AIRPORTFEE)*0.005
+        end as dft_amount,
+        DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIMe>=%s
+        and od.CREATETIMe<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and o.PNRSOURCE='hlth'
+        and o.SUBORDERNO='BOP' and
+        od.ETICKET is not null
+        and IFNULL(od.REFUNDID, 0) != 0
+        group by s_day
+    """
+
+    update_dft_fund_cost_sql = """
+        update profit_hb_cost set dft_cost_refund=%s where s_day=%s
+    """
+
+    dft_fund_cost = DBCli().sourcedb_cli.query_all(query_dft_cost_fund_sql, dto)
+
     cut_point_sql = """
         SELECT
         -sum(case when CHANNELTYPE=5 then ud.POINTS else 0 end)/1000 point_type5_amount,
@@ -142,6 +169,7 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batch_insert(update_dft_cost_sql, dft_result)
     DBCli().targetdb_cli.batch_insert(update_inland_price_diff_type2_sql, inland_price_diff_type2)
     DBCli().targetdb_cli.batch_insert(update_cut_point_cost_sql, cut_point_amount)
+    DBCli().targetdb_cli.batch_insert(update_dft_fund_cost_sql, dft_fund_cost)
 
     car_sql = """
         select distinct TRADE_TIME s_day,
@@ -616,4 +644,4 @@ if __name__ == "__main__":
     #     update_operation_hbgj_channel_ticket_profit_daily(i)
     #     i -= 1
     # update_hb_car_hotel_profit(1)
-    update_profit_hb_income(1)
+    update_hb_car_hotel_profit(1)

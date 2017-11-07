@@ -104,22 +104,23 @@ def update_hb_car_hotel_profit(days=0):
     query_dft_cost_fund_sql = """
         SELECT
         case when
-            DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') >= '2017-09-01'
+            left(r.submit_time,10) >= '2017-09-01'
                 then -sum(od.REALPRICE +  od.AIRPORTFEE)*0.0018
             else -sum(od.REALPRICE +  od.AIRPORTFEE)*0.005
         end as dft_amount,
-        DATE_FORMAT(od.CREATETIMe, '%%Y-%%m-%%d') s_day
-        FROM `TICKET_ORDERDETAIL` od
+
+        left(r.submit_time,10) s_day
+               FROM `TICKET_ORDERDETAIL` od
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
-        where od.CREATETIMe>=%s
-        and od.CREATETIMe<%s
+               join TICKET_ORDER_REFUND r on od.refundid=r.orid 
+        where r.submit_time>=%s
+        and r.submit_time<%s
         and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
         AND IFNULL(od.`LINKTYPE`, 0) != 2
         and o.PNRSOURCE='hlth'
         and o.SUBORDERNO='BOP' and
-        od.ETICKET is not null
-        and IFNULL(od.REFUNDID, 0) != 0
-        group by s_day
+        od.ETICKET is not null and  IFNULL(od.REFUNDID, 0) != 0
+        group by left(r.submit_time,10);
     """
 
     update_dft_fund_cost_sql = """

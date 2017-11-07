@@ -1,7 +1,7 @@
 import logging
 import sys
 import time
-from main_service.localytics import hb_ticket_book, hb_pay_type, hb_stages
+from main_service.localytics import hb_ticket_book, hb_pay_type, hb_stages, hb_nameauth, hb_phoneverify
 from dbClient import utils
 from main_service.localytics import hbdt_event
 from time_job_excute.timeServiceList import TimeService
@@ -16,6 +16,9 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(hb_ticket_book.update_ios_android_newuser_daily)
     TimeService.add_localytics_service(hb_stages.update_hbgj_stages_daily)
     TimeService.add_localytics_service(hb_stages.update_weex_activated_type_daily)
+
+    TimeService.add_localytics_service(hb_nameauth.update_weex_phoneverify)
+    TimeService.add_localytics_service(hb_phoneverify.update_weex_phoneverify)
 
     for fun in TimeService.get_localytics_service():
         try:

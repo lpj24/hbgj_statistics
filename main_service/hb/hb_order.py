@@ -276,7 +276,7 @@ def update_hbgj_ticket_region_inter_daily(days=0):
         ON t.ORDERID = td.ORDERID
         where
         t.CREATETIME>=%s
-        and t.CREATETIME<=%s
+        and t.CREATETIME<%s
         and t.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
         AND IFNULL(td.`LINKTYPE`, 0) != 2
         and INTFLAG=1
@@ -328,4 +328,4 @@ if __name__ == "__main__":
     # update_hbgj_ticket_region_inter_daily(60)
     # update_hbgj_ticket_region_inter_daily(157)
     # update_hbgj_ticket_region_inter_daily(423)
-    update_operation_hbgj_order_detail_daily(1)
+    update_hbgj_ticket_region_inter_daily(1)

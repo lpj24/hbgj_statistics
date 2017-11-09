@@ -457,7 +457,7 @@ def update_refund_ticket_channel_daily(days=0):
         left join PNRSOURCE_CONFIG ON AA.pn_resouce=PNRSOURCE_CONFIG.PNRSOURCE
     """
     update_refund_sql = """
-        insert operation_hbgj_channel_refund_ticket_daily (s_day, pid,
+        insert into operation_hbgj_channel_refund_ticket_daily (s_day, pid,
         refund_ticket_num, refund_ticket_amount, ticket_num, ticket_amount,
         createtime, updatetime) values (%s, %s, %s, %s, %s, %s, now(), now())
     """
@@ -479,7 +479,7 @@ def update_refund_ticket_channel_daily(days=0):
             pid = 1
         elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
             pid = 2
-        elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
+        elif saletype in (20, 21, 22, 24) and pn_resouce != 'intsupply':
             pid = 3
         elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
             pid = 4
@@ -498,7 +498,7 @@ def update_refund_ticket_channel_daily(days=0):
             pid = 1
         elif saletype == 12 and pn_resouce != 'supply' and pn_resouce != 'hlth':
             pid = 2
-        elif saletype in (20, 21, 22) and pn_resouce != 'intsupply':
+        elif saletype in (20, 21, 22, 24) and pn_resouce != 'intsupply':
             pid = 3
         elif pn_resouce == 'intsupply' or pn_resouce == 'supply':
             pid = 4
@@ -517,7 +517,6 @@ def update_refund_ticket_channel_daily(days=0):
         insert_data.append(new_insert_data)
 
     DBCli().targetdb_cli.batch_insert(update_refund_sql, insert_data)
-    pass
 
 
 def update_operation_hbgj_obsolete_order_daily(days=1):
@@ -602,10 +601,13 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hb_channel_ticket_income_daily(i)
     #     i -= 1
-    hb_code_sql = """
-        select code,FOUR_NAME
-        from AIRLINES_NORMAl
-    """
-    hb_info = DBCli().oracle_cli.query_all(hb_code_sql)
-    hb_info = dict(hb_info)
-    print hb_info
+    # hb_code_sql = """
+    #     select code,FOUR_NAME
+    #     from AIRLINES_NORMAl
+    # """
+    # hb_info = DBCli().oracle_cli.query_all(hb_code_sql)
+    # hb_info = dict(hb_info)
+    # print hb_info
+    # for i in xrange(1, 8):
+    #     update_refund_ticket_channel_daily(i)
+    update_refund_ticket_channel_daily(8)

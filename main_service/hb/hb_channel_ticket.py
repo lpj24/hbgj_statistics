@@ -65,15 +65,23 @@ def update_hb_channel_ticket_income_daily(days=0):
     end_date = DateUtil.get_date_after_days(1 - days)
     sql = """
         select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME),
-        (select supplier_name
-        from flow.sys_supplier
-        where channeltype=1 and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
+        TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
         left join PNRSOURCE_CONFIG b ON a.PNRSOURCE = b.PNRSOURCE
         left join TICKET_ORDER ON a.ORDERID = TICKET_ORDER.ORDERID
         where a.INCOMEDATE>=%s and a.INCOMEDATE<%s
         and a.TYPE=0
-        GROUP BY a.PNRSOURCE, a.INCOMEDATE, agaent_name, TICKET_ORDER.agentid
+        GROUP BY a.PNRSOURCE, a.INCOMEDATE, TICKET_ORDER.agentid
     """
+
+    supplier_sql = """
+        select supplier_id, supplier_name
+        from flow.sys_supplier
+        where channeltype=1
+        and supplier_name!='杰成'
+    """
+
+    supplier_data = dict(DBCli().pay_cost_cli.query_all(supplier_sql))
+
     do_sale_exception_sql = """
         insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,
         createtime, updatetime) values (%s, 13, %s, %s, 0, 0, 5, now(), now())
@@ -81,6 +89,7 @@ def update_hb_channel_ticket_income_daily(days=0):
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
 
     income_data = DBCli().sourcedb_cli.query_all(sql, dto)
+
     insert_sql = """
         insert into operation_hbgj_channel_ticket_income_daily (s_day, saletype, channel_name, pn_resouce,
         income_amount, pid,
@@ -98,8 +107,9 @@ def update_hb_channel_ticket_income_daily(days=0):
 
     pn_resouce_amount_dict = {}
     for channel_data in income_data:
-        saletype, pn_resouce = channel_data[1], channel_data[3]
         new_channel_data = list(channel_data)
+        new_channel_data.insert(-1, supplier_data.get(new_channel_data[-1], None))
+        saletype, pn_resouce = new_channel_data[1], new_channel_data[3]
         agaent_id = new_channel_data.pop()
         agaent_name = new_channel_data.pop()
         if saletype in (10, 11, 14):
@@ -131,7 +141,6 @@ def update_hb_channel_ticket_income_daily(days=0):
     DBCli().targetdb_cli.batch_insert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_date, u'航班管家', 'HBGJ'])
-    pass
 
 
 def update_hb_company_ticket_weekly():
@@ -610,4 +619,4 @@ if __name__ == "__main__":
     # print hb_info
     # for i in xrange(1, 8):
     #     update_refund_ticket_channel_daily(i)
-    update_refund_ticket_channel_daily(8)
+    update_hb_channel_ticket_income_daily(1)

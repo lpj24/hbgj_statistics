@@ -440,41 +440,44 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     query_start = DateUtil.get_date_before_days(days*1)
     query_end = DateUtil.get_date_after_days(1 - days)
 
-    income_sql = """
-        select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME),
-        (select supplier_name
+    supplier_sql = """
+        select supplier_id, supplier_name
         from flow.sys_supplier
         where channeltype=1
         and supplier_name!='杰成'
-        and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
+    """
+
+    supplier_data = dict(DBCli().pay_cost_cli.query_all(supplier_sql))
+
+    income_sql = """
+        select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME),
+        TICKET_ORDER.agentid from TICKET_ORDER_INCOME a
         left join PNRSOURCE_CONFIG b ON a.PNRSOURCE = b.PNRSOURCE
         left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.INCOMEDATE >= %s and a.INCOMEDATE < %s
         and a.TYPE=0
-        GROUP BY a.PNRSOURCE, a.INCOMEDATE, agaent_name, TICKET_ORDER.agentid order by a.INCOMEDATE
+        GROUP BY a.PNRSOURCE, a.INCOMEDATE, TICKET_ORDER.agentid order by a.INCOMEDATE
     """
     dto = [DateUtil.date2str(query_start, "%Y-%m-%d"), DateUtil.date2str(query_end, "%Y-%m-%d")]
     income_data = DBCli().sourcedb_cli.query_all(income_sql, dto)
     cost_sql = """
         select a.COSTDATE, P_C.SALETYPE,P_C.NAME, a.PNRSOURCE, SUM(AMOUNT) COST_AMOUNT,
-        (select supplier_name
-        from flow.sys_supplier
-        where channeltype=1
-        and supplier_name!='杰成'
-        and supplier_id=TICKET_ORDER.agentid) agaent_name, TICKET_ORDER.agentid from TICKET_ORDER_COST a
+        TICKET_ORDER.agentid from TICKET_ORDER_COST a
         left join PNRSOURCE_CONFIG P_C ON a.PNRSOURCE=P_C.PNRSOURCE
         left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.COSTDATE >= %s and a.COSTDATE < %s
         and AMOUNTTYPE!=2
-        GROUP BY a.PNRSOURCE, a.COSTDATE, agaent_name, TICKET_ORDER.agentid
+        GROUP BY a.PNRSOURCE, a.COSTDATE, TICKET_ORDER.agentid
     """
     cost_data = DBCli().sourcedb_cli.query_all(cost_sql, dto)
 
     cost_data_dict = {}
 
     for c_d in cost_data:
-        cost_date, s_type, pn_name, pn_r, cost_mon, aga_name, aga_id = c_d
-        new_cost = get_sale_type(s_type, pn_r, list(c_d))
+        new_cd = list(c_d)
+        new_cd.insert(-1, supplier_data.get(new_cd[-1], None))
+        cost_date, s_type, pn_name, pn_r, cost_mon, aga_name, aga_id = new_cd
+        new_cost = get_sale_type(s_type, pn_r, new_cd)
 
         cost_key = new_cost[3]
 
@@ -515,9 +518,10 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     profit_add_pid_data_dict = {}
     for income in income_data:
-
-        saletype, pn_rsource = income[1], income[3]
-        new_income_data = get_sale_type(saletype, pn_rsource, list(income))
+        new_cd = list(income)
+        new_cd.insert(-1, supplier_data.get(new_cd[-1], None))
+        saletype, pn_rsource = new_cd[1], new_cd[3]
+        new_income_data = get_sale_type(saletype, pn_rsource, new_cd)
         s_day, saletype, pn_name, pn_rsource, amount, pid = new_income_data
         income_pn.append(pn_rsource)
 
@@ -572,7 +576,6 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, profit_data)
-    pass
 
 
 def get_sale_type(saletype, pn_resouce, new_channel_data):
@@ -645,4 +648,4 @@ if __name__ == "__main__":
     #     update_operation_hbgj_channel_ticket_profit_daily(i)
     #     i -= 1
     # update_hb_car_hotel_profit(1)
-    update_hb_car_hotel_profit(1)
+    update_operation_hbgj_channel_ticket_profit_daily(1)

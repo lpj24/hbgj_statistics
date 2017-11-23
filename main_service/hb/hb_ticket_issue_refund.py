@@ -376,7 +376,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hbgj_income_issue_refund_daily(1)
+    update_hbgj_cost_type_daily(1)
     i = 1
     # while i <= 5:
     #     update_hbgj_cost_type_daily(i)

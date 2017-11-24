@@ -441,7 +441,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     query_end = DateUtil.get_date_after_days(1 - days)
 
     supplier_sql = """
-        select supplier_id, supplier_name
+        select concat(supplier_id), supplier_name
         from flow.sys_supplier
         where channeltype=1
         and supplier_name!='杰成'
@@ -519,8 +519,11 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
     profit_add_pid_data_dict = {}
     for income in income_data:
         new_cd = list(income)
+        # if new_cd[-1] == 677:
+        #     print supplier_data.get(new_cd[-1], None)
         new_cd.insert(-1, supplier_data.get(new_cd[-1], None))
         saletype, pn_rsource = new_cd[1], new_cd[3]
+        # print new_cd
         new_income_data = get_sale_type(saletype, pn_rsource, new_cd)
         s_day, saletype, pn_name, pn_rsource, amount, pid = new_income_data
         income_pn.append(pn_rsource)
@@ -575,6 +578,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         pid = values(pid)
 
     """
+
     DBCli().targetdb_cli.batch_insert(insert_sql, profit_data)
 
 

@@ -316,6 +316,43 @@ def update_hb_order_daily_minute(days=0):
     query_data = DBCli().sourcedb_cli.query_all(sql, [start_date, end_date])
     DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
+
+def update_hbgj_h5_ticket_daily(days=0):
+    """更新航班管家H5各个渠道票数与订单数, operation_hbgj_h5_ticket_daily"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 146), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
+    dto = [start_date, end_date]
+    h5_sql = """
+        SELECT left(od.CREATETIME,10) s_day,
+        left(p,3) pn_resource,
+        count(DISTINCT(o.ORDERID)) order_count,
+        count(DISTINCT(ETICKET)) ticket_count
+        FROM `TICKET_ORDERDETAIL` od 
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID 
+        where od.CREATETIME >= %s and od.CREATETIME < %s
+        AND IFNULL(od.`LINKTYPE`, 0) != 2 
+        and ETICKET is not NULL 
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' or p like 'cgb%%' or p like 'guizhoutong%%') 
+        GROUP BY left(od.CREATETIME,10),left(p,3) 
+        order by s_day
+    """
+
+    insert_sql = """
+        insert into operation_hbgj_h5_ticket_daily
+        (s_day, pn_resource, order_count, ticket_count, createtime, updatetime)
+        values
+        (%s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        pn_resource = values(pn_resource),
+        order_count = values(order_count),
+        ticket_count = values(ticket_count)
+        
+    """
+    h5_data = DBCli().sourcedb_cli.query_all(h5_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, h5_data)
+
+
 if __name__ == "__main__":
     # update_hb_gt_order_daily(1)
     # update_operation_hbgj_order_detail_daily(1)
@@ -328,4 +365,4 @@ if __name__ == "__main__":
     # update_hbgj_ticket_region_inter_daily(60)
     # update_hbgj_ticket_region_inter_daily(157)
     # update_hbgj_ticket_region_inter_daily(423)
-    update_hbgj_ticket_region_inter_daily(1)
+    update_hbgj_h5_ticket_daily(1)

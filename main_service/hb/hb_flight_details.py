@@ -389,7 +389,6 @@ def update_flight_detail_user_daily(days=0):
         dt, s_type, pv, uv = data
         insert_data = [dt, uv, pv]
         if s_type == 'D_Search':
-
             DBCli().targetdb_cli.insert(insert_sql.format('hbdt_search_daily'), insert_data)
         else:
             DBCli().targetdb_cli.insert(insert_sql.format('hbdt_details_daily'), insert_data)

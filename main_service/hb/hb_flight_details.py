@@ -376,7 +376,7 @@ def update_flight_detail_user_daily(days=0):
     """
     insert_sql = """
         insert into {0} 
-        s_day, pv, uv, createtime, updatetime
+        (s_day, pv, uv, createtime, updatetime)
         values
         (%s, %s, %s, %s)
         on duplicate key update updatetime = now() ,

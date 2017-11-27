@@ -387,11 +387,11 @@ def update_flight_detail_user_daily(days=0):
     query_data = DBCli().Apilog_cli.query_all(sql, [start_date, end_date])
     for data in query_data:
         dt, s_type, pv, uv = data
-        print s_type
+        insert_data = [dt, pv, uv]
         if s_type == 'D_Search':
-            DBCli().targetdb_cli.insert(insert_sql.format('hbdt_search_daily'), data)
+            DBCli().targetdb_cli.insert(insert_sql.format('hbdt_search_daily'), insert_data)
         else:
-            DBCli().targetdb_cli.insert(insert_sql.format('hbdt_details_daily'), data)
+            DBCli().targetdb_cli.insert(insert_sql.format('hbdt_details_daily'), insert_data)
 
 
 if __name__ == "__main__":

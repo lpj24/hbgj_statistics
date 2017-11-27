@@ -371,8 +371,8 @@ def update_flight_detail_user_daily(days=0):
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     sql = """
         select dt, type, pv , uv from hb_dynamicinfo_day where
-        s_day >= %s
-        and s_day < %s
+        dt >= %s
+        and dt < %s
     """
     insert_sql = """
         insert into {0} 

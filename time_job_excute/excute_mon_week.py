@@ -21,9 +21,9 @@ def add_execute_job():
 
     TimeService.add_week_mon_service(hb_focus_platform.update_focus_platform_weekly)
     TimeService.add_week_mon_service(hb_flight_focus.update_flight_focus_user_weekly)
-    TimeService.add_week_mon_service(hb_flight_details.update_flight_detail_user_weekly)
+    # TimeService.add_week_mon_service(hb_flight_details.update_flight_detail_user_weekly)
     # TimeService.add_week_mon_service(hb_consumers.update_hb_consumers_weekly)
-    TimeService.add_week_mon_service(hb_flight_search.update_flight_search_user_weekly)
+    # TimeService.add_week_mon_service(hb_flight_search.update_flight_search_user_weekly)
     TimeService.add_week_mon_service(hb_channel_ticket.update_unable_ticket)
     TimeService.add_week_mon_service(huoli_buy_consumers.update_huoli_buy_consumers_weekly)
 

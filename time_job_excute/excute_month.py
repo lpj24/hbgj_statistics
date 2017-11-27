@@ -17,9 +17,9 @@ def add_execute_job():
 
     TimeService.add_month_first_service(hotel_consumers.update_hotel_consumers_monthly)
 
-    TimeService.add_month_first_service(hb_flight_details.update_flight_detail_user_monthly)
+    # TimeService.add_month_first_service(hb_flight_details.update_flight_detail_user_monthly)
     # TimeService.add_month_first_service(hb_consumers.update_hb_consumers_monthly)
-    TimeService.add_month_first_service(hb_flight_search.update_flight_search_user_monthly)
+    # TimeService.add_month_first_service(hb_flight_search.update_flight_search_user_monthly)
     TimeService.add_month_first_service(hb_flight_focus.update_flight_focus_user_monthly)
     TimeService.add_month_first_service(hb_focus_platform.update_focus_platform_monthly)
     TimeService.add_month_first_service(huoli_buy_consumers.update_huoli_buy_consumers_monthly)

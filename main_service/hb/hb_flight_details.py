@@ -365,7 +365,7 @@ def get_city_code_dict():
     return dict(city_dict)
 
 
-def update_flight_detail_user_daily(days=0):
+def update_flight_detail_search_user_daily(days=0):
     """更新航班详情pv与uv, hbdt_details_daily hbdt_saerch_daily"""
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-int(days)), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
@@ -398,4 +398,4 @@ if __name__ == "__main__":
     # update_dt_detail_uid(1)
     i = 33
     for i in xrange(1, 34):
-        update_flight_detail_user_daily(i)
+        update_flight_detail_search_user_daily(i)

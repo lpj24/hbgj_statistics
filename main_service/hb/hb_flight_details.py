@@ -29,56 +29,56 @@ def localytics_cli(app_id, event, metrics, start_date):
     return status_code, (result["results"])[0][metrics]
 
 
-def update_flight_detail_user_daily(days=0):
-    """更新航班详情pv与uv, hbdt_details_daily"""
-    tomorrow = DateUtil.get_date_after_days(1-int(days))
-    tomorrow_date = DateUtil.date2str(tomorrow)
-    today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
-    s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
-    # tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
-
-    tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
-    dto = [s_day, today, tomorrow_date, tablename]
-    pv_check_dto = [str(s_day), ]
-    pv_check_sql = """
-        select pv from (
-            select time,sum(access) pv
-            from ADVICE_INFO
-            where id like '4314%%'
-            group by time
-            order by time) tmp
-            where tmp.time = %s
-    """
-
-    pv_check_data = DBCli().sourcedb_cli.query_one(pv_check_sql, pv_check_dto)
-    pv_check = pv_check_data[0]
-    query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
-    pv = query_data[2]
-    if int(pv) > 0:
-        if float(int(pv_check) - int(pv))/float(pv) > 0.2:
-            # utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
-            query_data = [query_data[0], query_data[1], int(pv)]
-    query_data = list(query_data)
-    query_data.append(int(pv_check))
-
-    app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
-    app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
-
-    app_id = [app_id_android, app_id_ios]
-    event_list = ["android.status.detail.open", "ios.status.detail.open"]
-    metrics = ["sessions", "users"]
-
-    localytics_check = {"sessions": 0, "users": 0}
-    for i in metrics:
-        for x in xrange(len(metrics)):
-            status_code, localytics_result = localytics_cli(app_id[x], event_list[x], i, s_day)
-            if status_code == 429:
-                raise AssertionError("localytics over times")
-                return
-            localytics_check[i] += localytics_result
-    query_data.append(localytics_check["users"])
-    query_data.append(localytics_check["sessions"])
-    DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_daily'], query_data)
+# def update_flight_detail_user_daily(days=0):
+#     """更新航班详情pv与uv, hbdt_details_daily"""
+#     tomorrow = DateUtil.get_date_after_days(1-int(days))
+#     tomorrow_date = DateUtil.date2str(tomorrow)
+#     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
+#     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
+#     # tablename = DateUtil.get_table(DateUtil.get_date_before_days(int(days)))
+#
+#     tablename = "flightApiLog_" + DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y%m%d')
+#     dto = [s_day, today, tomorrow_date, tablename]
+#     pv_check_dto = [str(s_day), ]
+#     pv_check_sql = """
+#         select pv from (
+#             select time,sum(access) pv
+#             from ADVICE_INFO
+#             where id like '4314%%'
+#             group by time
+#             order by time) tmp
+#             where tmp.time = %s
+#     """
+#
+#     pv_check_data = DBCli().sourcedb_cli.query_one(pv_check_sql, pv_check_dto)
+#     pv_check = pv_check_data[0]
+#     query_data = DBCli().Apilog_cli.query_one(hb_flight_detail_user_sql['hb_filght_detail_user_daily'], dto)
+#     pv = query_data[2]
+#     if int(pv) > 0:
+#         if float(int(pv_check) - int(pv))/float(pv) > 0.2:
+#             # utils.sendMail("lipenju24@163.com", s_day + str(pv_check) + ":" + str(pv), "航班动态数据错误")
+#             query_data = [query_data[0], query_data[1], int(pv)]
+#     query_data = list(query_data)
+#     query_data.append(int(pv_check))
+#
+#     app_id_android = "2c64c068203c5033ddb127f-c76c5cc2-582a-11e5-07bf-00deb82fd81f"
+#     app_id_ios = "c0b8588071fc960755ee311-9ac01816-582a-11e5-ba3c-0013a62af900"
+#
+#     app_id = [app_id_android, app_id_ios]
+#     event_list = ["android.status.detail.open", "ios.status.detail.open"]
+#     metrics = ["sessions", "users"]
+#
+#     localytics_check = {"sessions": 0, "users": 0}
+#     for i in metrics:
+#         for x in xrange(len(metrics)):
+#             status_code, localytics_result = localytics_cli(app_id[x], event_list[x], i, s_day)
+#             if status_code == 429:
+#                 raise AssertionError("localytics over times")
+#                 return
+#             localytics_check[i] += localytics_result
+#     query_data.append(localytics_check["users"])
+#     query_data.append(localytics_check["sessions"])
+#     DBCli().targetdb_cli.insert(hb_flight_detail_user_sql['update_flight_detail_user_daily'], query_data)
 
 
 def update_dt_detail_uid(days=0):
@@ -364,5 +364,35 @@ def get_city_code_dict():
     city_dict = DBCli().sourcedb_cli.query_all(city_sql)
     return dict(city_dict)
 
+
+def update_flight_detail_user_daily(days=0):
+    """更新航班详情pv与uv, hbdt_details_daily hbdt_saerch_daily"""
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-int(days)), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    sql = """
+        select dt, type, pv , uv from hb_dynamicinfo_day where
+        s_day >= %s
+        and s_day < %s
+    """
+    insert_sql = """
+        insert into {0} 
+        s_day, pv, uv, createtime, updatetime
+        values
+        (%s, %s, %s, %s)
+        on duplicate key update updatetime = now() ,
+        s_day = VALUES(s_day),
+        pv = VALUES(pv),
+        uv = VALUES(uv)
+    """
+    query_data = DBCli().Apilog_cli.query_all(sql, [start_date, end_date])
+    for data in query_data:
+        dt, s_type, pv, uv = data
+        if s_type == 'D_Search':
+            DBCli().targetdb_cli.insert(insert_sql.format('hbdt_search_daily'), dt)
+        else:
+            DBCli().targetdb_cli.insert(insert_sql.format('hbdt_details_daily'), dt)
+
+
 if __name__ == "__main__":
-    update_dt_detail_uid(1)
+    # update_dt_detail_uid(1)
+    update_flight_detail_user_daily(1)

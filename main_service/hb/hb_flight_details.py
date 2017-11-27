@@ -376,7 +376,7 @@ def update_flight_detail_user_daily(days=0):
     """
     insert_sql = """
         insert into {0} 
-        (s_day, pv, uv, createtime, updatetime)
+        (s_day, uv, pv, createtime, updatetime)
         values
         (%s, %s, %s, now(), now())
         on duplicate key update updatetime = now() ,
@@ -387,7 +387,7 @@ def update_flight_detail_user_daily(days=0):
     query_data = DBCli().Apilog_cli.query_all(sql, [start_date, end_date])
     for data in query_data:
         dt, s_type, pv, uv = data
-        insert_data = [dt, pv, uv]
+        insert_data = [dt, uv, pv]
         if s_type == 'D_Search':
             DBCli().targetdb_cli.insert(insert_sql.format('hbdt_search_daily'), insert_data)
         else:

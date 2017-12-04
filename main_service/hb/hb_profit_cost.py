@@ -442,7 +442,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
 
     supplier_sql = """
         select concat(supplier_id), supplier_name
-        from flow.sys_supplier
+        from supplier.sys_supplier
         where channeltype=1
         and supplier_name!='杰成'
     """

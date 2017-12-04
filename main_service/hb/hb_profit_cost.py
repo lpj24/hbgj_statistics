@@ -447,7 +447,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         and supplier_name!='杰成'
     """
 
-    supplier_data = dict(DBCli().pay_cost_cli.query_all(supplier_sql))
+    supplier_data = dict(DBCli().targetdb_cli.query_all(supplier_sql))
 
     income_sql = """
         select a.INCOMEDATE, b.SALETYPE, b.NAME, a.PNRSOURCE, SUM(INCOME),

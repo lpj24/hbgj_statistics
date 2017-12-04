@@ -80,7 +80,7 @@ def update_hb_channel_ticket_income_daily(days=0):
         and supplier_name!='杰成'
     """
 
-    supplier_data = dict(DBCli().pay_cost_cli.query_all(supplier_sql))
+    supplier_data = dict(DBCli().targetdb_cli.query_all(supplier_sql))
 
     do_sale_exception_sql = """
         insert into operation_hbgj_channel_ticket_daily (s_day, saletype, channel_name, pn_resouce, ticket_num, amount, pid,

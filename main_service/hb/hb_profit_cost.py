@@ -633,7 +633,7 @@ def update_profit_hb_income_official_website(days=0):
 
 def update_hb_inter_coupon_cost_daily(days=0):
     """国外航班优惠券支付成本, profit_hb_inter_cost"""
-    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 36), '%Y-%m-%d')
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 10), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
     coupon_inter_in_sql = """

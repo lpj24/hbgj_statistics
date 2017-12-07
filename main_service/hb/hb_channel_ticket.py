@@ -619,4 +619,7 @@ if __name__ == "__main__":
     # print hb_info
     # for i in xrange(1, 8):
     #     update_refund_ticket_channel_daily(i)
-    update_hb_channel_ticket_income_daily(1)
+    i = 2
+    while i <= 337:
+        update_hb_channel_ticket_income_daily(i)
+        i += 1

@@ -64,6 +64,8 @@ def add_execute_job():
     TimeService.add_hard_service(hb_search_focus.write_day)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
+
+    TimeService.add_hard_service(hb_profit_cost.update_hb_inter_coupon_cost_daily)
     return TimeService
 
 

@@ -633,7 +633,7 @@ def update_profit_hb_income_official_website(days=0):
 
 def update_hb_inter_coupon_cost_daily(days=0):
     """国外航班优惠券支付成本, profit_hb_inter_cost"""
-    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 10), '%Y-%m-%d')
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 36), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
     coupon_inter_in_sql = """
@@ -681,9 +681,9 @@ def update_hb_inter_coupon_cost_daily(days=0):
         order by s_day;
     """
 
-    pay_cost_return_sql = """
-        SELECT sum((ticod.price+ticod.ratefee)*4/1000) pay_price2,
-        DATE_FORMAT(eo.create_time,'%%Y-%%m-%%d') s_day
+    pay_cost_in_other_sql = """
+        SELECT DATE_FORMAT(eo.create_time,'%%Y-%%m-%%d') s_day, 
+        sum((ticod.price+ticod.ratefee)*4/1000) pay_price2
         from TICKET_ORDER tico,TICKET_ORDERDETAIL ticod,event_order eo,PNRSOURCE_CONFIG pc 
         where tico.ORDERID=ticod.ORDERID 
         and ticod.ORDERID = eo.order_id 
@@ -708,11 +708,6 @@ def update_hb_inter_coupon_cost_daily(days=0):
         coupon_return = VALUES(coupon_return)
     """
 
-    update_pay_cost_return_sql = """
-        update profit_hb_inter_cost set paycost_return=%s
-        where s_day=%s
-    """
-
     update_coupon_inter_in_sql = """
         update profit_hb_inter_cost set coupon_in = %s
         where s_day=%s
@@ -724,15 +719,18 @@ def update_hb_inter_coupon_cost_daily(days=0):
     """
 
     dto = [query_date, today]
-    print dto
     coupon_inter_in = DBCli().sourcedb_cli.query_all(coupon_inter_in_sql, dto)
     coupon_inter_return = DBCli().sourcedb_cli.query_all(coupon_inter_return_sql, dto)
 
     pay_cost_in = DBCli().sourcedb_cli.query_all(pay_cost_in_sql, dto)
-    pay_cost_return = DBCli().sourcedb_cli.query_all(pay_cost_return_sql, dto)
+    pay_cost_in_other = dict(DBCli().sourcedb_cli.query_all(pay_cost_in_other_sql, dto))
 
-    DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in)
-    DBCli().targetdb_cli.batch_insert(update_pay_cost_return_sql, pay_cost_return)
+    pay_cost_in_all = []
+
+    for key, val in dict(pay_cost_in).items():
+        pay_cost_in_all.append([key, float(val) + pay_cost_in_other.get(key, 0)])
+
+    DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in_all)
 
     DBCli().targetdb_cli.batch_insert(update_coupon_inter_in_sql, coupon_inter_in)
     DBCli().targetdb_cli.batch_insert(update_coupon_inter_return_sql, coupon_inter_return)

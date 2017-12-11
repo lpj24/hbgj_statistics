@@ -11,22 +11,42 @@ sys.setdefaultencoding('utf8')
 def update_hb_car_hotel_profit(days=0):
     """更新航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 7)
+    query_date = DateUtil.get_date_before_days(days * 3)
     today = DateUtil.get_date_after_days(1 - days)
+    # sql = """
+    #     select distinct TRADE_TIME s_day,
+    #     sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
+    #     sum(case when (AMOUNT_TYPE=3 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
+    #     sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
+    #     (PRODUCT=COST OR COST IS NULL) and TRADE_CHANNEL='coupon')
+    #     then amount else 0 end) coupon_in,
+    #     sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
+    #     (PRODUCT=COST OR COST IS NULL) and TRADE_CHANNEL='coupon')
+    #     then amount else 0 end) coupon_return,
+    #     sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
+    #     PRODUCT!=COST and TRADE_CHANNEL='coupon')
+    #     then amount else 0 end) else_coupon_in,
+    #     sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
+    #     PRODUCT!=COST and TRADE_CHANNEL='coupon')
+    #     then amount else 0 end) else_coupon_return,
+    #     sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
+    #     sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
+    #     sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('6','8','24','25')) then amount else 0 end) balance_give_amount
+    #     from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+    #     group by TRADE_TIME
+    # """
     sql = """
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
         sum(case when (AMOUNT_TYPE=3 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
-        (PRODUCT=COST OR COST IS NULL) and TRADE_CHANNEL='coupon')
+        sum(case when (AMOUNT_TYPE=1 and cost=1 and TRADE_CHANNEL='coupon')
         then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
-        (PRODUCT=COST OR COST IS NULL) and TRADE_CHANNEL='coupon')
+        sum(case when (AMOUNT_TYPE=4 and cost=1 and TRADE_CHANNEL='coupon')
         then amount else 0 end) coupon_return,
-        sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
+        sum(case when (AMOUNT_TYPE=1 and cost=1 and
         PRODUCT!=COST and TRADE_CHANNEL='coupon')
         then amount else 0 end) else_coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
+        sum(case when (AMOUNT_TYPE=4 and cost=1 and
         PRODUCT!=COST and TRADE_CHANNEL='coupon')
         then amount else 0 end) else_coupon_return,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
@@ -633,39 +653,50 @@ def update_profit_hb_income_official_website(days=0):
 
 def update_hb_inter_coupon_cost_daily(days=0):
     """国外航班优惠券支付成本, profit_hb_inter_cost"""
-    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 10), '%Y-%m-%d')
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
-    coupon_inter_in_sql = """
-        SELECT 
-        SUM(price) coupon_inter_in,
-        DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day 
-        from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc 
-        where left(ptr.create_time,10)>=%s
-        and left(ptr.create_time,10)<%s
-        and tico.INTFLAG=1 
-        and ptr.paysource in('coupon') 
-        and tico.orderid=ptr.order_id 
-        and tico.PnrSource=pc.PnrSource
-        GROUP BY s_day
-        order by s_day;
-    """
+    # coupon_inter_in_sql = """
+    #     SELECT
+    #     SUM(price) coupon_inter_in,
+    #     DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day
+    #     from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc
+    #     where left(ptr.create_time,10)>=%s
+    #     and left(ptr.create_time,10)<%s
+    #     and tico.INTFLAG=1
+    #     and ptr.paysource in('coupon')
+    #     and tico.orderid=ptr.order_id
+    #     and tico.PnrSource=pc.PnrSource
+    #     GROUP BY s_day
+    #     order by s_day;
+    # """
+    #
+    # coupon_inter_return_sql = """
+    #     SELECT
+    #     SUM(price) coupon_inter_return ,
+    #     DATE_FORMAT(tor.INREFUND_TIME,'%%Y-%%m-%%d') s_day
+    #     from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc,TICKET_ORDER_REFUND tor
+    #     where left(tor.INREFUND_TIME,10)>=%s
+    #     and left(tor.INREFUND_TIME,10)<%s
+    #     and tico.INTFLAG=1
+    #     and ptr.paysource in('coupon')
+    #     and tico.orderid=ptr.order_id
+    #     and tico.orderid=tor.orderid
+    #     and tor.STATUS=7
+    #     and tico.PnrSource=pc.PnrSource
+    #     group by s_day
+    #     order by s_day;
+    # """
 
-    coupon_inter_return_sql = """
-        SELECT 
-        SUM(price) coupon_inter_return ,
-        DATE_FORMAT(tor.INREFUND_TIME,'%%Y-%%m-%%d') s_day
-        from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc,TICKET_ORDER_REFUND tor 
-        where left(tor.INREFUND_TIME,10)>=%s
-        and left(tor.INREFUND_TIME,10)<%s 
-        and tico.INTFLAG=1 
-        and ptr.paysource in('coupon') 
-        and tico.orderid=ptr.order_id 
-        and tico.orderid=tor.orderid 
-        and tor.STATUS=7 
-        and tico.PnrSource=pc.PnrSource
-        group by s_day
-        order by s_day;
+    coupon_sql = """
+        select distinct
+        sum(case when (AMOUNT_TYPE=1 and cost=10 and TRADE_CHANNEL='coupon')
+        then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE=4 and cost=10 and TRADE_CHANNEL='coupon')
+        then amount else 0 end) coupon_return,
+        TRADE_TIME s_day
+        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+        group by TRADE_TIME
     """
 
     pay_cost_in_sql = """
@@ -708,19 +739,13 @@ def update_hb_inter_coupon_cost_daily(days=0):
         coupon_return = VALUES(coupon_return)
     """
 
-    update_coupon_inter_in_sql = """
-        update profit_hb_inter_cost set coupon_in = %s
-        where s_day=%s
-    """
-
-    update_coupon_inter_return_sql = """
-        update profit_hb_inter_cost set coupon_return = %s
+    update_coupon_inter_sql = """
+        update profit_hb_inter_cost set coupon_in = %s, coupon_return=%s
         where s_day=%s
     """
 
     dto = [query_date, today]
-    coupon_inter_in = DBCli().sourcedb_cli.query_all(coupon_inter_in_sql, dto)
-    coupon_inter_return = DBCli().sourcedb_cli.query_all(coupon_inter_return_sql, dto)
+    coupon_inter = DBCli().pay_cost_cli.query_all(coupon_sql, dto)
 
     pay_cost_in = DBCli().sourcedb_cli.query_all(pay_cost_in_sql, dto)
     pay_cost_in_other = dict(DBCli().sourcedb_cli.query_all(pay_cost_in_other_sql, dto))
@@ -732,9 +757,9 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
     DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in_all)
 
-    DBCli().targetdb_cli.batch_insert(update_coupon_inter_in_sql, coupon_inter_in)
-    DBCli().targetdb_cli.batch_insert(update_coupon_inter_return_sql, coupon_inter_return)
+    DBCli().targetdb_cli.batch_insert(update_coupon_inter_sql, coupon_inter)
 
 
 if __name__ == "__main__":
     update_hb_inter_coupon_cost_daily(1)
+    update_hb_car_hotel_profit(1)

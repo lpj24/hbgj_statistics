@@ -285,9 +285,9 @@ def update_profit_hb_supply_transfer_daily(days=0):
         and i.PNRSOURCE='supply' and
         i.INCOMEDATE>=%s and i.INCOMEDATE <%s
          and o.mode=0  and od.LINKDETAILID!=0
+         and o.agentid is not null
         GROUP BY i.INCOMEDATE, o.agentid ;
     """
-
     supply_transfer_cost_sql = """
         SELECT
         sum(case when c.COSTTYPE=0 and od.LINKTYPE is NULL then c.AMOUNT else 0 end) one_issue_cost,
@@ -322,7 +322,6 @@ def update_profit_hb_supply_transfer_daily(days=0):
     DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
     cost_data = DBCli().sourcedb_cli.query_all(supply_transfer_cost_sql, dto)
     DBCli().targetdb_cli.batch_insert(update_sql, cost_data)
-    pass
 
 
 def update_profit_hb_supply_no_transfer_daily(days=0):
@@ -376,8 +375,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hbgj_cost_type_daily(1)
-    i = 1
+    update_profit_hb_supply_transfer_daily(3)
     # while i <= 5:
     #     update_hbgj_cost_type_daily(i)
     #     i += 1
@@ -392,7 +390,6 @@ if __name__ == "__main__":
     #     update_hbgj_supply_no_transfer_order_income_cost_daily(i)
     #     update_hbgj_supply_transfer_order_income_cost_daily(i)
     #     i += 1
-    pass
     # update_hbgj_no_transfer_order_income_cost_daily(1)
     # update_hbgj_transfer_order_income_cost_daily(1)
     # update_hbgj_supply_transfer_order_income_cost_daily(1)

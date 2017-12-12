@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf8')
 def update_hb_car_hotel_profit(days=0):
     """更新航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 3)
+    query_date = DateUtil.get_date_before_days(days * 11)
     today = DateUtil.get_date_after_days(1 - days)
     # sql = """
     #     select distinct TRADE_TIME s_day,
@@ -39,15 +39,13 @@ def update_hb_car_hotel_profit(days=0):
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
         sum(case when (AMOUNT_TYPE=3 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-        sum(case when (AMOUNT_TYPE=1 and cost=1 and TRADE_CHANNEL='coupon')
+        sum(case when (AMOUNT_TYPE=1 and cost=1 and product=0 and TRADE_CHANNEL='coupon')
         then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and cost=1 and TRADE_CHANNEL='coupon')
+        sum(case when (AMOUNT_TYPE=4 and cost=1 and product=0 and TRADE_CHANNEL='coupon')
         then amount else 0 end) coupon_return,
-        sum(case when (AMOUNT_TYPE=1 and cost=1 and
-        PRODUCT!=COST and TRADE_CHANNEL='coupon')
+        sum(case when (AMOUNT_TYPE=1 and cost!=1 and cost!=10 and product=0 and TRADE_CHANNEL='coupon')
         then amount else 0 end) else_coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and cost=1 and
-        PRODUCT!=COST and TRADE_CHANNEL='coupon')
+        sum(case when (AMOUNT_TYPE=4 and cost!=1 and cost!=10 and product=0 and TRADE_CHANNEL='coupon')
         then amount else 0 end) else_coupon_return,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
         sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
@@ -761,5 +759,5 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_inter_coupon_cost_daily(1)
+    # update_hb_inter_coupon_cost_daily(1)
     update_hb_car_hotel_profit(1)

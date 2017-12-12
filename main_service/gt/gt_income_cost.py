@@ -6,11 +6,10 @@ from dbClient.dateutil import DateUtil
 def update_gt_income_cost(days=0):
     """更新高铁收入与成本, profit_gt_income profit_gt_cost"""
     if days > 0:
-        start_date = DateUtil.get_date_before_days(30 * int(days))
+        start_date = DateUtil.get_date_before_days(3 * int(days))
     else:
         start_date = DateUtil.get_date_before_days(1)
     end_date = DateUtil.get_date_before_days(0)
-
     query_sql = """
         select *
         from income_and_cost where s_date >= %s and s_date < %s
@@ -36,9 +35,9 @@ def update_gt_income_cost(days=0):
 
     gt_coupon_use_sql = """
         select distinct TRADE_TIME s_day,
-        sum(case when (AMOUNT_TYPE =1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='29'
+        sum(case when (AMOUNT_TYPE=1 and cost=2 and product=0
         and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE =4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='29'
+        sum(case when (AMOUNT_TYPE =4 and cost=2 and product=0
         and TRADE_CHANNEL='coupon') then amount else 0 end) coupon_return
         from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
         group by TRADE_TIME

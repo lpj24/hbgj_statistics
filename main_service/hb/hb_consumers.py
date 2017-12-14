@@ -183,7 +183,7 @@ def update_hbgj_newconsumers_inter_daily_nation(days=0):
     DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 if __name__ == "__main__":
-    update_hbgj_newconsumers_inter_daily_nation(1)
+    # update_hbgj_newconsumers_inter_daily_nation(1)
     # i = 1151
     # while i <= 100000:
     #     query_data = update_hbgj_newconsumers_inter_daily(i)
@@ -197,3 +197,4 @@ if __name__ == "__main__":
     # update_hb_consumers_weekly()
     # update_hb_consumers_monthly()
     # update_hb_consumers_quarterly()
+    update_hb_consumers_quarterly()

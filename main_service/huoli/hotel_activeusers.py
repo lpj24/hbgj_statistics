@@ -54,8 +54,10 @@ def update_hotel_activeusers_monthly():
         month_activeusers_num = DBCli().redis_cli.sunionstore(month_uid_key,
                                                       DateUtil.date2str(start_month, '%Y%m%d') + "_activeusers",
                                                       month_uid_key)
+        DBCli().redis_cli.expire(DateUtil.date2str(start_month, '%Y%m%d') + "_activeusers", 691200)
         start_month = DateUtil.add_days(start_month, 1)
 
+    DBCli().redis_cli.delete(month_uid_key)
     activeuser_monthly_sql = """
         insert into hotel_activeusers_monthly values (%s, %s, now(), now())
         on duplicate key update updatetime = now(),
@@ -67,9 +69,9 @@ def update_hotel_activeusers_monthly():
 
 
 if __name__ == "__main__":
-    update_hotel_activeusers_daily(1)
+    # update_hotel_activeusers_daily(1)
     # update_hotel_activeusers_weekly(1)
-    # update_hotel_activeusers_monthly()
+    update_hotel_activeusers_monthly()
 
 
 

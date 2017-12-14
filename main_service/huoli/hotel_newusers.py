@@ -9,6 +9,8 @@ import tarfile
 
 def update_hotel_newusers_daily(days=0):
     """更新酒店新用户, hotel_newusers_daily"""
+    if not check_hotel_newusers(days):
+        return
     regex = re.compile(r"uid=([0-9]*)")
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y%m%d")
     file_list = [os.path.join("/home/huolibi/external_data/hotel_log", "access.log_207_" + s_day + ".tar.gz"),
@@ -53,6 +55,21 @@ def update_hotel_newusers_daily(days=0):
 
         dto = [DateUtil.date2str(DateUtil.get_date_before_days(days), "%Y-%m-%d"), today_uid_num]
         DBCli().targetdb_cli.insert(insert_sql, dto)
+        DBCli().redis_cli.expire(uid_key, 86400)
+
+def check_hotel_newusers(days):
+    s_day = DateUtil.date2str(DateUtil.get_date_before_days(days + 1), "%Y-%m-%d")
+    sql = """
+        select count(*) from hotel_newusers_daily where s_day=%s 
+    """
+    last_count = DBCli().targetdb_cli.query_one(sql, [s_day])
+    print last_count[0]
+    if last_count[0] == 1:
+        return True
+    else:
+        return False
+
 
 if __name__ == "__main__":
-    update_hotel_newusers_daily(1)
+    # update_hotel_newusers_daily(0)
+    print check_hotel_newusers(-1)

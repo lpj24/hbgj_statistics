@@ -591,35 +591,9 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
     DBCli().targetdb_cli.batch_insert(insert_sql, insert_data)
     pass
 
+
 if __name__ == "__main__":
-    i = 13
-    # update_unable_ticket()
-    # import datetime
-    # a = datetime.date(2017, 6, 6)
-    # b = datetime.date(2014, 1, 6)
-    # while a >= b:
-    #     start_week, end_week = DateUtil.get_last_week_date(a)
-    #     print start_week, end_week
-    #     update_unable_ticket(start_week, end_week)
-    #
-    #     a = start_week
-    # update_operation_hbgj_obsolete_order_daily(1)
-    # update_hb_channel_ticket_income_daily(i)
-    # update_hb_channel_ticket_daily(i)
-    # update_refund_ticket_channel_daily(i)
-    # while i >= 1:
-    #     update_hb_channel_ticket_income_daily(i)
-    #     i -= 1
-    # hb_code_sql = """
-    #     select code,FOUR_NAME
-    #     from AIRLINES_NORMAl
-    # """
-    # hb_info = DBCli().oracle_cli.query_all(hb_code_sql)
-    # hb_info = dict(hb_info)
-    # print hb_info
-    # for i in xrange(1, 8):
-    #     update_refund_ticket_channel_daily(i)
-    i = 2
-    while i <= 337:
+    i = 1
+    while i <= 352:
         update_hb_channel_ticket_income_daily(i)
         i += 1

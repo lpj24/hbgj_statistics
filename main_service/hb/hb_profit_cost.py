@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf8')
 def update_hb_car_hotel_profit(days=0):
     """更新航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 11)
+    query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     # sql = """
     #     select distinct TRADE_TIME s_day,
@@ -66,6 +66,7 @@ def update_hb_car_hotel_profit(days=0):
         left join TICKET_ORDER_INCOME_TYPE T_TYPE
         ON T_COST.PNRSOURCE = T_TYPE.PNRSOURCE
         where COSTDATE>=%s and COSTDATE<%s
+        and T_COST.ORDERID!= '173491550521732'
         GROUP BY COSTDATE
         ORDER BY COSTDATE
     """
@@ -371,7 +372,7 @@ def update_huoli_car_income_type(days=0):
 
 def update_profit_hb_income(days=0):
     """更新航班收入, profit_hb_income"""
-    query_date = DateUtil.get_date_before_days(days*5)
+    query_date = DateUtil.get_date_before_days(days*352)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
@@ -761,3 +762,7 @@ def update_hb_inter_coupon_cost_daily(days=0):
 if __name__ == "__main__":
     # update_hb_inter_coupon_cost_daily(1)
     update_hb_car_hotel_profit(1)
+    # i = 1
+    # while i <= 352:
+    #     update_operation_hbgj_channel_ticket_profit_daily(i)
+    #     i += 1

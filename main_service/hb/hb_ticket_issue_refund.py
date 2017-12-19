@@ -375,11 +375,11 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 
 if __name__ == "__main__":
-    i = 138
+    i = 22
     while i <= 352:
-        # update_hbgj_cost_type_daily(i)
-        update_profit_hb_self_no_transfer_daily(i)
-        update_profit_hb_self_transfer_daily(i)
-        update_profit_hb_supply_transfer_daily(i)
-        update_profit_hb_supply_no_transfer_daily(i)
+        update_hbgj_cost_type_daily(i)
+        # update_profit_hb_self_no_transfer_daily(i)
+        # update_profit_hb_self_transfer_daily(i)
+        # update_profit_hb_supply_transfer_daily(i)
+        # update_profit_hb_supply_no_transfer_daily(i)
         i += 1

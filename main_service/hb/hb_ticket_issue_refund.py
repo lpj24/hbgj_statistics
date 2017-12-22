@@ -159,7 +159,6 @@ def update_hbgj_cost_type_daily(days=0):
             else:
                 DBCli().targetdb_cli.insert(update_sql, refund_data)
         # DBCli().targetdb_cli.batch_insert(update_sql, refund_cost)
-    pass
 
 
 def update_profit_hb_self_no_transfer_daily(days=0):

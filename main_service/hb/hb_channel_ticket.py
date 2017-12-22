@@ -179,8 +179,7 @@ def update_hb_company_ticket_weekly():
         insert into operation_hbgj_company_ticket_weekly (s_day, hb_comany, hb_code, ticket_num, amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, now(), now())
     """
-    print insert_hb_company
-    # DBCli().targetdb_cli.batch_insert(insert_sql, insert_hb_company)
+    DBCli().targetdb_cli.batch_insert(insert_sql, insert_hb_company)
 
 
 def update_unable_ticket():
@@ -594,8 +593,7 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
 
 
 if __name__ == "__main__":
-    update_hb_company_ticket_weekly()
-    # i = 1
-    # while i <= 352:
-    #     update_hb_channel_ticket_income_daily(i)
-    #     i += 1
+    i = 1
+    while i <= 352:
+        update_hb_channel_ticket_income_daily(i)
+        i += 1

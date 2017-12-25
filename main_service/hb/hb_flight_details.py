@@ -385,6 +385,7 @@ def update_flight_detail_search_user_daily(days=0):
         uv = VALUES(uv)
     """
     query_data = DBCli().Apilog_cli.query_all(sql, [start_date, end_date])
+    print query_data
     for data in query_data:
         dt, s_type, pv, uv = data
         insert_data = [dt, uv, pv]

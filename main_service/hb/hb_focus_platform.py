@@ -16,14 +16,15 @@ def update_focus_platform(days=0):
             select distinct(userid) userid, platform from FLY_USERFOCUS_TBL_HIS
             where FOCUSTIME>=%s  and FOCUSTIME<%s
             and ordertype = 0 and (platform = 'android' or platform = 'iphone'
-            or platform = 'iphonepro' or platform = 'web' or platform='weixin')
+            or platform = 'iphonepro' or platform = 'web' or platform='weixin'
+            or platorm = 'weixindynamic')
             and userid not like 'gt%%') A group by platform
     """
     pv_sql = """
         SELECT platform, count(*) FROM FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s  and FOCUSTIME<%s
         and ordertype = 0
-        and platform in ('android', 'weixin', 'iphone', 'iphonepro', 'web')
+        and platform in ('android', 'weixin', 'iphone', 'iphonepro', 'web', 'weixindynamic')
         and userid not like 'gt%%'
         group by platform
     """
@@ -31,7 +32,7 @@ def update_focus_platform(days=0):
         SELECT platform, count(*) FROM FLY_USERFOCUS_TBL_HIS
         where FOCUSTIME>=%s  and FOCUSTIME<%s
         and ordertype = 0
-        and platform in ('android', 'weixin', 'iphone', 'iphonepro', 'web')
+        and platform in ('android', 'weixin', 'iphone', 'iphonepro', 'web', 'weixindynamic')
         and userid not like 'gt%%'
         group by platform
     """
@@ -78,32 +79,32 @@ def update_focus_platform(days=0):
     jieji_sql = """
     select count(distinct A.uv) from (
         select distinct(token) as uv from FLY_USERFOCUS_TBL
-        where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
+        where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform in ('jieji','jieji-order')
         union
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
-        where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform = 'jieji'
+        where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform in ('jieji','jieji-order')
         union
         select distinct(phoneid) as uv
         from FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s
         and FOCUSTIME<%s
-        and ordertype = 0 and platform = 'jieji' and phoneid is not null
+        and ordertype = 0 and platform in ('jieji','jieji-order') and phoneid is not null
         )A
     """
 
     jieji_sql_pv = """
     select sum(A.pv) from (
         select count(*) pv from FLY_USERFOCUS_TBL where FOCUSTIME>=%s  and FOCUSTIME<%s
-        and ordertype = 0 and platform = 'jieji'
+        and ordertype = 0 and platform in ('jieji','jieji-order')
         union
         select count(*) pv from FLY_USERFOCUS_TBL_HIS where FOCUSTIME>=%s  and FOCUSTIME<%s
-        and ordertype = 0 and platform = 'jieji'
+        and ordertype = 0 and platform in ('jieji','jieji-order')
         union
         select count(*) as pv
         from FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s
         and FOCUSTIME<%s
-        and ordertype = 0 and platform = 'jieji' and phoneid is not null
+        and ordertype = 0 and platform in ('jieji','jieji-order') and phoneid is not null
     )A
     """
 
@@ -139,7 +140,7 @@ def update_focus_platform(days=0):
             android_uv += app_uv
         elif platform == 'weixin':
             weixin_uv += app_uv
-        else:
+        elif platform == 'weixindynamic':
             weixin_applate_uv += app_uv
 
     jieji_data = DBCli().dynamic_focus_cli.query_one(jieji_sql, dto*3)
@@ -160,7 +161,7 @@ def update_focus_platform(days=0):
             android_pv += app_pv
         elif platform == 'weixin':
             weixin_pv += app_pv
-        else:
+        elif platform == 'weixindynamic':
             weixin_applate_pv += app_pv
 
     app_data_pv = DBCli().dynamic_focus_cli.query_all(pv_his_sql, dto)
@@ -172,7 +173,7 @@ def update_focus_platform(days=0):
             android_pv += app_pv
         elif platform == 'weixin':
             weixin_pv += app_pv
-        else:
+        elif platform == 'weixindynamic':
             weixin_applate_pv += app_pv
 
     jieji_data_pv = DBCli().dynamic_focus_cli.query_one(jieji_sql_pv, dto*3)

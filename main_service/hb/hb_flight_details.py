@@ -396,7 +396,7 @@ def update_flight_detail_search_user_daily(days=0):
 
 if __name__ == "__main__":
     # update_dt_detail_uid(1)
-    update_flight_detail_search_user_daily(1)
+    update_flight_detail_search_user_daily(2)
     # i = 33
     # for i in xrange(1, 34):
     #     update_flight_detail_search_user_daily(i)

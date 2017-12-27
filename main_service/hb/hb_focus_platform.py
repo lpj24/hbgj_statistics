@@ -412,7 +412,11 @@ def update_focus_platform_monthly():
                     str(gtgj_uv), str(jieji_uv), str(sms_uv), str(weixin_applate_uv), str(total_uv)]
     DBCli().targetdb_cli.insert(insert_sql, result_data)
 
+
 if __name__ == "__main__":
-    update_focus_platform(1)
+    i = 1
+    while i <= 26:
+        update_focus_platform(i)
+        i += 1
 
 

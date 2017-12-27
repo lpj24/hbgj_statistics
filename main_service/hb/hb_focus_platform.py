@@ -12,7 +12,13 @@ def update_focus_platform(days=0):
             and ordertype = 0 and (platform = 'android' or platform = 'iphone'
             or platform = 'iphonepro' or platform = 'web' or platform='weixin' or platform = 'weixindynamic')
             and userid not like 'gt%%'
-) A group by platform
+            union
+            select distinct(userid) userid, platform from FLY_USERFOCUS_TBL_HIS
+            where FOCUSTIME>=%s  and FOCUSTIME<%s
+            and ordertype = 0 and (platform = 'android' or platform = 'iphone'
+            or platform = 'iphonepro' or platform = 'web' or platform='weixin'
+            or platform = 'weixindynamic')
+            and userid not like 'gt%%') A group by platform
     """
     pv_sql = """
         SELECT platform, count(*) FROM FLY_USERFOCUS_TBL
@@ -127,7 +133,7 @@ def update_focus_platform(days=0):
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
-    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto)
+    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto*2)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:

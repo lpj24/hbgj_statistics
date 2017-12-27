@@ -80,9 +80,11 @@ def update_focus_platform(days=0):
     select count(distinct A.uv) from (
         select distinct(token) as uv from FLY_USERFOCUS_TBL
         where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform in ('jieji','jieji-order')
+        and token is not null
         union
         select distinct(token) as uv from FLY_USERFOCUS_TBL_HIS
         where FOCUSTIME>=%s  and FOCUSTIME<%s and ordertype = 0 and platform in ('jieji','jieji-order')
+        and token is not null
         union
         select distinct(phoneid) as uv
         from FLY_USERFOCUS_TBL

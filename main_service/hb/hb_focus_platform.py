@@ -10,7 +10,7 @@ def update_focus_platform(days=0):
             select distinct(userid) userid, platform from FLY_USERFOCUS_TBL
             where FOCUSTIME>=%s  and FOCUSTIME<%s
             and ordertype = 0 and (platform = 'android' or platform = 'iphone'
-            or platform = 'iphonepro' or platform = 'web' or platform='weixin')
+            or platform = 'iphonepro' or platform = 'web' or platform='weixin' or platform = 'weixindynamic')
             and userid not like 'gt%%'
             union
             select distinct(userid) userid, platform from FLY_USERFOCUS_TBL_HIS

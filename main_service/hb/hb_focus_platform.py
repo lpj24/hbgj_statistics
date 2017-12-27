@@ -17,7 +17,7 @@ def update_focus_platform(days=0):
             where FOCUSTIME>=%s  and FOCUSTIME<%s
             and ordertype = 0 and (platform = 'android' or platform = 'iphone'
             or platform = 'iphonepro' or platform = 'web' or platform='weixin'
-            or platorm = 'weixindynamic')
+            or platform = 'weixindynamic')
             and userid not like 'gt%%') A group by platform
     """
     pv_sql = """
@@ -413,6 +413,6 @@ def update_focus_platform_monthly():
     DBCli().targetdb_cli.insert(insert_sql, result_data)
 
 if __name__ == "__main__":
-    update_focus_platform(3)
+    update_focus_platform(1)
 
 

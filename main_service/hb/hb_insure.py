@@ -372,4 +372,4 @@ def update_hb_boat(days=0):
 
 
 if __name__ == "__main__":
-    update_insure_type_daily(1)
+    update_hb_insure_daily(16)

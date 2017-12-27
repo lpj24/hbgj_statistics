@@ -127,7 +127,7 @@ def update_focus_platform(days=0):
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(end_date, '%Y-%m-%d')]
-    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto*2)
+    app_data_uv = DBCli().dynamic_focus_cli.query_all(all_platform_sql_uv, dto)
     for app in app_data_uv:
         platform, app_uv = app[0], app[1]
         if platform in ['iphone', 'iphonepro']:

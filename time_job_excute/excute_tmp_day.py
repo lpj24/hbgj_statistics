@@ -57,11 +57,7 @@ def add_execute_job():
     TimeService.add_hard_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_hard_service(hb_flight_details.update_hb_city_rate)
 
-    # TimeService.add_hard_service(hb_flight_search.update_flight_search_user_daily)
     TimeService.add_hard_service(hb_flight_details.update_flight_detail_search_user_daily)
-    # TimeService.add_hard_service(hb_flight_details.update_dt_detail_uid)
-    # TimeService.add_hard_service(hb_flight_search.update_dt_search_uid)
-    # TimeService.add_hard_service(hb_search_focus.write_day)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_fmall_cost)
     TimeService.add_hard_service(hb_coupon_ticket.update_profit_huoli_buy_cost)
 

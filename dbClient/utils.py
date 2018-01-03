@@ -5,6 +5,8 @@ import threading, logging
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 import inspect
+import subprocess
+import os
 
 
 def get_mail_server():
@@ -26,56 +28,70 @@ def sendMail(mail, msgText, subject):
 
 
 def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=1):
-    import os
     fun_path = (fun_path.split(os.path.sep))[-3:]
     fun_path[-1] = (fun_path[-1].split("."))[0]
     fun_path = ".".join(fun_path)
-    with open("tmp_py.py", "w") as py_file:
-        coding_str = "# -*- coding: utf-8 -*-\n"
-        import_str = "from " + fun_path + " import " + fun_name + "\n"
-        main_str = "if __name__ == '__main__':\n"
-        execute_fun_str = "\t" + fun_name + "(" + str(execute_day) + ")" + "\n"
-        py_str = coding_str + import_str + main_str + execute_fun_str
-        py_file.write(py_str)
+    # with open("tmp_py.py", "w") as py_file:
+    #     coding_str = "# -*- coding: utf-8 -*-\n"
+    #     import_str = "from " + fun_path + " import " + fun_name + "\n"
+    #     main_str = "if __name__ == '__main__':\n"
+    #     execute_fun_str = "\t" + fun_name + "(" + str(execute_day) + ")" + "\n"
+    #     py_str = coding_str + import_str + main_str + execute_fun_str
+    #     py_file.write(py_str)
     # del execute day data
+    import_str = "from " + fun_path + " import " + fun_name + ";"
+    execute_fun_str = import_str + fun_name + "(" + str(execute_day) + ")" + ";"
+    py_str = execute_fun_str
+
     s_day = DateUtil.date2str(DateUtil.get_date_before_days(int(execute_day)), "%Y-%m-%d")
     if job_type != 5:
         for table in table_name:
             delete_sql = "delete from " + table + " where s_day=%s"
             DBCli().targetdb_cli.batch_insert(delete_sql, [s_day])
-    os.system("python ./tmp_py.py")
-    os.remove("tmp_py.py")
+    subprocess.Popen("python -c " + '"' + py_str + '"')
 
 
 def storage_execute_job(fun):
+    category_type = {
+        'hb': 1,
+        'gt': 2,
+        'huoli': 3,
+        'localytics': 4
+    }
     fun_name = fun.__name__
     fun_doc = inspect.getdoc(fun)
     fun_path = inspect.getfile(fun)
+    fun_category = fun_path.split(os.path.sep)
+    category_job = fun_category[-2]
+    category_job_id = category_type.get(category_job, 5)
     if fun_doc is None:
         return
     check_fun = DBCli().redis_cli.sismember("execute_day_job", fun_name)
     if not check_fun:
         if fun_path and fun_path.endswith("pyc"):
             fun_path = fun_path[0: -1]
-        renewable = 1 if fun_path else 0
+        is_execute = 1 if fun_path else 0
         job_type = 5 if fun_name == "hbgj_user" else 1
         f_des, f_table = fun_doc.split(",")
         insert_sql = """
-            insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, renewable, createtime, updatetime)
-            values (%s, %s, %s, %s, %s, %s, now(), now())
-            on duplicate key update updatetime = now(),
+            insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, is_execute, category_type_id, 
+            create_time, update_time)
+            values (%s, %s, %s, %s, %s, %s, %s, now(), now())
+            on duplicate key update update_time = now(),
             job_name = values(job_name),
             job_path = values(job_path),
             job_doc = values(job_doc),
             job_table = values(job_table),
             job_type = values(job_type),
-            renewable = values(renewable)
+            is_execute = values(is_execute),
+            category_type_id = values(category_type_id)
         """
         try:
             DBCli().targetdb_cli.insert(insert_sql,
-                                    [fun_name, fun_path, f_des.strip(), f_table.strip(), job_type, renewable])
-        except Exception:
-            return
+                                    [fun_name, fun_path, f_des.strip(), f_table.strip(), job_type, is_execute,
+                                     category_job_id])
+        except Exception as e:
+            logging.error(e.message)
         else:
             DBCli().redis_cli.sadd("execute_day_job", fun_name)
 
@@ -95,12 +111,13 @@ class ThreadExecuteJob(threading.Thread):
             fun = self.queue.get()
             try:
                 fun(int(self.days))
-                storage_execute_job(fun)
-                self.queue.task_done()
+
             except Exception as e:
                 logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))
-                self.queue.task_done()
                 continue
+            finally:
+                storage_execute_job(fun)
+                self.queue.task_done()
 
 
 def execute_job_thread_pool(queue, arg):

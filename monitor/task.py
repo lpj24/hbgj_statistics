@@ -10,66 +10,38 @@ import logging
 from itertools import chain
 
 
-# def check_day_data(table_list):
-#     query_date = DateUtil.get_date_before_days(1)
-#     query_date = DateUtil.date2str(query_date, '%Y-%m-%d')
-#     msg = ""
-#     insert_msg = []
-#     insert_sql = """
-#         insert into error_update_table_daily (s_day, job_table)
-#         values(%s, %s)
-#     """
-#
-#     for table in table_list:
-#         if table.endswith('weekly'):
-#             continue
-#         format_sql = 'select count(1) from {} where s_day=%s'.format(table)
-#         try:
-#             data = DBCli().targetdb_cli.query_one(format_sql, [query_date])
-#         except Exception:
-#             continue
-#         if data[0] < 1:
-#             # error
-#             insert_msg.append([query_date, table])
-#             msg += table + "<br/>"
-#
-#     if len(msg) > 0:
-#         DBCli().targetdb_cli.batch_insert(insert_sql, insert_msg)
-#         utils.sendMail("762575190@qq.com", msg, "数据查询异常")
-#     else:
-#         utils.sendMail("762575190@qq.com", "数据查询正常", "数据查询正常")
-
-
 def check_day_data():
     query_date = DateUtil.get_date_before_days(1)
     query_date = DateUtil.date2str(query_date, '%Y-%m-%d')
     msg = ""
-    insert_msg = []
+    insert_msg = set()
     insert_sql = """
-        insert into error_update_table_daily (s_day, job_table)
+        insert into error_update_table_daily (s_day, error_job_id)
         values(%s, %s)
     """
 
     query_table_sql = """
-        select job_table
+        select id, job_table
         from bi_execute_job where job_type !=5;
     """
-    day_sql = DBCli().targetdb_cli.query_all(query_table_sql)
+    day_table = DBCli().targetdb_cli.query_all(query_table_sql)
+    query_table = [table for table in day_table]
 
-    query_table = [table[0].split(' ') for table in day_sql]
-
-    for table in chain(*query_table):
-        format_sql = 'select count(1) from {} where s_day=%s'.format(table)
-        try:
-            data = DBCli().targetdb_cli.query_one(format_sql, [query_date])
-        except Exception:
-            continue
-        if data[0] < 1:
-            # error
-            insert_msg.append([query_date, table])
-            msg += table + "<br/>"
-
+    for table in query_table:
+        j_id, job_table = table
+        for t in job_table.split(' '):
+            format_sql = 'select count(1) from {} where s_day=%s'.format(t)
+            try:
+                data = DBCli().targetdb_cli.query_one(format_sql, [query_date])
+            except Exception as e:
+                logging.error(e)
+                continue
+            if data[0] < 1:
+                # error
+                insert_msg.add(j_id)
+                msg += t + "<br/>"
     if len(msg) > 0:
+        insert_msg = [[query_date, ids] for ids in list(insert_msg)]
         DBCli().targetdb_cli.batch_insert(insert_sql, insert_msg)
         utils.sendMail("762575190@qq.com", msg, u"数据查询异常")
     else:
@@ -130,11 +102,11 @@ if __name__ == "__main__":
     for fun in later_service.get_later_service():
         try:
             fun_path = fun(1)
-            utils.storage_execute_job(fun)
-
         except Exception as e:
             logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))
             continue
+        finally:
+            utils.storage_execute_job(fun)
     check_day_data()
     exception_table = cal_balance()
     if exception_table:

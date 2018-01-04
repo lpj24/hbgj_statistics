@@ -91,7 +91,7 @@ def storage_execute_job(fun):
                                     [fun_name, fun_path, f_des.strip(), f_table.strip(), job_type, is_execute,
                                      category_job_id])
         except Exception as e:
-            logging.error(e.message)
+            logging.error(e.message + fun_name)
         else:
             DBCli().redis_cli.sadd("execute_day_job", fun_name)
 

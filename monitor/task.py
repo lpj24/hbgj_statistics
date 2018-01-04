@@ -111,6 +111,7 @@ if __name__ == "__main__":
             utils.storage_execute_job(fun)
     check_day_data()
     exception_table = cal_balance()
+
     if exception_table:
         utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")
     subprocess.Popen("ps aux | grep excute_tmp_day*| grep -v grep|awk '{print $2}'|xargs kill -9",

@@ -8,7 +8,7 @@ import tarfile
 
 
 def update_hotel_newusers_daily(days=0):
-    """更新酒店新用户, hotel_newusers_daily"""
+    """酒店新用户, hotel_newusers_daily"""
     if not check_hotel_newusers(days):
         return
     regex = re.compile(r"uid=([0-9]*)")

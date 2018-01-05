@@ -4,7 +4,7 @@ from dbClient.db_client import DBCli
 
 
 def update_huoli_buy_orders_daily(days=0):
-    """更新huolibuy的每日订单数, huoli_buy_orders_daily"""
+    """huolibuy的每日订单数, huoli_buy_orders_daily"""
     start_date = DateUtil.get_date_before_days(int(days) * 3)
     end_date = DateUtil.get_date_after_days(1-int(days))
     huoli_order_sql = """
@@ -33,7 +33,7 @@ def update_huoli_buy_orders_daily(days=0):
 
 
 def update_huoli_buy_consumers_daily(days=0):
-    """更新huolibuy的每日消费用户数, huoli_buy_consumers_daily"""
+    """huolibuy的每日消费用户数, huoli_buy_consumers_daily"""
     start_date = DateUtil.get_date_before_days(int(days) * 3)
     end_date = DateUtil.get_date_after_days(1-int(days))
     huoli_consumers_sql = """
@@ -61,7 +61,7 @@ def update_huoli_buy_consumers_daily(days=0):
 
 
 def update_huoli_buy_consumers_weekly():
-    """更新伙力精选消费用户周, huoli_buy_consumers_weekly"""
+    """伙力精选消费用户周, huoli_buy_consumers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     huoli_consumers_sql = """
         select %s, count(DISTINCT po.userid),
@@ -140,7 +140,7 @@ def update_huoli_buy_consumers_quarterly():
 
 
 def update_huoli_buy_newconsumers_daily(days=0):
-    """更新huolibuy的每日新增消费用户数, huoli_buy_newconsumers_daily"""
+    """huolibuy的每日新增消费用户数, huoli_buy_newconsumers_daily"""
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     huoli_consumers_sql = """
@@ -174,7 +174,7 @@ def update_huoli_buy_newconsumers_daily(days=0):
 
 
 def update_huoli_edj_newconsumers_daily(days=0):
-    """更新huolibuy的e代价新增消费用户数, huoli_buy_edj_newconsumers_daily"""
+    """huolibuy的e代价新增消费用户数, huoli_buy_edj_newconsumers_daily"""
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     huoli_consumers_sql = """

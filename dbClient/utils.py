@@ -140,8 +140,8 @@ if __name__ == "__main__":
                         help='gt_user hb_consumers, 要操作的目标数据表, 多张表使用空格分离')
     parser.add_argument('-path', required=True, type=str, help='操作py文件的具体路径')
     parser.add_argument('-name', required=True, type=str, help='操作的函数名')
-    parser.add_argument('-day', required=True, type=str, help='更新的天数')
-    parser.add_argument('-jobType', required=True, type=int, help='更新的任务类型')
+    parser.add_argument('-day', required=True, type=str, help='的天数')
+    parser.add_argument('-jobType', required=True, type=int, help='的任务类型')
     args = parser.parse_args()
     t_name = args.table
     f_path = args.path

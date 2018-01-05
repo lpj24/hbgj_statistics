@@ -9,7 +9,7 @@ sys.setdefaultencoding('utf8')
 
 
 def update_hb_car_hotel_profit(days=0):
-    """更新航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
+    """航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
@@ -269,7 +269,7 @@ def update_hb_car_hotel_profit(days=0):
 
 
 def update_car_cost_detail(days=0):
-    """更新专车成本明细, profit_huoli_car_cost_type"""
+    """专车成本明细, profit_huoli_car_cost_type"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
     dto = [query_date, today]
@@ -323,7 +323,7 @@ def update_car_cost_detail(days=0):
 
 
 def update_huoli_car_income_daily(days=0):
-    """更新伙力专车收入, profit_huoli_car_income"""
+    """伙力专车收入, profit_huoli_car_income"""
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
@@ -344,7 +344,7 @@ def update_huoli_car_income_daily(days=0):
 
 
 def update_huoli_car_income_type(days=0):
-    """更新专车的收入类型, profit_huoli_car_income_type"""
+    """专车的收入类型, profit_huoli_car_income_type"""
     query_date = DateUtil.get_date_before_days(days)
     today = DateUtil.get_date_after_days(1 - days)
     insert_car_sql = """
@@ -371,7 +371,7 @@ def update_huoli_car_income_type(days=0):
 
 
 def update_profit_hb_income(days=0):
-    """更新航班收入, profit_hb_income"""
+    """航班收入, profit_hb_income"""
     query_date = DateUtil.get_date_before_days(days*352)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -433,7 +433,7 @@ def update_profit_hb_income(days=0):
 
 
 def update_profit_hotel_income(days=0):
-    """更新酒店收入, profit_huoli_hotel_income"""
+    """酒店收入, profit_huoli_hotel_income"""
     query_start = DateUtil.get_date_before_days(days*7)
     query_end = DateUtil.get_date_after_days(1 - days)
     sql = """
@@ -455,7 +455,7 @@ def update_profit_hotel_income(days=0):
 
 
 def update_operation_hbgj_channel_ticket_profit_daily(days=0):
-    """更新航班各个渠道的利润, operation_hbgj_channel_ticket_profit_daily"""
+    """航班各个渠道的利润, operation_hbgj_channel_ticket_profit_daily"""
     query_start = DateUtil.get_date_before_days(days*1)
     query_end = DateUtil.get_date_after_days(1 - days)
 
@@ -626,7 +626,7 @@ def get_sale_type(saletype, pn_resouce, new_channel_data):
 
 
 def update_profit_hb_income_official_website(days=0):
-    """更新官网航班收入, profit_hb_income_official_website"""
+    """官网航班收入, profit_hb_income_official_website"""
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days*5), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """

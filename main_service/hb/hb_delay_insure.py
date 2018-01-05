@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_deplay_insure(days=0):
-    """更新航班关怀活动(邮件2-6), operation_hbgj_delay_treasure_daily"""
+    """航班关怀活动(邮件2-6), operation_hbgj_delay_treasure_daily"""
     while int(days) <= 15:
         fly_order_num_sql = """
             SELECT count(DISTINCT(O.ORDERID)) FROM TICKET_ORDERDETAIL O
@@ -85,7 +85,7 @@ def update_hb_deplay_insure(days=0):
 
 
 def update_compensate_detail(days=0):
-    """更新延误宝赔付明细(邮件2-6), operation_delaycare_detail_daily"""
+    """延误宝赔付明细(邮件2-6), operation_delaycare_detail_daily"""
     compensate_detail_sql = """
         SELECT DATE_FORMAT(flydate, '%%Y-%%m-%%d') s_day, chargenum,count(*) order_num FROM TICKET_DELAY_CARE
         WHERE flydate >= %s

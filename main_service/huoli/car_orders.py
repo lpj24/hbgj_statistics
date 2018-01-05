@@ -8,7 +8,7 @@ sys.setdefaultencoding('utf8')
 
 
 def update_car_orders_daily(days=0):
-    """更新伙力专车的日订单, huoli_car_orders_daily"""
+    """伙力专车的日订单, huoli_car_orders_daily"""
 
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))

@@ -28,10 +28,10 @@ def update_platform_focus_by_file():
             if create_time == "None":
                 continue
 
-            #按周更新
+            #按周
             create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
 
-            #按月更新
+            #按月
             # create_time = DateUtil.date2str((DateUtil.get_this_month_date(create_time))[0], '%Y-%m-%d')
 
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:
@@ -71,10 +71,10 @@ def update_platform_focus_by_file():
             create_time = createtime.split(" ")[0] if createtime else focusdate.split(" ")[0]
             if create_time == "None":
                 continue
-            #按周更新
+            #按周
             create_time = DateUtil.date2str((DateUtil.get_this_week_date(create_time))[0], '%Y-%m-%d')
 
-            #按月更新
+            #按月
             # create_time = DateUtil.date2str((DateUtil.get_this_month_date(create_time))[0], '%Y-%m-%d')
 
             if platform in ['iphone', 'android'] and ordertype == '0' and userid.find('gt') < 0:

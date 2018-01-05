@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gtgj_activeusers_daily(days=0):
-    """更新高铁活跃用户(日), gtgj_activeusers_daily"""
+    """高铁活跃用户(日), gtgj_activeusers_daily"""
     if days > 0:
         today = DateUtil.date2str(DateUtil.get_date_before_days(3), '%Y-%m-%d')
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(0), '%Y-%m-%d')
@@ -19,7 +19,7 @@ def update_gtgj_activeusers_daily(days=0):
 
 
 def update_gtgj_activeusers_weekly():
-    """更新高铁活跃用户周, gtgj_activeusers_weekly"""
+    """高铁活跃用户周, gtgj_activeusers_weekly"""
     start_date = DateUtil.get_last_week_date(DateUtil.get_last_week_date()[0])[0]
     end_date = DateUtil.get_last_week_date()[1]
     dto = [start_date, end_date]
@@ -35,7 +35,7 @@ def update_gtgj_activeusers_monthly():
 
 
 def update_gtgj_newusers_daily(days=0):
-    """更新高铁新用户(日), gtgj_newusers_daily"""
+    """高铁新用户(日), gtgj_newusers_daily"""
     if days > 0:
         today = DateUtil.date2str(DateUtil.get_date_before_days(3), '%Y-%m-%d')
         tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(0), '%Y-%m-%d')
@@ -88,7 +88,7 @@ def update_gtgj_activeusers_quarterly():
 
 
 if __name__ == "__main__":
-    #下面2项只在凌晨更新前三天
+    #下面2项只在凌晨前三天
     update_gtgj_activeusers_daily(1)
     # update_gtgj_newusers_daily(1)
     # update_gtgj_activeusers_weekly()

@@ -5,7 +5,7 @@ from core import request_uv
 
 
 def update_weex_phoneverify(days=1):
-    """更新手机分期验证, weex_installment_phoneverify_daily"""
+    """手机分期验证, weex_installment_phoneverify_daily"""
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     event_list = ['weex.installment.phoneverify.open', 'weex.installment.phoneverify.success']
 

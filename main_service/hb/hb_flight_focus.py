@@ -9,7 +9,7 @@ os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
 
 def update_flight_focus_user_daily(days=0):
-    """更新航班关注用户, hbdt_focus_daily"""
+    """航班关注用户, hbdt_focus_daily"""
     today = DateUtil.get_date_before_days(int(days))
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     dto = [DateUtil.date2str(today, '%Y-%m-%d')] + \
@@ -52,7 +52,7 @@ def get_focus_new_user(days=0):
 
 
 def update_flight_focus_user_weekly():
-    """更新航班关注用户周, hbdt_focus_weekly"""
+    """航班关注用户周, hbdt_focus_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
@@ -442,7 +442,7 @@ def update_focus_platform(days=0):
 
 
 def update_hb_focus_inter_inland(days=0):
-    """更新国内外航班关注pv及uv, hbdt_focus_daily_inter"""
+    """国内外航班关注pv及uv, hbdt_focus_daily_inter"""
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1-int(days))
     inter_inland_sql = """

@@ -4,7 +4,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_huoli_car_orders_daily(days=0):
-    """更新专车订单(新), huolicar_orders_daily"""
+    """专车订单(新), huolicar_orders_daily"""
     start_date = DateUtil.get_date_before_days(int(days) * 1344)
     end_date = DateUtil.get_date_after_days(1-int(days))
     order_sql = """
@@ -125,7 +125,7 @@ def update_huoli_car_orders_daily(days=0):
 
 
 def update_huoli_car_consumers_daily(days=0):
-    """更新专车订单(新), huolicar_consumers_daily"""
+    """专车订单(新), huolicar_consumers_daily"""
     start_date = DateUtil.get_date_before_days(int(days) * 1)
     end_date = DateUtil.get_date_after_days(1-int(days))
     order_sql = """
@@ -246,7 +246,7 @@ def update_huoli_car_consumers_daily(days=0):
 
 
 def update_huoli_car_newconsumers_daily(days=0):
-    """更新专车订单(新), huolicar_newconsumers_daily"""
+    """专车订单(新), huolicar_newconsumers_daily"""
     start_date = DateUtil.get_date_before_days(int(days) * 1)
     end_date = DateUtil.get_date_after_days(1-int(days))
     order_sql = """

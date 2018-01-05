@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gt_order_daily(days=0):
-    """更新高铁订单(日), gtgj_order_daily"""
+    """高铁订单(日), gtgj_order_daily"""
     dto = []
     if days > 0:
         today = DateUtil.date2str(DateUtil.get_date_before_days(3))

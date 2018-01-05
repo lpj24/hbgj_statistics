@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_consumers_daily(days=0):
-    """更新航班消费用户, hbgj_consumers_daily"""
+    """航班消费用户, hbgj_consumers_daily"""
     today_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today_date, end_date, today_date, end_date]
@@ -15,7 +15,7 @@ def update_hb_consumers_daily(days=0):
 
 
 def update_hb_consumers_weekly(days=0):
-    """更新航班消费周用户, hbgj_consumers_weekly_test"""
+    """航班消费周用户, hbgj_consumers_weekly_test"""
     start_weekdate, end_weekdate = DateUtil.get_this_week_date()
     start_date = DateUtil.date2str(start_weekdate)
     end_date = DateUtil.date2str(end_weekdate)
@@ -26,7 +26,7 @@ def update_hb_consumers_weekly(days=0):
 
 
 def update_hb_consumers_monthly(days=0):
-    """更新航班月消费用户, hbgj_consumers_monthly_test"""
+    """航班月消费用户, hbgj_consumers_monthly_test"""
     start_monthdate, end_enddate = DateUtil.get_this_month_date()
     start_monthdate = DateUtil.date2str(start_monthdate)
     end_enddate = DateUtil.date2str(end_enddate)
@@ -46,7 +46,7 @@ def update_hb_consumers_quarterly():
 
 
 def update_hb_newconsumers_daily(days=0):
-    """更新航班新增消费用户, hbgj_newconsumers_daily"""
+    """航班新增消费用户, hbgj_newconsumers_daily"""
     yesterday = DateUtil.get_before_days(days)
     dto = [yesterday, yesterday, yesterday, yesterday]
     query_data = DBCli().sourcedb_cli.query_one(hb_consumers_sql['hb_newconsumers_daily'], dto)
@@ -55,7 +55,7 @@ def update_hb_newconsumers_daily(days=0):
 
 
 def update_hbgj_newconsumers_inter_daily(days=0):
-    """更新国际机票新增消费用户, hbgj_newconsumers_inter_daily"""
+    """国际机票新增消费用户, hbgj_newconsumers_inter_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1), '%Y-%m-%d')
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today, tomorrow, today]
@@ -98,7 +98,7 @@ def update_hbgj_newconsumers_inter_daily(days=0):
 
 
 def update_hbgj_consumers_inter_daily(days=0):
-    """更新国际机票消费用户, hbgj_consumers_inter_daily"""
+    """国际机票消费用户, hbgj_consumers_inter_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today, tomorrow]

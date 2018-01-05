@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gtgj_from_hb(days=0):
-    """更新由航班转换到高铁的订单, gtgj_ticket_from_hb"""
+    """由航班转换到高铁的订单, gtgj_ticket_from_hb"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [today, tomorrow]

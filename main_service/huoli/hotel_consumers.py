@@ -5,7 +5,7 @@ from sql.huoli_sqlHandlers import hotel_consumers_sql
 
 
 def update_hotel_consumers_daily(days=0):
-    """更新酒店消费(日), hotel_consumers_daily"""
+    """酒店消费(日), hotel_consumers_daily"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
@@ -16,7 +16,7 @@ def update_hotel_consumers_daily(days=0):
 
 
 def update_hotel_consumers_weekly():
-    """更新酒店消费用户, hotel_consumers_weekly"""
+    """酒店消费用户, hotel_consumers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     dto = [DateUtil.date2str(start_date), DateUtil.date2str(end_date),
            DateUtil.date2str(start_date), DateUtil.date2str(end_date)]

@@ -8,7 +8,7 @@ import datetime
 
 
 def hb_pay_type(days=0):
-    """更新localytics支付事件, hbgj_event_orderpay_paytype_ios_android_daily"""
+    """localytics支付事件, hbgj_event_orderpay_paytype_ios_android_daily"""
     api_key = "dd633143c1a14867726b60a-812924b6-5b0b-11e6-71ff-002dea3c3994"
     api_secret = "f91925eb1865c8431589ff2-81292808-5b0b-11e6-71ff-002dea3c3994"
     api_root = "https://api.localytics.com/v1/query"

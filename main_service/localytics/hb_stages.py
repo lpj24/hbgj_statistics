@@ -6,7 +6,7 @@ from core import *
 
 
 def update_hbgj_stages_daily(days=0):
-    """更新分期付款localytics, weex_installment_pay_daily"""
+    """分期付款localytics, weex_installment_pay_daily"""
 
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     event_list = ['weex.installment.pay.start', 'weex.installment.activated', 'weex.installment.pay.success']
@@ -70,7 +70,7 @@ def update_hbgj_stages_daily(days=0):
 
 
 def update_weex_activated_type_daily(days=0):
-    """更新分期付款localytics, weex_installment_activated_type_daily"""
+    """分期付款localytics, weex_installment_activated_type_daily"""
     event_list = ['weex.installment.activated']
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     insert_sql = """

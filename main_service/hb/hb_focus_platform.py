@@ -4,7 +4,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_focus_platform(days=0):
-    """更新不同平台关注数据(日), hbdt_focus_platform_daily"""
+    """不同平台关注数据(日), hbdt_focus_platform_daily"""
     all_platform_sql_uv = """
         select A.platform, count(distinct A.userid) from (
             select distinct(userid) userid, platform from FLY_USERFOCUS_TBL
@@ -220,7 +220,7 @@ def update_focus_platform(days=0):
 
 
 def update_focus_platform_weekly():
-    """更新航班关注不同平台pv uv, hbdt_focus_platform_weekly"""
+    """航班关注不同平台pv uv, hbdt_focus_platform_weekly"""
     all_platform_sql_uv = """
         select A.platform, count(distinct A.userid) from (
             select distinct(userid) userid, platform from FLY_USERFOCUS_TBL

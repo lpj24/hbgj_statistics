@@ -30,7 +30,7 @@ def localytics_cli(app_id, event, metrics, start_date):
 
 
 def update_flight_search_user_daily(days=0):
-    """更新航班搜索pv与uv, hbdt_search_daily"""
+    """航班搜索pv与uv, hbdt_search_daily"""
     tomorrow = DateUtil.get_date_after_days(1-int(days))
     tomorrow_date = DateUtil.date2str(tomorrow)
     today = DateUtil.get_date_before_days(int(days))
@@ -83,7 +83,7 @@ def update_flight_search_user_daily(days=0):
 
 
 def update_dt_search_uid(days=0):
-    """更新航班搜索uid计算周月数据, redis数据库"""
+    """航班搜索uid计算周月数据, redis数据库"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """
@@ -100,7 +100,7 @@ def update_dt_search_uid(days=0):
 
 
 def update_flight_search_user_weekly():
-    """更新航班搜索用户周, hbdt_search_weekly"""
+    """航班搜索用户周, hbdt_search_weekly"""
     start_week, end_week = DateUtil.get_last_week_date()
     s_day = DateUtil.date2str(start_week, '%Y-%m-%d')
     dto = [start_week, end_week]

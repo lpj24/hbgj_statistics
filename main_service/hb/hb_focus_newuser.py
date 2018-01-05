@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 # 在1月31号基础上计算
 def update_focus_newuser(days=0):
-    """更新航班关注新用户, hbdt_focus_newusers_daily"""
+    """航班关注新用户, hbdt_focus_newusers_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     query_file = start_date + "_hbdt_focus.dat"
     check_s_day = DateUtil.get_date_before_days(days * 2)

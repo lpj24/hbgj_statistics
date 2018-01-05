@@ -6,7 +6,7 @@ from sql.hb_sqlHandlers import coupon_sql
 
 
 def update_hbgj_coupon_tickt(days=0):
-    """更新航班机票优惠券发放与使用情况, coupon_hbgj_ticket"""
+    """航班机票优惠券发放与使用情况, coupon_hbgj_ticket"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - days)
 
@@ -293,7 +293,7 @@ def update_hb_coupon_his():
 
 
 def update_profit_huoli_fmall_cost(days=0):
-    """更新商城优惠券使用, profit_huoli_fmall_cost"""
+    """商城优惠券使用, profit_huoli_fmall_cost"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     dto = [start_date, end_date]
@@ -333,7 +333,7 @@ def update_profit_huoli_fmall_cost(days=0):
 
 
 def update_profit_huoli_buy_cost(days=0):
-    """更新卖好货优惠券使用, profit_huoli_buy_cost"""
+    """卖好货优惠券使用, profit_huoli_buy_cost"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     dto = [start_date, end_date]

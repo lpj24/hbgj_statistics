@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hbgj_activeusers_daily(days=0):
-    """更新航班活跃用户(日), hbgj_activeusers_daily"""
+    """航班活跃用户(日), hbgj_activeusers_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)), '%Y-%m-%d')
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today, today, tomorrow]
@@ -14,7 +14,7 @@ def update_hbgj_activeusers_daily(days=0):
 
 
 def update_hbgj_activeusers_weekly():
-    """更新航班活跃用户周, hbgj_activeusers_weekly"""
+    """航班活跃用户周, hbgj_activeusers_weekly"""
     start_date, end_date = DateUtil.get_last_week_date()
     start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
     end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
@@ -33,7 +33,7 @@ def update_hbgj_activeusers_monthly():
 
 
 def update_hbgj_newuser_daily(days=1):
-    """更新航班新用户, hbgj_newuser_daily"""
+    """航班新用户, hbgj_newuser_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [today, tomorrow]

@@ -6,7 +6,7 @@ from sql.hb_sqlHandlers import hb_orders_date_sql
 
 
 def update_hb_gt_order_daily(days=0):
-    """更新航班高铁订单, hbgj_order_detail_daily"""
+    """航班高铁订单, hbgj_order_detail_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
@@ -24,7 +24,7 @@ def update_hb_gt_order_daily_his():
 
 
 def update_operation_hbgj_order_detail_daily(days=0):
-    """更新航班管家订单详情, operation_hbgj_order_detail_daily"""
+    """航班管家订单详情, operation_hbgj_order_detail_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]
@@ -108,7 +108,7 @@ def update_operation_hbgj_order_detail_daily(days=0):
 
 
 def update_hb_gt_order_new_daily(days=0):
-    """更新航班高铁订单(new), hbgj_order_detail_daily_new"""
+    """航班高铁订单(new), hbgj_order_detail_daily_new"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [start_date, end_date]
@@ -156,7 +156,7 @@ def update_hb_gt_order_new_daily(days=0):
 
 
 def update_hbgj_ticket_region_inter_daily(days=0):
-    """更新国际航班各地区订票统计, hbgj_ticket_region_inter_daily"""
+    """国际航班各地区订票统计, hbgj_ticket_region_inter_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 60))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [start_date, end_date]
@@ -318,7 +318,7 @@ def update_hb_order_daily_minute(days=0):
 
 
 def update_hbgj_h5_ticket_daily(days=0):
-    """更新航班管家H5各个渠道票数与订单数, operation_hbgj_h5_ticket_daily"""
+    """航班管家H5各个渠道票数与订单数, operation_hbgj_h5_ticket_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 5), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [start_date, end_date]

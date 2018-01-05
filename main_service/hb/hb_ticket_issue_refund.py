@@ -162,7 +162,7 @@ def update_hbgj_cost_type_daily(days=0):
 
 
 def update_profit_hb_self_no_transfer_daily(days=0):
-    """更新自营非转单收入成本, profit_hb_self_no_transfer_daily"""
+    """自营非转单收入成本, profit_hb_self_no_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     transfer_income_sql = """
@@ -265,7 +265,7 @@ def update_profit_hb_self_transfer_daily(days=0):
 
 
 def update_profit_hb_supply_transfer_daily(days=0):
-    """更新供应商转单收入成本, profit_hb_supply_transfer_daily"""
+    """供应商转单收入成本, profit_hb_supply_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
@@ -324,7 +324,7 @@ def update_profit_hb_supply_transfer_daily(days=0):
 
 
 def update_profit_hb_supply_no_transfer_daily(days=0):
-    """更新供应商非转单收入成本, profit_hb_supply_no_transfer_daily"""
+    """供应商非转单收入成本, profit_hb_supply_no_transfer_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     supply_no_transfer_income_sql = """

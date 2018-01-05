@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 def update_hbgj_newconsumers_type_daily(days=0):
-    """更新航班管家各种类别的新增消费(舱位 国内外 折扣), hbgj_newconsumers_type_daily"""
+    """航班管家各种类别的新增消费(舱位 国内外 折扣), hbgj_newconsumers_type_daily"""
     start_date = DateUtil.get_date_before_days(int(days))
     end_date = DateUtil.get_date_after_days(1 - int(days))
     dto = [start_date, end_date, start_date]
@@ -121,7 +121,7 @@ def update_hbgj_newconsumers_type_daily(days=0):
 
 
 def update_new_register_user_daily(days=0):
-    """更新新增注册用户, hbgj_new_register_user_daily"""
+    """新增注册用户, hbgj_new_register_user_daily"""
     register_sql = """
         select
         A.s_day,
@@ -156,7 +156,7 @@ def update_new_register_user_daily(days=0):
 
 
 def update_hbgj_inter_inland_consumers_daily(days=0):
-    """更新航班国际国内消费用户, hbgj_inter_inland_consumers_daily"""
+    """航班国际国内消费用户, hbgj_inter_inland_consumers_daily"""
     inter_inland_sql = """
         SELECT DATE_FORMAT(TICKET_ORDER.CREATETIME,'%%Y-%%m-%%d') s_day,
         count(DISTINCT TICKET_ORDER.PHONEID) consumers,

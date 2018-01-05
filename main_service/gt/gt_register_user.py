@@ -4,7 +4,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gtgj_register_user_daily(days=1):
-    """更新高铁注册用户数量, gtgj_register_user_daily"""
+    """高铁注册用户数量, gtgj_register_user_daily"""
 
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
@@ -44,7 +44,7 @@ def update_gtgj_register_user_daily(days=1):
 
 
 def update_hbgj_register_user_daily(days=1):
-    """更新航班注册用户数量, hbgj_register_user_daily"""
+    """航班注册用户数量, hbgj_register_user_daily"""
 
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')

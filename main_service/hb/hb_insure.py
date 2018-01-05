@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_hb_insure_daily(days=0):
-    """更新保险销售的投保率, operation_hbgj_insure"""
+    """保险销售的投保率, operation_hbgj_insure"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     platform_sql = """
@@ -150,7 +150,7 @@ def update_insure_class_daily(days=0):
 
 
 def update_insure_type_daily(days=0):
-    """更新航意险 退票险 延误险明细, operation_hbgj_insure_type_daily"""
+    """航意险 退票险 延误险明细, operation_hbgj_insure_type_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]

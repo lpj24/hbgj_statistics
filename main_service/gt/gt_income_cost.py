@@ -4,7 +4,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_gt_income_cost(days=0):
-    """更新高铁收入与成本, profit_gt_income profit_gt_cost"""
+    """高铁收入与成本, profit_gt_income profit_gt_cost"""
     if days > 0:
         start_date = DateUtil.get_date_before_days(3 * int(days))
     else:

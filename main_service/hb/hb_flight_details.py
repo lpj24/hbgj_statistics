@@ -30,7 +30,7 @@ def localytics_cli(app_id, event, metrics, start_date):
 
 
 # def update_flight_detail_user_daily(days=0):
-#     """更新航班详情pv与uv, hbdt_details_daily"""
+#     """航班详情pv与uv, hbdt_details_daily"""
 #     tomorrow = DateUtil.get_date_after_days(1-int(days))
 #     tomorrow_date = DateUtil.date2str(tomorrow)
 #     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
@@ -82,7 +82,7 @@ def localytics_cli(app_id, event, metrics, start_date):
 
 
 def update_dt_detail_uid(days=0):
-    """更新航班动态uid用于计算周数据与月, redis数据库"""
+    """航班动态uid用于计算周数据与月, redis数据库"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """
@@ -99,7 +99,7 @@ def update_dt_detail_uid(days=0):
 
 
 def update_flight_detail_user_weekly():
-    """更新航班动态详情用户周, hbdt_details_weekly"""
+    """航班动态详情用户周, hbdt_details_weekly"""
     start_week, end_week = DateUtil.get_last_week_date()
     s_day = DateUtil.date2str(start_week, '%Y-%m-%d')
     dto = [start_week, end_week]
@@ -238,7 +238,7 @@ def update_check_pv_his(start_date=(datetime.date(2016, 3, 8))):
 
 
 def update_hb_city_rate(days=0):
-    """更新航班准点率 延误率 取消率, hbgj_flightdyn_company_daily hbgj_flightdyn_depcity_daily"""
+    """航班准点率 延误率 取消率, hbgj_flightdyn_company_daily hbgj_flightdyn_depcity_daily"""
     import os
     os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 2), '%Y-%m-%d')
@@ -366,7 +366,7 @@ def get_city_code_dict():
 
 
 def update_flight_detail_search_user_daily(days=0):
-    """更新航班详情pv与uv, hbdt_details_daily hbdt_search_daily"""
+    """航班详情pv与uv, hbdt_details_daily hbdt_search_daily"""
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-int(days)), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     sql = """

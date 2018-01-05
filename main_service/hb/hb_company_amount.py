@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 
 def update_operation_hbgj_amount_monitor_cz(days=0):
-    """更新南航国内外销售额, operation_hbgj_amount_monitor_cz"""
+    """南航国内外销售额, operation_hbgj_amount_monitor_cz"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*30))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     cz_inter_inland_sql = """
@@ -47,7 +47,7 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
 
 
 def update_operation_hbgj_amount_monitor_hlth(days=0):
-    """更新伙力天汇各航司出票情况, operation_hbgj_amount_monitor_hlth"""
+    """伙力天汇各航司出票情况, operation_hbgj_amount_monitor_hlth"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 20), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     hlth_sql = """
@@ -84,7 +84,7 @@ def update_operation_hbgj_amount_monitor_hlth(days=0):
 
 
 def update_operation_hbgj_amount_monitor_hlth_szx(days=0):
-    """更新深圳始发3个航空公司, operation_hbgj_amount_monitor_hlth_SZX"""
+    """深圳始发3个航空公司, operation_hbgj_amount_monitor_hlth_SZX"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*20), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     szx_sql = """
@@ -158,7 +158,7 @@ def update_operation_hbgj_amount_monitor_inter(days=0):
 
 
 def update_operation_hbgj_qp_success(days=0):
-    """更新抢票情况统计, operation_hbgj_qp_success"""
+    """抢票情况统计, operation_hbgj_qp_success"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]
@@ -185,7 +185,7 @@ def update_operation_hbgj_qp_success(days=0):
 
 
 def update_operation_hbgj_special_return_daily(days=1):
-    """更新自营特殊产品返现额, operation_hbgj_special_return"""
+    """自营特殊产品返现额, operation_hbgj_special_return"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*3))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     dto = [start_date, end_date]

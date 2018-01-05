@@ -64,7 +64,7 @@ def getGtAmountChange(start_date, end_date):
 
 
 def update_gtgj_amount_daily(days=0):
-    """更新高铁交易额(日), gtgj_amount_daily"""
+    """高铁交易额(日), gtgj_amount_daily"""
     if days > 0:
         query_date = DateUtil.get_date_before_days(3)
         today = DateUtil.get_date_before_days(3)

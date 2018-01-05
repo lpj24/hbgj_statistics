@@ -64,6 +64,7 @@ def update_hbgj_newuser_daily(days=1):
     DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
     pass
 
+
 if __name__ == "__main__":
     # for x in xrange(6, 0, -1):
     # i = 5
@@ -71,5 +72,7 @@ if __name__ == "__main__":
     #     update_hbgj_activeusers_daily(i)
     #     i -= 1
     # update_hbgj_activeusers_daily(1)
-
-    update_hbgj_activeusers_weekly()
+    i = 1
+    while i <= 369:
+        update_hbgj_newuser_daily(i)
+        i += 1

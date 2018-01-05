@@ -11,7 +11,6 @@ def update_hb_consumers_daily(days=0):
     dto = [today_date, end_date, today_date, end_date]
     query_data = DBCli().sourcedb_cli.query_one(hb_consumers_sql['hb_consumers_daily'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_daily'], query_data)
-    pass
 
 
 def update_hb_consumers_weekly(days=0):
@@ -33,7 +32,6 @@ def update_hb_consumers_monthly(days=0):
     dto = [start_monthdate, end_enddate, start_monthdate, end_enddate]
     query_data = DBCli().sourcedb_cli.query_one(hb_consumers_sql['hb_consumers_monthly'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_consumers_monthly'], query_data)
-    pass
 
 
 def update_hb_consumers_quarterly():
@@ -51,7 +49,6 @@ def update_hb_newconsumers_daily(days=0):
     dto = [yesterday, yesterday, yesterday, yesterday]
     query_data = DBCli().sourcedb_cli.query_one(hb_consumers_sql['hb_newconsumers_daily'], dto)
     DBCli().targetdb_cli.insert(hb_consumers_sql['update_hb_newconsumers_daily'], query_data)
-    pass
 
 
 def update_hbgj_newconsumers_inter_daily(days=0):

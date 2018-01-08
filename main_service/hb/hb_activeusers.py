@@ -33,7 +33,7 @@ def update_hbgj_activeusers_monthly():
 
 
 def update_hbgj_newuser_daily(days=1):
-    """航班新用户, hbgj_newuser_daily"""
+    """航班新用户, hbgj_newusers_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days)))
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)))
     dto = [today, tomorrow]

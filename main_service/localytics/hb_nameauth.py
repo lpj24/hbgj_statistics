@@ -57,6 +57,6 @@ def update_weex_phoneverify(days=1):
 
 
 if __name__ == '__main__':
-    for i in xrange(1, 9):
-        update_weex_phoneverify(i)
+    # for i in xrange(1, 9):
+    update_weex_phoneverify(1)
     # update_weex_phoneverify(15)

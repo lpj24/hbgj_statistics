@@ -205,49 +205,65 @@ def test2():
     f.close()
 
 if __name__ == "__main__":
-    import tornado.httpserver
-    import tornado.ioloop
-    import tornado.options
-    import tornado.web
-    import tornado.httpclient
-    from tornado import gen
-    from sql.huoli_sqlHandlers import car_consumers_sql
-    from tornado.options import define, options
-    from tornado.concurrent import run_on_executor
-    from concurrent.futures import ThreadPoolExecutor
+    # import tornado.httpserver
+    # import tornado.ioloop
+    # import tornado.options
+    # import tornado.web
+    # import tornado.httpclient
+    # from tornado import gen
+    # from sql.huoli_sqlHandlers import car_consumers_sql
+    # from tornado.options import define, options
+    # from tornado.concurrent import run_on_executor
+    # from concurrent.futures import ThreadPoolExecutor
+    #
+    # define("port", default=8000, help="run on the given port", type=int)
+    #
+    #
+    # class SleepHandler(tornado.web.RequestHandler):
+    #     executor = ThreadPoolExecutor(1)
+    #
+    #     @run_on_executor
+    #     def testApp(self):
+    #         today = DateUtil.get_date_before_days(int(1))
+    #         dto = []
+    #         for i in xrange(3):
+    #             dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
+    #             dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
+    #             dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
+    #         result = DBCli().car_cli.query_one(car_consumers_sql['car_newconsumers_daily'], dto)
+    #         return result
+    #
+    #     @tornado.gen.coroutine
+    #     def get(self):
+    #         a = yield self.testApp()
+    #         self.write('haha')
+    #
+    # class JustNowHandler(tornado.web.RequestHandler):
+    #     def get(self):
+    #         self.write("i hope just now see you")
+    #
+    #
+    # tornado.options.parse_command_line()
+    # app = tornado.web.Application(handlers=[
+    #     (r"/sleep", SleepHandler), (r"/justnow", JustNowHandler)])
+    # http_server = tornado.httpserver.HTTPServer(app)
+    # http_server.listen(options.port)
+    # print 'server is running'
+    # tornado.ioloop.IOLoop.instance().start()
+    import requests
+    # host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=gmhF0xeKTwAdhvwD5vznbDoa&client_secret=3uYhrknqlFCaDi2nprDTQzpvFKcwEG1a'
+    # headers = {'Content-Type': 'application/json; charset=UTF-8'}
+    # res = requests.post(host, headers=headers)
+    # print res.json()
+    import base64
+    ocr_url = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic'
+    ocr_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    img_file = open('C:\\Users\\Administrator\\Desktop\\wm.jpg', 'rb')
+    img_content = img_file.read()
+    img_file.close()
+    data = dict()
+    data['image'] = base64.b64encode(img_content)
 
-    define("port", default=8000, help="run on the given port", type=int)
-
-
-    class SleepHandler(tornado.web.RequestHandler):
-        executor = ThreadPoolExecutor(1)
-
-        @run_on_executor
-        def testApp(self):
-            today = DateUtil.get_date_before_days(int(1))
-            dto = []
-            for i in xrange(3):
-                dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-                dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-                dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-            result = DBCli().car_cli.query_one(car_consumers_sql['car_newconsumers_daily'], dto)
-            return result
-
-        @tornado.gen.coroutine
-        def get(self):
-            a = yield self.testApp()
-            self.write('haha')
-
-    class JustNowHandler(tornado.web.RequestHandler):
-        def get(self):
-            self.write("i hope just now see you")
-
-
-    tornado.options.parse_command_line()
-    app = tornado.web.Application(handlers=[
-        (r"/sleep", SleepHandler), (r"/justnow", JustNowHandler)])
-    http_server = tornado.httpserver.HTTPServer(app)
-    http_server.listen(options.port)
-    print 'server is running'
-    tornado.ioloop.IOLoop.instance().start()
-
+    params = {'access_token': '24.3cb9489c39f0b3287cdecd4de76cdd06.2592000.1517969292.282335-10644381'}
+    ocr_res = requests.post(ocr_url, headers=ocr_headers, params=params, data=data)
+    print ocr_res.json()

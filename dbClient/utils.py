@@ -48,7 +48,6 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
         for table in table_name:
             delete_sql = "delete from " + table + " where s_day=%s"
             DBCli().targetdb_cli.batch_insert(delete_sql, [s_day])
-    print "python -c " + '"' + py_str + '"'
     os.system("python -c " + '"' + py_str + '"')
 
 

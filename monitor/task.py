@@ -31,7 +31,7 @@ def check_day_data():
         j_id, job_table = table
         for t in job_table.split(' '):
             format_sql = 'select count(1) from {} where s_day=%s'.format(t)
-            if t.find('weekly') >= 0:
+            if t.find('weekly') >= 0 or t.find('monthly') >= 0:
                 continue
             try:
                 data = DBCli().targetdb_cli.query_one(format_sql, [query_date])

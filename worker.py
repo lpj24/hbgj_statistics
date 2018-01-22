@@ -258,7 +258,7 @@ if __name__ == "__main__":
     import base64
     ocr_url = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic'
     ocr_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    img_file = open('C:\\Users\\Administrator\\Desktop\\wm.jpg', 'rb')
+    img_file = open('C:\\Users\\Administrator\\Desktop\\a.jpg', 'rb')
     img_content = img_file.read()
     img_file.close()
     data = dict()

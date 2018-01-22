@@ -252,9 +252,9 @@ if __name__ == "__main__":
     # update_ios_android_newuser_daily(1)
     # update_ios_android_newuser_daily(1)
     # update_booke_ticket_event_hourly(1)
-    hb_ticket_book(3)
-    update_ios_android_newuser_daily(3)
-    update_booke_ticket_event_hourly(3)
+    hb_ticket_book(1)
+    # update_ios_android_newuser_daily(3)
+    # update_booke_ticket_event_hourly(3)
     # i = 368
     # while 1 < 1500:
     #     update_ios_android_newuser_daily(i)

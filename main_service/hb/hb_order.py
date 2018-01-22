@@ -332,7 +332,8 @@ def update_hbgj_h5_ticket_daily(days=0):
         where od.CREATETIME >= %s and od.CREATETIME < %s
         AND IFNULL(od.`LINKTYPE`, 0) != 2 
         and ETICKET is not NULL 
-        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' or p like 'cgb%%' or p like 'guizhoutong%%') 
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' or p like 'cgb%%' or p like 'guizhoutong%%'
+        or p like 'yidonghefeixin%%') 
         GROUP BY left(od.CREATETIME,10),left(p,3) 
         order by s_day
     """

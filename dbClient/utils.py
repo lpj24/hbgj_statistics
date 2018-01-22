@@ -31,14 +31,6 @@ def execute_day_job_again(table_name, fun_path, fun_name, job_type, execute_day=
     fun_path = (fun_path.split(os.path.sep))[-3:]
     fun_path[-1] = (fun_path[-1].split("."))[0]
     fun_path = ".".join(fun_path)
-    # with open("tmp_py.py", "w") as py_file:
-    #     coding_str = "# -*- coding: utf-8 -*-\n"
-    #     import_str = "from " + fun_path + " import " + fun_name + "\n"
-    #     main_str = "if __name__ == '__main__':\n"
-    #     execute_fun_str = "\t" + fun_name + "(" + str(execute_day) + ")" + "\n"
-    #     py_str = coding_str + import_str + main_str + execute_fun_str
-    #     py_file.write(py_str)
-    # del execute day data
     import_str = "from " + fun_path + " import " + fun_name + ";"
     execute_fun_str = import_str + fun_name + "(" + str(execute_day) + ")" + ";"
     py_str = execute_fun_str

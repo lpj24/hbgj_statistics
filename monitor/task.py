@@ -99,20 +99,20 @@ def check_execute_job():
 
 
 if __name__ == "__main__":
-    # import subprocess
-    # later_service = execute_later_job()
-    # for fun in later_service.get_later_service():
-    #     try:
-    #         fun_path = fun(1)
-    #     except Exception as e:
-    #         logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))
-    #         continue
-    #     finally:
-    #         utils.storage_execute_job(fun)
+    import subprocess
+    later_service = execute_later_job()
+    for fun in later_service.get_later_service():
+        try:
+            fun_path = fun(1)
+        except Exception as e:
+            logging.error(str(fun) + "---" + str(e.message) + "---" + str(e.args))
+            continue
+        finally:
+            utils.storage_execute_job(fun)
     check_day_data()
-    # exception_table = cal_balance()
-    #
-    # if exception_table:
-    #     utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")
-    # subprocess.Popen("ps aux | grep excute_tmp_day*| grep -v grep|awk '{print $2}'|xargs kill -9",
-    #                  stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    exception_table = cal_balance()
+
+    if exception_table:
+        utils.sendMail("762575190@qq.com", '<br/>'.join([t for t in exception_table]), "与前一天的数据有差异")
+    subprocess.Popen("ps aux | grep excute_tmp_day*| grep -v grep|awk '{print $2}'|xargs kill -9",
+                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)

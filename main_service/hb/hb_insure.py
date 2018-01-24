@@ -159,11 +159,12 @@ def update_insure_type_daily(days=0):
         (SELECT DISTINCT bigtype from INSURE_DATA where id=i.insurecode) bigtype,
         count(*),sum(i.price)
         FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
-        on i.outorderid=o.orderid
-        where i.createtime >=%s and i.createtime < %s
-        and i.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (2))
-        GROUP BY left(i.createtime,10), i.insurecode
+        on substring_index(i.OUTORDERID, 'P', -1)=o.orderid 
+        where i.createtime >=%s and i.createtime <%s
+        and i.insurecode in (select DISTINCT id from INSURE_DATA where bigtype)
+        GROUP BY left(i.createtime,10), i.insurecode;
     """
+
     insert_boat_sql = """
         insert into operation_hbgj_insure_type_daily (s_day, insure_code, pid, insure_order_num,
         insure_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
@@ -271,7 +272,7 @@ def update_insure_type_daily(days=0):
 
 def update_hb_boat(days=0):
     """航意险投保详情和航意险退保详情, operation_accident_insure_detail_daily operation_accident_insure_refund_detail_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     dto = [start_date, end_date]
     detail_sql = """
@@ -289,7 +290,7 @@ def update_hb_boat(days=0):
         sum(case when o.INTFLAG=0 then i.PRICE else 0 END) insuer_inland_amount,
         sum(case when o.INTFLAG=1 then i.PRICE else 0 END) insuer_inter_amount
         FROM `INSURE_ORDERDETAIL` i
-        join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
+        join `TICKET_ORDER` o on substring_index(i.OUTORDERID, 'P', -1)=o.ORDERID
         where i.CREATETIME>=%s
         and i.CREATETIME<%s
         and i.insurecode in (select distinct id from INSURE_DATA where bigtype in (2) and id !='PA_A020')
@@ -336,7 +337,7 @@ def update_hb_boat(days=0):
         sum(case when o.INTFLAG=0 then i.PRICE else 0 end) insuer_refund_inland_amount,
         sum(case when o.INTFLAG=1 then i.PRICE else 0 end) insuer_refund_inter_amount
         FROM `INSURE_ORDERDETAIL` i
-        join `TICKET_ORDER` o on i.OUTORDERID=o.ORDERID
+        join `TICKET_ORDER` o on substring_index(i.OUTORDERID, 'P', -1)=o.ORDERID
         where i.updatetime>=%s
         and i.updatetime<%s
         and i.insurecode in (select distinct id from INSURE_DATA where bigtype in (2) and id !='PA_A020')
@@ -372,4 +373,5 @@ def update_hb_boat(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_insure_daily(16)
+    update_hb_boat(1)
+    update_insure_type_daily(1)

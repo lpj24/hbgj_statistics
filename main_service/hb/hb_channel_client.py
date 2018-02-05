@@ -247,100 +247,100 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         k = k.split("-")
         if k[0] == "hb":
             if k[1] == "zx":
-                v.insert(0, 1)
+                v.insert(0, 11)
                 v.insert(0, "直销")
                 v.insert(0, "航班管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "zy":
-                v.insert(0, 2)
+                v.insert(0, 12)
                 v.insert(0, "自营")
                 v.insert(0, "航班管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "hzf":
-                v.insert(0, 3)
+                v.insert(0, 13)
                 v.insert(0, "合作方")
                 v.insert(0, "航班管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "gwdg":
-                v.insert(0, 4)
+                v.insert(0, 14)
                 v.insert(0, "官网代购")
                 v.insert(0, "航班管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
         elif k[0] == "gt":
             if k[1] == "zx":
-                v.insert(0, 1)
+                v.insert(0, 21)
                 v.insert(0, "直销")
                 v.insert(0, "高铁管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "zy":
-                v.insert(0, 2)
+                v.insert(0, 22)
                 v.insert(0, "自营")
                 v.insert(0, "高铁管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "hzf":
-                v.insert(0, 3)
+                v.insert(0, 23)
                 v.insert(0, "合作方")
                 v.insert(0, "高铁管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "gwdg":
-                v.insert(0, 4)
+                v.insert(0, 24)
                 v.insert(0, "官网代购")
                 v.insert(0, "高铁管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
         elif k[0] == "wx":
             if k[1] == "zx":
-                v.insert(0, 1)
+                v.insert(0, 31)
                 v.insert(0, "直销")
                 v.insert(0, "微信")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "zy":
-                v.insert(0, 2)
+                v.insert(0, 32)
                 v.insert(0, "自营")
                 v.insert(0, "微信")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "hzf":
-                v.insert(0, 3)
+                v.insert(0, 33)
                 v.insert(0, "合作方")
                 v.insert(0, "微信")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "gwdg":
-                v.insert(0, 4)
+                v.insert(0, 34)
                 v.insert(0, "官网代购")
                 v.insert(0, "微信")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
         elif k[0] == "gtwx":
             if k[1] == "zx":
-                v.insert(0, 1)
+                v.insert(0, 41)
                 v.insert(0, "直销")
                 v.insert(0, "高铁微信小程序")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "zy":
-                v.insert(0, 2)
+                v.insert(0, 42)
                 v.insert(0, "自营")
                 v.insert(0, "高铁微信小程序")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "hzf":
-                v.insert(0, 3)
+                v.insert(0, 43)
                 v.insert(0, "合作方")
                 v.insert(0, "高铁微信小程序")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "gwdg":
-                v.insert(0, 4)
+                v.insert(0, 44)
                 v.insert(0, "官网代购")
                 v.insert(0, "高铁微信小程序")
                 v.insert(0, start_date)
@@ -361,10 +361,10 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         tmp.insert(4, 0)
         new_last_insert_data.append(tmp)
 
-    new_last_insert_data.append([start_date, "航班管家", "合计", 0, reg_users_dict[u"hb-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
-    new_last_insert_data.append([start_date, "高铁管家", "合计", 0, reg_users_dict[u"gt-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
-    new_last_insert_data.append([start_date, "微信", "合计", 0, reg_users_dict[u"wx-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
-    new_last_insert_data.append([start_date, "高铁微信小程序", "合计", 0, reg_users_dict[u"gtwx-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
+    new_last_insert_data.append([start_date, "航班管家", "合计", 10, reg_users_dict[u"hb-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
+    new_last_insert_data.append([start_date, "高铁管家", "合计", 20, reg_users_dict[u"gt-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
+    new_last_insert_data.append([start_date, "微信", "合计", 30, reg_users_dict[u"wx-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
+    new_last_insert_data.append([start_date, "高铁微信小程序", "合计", 40, reg_users_dict[u"gtwx-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
 
     DBCli().targetdb_cli.batch_insert(insert_sql, new_last_insert_data)
     update_client_channel_hj(start_date)
@@ -391,7 +391,5 @@ def update_client_channel_hj(s_day):
 if __name__ == '__main__':
     i = 1
     while i <= 4:
-        start_date = DateUtil.get_date_before_days(i * 1)
-        end_date = DateUtil.get_date_after_days(1 - i)
-        update_client_channel_hj(start_date)
+        update_hbgj_channel_client_ticket_daily(i)
         i += 1

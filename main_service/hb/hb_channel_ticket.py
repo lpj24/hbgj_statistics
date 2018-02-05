@@ -589,7 +589,6 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
         insert_data.append([s_day, pn, total_data_dict[no_ob_key][0], 0, total_data_dict[no_ob_key][1]])
 
     DBCli().targetdb_cli.batch_insert(insert_sql, insert_data)
-    pass
 
 
 if __name__ == "__main__":

@@ -388,8 +388,258 @@ def update_client_channel_hj(s_day):
     DBCli().targetdb_cli.batch_insert(update_sql, update_data)
 
 
+def update_hbgj_channel_client_ticket_h5_daily(days=1):
+    """H5客户端渠道机票统计, operation_client_channel_H5_ticket_daily"""
+    start_date = DateUtil.get_date_before_days(days * 1)
+    end_date = DateUtil.get_date_after_days(1 - days)
+    register_users_sql = """
+        SELECT DATE_FORMAT(createtime, '%%Y-%%m-%%d') s_day, 
+        sum(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' then 1 else 0 end) H5注册用户
+        FROM `phone_user` WHERE `CREATETIME`>%s and CREATETIME<%s
+    """
+
+    order_sql = """
+            SELECT DATE_FORMAT(o.createtime, '%%Y-%%m-%%d') s_day, left(p,3), 
+            sum(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%' then 1 else 0 end) H5订单数
+            FROM TICKET_ORDER o 
+            WHERE o.CREATETIME>=%s 
+            and o.CREATETIME<%s
+            and INTFLAG=0 
+            AND IFNULL(o.`LINKTYPE`, 0) != 2
+            and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%')
+            GROUP BY s_day,left(p,3);
+        """
+
+    success_order_ticket_sql = """
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,
+        left(p, 3),
+        count(DISTINCT (case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' then o.ORDERID end)) H5成功订单数
+        FROM `TICKET_ORDERDETAIL` od 
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>=%s and od.CREATETIME<%s
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%')
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0 
+        GROUP BY s_day, left(p, 3);
+        """
+
+    ticket_sql = """
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day, left(p, 3),
+        sum(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' then 1 else 0 end) H5订票数
+        FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>=%s and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%')
+        AND IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0 
+        GROUP BY s_day, left(p, 3);
+        """
+
+    boat_insure_sql = """
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,left(p, 3),
+        count(DISTINCT case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' then i.insureid  end) 
+        FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        join INSURE_ORDERDETAIL i on o.ORDERID=i.outorderid
+        where od.CREATETIME>=%s and od.CREATETIME<%s 
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%') 
+        and i.insurecode in (
+        select DISTINCT id from INSURE_DATA where bigtype in (2))
+        GROUP BY s_day, left(p, 3)
+
+        """
+
+    web_insure_sql = """
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,left(p, 3),
+        count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' then i.insureid  end)) H5
+        FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        join INSURE_ORDERDETAIL i on CONCAT('P',o.ORDERID)=i.OUTORDERID
+        where od.CREATETIME>=%s and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%')
+        and i.insurecode in (
+        select DISTINCT id from INSURE_DATA where bigtype in (2)) 
+        GROUP BY s_day, left(p, 3);
+        """
+
+    delay_insure_sql = """
+            SELECT flydate, left(p, 3),
+            count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%' then o.ORDERID  end)) h5 
+            FROM `TICKET_DELAY_CARE` d 
+            join TICKET_ORDER o on d.ORDERID=o.ORDERID
+            WHERE flydate>=%s and flydate<%s
+            and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%')
+            and state='1' and INTFLAG=0 GROUP BY flydate, left(p, 3);
+        """
+
+    delay_accquire_sql = """
+
+            SELECT flydate,left(p, 3),
+            count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%' then o.ORDERID  end)) h5
+            FROM `TICKET_DELAY_CARE` d 
+            join TICKET_ORDER o on d.ORDERID=o.ORDERID
+            WHERE flydate>=%s and flydate<%s and state='1' 
+            and INTFLAG=0 and chargetime<>0 and chargenum!=0 
+            and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%')
+            GROUP BY flydate, left(p, 3);
+
+        """
+
+    consumers_sql = """
+            SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day, left(p, 3),
+            count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%' then PHONEID  end)) h5
+            FROM `TICKET_ORDERDETAIL` od 
+            INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+            join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
+            where od.CREATETIME>=%s and od.CREATETIME<%s
+            and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
+            AND IFNULL(od.`LINKTYPE`, 0) != 2 
+            and INTFLAG=0 and FIRSTPAY=1
+            and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%')
+            GROUP BY s_day, left(p, 3);
+
+        """
+    dto = [start_date, end_date]
+
+    order_data = DBCli().sourcedb_cli.query_all(order_sql, dto)
+    insert_order_sql = """
+        insert into operation_client_channel_H5_ticket_daily
+        (s_day, client, pn_resource, register_users, order_nums,
+        order_success_nums, ticket_num, boat_nums, website_boat_nums,
+        delay_insure_nums, delay_obtain_nums, consumers, create_time, update_time)
+        values (%s, %s, %s, 0, %s, 0, 0, 0, 0, 0, 0, 0, now(), now())
+    """
+    for o in order_data:
+        s_day, pn, num = o
+        DBCli().targetdb_cli.insert(insert_order_sql, [s_day, "H5", pn, num])
+
+    success_order_data = DBCli().sourcedb_cli.query_all(success_order_ticket_sql, dto)
+    update_success_sql = """
+        update operation_client_channel_H5_ticket_daily set order_success_nums=%s
+        where s_day=%s and pn_resource=%s
+    """
+    for s in success_order_data:
+        s_day, pn, num = s
+        DBCli().targetdb_cli.insert(update_success_sql, [num, s_day, pn])
+
+    ticket_data = DBCli().sourcedb_cli.query_all(ticket_sql, dto)
+    update_ticket_sql = """
+        update operation_client_channel_H5_ticket_daily set ticket_num=%s
+        where s_day=%s and pn_resource=%s
+    """
+
+    for t in ticket_data:
+        s_day, pn, num = t
+        DBCli().targetdb_cli.insert(update_ticket_sql, [num, s_day, pn])
+
+    boat_insure_data = DBCli().sourcedb_cli.query_all(boat_insure_sql, dto)
+    update_boat_sql = """
+        update operation_client_channel_H5_ticket_daily set boat_nums=%s
+        where s_day=%s and pn_resource=%s
+    """
+    for b in boat_insure_data:
+        s_day, pn, num = b
+        DBCli().targetdb_cli.insert(update_boat_sql, [num, s_day, pn])
+
+    web_insure_data = DBCli().sourcedb_cli.query_all(web_insure_sql, dto)
+    update_web_insure_sql = """
+        update operation_client_channel_H5_ticket_daily set website_boat_nums=%s
+        where s_day=%s and pn_resource=%s
+    """
+    for w in web_insure_data:
+        s_day, pn, num = w
+        DBCli().targetdb_cli.insert(update_web_insure_sql, [num, s_day, pn])
+
+    delay_insure_data = DBCli().sourcedb_cli.query_all(delay_insure_sql, dto)
+    update_delay_insure_sql = """
+        update operation_client_channel_H5_ticket_daily set delay_insure_nums=%s
+        where s_day=%s and pn_resource=%s
+    """
+    for d in delay_insure_data:
+        s_day, pn, num = d
+        DBCli().targetdb_cli.insert(update_delay_insure_sql, [num, s_day, pn])
+
+    delay_accquire_data = DBCli().sourcedb_cli.query_all(delay_accquire_sql, dto)
+    update_delay_obtain_sql = """
+        update operation_client_channel_H5_ticket_daily set delay_obtain_nums=%s
+        where s_day=%s and pn_resource=%s
+    """
+    for dc in delay_accquire_data:
+        s_day, pn, num = dc
+        DBCli().targetdb_cli.insert(update_delay_obtain_sql, [num, s_day, pn])
+
+    consumers_data = DBCli().sourcedb_cli.query_all(consumers_sql, dto)
+    update_consumers_sql = """
+        update operation_client_channel_H5_ticket_daily set consumers=%s
+        where s_day=%s and pn_resource=%s
+    """
+    for u in consumers_data:
+        s_day, pn, num = u
+        DBCli().targetdb_cli.insert(update_consumers_sql, [num, s_day, pn])
+
+
+    update_hj_sql = """
+        select sum(order_nums), sum(order_success_nums),
+        sum(ticket_num), sum(boat_nums), sum(website_boat_nums),
+        sum(delay_insure_nums), sum(delay_obtain_nums), sum(consumers)
+        from operation_client_channel_H5_ticket_daily
+        where s_day=%s and pn_resource !="合计"
+        group by client, s_day;
+    """
+    hj_data = DBCli().targetdb_cli.query_one(update_hj_sql, [start_date])
+    register_users = DBCli().sourcedb_cli.query_one(register_users_sql, dto)
+    insert_reg_sql = """
+        insert into operation_client_channel_H5_ticket_daily
+        (s_day, client, pn_resource, register_users, order_nums, 
+        order_success_nums, ticket_num, boat_nums, website_boat_nums, 
+        delay_insure_nums, delay_obtain_nums, consumers, create_time, update_time)
+        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+    """
+    insert_data = [start_date, "H5", "合计"] + [register_users[1]] + list(hj_data)
+    DBCli().targetdb_cli.insert(insert_reg_sql, insert_data)
+
+
 if __name__ == '__main__':
-    i = 1
-    while i <= 4:
-        update_hbgj_channel_client_ticket_daily(i)
+    # i = 1
+    # while i <= 4:
+    #     update_hbgj_channel_client_ticket_daily(i)
+    #     i += 1
+    i = 5
+    while i <= 12:
+        update_hbgj_channel_client_ticket_h5_daily(i)
         i += 1

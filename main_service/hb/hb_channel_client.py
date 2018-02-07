@@ -13,8 +13,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(createtime, '%%Y-%%m-%%d') s_day,
         sum(case when p like '%%hbgj%%' then 1 else 0 end) 航班管家注册用户,
         sum(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then 1 else 0 end) 高铁管家注册用户,
-        sum(case when p like '%%wxapplet%%' then 1 else 0 end) 高铁管家小程序注册用户,
-        sum(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then 1 else 0 end) 微信等其他注册用户
+        sum(case when p like '%%weixinyee%%' then 1 else 0 end) 野鹅注册用户
         FROM `phone_user` WHERE `CREATETIME`>= %s
         and `CREATETIME`< %s
     """
@@ -23,8 +22,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(o.createtime, '%%Y-%%m-%%d') s_day,SALETYPE,o.PNRSOURCE, 
         sum(case when p like '%%hbgj%%' then 1 else 0 end) 航班管家机票订单数, 
         sum(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then 1 else 0 end) 高铁管家机票订单数,
-        sum(case when p  like '%%wxapplet%%' then 1 else 0 end) 高铁小程序机票订单数,
-        sum(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then 1 else 0 end) 微信等其他机票订单数
+        sum(case when p like '%%weixinyee%%' then 1 else 0 end) 野鹅订单数
         FROM TICKET_ORDER o join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE 
         WHERE o.CREATETIME>=%s and o.CREATETIME<%s and INTFLAG=0 
         GROUP BY s_day,SALETYPE, o.PNRSOURCE ;
@@ -34,8 +32,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,SALETYPE, 
         o.PNRSOURCE,count(DISTINCT(case when p like '%%hbgj%%' then o.ORDERID  end)) 航班管家机票成功订单数,
         count(DISTINCT(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then o.ORDERID  end)) 高铁管家机票成功订单数,
-        count(DISTINCT(case when p like '%%wxapplet%%' then o.ORDERID  end)) 高铁小程序机票成功订单数,
-        count(DISTINCT(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then o.ORDERID  end)) 微信等其他机票成功订单数
+        count(DISTINCT(case when p like '%%weixinyee%%' then o.ORDERID  end)) 高铁小程序机票成功订单数
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
         where od.CREATETIME>=%s and od.CREATETIME<%s 
@@ -47,8 +44,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,SALETYPE,o.PNRSOURCE, 
         sum(case when p like '%%hbgj%%' then 1 else 0 end) 航班管家机票成功出票数, 
         sum(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then 1 else 0 end) 高铁管家机票成功出票数,
-        sum(case when p  like '%%wxapplet%%' then 1 else 0 end) 高铁小程序机票成功出票数,
-        sum(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then 1 else 0 end) 微信等其他机票成功出票数
+        sum(case when p like '%%weixinyee%%' then 1 else 0 end) 野鹅机票成功出票数
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
         where od.CREATETIME>=%s and od.CREATETIME<%s
@@ -61,16 +57,16 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,SALETYPE,o.PNRSOURCE,
         count(DISTINCT(case when p like '%%hbgj%%' then i.insureid  end)) 航班管家机票成功保单数, 
         count(DISTINCT(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then i.insureid  end)) 高铁管家机票成功保单数,
-        count(DISTINCT(case when p  like '%%wxapplet%%' then i.insureid  end)) 高铁小程序机票成功保单数,
-        count(DISTINCT(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then i.insureid  end)) 微信等其他机票成功保单数
+        count(DISTINCT(case when p like '%%weixinyee%%' then i.insureid  end)) 高铁小程序机票成功保单数
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
         join INSURE_ORDERDETAIL i on o.ORDERID=i.outorderid
         where od.CREATETIME>=%s and od.CREATETIME<%s 
-        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
-        IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0 GROUP BY s_day,SALETYPE,o.PNRSOURCE
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
         and i.insurecode in (
-        select DISTINCT id from INSURE_DATA where bigtype in (2));
+        select DISTINCT id from INSURE_DATA where bigtype in (2))
+        and IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0 GROUP BY s_day,SALETYPE,o.PNRSOURCE
+
 
     """
 
@@ -78,8 +74,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,SALETYPE,o.PNRSOURCE,
         count(DISTINCT(case when p like '%%hbgj%%' then i.insureid  end)) 航班管家机票成功保单数, 
         count(DISTINCT(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then i.insureid  end)) 高铁管家机票成功保单数,
-        count(DISTINCT(case when p  like '%%wxapplet%%' then i.insureid  end)) 高铁小程序机票成功保单数,
-        count(DISTINCT(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then i.insureid  end)) 微信等其他机票成功保单数
+        count(DISTINCT(case when p like '%%weixinyee%%' then i.insureid  end)) 高铁小程序机票成功保单数
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
         join INSURE_ORDERDETAIL i on CONCAT('P',o.ORDERID)=i.OUTORDERID
@@ -95,12 +90,12 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT flydate,SALETYPE, o.PNRSOURCE,
         count(DISTINCT(case when p like '%%hbgj%%' then o.ORDERID  end)) 航班管家机票成功出票数, 
         count(DISTINCT(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then o.ORDERID  end)) 高铁管家机票成功出票数,
-        count(DISTINCT(case when p  like '%%wxapplet%%' then o.ORDERID  end)) 高铁小程序机票成功出票数,
-        count(DISTINCT(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then o.ORDERID  end)) 微信等其他机票成功出票数
+        count(DISTINCT(case when p like '%%weixinyee%%' then o.ORDERID  end)) 高铁小程序机票成功出票数
          FROM `TICKET_DELAY_CARE` d 
         join TICKET_ORDER o on d.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
-        WHERE flydate>=%s and flydate<%s and state='1' and INTFLAG=0 GROUP BY SALETYPE;
+        WHERE flydate>=%s and flydate<%s and state='1' and INTFLAG=0 
+        GROUP BY SALETYPE, o.PNRSOURCE, flydate;
     """
 
     delay_accquire_sql = """
@@ -108,12 +103,12 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT flydate,SALETYPE,c.PNRSOURCE,
         count(DISTINCT(case when p like '%%hbgj%%' then o.ORDERID  end)) 航班管家机票成功出票数, 
         count(DISTINCT(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then o.ORDERID  end)) 高铁管家机票成功出票数,
-        count(DISTINCT(case when p  like '%%wxapplet%%' then o.ORDERID  end)) 高铁小程序机票成功出票数,
-        count(DISTINCT(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then o.ORDERID  end)) 微信等其他机票成功出票数
+        count(DISTINCT(case when p like '%%weixinyee%%' then o.ORDERID  end)) 高铁小程序机票成功出票数
          FROM `TICKET_DELAY_CARE` d 
         join TICKET_ORDER o on d.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
-        WHERE flydate>=%s and flydate<%s and state='1' and INTFLAG=0 and chargetime<>0 and chargenum!=0 GROUP BY SALETYPE;
+        WHERE flydate>=%s and flydate<%s and state='1' and INTFLAG=0 and chargetime<>0 
+        and chargenum!=0 GROUP BY SALETYPE, o.PNRSOURCE, flydate;
 
     """
 
@@ -121,8 +116,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,SALETYPE,o.PNRSOURCE,
         count(DISTINCT(case when p like '%%hbgj%%' then PHONEID  end)) 航班管家机票新增消费用户数,
         count(DISTINCT(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then PHONEID  end)) 高铁管家机票新增消费用户数,
-        count(DISTINCT(case when p like '%%wxapplet%%' then PHONEID  end)) 高铁小程序机票新增消费用户数,
-        count(DISTINCT(case when p not like '%%gtgj%%' and p not like '%%hbgj%%' then PHONEID end)) 微信等其他机票新增消费用户数
+        count(DISTINCT(case when p like '%%weixinyee%%' then PHONEID  end)) 高铁小程序机票新增消费用户数
         FROM `TICKET_ORDERDETAIL` od 
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
@@ -139,45 +133,41 @@ def update_hbgj_channel_client_ticket_daily(days=1):
     dto = [start_date, end_date]
     register_users = DBCli().sourcedb_cli.query_all(register_users_sql, dto)
     for reg in register_users:
-        s_day, hbgj_users, gt_users, gt_weixin, weixin = reg
+        s_day, hbgj_users, gt_users, ye = reg
         reg_users_dict[u"hb-注册用户"] = hbgj_users
         reg_users_dict[u"gt-注册用户"] = gt_users
-        reg_users_dict[u"wx-注册用户"] = weixin
-        reg_users_dict[u"gtwx-注册用户"] = gt_weixin
+        reg_users_dict[u"ye-注册用户"] = ye
+
+    print reg_users_dict
 
     order = DBCli().sourcedb_cli.query_all(order_sql, dto)
 
-    insert_keys = ["hb-zx", "gt-zx", "wx-zx", "gtwx-zx",
-                   "hb-zy", "gt-zy", "wx-zy", "gtwx-zy",
-                   "hb-hzf", "gt-hzf", "wx-hzf", "gtwx-hzf",
-                   "hb-gwdg", "gt-gwdg", "wx-gwdg", "gtwx-gwdg"
+    insert_keys = ["hb-zx", "gt-zx", "ye-zx",
+                   "hb-zy", "gt-zy", "ye-zy",
+                   "hb-hzf", "gt-hzf", "ye-hzf",
+                   "hb-gwdg", "gt-gwdg", "ye-gwdg"
                    ]
 
     def map_fun(sale_type, pn, arg):
         hb = arg[3]
         gt = arg[4]
-        gt_wx = arg[5]
-        wx = arg[6]
+        ye = arg[5]
         if str(sale_type) == "10":
             insert_data["hb-zx"].append(hb)
             insert_data["gt-zx"].append(gt)
-            insert_data["gtwx-zx"].append(gt_wx)
-            insert_data["wx-zx"].append(wx)
+            insert_data["ye-zx"].append(ye)
         elif str(sale_type) == "13" or pn == "hlth":
             insert_data["hb-zy"].append(hb)
             insert_data["gt-zy"].append(gt)
-            insert_data["gtwx-zy"].append(gt_wx)
-            insert_data["wx-zy"].append(wx)
+            insert_data["ye-zy"].append(ye)
         elif str(sale_type) == "12" and pn != "hlth":
             insert_data["hb-hzf"].append(hb)
             insert_data["gt-hzf"].append(gt)
-            insert_data["gtwx-hzf"].append(gt_wx)
-            insert_data["wx-hzf"].append(wx)
+            insert_data["ye-hzf"].append(ye)
         elif str(sale_type) == "11" or str(sale_type) == "15":
             insert_data["hb-gwdg"].append(hb)
             insert_data["gt-gwdg"].append(gt)
-            insert_data["gtwx-gwdg"].append(gt_wx)
-            insert_data["wx-gwdg"].append(wx)
+            insert_data["ye-gwdg"].append(ye)
         else:
             print "error"
             print arg
@@ -295,54 +285,29 @@ def update_hbgj_channel_client_ticket_daily(days=1):
                 v.insert(0, "高铁管家")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
-        elif k[0] == "wx":
+        elif k[0] == "ye":
             if k[1] == "zx":
                 v.insert(0, 31)
                 v.insert(0, "直销")
-                v.insert(0, "微信")
+                v.insert(0, "野鹅")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "zy":
                 v.insert(0, 32)
                 v.insert(0, "自营")
-                v.insert(0, "微信")
+                v.insert(0, "野鹅")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "hzf":
                 v.insert(0, 33)
                 v.insert(0, "合作方")
-                v.insert(0, "微信")
+                v.insert(0, "野鹅")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
             elif k[1] == "gwdg":
                 v.insert(0, 34)
                 v.insert(0, "官网代购")
-                v.insert(0, "微信")
-                v.insert(0, start_date)
-                last_insert_data.append(v)
-        elif k[0] == "gtwx":
-            if k[1] == "zx":
-                v.insert(0, 41)
-                v.insert(0, "直销")
-                v.insert(0, "高铁微信小程序")
-                v.insert(0, start_date)
-                last_insert_data.append(v)
-            elif k[1] == "zy":
-                v.insert(0, 42)
-                v.insert(0, "自营")
-                v.insert(0, "高铁微信小程序")
-                v.insert(0, start_date)
-                last_insert_data.append(v)
-            elif k[1] == "hzf":
-                v.insert(0, 43)
-                v.insert(0, "合作方")
-                v.insert(0, "高铁微信小程序")
-                v.insert(0, start_date)
-                last_insert_data.append(v)
-            elif k[1] == "gwdg":
-                v.insert(0, 44)
-                v.insert(0, "官网代购")
-                v.insert(0, "高铁微信小程序")
+                v.insert(0, "野鹅")
                 v.insert(0, start_date)
                 last_insert_data.append(v)
 
@@ -363,8 +328,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
 
     new_last_insert_data.append([start_date, "航班管家", "合计", 10, reg_users_dict[u"hb-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
     new_last_insert_data.append([start_date, "高铁管家", "合计", 20, reg_users_dict[u"gt-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
-    new_last_insert_data.append([start_date, "微信", "合计", 30, reg_users_dict[u"wx-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
-    new_last_insert_data.append([start_date, "高铁微信小程序", "合计", 40, reg_users_dict[u"gtwx-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
+    new_last_insert_data.append([start_date, "野鹅", "合计", 30, reg_users_dict[u"ye-注册用户"], 0, 0, 0, 0, 0, 0, 0, 0])
 
     DBCli().targetdb_cli.batch_insert(insert_sql, new_last_insert_data)
     update_client_channel_hj(start_date)
@@ -635,11 +599,11 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
 
 
 if __name__ == '__main__':
-    # i = 1
-    # while i <= 4:
-    #     update_hbgj_channel_client_ticket_daily(i)
-    #     i += 1
-    i = 5
-    while i <= 12:
-        update_hbgj_channel_client_ticket_h5_daily(i)
+    i = 1
+    while i <= 13:
+        update_hbgj_channel_client_ticket_daily(i)
         i += 1
+    # i = 5
+    # while i <= 12:
+    #     update_hbgj_channel_client_ticket_h5_daily(i)
+    #     i += 1

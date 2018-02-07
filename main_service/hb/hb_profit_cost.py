@@ -372,7 +372,7 @@ def update_huoli_car_income_type(days=0):
 
 def update_profit_hb_income(days=0):
     """航班收入, profit_hb_income"""
-    query_date = DateUtil.get_date_before_days(days*352)
+    query_date = DateUtil.get_date_before_days(days*15)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
@@ -430,6 +430,27 @@ def update_profit_hb_income(days=0):
     DBCli().targetdb_cli.batch_insert(insert_sql, hb_profit)
     inter_inland_data = DBCli().sourcedb_cli.query_all(inter_inland_sql, [query_date, today])
     DBCli().targetdb_cli.batch_insert(update_inter_inland_sql, inter_inland_data)
+
+    official_insure_income_sql = """
+        SELECT 
+        sum(pay_price+outpay_price*r.RATE-outpay_price) ,
+        left(o.createtime,10)
+        FROM `TICKET_ORDER_ITEMDETAIL` o 
+        join TICKET_INSURE_INCOME_RULE r 
+        on r.insureid=SUBSTR(extinfo,10,8) 
+        WHERE item_id<>'7' 
+        and realitem_id='2' 
+        and left(o.createtime,10) >= %s
+        and left(o.createtime,10) < %s
+        and `status`=2  
+        and pay_price<>1 GROUP BY left(o.createtime,10)
+    """
+    update_office_sql = """
+        update profit_hb_income set official_insure_income = %s, updatetime=now()
+        where s_day=%s
+    """
+    office_data = DBCli().sourcedb_cli.query_all(official_insure_income_sql, [query_date, today])
+    DBCli().targetdb_cli.batch_insert(update_office_sql, office_data)
 
 
 def update_profit_hotel_income(days=0):
@@ -760,11 +781,11 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    # update_hb_inter_coupon_cost_daily(1)
-    i = 1
-    while i <= 11:
-        update_huoli_car_income_type(i)
-        i += 1
+    update_profit_hb_income(1)
+    # i = 1
+    # while i <= 11:
+    #     update_huoli_car_income_type(i)
+    #     i += 1
     # i = 1
     # while i <= 352:
     #     update_operation_hbgj_channel_ticket_profit_daily(i)

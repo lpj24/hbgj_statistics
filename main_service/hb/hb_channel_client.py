@@ -138,8 +138,6 @@ def update_hbgj_channel_client_ticket_daily(days=1):
         reg_users_dict[u"gt-注册用户"] = gt_users
         reg_users_dict[u"ye-注册用户"] = ye
 
-    print reg_users_dict
-
     order = DBCli().sourcedb_cli.query_all(order_sql, dto)
 
     insert_keys = ["hb-zx", "gt-zx", "ye-zx",

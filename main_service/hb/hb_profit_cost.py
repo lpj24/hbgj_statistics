@@ -49,7 +49,9 @@ def update_hb_car_hotel_profit(days=0):
         then amount else 0 end) else_coupon_return,
         sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
         sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
-        sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('6','8','24','25')) then amount else 0 end) balance_give_amount
+        
+        sum(case when (AMOUNT_TYPE=6 and PRODUCT ='8')  then amount else 0 end) balance_give_amount_8,
+        sum(case when (AMOUNT_TYPE=6 and PRODUCT ='24')  then amount else 0 end) balance_give_amount_24
         from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
         group by TRADE_TIME
     """
@@ -169,8 +171,9 @@ def update_hb_car_hotel_profit(days=0):
     cut_point_amount = DBCli().sourcedb_cli.query_all(cut_point_sql, dto)
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
-        else_coupon_in, else_coupon_return, delay_care, point_give_amount, balance_give_amount, createtime, updatetime) values (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now()
+        else_coupon_in, else_coupon_return, delay_care, point_give_amount, balance_give_amount_8, 
+        balance_give_amount_24, createtime, updatetime) values (
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now()
         )
         on duplicate key update updatetime = now(),
         s_day = VALUES(s_day),
@@ -182,7 +185,8 @@ def update_hb_car_hotel_profit(days=0):
         else_coupon_return = VALUES(else_coupon_return),
         delay_care = VALUES(delay_care),
         point_give_amount = VALUES(point_give_amount),
-        balance_give_amount = VALUES(balance_give_amount)
+        balance_give_amount_8 = VALUES(balance_give_amount_8),
+        balance_give_amount_24 = VALUES(balance_give_amount_24)
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, result)
     DBCli().targetdb_cli.batch_insert(update_other_cost_sql, other_result)
@@ -781,7 +785,7 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_profit_hb_income(1)
+    update_hb_car_hotel_profit(1)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

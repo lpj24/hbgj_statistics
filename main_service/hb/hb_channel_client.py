@@ -9,6 +9,7 @@ def update_hbgj_channel_client_ticket_daily(days=1):
     start_date = DateUtil.get_date_before_days(days * 1)
     end_date = DateUtil.get_date_after_days(1 - days)
     start_date = str(start_date)
+
     register_users_sql = """
         SELECT DATE_FORMAT(createtime, '%%Y-%%m-%%d') s_day,
         sum(case when p like '%%hbgj%%' then 1 else 0 end) 航班管家注册用户,

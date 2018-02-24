@@ -134,6 +134,7 @@ def update_weex_activated_type_daily(days=0):
         insert_data.append(v)
     DBCli().targetdb_cli.batch_insert(insert_sql, insert_data)
 
+
 if __name__ == "__main__":
     # update_hbgj_stages_daily(1)
     # update_hbgj_stages_daily(1)

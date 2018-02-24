@@ -104,6 +104,7 @@ def update_weex_activated_type_daily(days=0):
     """
     insert_result = defaultdict(list)
     insert_data = []
+    
     for p in ['ios.', '']:
         for e in event_list:
             pv_data = request_pv(query_date, query_date, p + e, 'day, a:type')

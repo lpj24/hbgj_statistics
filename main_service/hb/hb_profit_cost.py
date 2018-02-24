@@ -453,8 +453,29 @@ def update_profit_hb_income(days=0):
         update profit_hb_income set official_insure_income = %s, updatetime=now()
         where s_day=%s
     """
+
     office_data = DBCli().sourcedb_cli.query_all(official_insure_income_sql, [query_date, today])
     DBCli().targetdb_cli.batch_insert(update_office_sql, office_data)
+
+    no_website_sql = """
+        SELECT 
+        sum(pay_price+outpay_price*r.RATE-outpay_price) insure_package,
+        left(o.createtime,10) s_day
+        FROM `TICKET_ORDER_ITEMDETAIL` o join TICKET_INSURE_INCOME_RULE r 
+        on r.insureid=SUBSTR(extinfo,10,8) 
+        WHERE item_id='7' 
+        and realitem_id='2' and `status`=2  
+        and left(o.createtime,10)>=%s 
+        and left(o.createtime,10)<%s
+        and pay_price<>1 GROUP BY left(o.createtime,10);
+    """
+
+    update_no_office_sql = """
+        update profit_hb_income set insure_package = %s, updatetime=now()
+        where s_day=%s
+    """
+    no_office_data = DBCli().sourcedb_cli.query_all(no_website_sql, [query_date, today])
+    DBCli().targetdb_cli.batch_insert(update_no_office_sql, no_office_data)
 
 
 def update_profit_hotel_income(days=0):

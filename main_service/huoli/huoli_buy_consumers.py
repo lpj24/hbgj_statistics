@@ -209,6 +209,8 @@ def update_huoli_edj_newconsumers_daily(days=0):
 
 if __name__ == '__main__':
     import datetime
+
+    update_huoli_buy_newconsumers_daily(4)
     # start_date, end_date = DateUtil.get_last_week_date()
     # while start_date >= datetime.date(2017, 1, 16):
     #     print start_date
@@ -223,10 +225,10 @@ if __name__ == '__main__':
     #     start_date, end_date = DateUtil.get_last_month_date(start_date)
     # update_huoli_buy_consumers_weekly()
     # update_huoli_buy_orders_daily(1)
-    i = 1
-    while i <= 280:
-        update_huoli_edj_newconsumers_daily(i)
-        i += 1
+    # i = 1
+    # while i <= 280:
+    #     update_huoli_edj_newconsumers_daily(i)
+    #     i += 1
 
     # s = datetime.date(2017, 4, 1)
     # update_huoli_buy_consumers_quarterly(s)

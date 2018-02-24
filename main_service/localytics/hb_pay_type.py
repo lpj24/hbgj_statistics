@@ -128,4 +128,4 @@ def hb_pay_type(days=0):
         start_date = DateUtil.add_days(start_date, 1)
 
 if __name__ == "__main__":
-    hb_pay_type(1)
+    hb_pay_type(8)

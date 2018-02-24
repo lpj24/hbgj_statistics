@@ -108,16 +108,23 @@ def update_weex_activated_type_daily(days=0):
         for e in event_list:
             pv_data = request_pv(query_date, query_date, p + e, 'day, a:type')
             uv_data = request_uv(query_date, query_date, p + e, 'day, a:type')
+
             if len(pv_data) >= 1:
                 insert_result[query_date].append(pv_data[0]['sessions_per_event'])
-                insert_result[query_date].append(pv_data[1]['sessions_per_event'])
+                if len(pv_data) < 2:
+                    insert_result[query_date].append(0)
+                else:
+                    insert_result[query_date].append(pv_data[1]['sessions_per_event'])
             else:
                 insert_result[query_date].append(0)
                 insert_result[query_date].append(0)
 
             if len(uv_data) >= 1:
                 insert_result[query_date].append(uv_data[0]['users'])
-                insert_result[query_date].append(uv_data[1]['users'])
+                if len(uv_data) < 2:
+                    insert_result[query_date].append(0)
+                else:
+                    insert_result[query_date].append(uv_data[1]['users'])
             else:
                 insert_result[query_date].append(0)
                 insert_result[query_date].append(0)
@@ -130,4 +137,4 @@ def update_weex_activated_type_daily(days=0):
 if __name__ == "__main__":
     # update_hbgj_stages_daily(1)
     # update_hbgj_stages_daily(1)
-    update_weex_activated_type_daily(1)
+    update_weex_activated_type_daily(9)

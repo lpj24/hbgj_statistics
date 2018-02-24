@@ -592,7 +592,8 @@ def update_operation_hbgj_obsolete_order_daily(days=1):
 
 
 if __name__ == "__main__":
-    i = 1
-    while i <= 352:
-        update_hb_channel_ticket_income_daily(i)
-        i += 1
+    # i = 1
+    # while i <= 352:
+    #     update_hb_channel_ticket_income_daily(i)
+    #     i += 1
+    update_hb_channel_ticket_income_daily(2)

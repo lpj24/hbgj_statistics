@@ -785,7 +785,7 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    update_operation_hbgj_channel_ticket_profit_daily(2)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

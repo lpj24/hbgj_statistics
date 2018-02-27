@@ -112,6 +112,7 @@ if __name__ == "__main__":
         finally:
             utils.storage_execute_job(fun)
     check_day_data()
+
     exception_table = cal_balance()
 
     if exception_table:

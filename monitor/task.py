@@ -68,12 +68,14 @@ def check_week_data(table_list):
 
 
 def execute_later_job():
+    from main_service.hb import hb_ticket_issue_refund
     TimeService.add_later_service(gt_income_cost.update_gt_income_cost)
     TimeService.add_later_service(hb_profit_cost.update_hb_car_hotel_profit)
     TimeService.add_later_service(hb_profit_cost.update_car_cost_detail)
     TimeService.add_later_service(hb_profit_cost.update_huoli_car_income_type)
     TimeService.add_later_service(hb_profit_cost.update_profit_hotel_income)
     TimeService.add_later_service(hb_insure.update_insure_type_daily)
+    TimeService.add_later_service(hb_ticket_issue_refund.update_profit_hb_supply_transfer_daily)
     return TimeService
 
 

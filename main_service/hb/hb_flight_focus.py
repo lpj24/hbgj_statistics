@@ -602,4 +602,4 @@ def tmp_cal_inter_inland(codes_city):
 
 
 if __name__ == "__main__":
-    update_flight_focus_user_daily(1)
+    update_flight_focus_user_daily(2)

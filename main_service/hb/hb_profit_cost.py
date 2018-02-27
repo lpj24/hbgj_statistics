@@ -698,79 +698,79 @@ def update_profit_hb_income_official_website(days=0):
 
 def update_hb_inter_coupon_cost_daily(days=0):
     """国外航班优惠券支付成本, profit_hb_inter_cost"""
-    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 118), '%Y-%m-%d')
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
-    # coupon_sql = """
-    #     select distinct
-    #     sum(case when (AMOUNT_TYPE=1 and cost=10 and TRADE_CHANNEL='coupon')
-    #     then amount else 0 end) coupon_in,
-    #     sum(case when (AMOUNT_TYPE=4 and cost=10 and TRADE_CHANNEL='coupon')
-    #     then amount else 0 end) coupon_return,
-    #     TRADE_TIME s_day
-    #     from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
-    #     group by TRADE_TIME
-    # """
-    #
-    # pay_cost_in_sql = """
-    #     SELECT DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day, sum(ptr.price*4/1000) pay_price1
-    #     from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc
-    #     where left(ptr.create_time,10)>=%s
-    #     and left(ptr.create_time,10)<%s
-    #     and ptr.PAYSOURCE in('weixinpay','bankcard','alipay','applepay','xinyf')
-    #     and ptr.order_id=tico.ORDERID
-    #     and tico.INTFLAG = 1
-    #     and tico.PnrSource=pc.PnrSource
-    #     group by s_day
-    #     order by s_day;
-    # """
-    #
-    # pay_cost_in_other_sql = """
-    #     SELECT DATE_FORMAT(eo.create_time,'%%Y-%%m-%%d') s_day,
-    #     sum((ticod.price+ticod.ratefee)*4/1000) pay_price2
-    #     from TICKET_ORDER tico,TICKET_ORDERDETAIL ticod,event_order eo,PNRSOURCE_CONFIG pc
-    #     where tico.ORDERID=ticod.ORDERID
-    #     and ticod.ORDERID = eo.order_id
-    #     and eo.EVENT_group='519sec'
-    #     and tico.INTFLAG=1 and tico.PNRSOURCE=pc.PNRSOURCE
-    #     and left(eo.create_time,10)>=%s
-    #     and left(eo.create_time,10)<%s
-    #     group by s_day
-    #     order by s_day;
-    # """
-    #
-    # insert_pay_cost_in_sql = """
-    #     insert into profit_hb_inter_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
-    #     createtime, updatetime)
-    #     values
-    #     (%s, %s, 0, 0, 0, now(), now())
-    #     on duplicate key update updatetime = now(),
-    #     s_day = VALUES(s_day),
-    #     paycost_in = VALUES(paycost_in),
-    #     paycost_return = VALUES(paycost_return),
-    #     coupon_in = VALUES(coupon_in),
-    #     coupon_return = VALUES(coupon_return)
-    # """
-    #
-    # update_coupon_inter_sql = """
-    #     update profit_hb_inter_cost set coupon_in = %s, coupon_return=%s
-    #     where s_day=%s
-    # """
-    #
+    coupon_sql = """
+        select distinct
+        sum(case when (AMOUNT_TYPE=1 and cost=10 and TRADE_CHANNEL='coupon')
+        then amount else 0 end) coupon_in,
+        sum(case when (AMOUNT_TYPE=4 and cost=10 and TRADE_CHANNEL='coupon')
+        then amount else 0 end) coupon_return,
+        TRADE_TIME s_day
+        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+        group by TRADE_TIME
+    """
+
+    pay_cost_in_sql = """
+        SELECT DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day, sum(ptr.price*4/1000) pay_price1
+        from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc
+        where left(ptr.create_time,10)>=%s
+        and left(ptr.create_time,10)<%s
+        and ptr.PAYSOURCE in('weixinpay','bankcard','alipay','applepay','xinyf')
+        and ptr.order_id=tico.ORDERID
+        and tico.INTFLAG = 1
+        and tico.PnrSource=pc.PnrSource
+        group by s_day
+        order by s_day;
+    """
+
+    pay_cost_in_other_sql = """
+        SELECT DATE_FORMAT(eo.create_time,'%%Y-%%m-%%d') s_day,
+        sum((ticod.price+ticod.ratefee)*4/1000) pay_price2
+        from TICKET_ORDER tico,TICKET_ORDERDETAIL ticod,event_order eo,PNRSOURCE_CONFIG pc
+        where tico.ORDERID=ticod.ORDERID
+        and ticod.ORDERID = eo.order_id
+        and eo.EVENT_group='519sec'
+        and tico.INTFLAG=1 and tico.PNRSOURCE=pc.PNRSOURCE
+        and left(eo.create_time,10)>=%s
+        and left(eo.create_time,10)<%s
+        group by s_day
+        order by s_day;
+    """
+
+    insert_pay_cost_in_sql = """
+        insert into profit_hb_inter_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
+        createtime, updatetime)
+        values
+        (%s, %s, 0, 0, 0, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = VALUES(s_day),
+        paycost_in = VALUES(paycost_in),
+        paycost_return = VALUES(paycost_return),
+        coupon_in = VALUES(coupon_in),
+        coupon_return = VALUES(coupon_return)
+    """
+
+    update_coupon_inter_sql = """
+        update profit_hb_inter_cost set coupon_in = %s, coupon_return=%s
+        where s_day=%s
+    """
+
     dto = [query_date, today]
-    # coupon_inter = DBCli().pay_cost_cli.query_all(coupon_sql, dto)
-    #
-    # pay_cost_in = DBCli().sourcedb_cli.query_all(pay_cost_in_sql, dto)
-    # pay_cost_in_other = dict(DBCli().sourcedb_cli.query_all(pay_cost_in_other_sql, dto))
-    #
-    # pay_cost_in_all = []
-    #
-    # for key, val in dict(pay_cost_in).items():
-    #     pay_cost_in_all.append([key, float(val) + pay_cost_in_other.get(key, 0)])
-    #
-    # DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in_all)
-    #
-    # DBCli().targetdb_cli.batch_insert(update_coupon_inter_sql, coupon_inter)
+    coupon_inter = DBCli().pay_cost_cli.query_all(coupon_sql, dto)
+
+    pay_cost_in = DBCli().sourcedb_cli.query_all(pay_cost_in_sql, dto)
+    pay_cost_in_other = dict(DBCli().sourcedb_cli.query_all(pay_cost_in_other_sql, dto))
+
+    pay_cost_in_all = []
+
+    for key, val in dict(pay_cost_in).items():
+        pay_cost_in_all.append([key, float(val) + pay_cost_in_other.get(key, 0)])
+
+    DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in_all)
+
+    DBCli().targetdb_cli.batch_insert(update_coupon_inter_sql, coupon_inter)
 
     balance_give_amount_sql = """
         SELECT 

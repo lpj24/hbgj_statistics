@@ -700,7 +700,6 @@ def update_hb_inter_coupon_cost_daily(days=0):
     """国外航班优惠券支付成本, profit_hb_inter_cost"""
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
-
     coupon_sql = """
         select distinct
         sum(case when (AMOUNT_TYPE=1 and cost=10 and TRADE_CHANNEL='coupon')

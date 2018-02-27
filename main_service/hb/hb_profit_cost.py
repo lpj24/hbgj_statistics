@@ -698,115 +698,129 @@ def update_profit_hb_income_official_website(days=0):
 
 def update_hb_inter_coupon_cost_daily(days=0):
     """国外航班优惠券支付成本, profit_hb_inter_cost"""
-    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 3), '%Y-%m-%d')
+    query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 118), '%Y-%m-%d')
     today = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
 
-    # coupon_inter_in_sql = """
-    #     SELECT
-    #     SUM(price) coupon_inter_in,
-    #     DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day
+    # coupon_sql = """
+    #     select distinct
+    #     sum(case when (AMOUNT_TYPE=1 and cost=10 and TRADE_CHANNEL='coupon')
+    #     then amount else 0 end) coupon_in,
+    #     sum(case when (AMOUNT_TYPE=4 and cost=10 and TRADE_CHANNEL='coupon')
+    #     then amount else 0 end) coupon_return,
+    #     TRADE_TIME s_day
+    #     from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
+    #     group by TRADE_TIME
+    # """
+    #
+    # pay_cost_in_sql = """
+    #     SELECT DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day, sum(ptr.price*4/1000) pay_price1
     #     from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc
     #     where left(ptr.create_time,10)>=%s
     #     and left(ptr.create_time,10)<%s
-    #     and tico.INTFLAG=1
-    #     and ptr.paysource in('coupon')
-    #     and tico.orderid=ptr.order_id
-    #     and tico.PnrSource=pc.PnrSource
-    #     GROUP BY s_day
-    #     order by s_day;
-    # """
-    #
-    # coupon_inter_return_sql = """
-    #     SELECT
-    #     SUM(price) coupon_inter_return ,
-    #     DATE_FORMAT(tor.INREFUND_TIME,'%%Y-%%m-%%d') s_day
-    #     from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc,TICKET_ORDER_REFUND tor
-    #     where left(tor.INREFUND_TIME,10)>=%s
-    #     and left(tor.INREFUND_TIME,10)<%s
-    #     and tico.INTFLAG=1
-    #     and ptr.paysource in('coupon')
-    #     and tico.orderid=ptr.order_id
-    #     and tico.orderid=tor.orderid
-    #     and tor.STATUS=7
+    #     and ptr.PAYSOURCE in('weixinpay','bankcard','alipay','applepay','xinyf')
+    #     and ptr.order_id=tico.ORDERID
+    #     and tico.INTFLAG = 1
     #     and tico.PnrSource=pc.PnrSource
     #     group by s_day
     #     order by s_day;
     # """
+    #
+    # pay_cost_in_other_sql = """
+    #     SELECT DATE_FORMAT(eo.create_time,'%%Y-%%m-%%d') s_day,
+    #     sum((ticod.price+ticod.ratefee)*4/1000) pay_price2
+    #     from TICKET_ORDER tico,TICKET_ORDERDETAIL ticod,event_order eo,PNRSOURCE_CONFIG pc
+    #     where tico.ORDERID=ticod.ORDERID
+    #     and ticod.ORDERID = eo.order_id
+    #     and eo.EVENT_group='519sec'
+    #     and tico.INTFLAG=1 and tico.PNRSOURCE=pc.PNRSOURCE
+    #     and left(eo.create_time,10)>=%s
+    #     and left(eo.create_time,10)<%s
+    #     group by s_day
+    #     order by s_day;
+    # """
+    #
+    # insert_pay_cost_in_sql = """
+    #     insert into profit_hb_inter_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
+    #     createtime, updatetime)
+    #     values
+    #     (%s, %s, 0, 0, 0, now(), now())
+    #     on duplicate key update updatetime = now(),
+    #     s_day = VALUES(s_day),
+    #     paycost_in = VALUES(paycost_in),
+    #     paycost_return = VALUES(paycost_return),
+    #     coupon_in = VALUES(coupon_in),
+    #     coupon_return = VALUES(coupon_return)
+    # """
+    #
+    # update_coupon_inter_sql = """
+    #     update profit_hb_inter_cost set coupon_in = %s, coupon_return=%s
+    #     where s_day=%s
+    # """
+    #
+    dto = [query_date, today]
+    # coupon_inter = DBCli().pay_cost_cli.query_all(coupon_sql, dto)
+    #
+    # pay_cost_in = DBCli().sourcedb_cli.query_all(pay_cost_in_sql, dto)
+    # pay_cost_in_other = dict(DBCli().sourcedb_cli.query_all(pay_cost_in_other_sql, dto))
+    #
+    # pay_cost_in_all = []
+    #
+    # for key, val in dict(pay_cost_in).items():
+    #     pay_cost_in_all.append([key, float(val) + pay_cost_in_other.get(key, 0)])
+    #
+    # DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in_all)
+    #
+    # DBCli().targetdb_cli.batch_insert(update_coupon_inter_sql, coupon_inter)
 
-    coupon_sql = """
-        select distinct
-        sum(case when (AMOUNT_TYPE=1 and cost=10 and TRADE_CHANNEL='coupon')
-        then amount else 0 end) coupon_in,
-        sum(case when (AMOUNT_TYPE=4 and cost=10 and TRADE_CHANNEL='coupon')
-        then amount else 0 end) coupon_return,
-        TRADE_TIME s_day
-        from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
-        group by TRADE_TIME
+    balance_give_amount_sql = """
+        SELECT 
+        sum(amount) balance_give_amount,
+        left(rr.RECHARGE_TIME,10) sday
+        from TICKET_ORDER tico,
+        RECHARGE_RECORD rr
+        where tico.ORDERID = rr.orderid 
+        and tico.INTFLAG=1 
+        and rr.RECHARGE_TIME>=%s
+        and rr.RECHARGE_TIME<%s
+        GROUP BY sday
     """
 
-    pay_cost_in_sql = """
-        SELECT DATE_FORMAT(ptr.create_time,'%%Y-%%m-%%d') s_day, sum(ptr.price*4/1000) pay_price1 
-        from pay_trade_record ptr,TICKET_ORDER tico,PNRSOURCE_CONFIG pc 
-        where left(ptr.create_time,10)>=%s
-        and left(ptr.create_time,10)<%s 
-        and ptr.PAYSOURCE in('weixinpay','bankcard','alipay','applepay','xinyf') 
-        and ptr.order_id=tico.ORDERID 
-        and tico.INTFLAG = 1 
-        and tico.PnrSource=pc.PnrSource 
-        group by s_day
-        order by s_day;
-    """
-
-    pay_cost_in_other_sql = """
-        SELECT DATE_FORMAT(eo.create_time,'%%Y-%%m-%%d') s_day, 
-        sum((ticod.price+ticod.ratefee)*4/1000) pay_price2
-        from TICKET_ORDER tico,TICKET_ORDERDETAIL ticod,event_order eo,PNRSOURCE_CONFIG pc 
-        where tico.ORDERID=ticod.ORDERID 
-        and ticod.ORDERID = eo.order_id 
-        and eo.EVENT_group='519sec' 
-        and tico.INTFLAG=1 and tico.PNRSOURCE=pc.PNRSOURCE 
-        and left(eo.create_time,10)>=%s
-        and left(eo.create_time,10)<%s 
-        group by s_day
-        order by s_day;
-    """
-
-    insert_pay_cost_in_sql = """
-        insert into profit_hb_inter_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return, 
-        createtime, updatetime)
-        values
-        (%s, %s, 0, 0, 0, now(), now())
-        on duplicate key update updatetime = now(),
-        s_day = VALUES(s_day),
-        paycost_in = VALUES(paycost_in),
-        paycost_return = VALUES(paycost_return),
-        coupon_in = VALUES(coupon_in),
-        coupon_return = VALUES(coupon_return)
-    """
-
-    update_coupon_inter_sql = """
-        update profit_hb_inter_cost set coupon_in = %s, coupon_return=%s
+    update_balance_give_amount_sql = """
+        update profit_hb_inter_cost set balance_give_amount = %s
         where s_day=%s
     """
 
-    dto = [query_date, today]
-    coupon_inter = DBCli().pay_cost_cli.query_all(coupon_sql, dto)
+    balance_give_amount_data = DBCli().sourcedb_cli.query_all(balance_give_amount_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_balance_give_amount_sql, balance_give_amount_data)
 
-    pay_cost_in = DBCli().sourcedb_cli.query_all(pay_cost_in_sql, dto)
-    pay_cost_in_other = dict(DBCli().sourcedb_cli.query_all(pay_cost_in_other_sql, dto))
+    point_give_amount_sql = """
+        SELECT 
+        sum(upd.POINTS/1000) point_give_amount,
+        left(upd.create_time,10) sday
+        from TICKET_ORDER tico,
+        USER_POINTS_DETAIL upd,
+        USER_POINTS up
+        where tico.ORDERID = upd.ORDER_ID 
+        and tico.INTFLAG=1 
+        and upd.TYPE=1 
+        and upd.POINT_ID=up.ID 
+        and up.TYPE=1 
+        and upd.create_time>=%s
+        and upd.create_time<%s
+        GROUP BY sday
+    """
 
-    pay_cost_in_all = []
+    update_point_give_amount_sql = """
+        update profit_hb_inter_cost set point_give_amount = %s
+        where s_day=%s
+    """
 
-    for key, val in dict(pay_cost_in).items():
-        pay_cost_in_all.append([key, float(val) + pay_cost_in_other.get(key, 0)])
-
-    DBCli().targetdb_cli.batch_insert(insert_pay_cost_in_sql, pay_cost_in_all)
-
-    DBCli().targetdb_cli.batch_insert(update_coupon_inter_sql, coupon_inter)
+    point_give_amount_data = DBCli().sourcedb_cli.query_all(point_give_amount_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_point_give_amount_sql, point_give_amount_data)
 
 
 if __name__ == "__main__":
-    update_operation_hbgj_channel_ticket_profit_daily(2)
+    update_hb_inter_coupon_cost_daily(1)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

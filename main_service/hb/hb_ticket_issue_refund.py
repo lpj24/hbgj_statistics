@@ -199,7 +199,6 @@ def update_profit_hb_self_no_transfer_daily(days=0):
     cost_data = DBCli().sourcedb_cli.query_one(transfer_cost_sql, dto)
     insert_data = [start_date] + list(income_data) + list(cost_data)
     DBCli().targetdb_cli.insert(insert_sql, insert_data)
-    pass
 
 
 def update_profit_hb_self_transfer_daily(days=0):

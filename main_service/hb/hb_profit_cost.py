@@ -51,7 +51,8 @@ def update_hb_car_hotel_profit(days=0):
         sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
         
         sum(case when (AMOUNT_TYPE=6 and PRODUCT ='8')  then amount else 0 end) balance_give_amount_8,
-        sum(case when (AMOUNT_TYPE=6 and PRODUCT ='24')  then amount else 0 end) balance_give_amount_24
+        sum(case when (AMOUNT_TYPE=6 and PRODUCT ='24')  then amount else 0 end) balance_give_amount_24,
+        sum(case when (AMOUNT_TYPE=6 and PRODUCT ='42')  then amount else 0 end) balance_give_amount_42
         from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
         group by TRADE_TIME
     """
@@ -172,8 +173,8 @@ def update_hb_car_hotel_profit(days=0):
     insert_sql = """
         insert into profit_hb_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
         else_coupon_in, else_coupon_return, delay_care, point_give_amount, balance_give_amount_8, 
-        balance_give_amount_24, createtime, updatetime) values (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now()
+        balance_give_amount_24, balance_give_amount_42, createtime, updatetime) values (
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now()
         )
         on duplicate key update updatetime = now(),
         s_day = VALUES(s_day),
@@ -186,7 +187,8 @@ def update_hb_car_hotel_profit(days=0):
         delay_care = VALUES(delay_care),
         point_give_amount = VALUES(point_give_amount),
         balance_give_amount_8 = VALUES(balance_give_amount_8),
-        balance_give_amount_24 = VALUES(balance_give_amount_24)
+        balance_give_amount_24 = VALUES(balance_give_amount_24),
+        balance_give_amount_42 = VALUES(balance_give_amount_42)
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, result)
     DBCli().targetdb_cli.batch_insert(update_other_cost_sql, other_result)

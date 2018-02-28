@@ -75,7 +75,7 @@ def execute_later_job():
     TimeService.add_later_service(hb_profit_cost.update_huoli_car_income_type)
     TimeService.add_later_service(hb_profit_cost.update_profit_hotel_income)
     TimeService.add_later_service(hb_insure.update_insure_type_daily)
-    TimeService.add_later_service(hb_ticket_issue_refund.update_profit_hb_supply_transfer_daily)
+    TimeService.add_later_service(hb_ticket_issue_refund.update_profit_hb_supply_no_transfer_daily)
     return TimeService
 
 

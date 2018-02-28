@@ -31,8 +31,8 @@ def add_execute_job():
 
     TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_self_no_transfer_daily)
     TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_self_transfer_daily)
-    TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_no_transfer_daily)
-    # TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_transfer_daily)
+    # TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_no_transfer_daily)
+    TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_transfer_daily)
 
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_hlth_szx)
     TimeService.add_hard_service(hb_company_amount.update_operation_hbgj_amount_monitor_hlth)

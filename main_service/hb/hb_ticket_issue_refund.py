@@ -374,6 +374,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 if __name__ == "__main__":
     # update_profit_hb_supply_no_transfer_daily(2)
+
     update_profit_hb_self_no_transfer_daily(1)
     # i = 75
     # while i <= 353:

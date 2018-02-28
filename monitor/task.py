@@ -60,7 +60,6 @@ def check_week_data(table_list):
         if data[0] < 1:
             # error
             msg += table + "<br/>"
-
     if len(msg) > 0:
         utils.sendMail("762575190@qq.com", msg, u"周数据查询异常")
     else:

@@ -60,42 +60,27 @@ def update_hb_car_hotel_profit(days=0):
     result = DBCli().pay_cost_cli.query_all(sql, dto)
     other_cost_sql = """
         select
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
-        sum(case when T_COST.INTFLAG=0 and AMOUNTTYPE in (0, 1) and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
+        sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
+        sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
+        sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
         sum(case when AMOUNTTYPE in (2, 3) then AMOUNT else 0 end) inland_refund_new,
         sum(case when T_COST.INTFLAG=1 and AMOUNTTYPE in (0, 1) then AMOUNT else 0 end) inter_price_diff,
         COSTDATE
         FROM TICKET_ORDER_COST T_COST
         left join TICKET_ORDER_INCOME_TYPE T_TYPE
         ON T_COST.PNRSOURCE = T_TYPE.PNRSOURCE
+        left join skyhotel.`TICKET_ORDER` o
+        on T_COST.ORDERID=o.ORDERID
         where COSTDATE>=%s and COSTDATE<%s
-        and T_COST.ORDERID!= '173491550521732'
         GROUP BY COSTDATE
         ORDER BY COSTDATE
     """
 
-    inland_price_diff_type2_sql = """
-        SELECT sum(c.amount), c.COSTDATE
-        FROM `TICKET_ORDER_COST` c
-        join skyhotel.`TICKET_ORDERDETAIL` od on c.ODID=od.ODID
-        left join skyhotel.`TICKET_ORDER` o
-        on c.ORDERID=o.ORDERID
-        where  c.PNRSOURCE='hlth' and c.type=0
-        and c.COSTDATE>=%s
-        and c.COSTDATE<%s
-        and c.AMOUNTTYPE!=2
-        and od.LINKTYPE is NULL and o.mode=0
-        and od.LINKDETAILID=0 GROUP BY  COSTDATE;
-    """
-    inland_price_diff_type2 = DBCli().sourcedb_cli.query_all(inland_price_diff_type2_sql, dto)
     other_result = DBCli().sourcedb_cli.query_all(other_cost_sql, dto)
     update_other_cost_sql = """
         update profit_hb_cost set inland_price_diff_type0=%s, inland_price_diff_type1=%s,
-        inland_refund_new=%s, inter_price_diff=%s where s_day=%s
-    """
-
-    update_inland_price_diff_type2_sql = """
-        update profit_hb_cost set inland_price_diff_type2=%s where s_day=%s
+        inland_price_diff_type2=%s, inland_refund_new=%s, 
+        inter_price_diff=%s where s_day=%s
     """
 
     query_dft_cost_sql = """
@@ -193,7 +178,6 @@ def update_hb_car_hotel_profit(days=0):
     DBCli().targetdb_cli.batch_insert(insert_sql, result)
     DBCli().targetdb_cli.batch_insert(update_other_cost_sql, other_result)
     DBCli().targetdb_cli.batch_insert(update_dft_cost_sql, dft_result)
-    DBCli().targetdb_cli.batch_insert(update_inland_price_diff_type2_sql, inland_price_diff_type2)
     DBCli().targetdb_cli.batch_insert(update_cut_point_cost_sql, cut_point_amount)
     DBCli().targetdb_cli.batch_insert(update_dft_fund_cost_sql, dft_fund_cost)
 
@@ -823,7 +807,7 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_profit_hb_income(1)
+    update_hb_car_hotel_profit(1)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

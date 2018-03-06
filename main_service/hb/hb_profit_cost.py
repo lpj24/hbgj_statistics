@@ -378,7 +378,7 @@ def update_huoli_car_income_type(days=0):
 
 def update_profit_hb_income(days=0):
     """航班收入, profit_hb_income"""
-    query_date = DateUtil.get_date_before_days(days*6)
+    query_date = DateUtil.get_date_before_days(days*15)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
@@ -390,7 +390,7 @@ def update_profit_hb_income(days=0):
         sum(case when TYPE=1 AND T_INCOME.INTFLAG=1 THEN INCOME else 0 END) inter_insure_income
         FROM TICKET_ORDER_INCOME T_INCOME
         left join TICKET_ORDER_INCOME_TYPE T_TYPE
-        ON T_INCOME.PNRSOURCE = T_TYPE.PNRSOURCE
+        ON T_INCOME.PNRSOURCE = T_TYPE.PNRSOURCEe
         left join skyhotel.`TICKET_ORDER` o
         on T_INCOME.ORDERID=o.ORDERID
         WHERE INCOMEDATE>=%s and INCOMEDATE<%s

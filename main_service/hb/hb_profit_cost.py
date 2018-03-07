@@ -374,7 +374,7 @@ def update_profit_hb_income(days=0):
         sum(case when TYPE=1 AND T_INCOME.INTFLAG=1 THEN INCOME else 0 END) inter_insure_income
         FROM TICKET_ORDER_INCOME T_INCOME
         left join TICKET_ORDER_INCOME_TYPE T_TYPE
-        ON T_INCOME.PNRSOURCE = T_TYPE.PNRSOURCEe
+        ON T_INCOME.PNRSOURCE = T_TYPE.PNRSOURCE
         left join skyhotel.`TICKET_ORDER` o
         on T_INCOME.ORDERID=o.ORDERID
         WHERE INCOMEDATE>=%s and INCOMEDATE<%s
@@ -807,7 +807,7 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_car_hotel_profit(1)
+    update_profit_hb_income(1)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

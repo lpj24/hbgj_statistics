@@ -13,28 +13,6 @@ def update_hb_car_hotel_profit(days=0):
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
-    # sql = """
-    #     select distinct TRADE_TIME s_day,
-    #     sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
-    #     sum(case when (AMOUNT_TYPE=3 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_return,
-    #     sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
-    #     (PRODUCT=COST OR COST IS NULL) and TRADE_CHANNEL='coupon')
-    #     then amount else 0 end) coupon_in,
-    #     sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
-    #     (PRODUCT=COST OR COST IS NULL) and TRADE_CHANNEL='coupon')
-    #     then amount else 0 end) coupon_return,
-    #     sum(case when (AMOUNT_TYPE=1 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
-    #     PRODUCT!=COST and TRADE_CHANNEL='coupon')
-    #     then amount else 0 end) else_coupon_in,
-    #     sum(case when (AMOUNT_TYPE=4 and IF(ISNULL(COST) || LENGTH(trim(COST))<1, PRODUCT, COST)='0' and
-    #     PRODUCT!=COST and TRADE_CHANNEL='coupon')
-    #     then amount else 0 end) else_coupon_return,
-    #     sum(case when (AMOUNT_TYPE=6 and PRODUCT='20') then amount else 0 end) delay_care,
-    #     sum(case when (AMOUNT_TYPE=5 and PRODUCT in ('1')) then amount else 0 end) point_give_amount,
-    #     sum(case when (AMOUNT_TYPE=6 and PRODUCT in ('6','8','24','25')) then amount else 0 end) balance_give_amount
-    #     from PAY_COST_INFO where TRADE_TIME>=%s and TRADE_TIME<%s
-    #     group by TRADE_TIME
-    # """
     sql = """
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,
@@ -175,6 +153,45 @@ def update_hb_car_hotel_profit(days=0):
         balance_give_amount_24 = VALUES(balance_give_amount_24),
         balance_give_amount_42 = VALUES(balance_give_amount_42)
     """
+
+    activity_cost_in_sql = """
+        SELECT SUM(ptr.price) activity_cost_in, left(ptr.create_time,10) sday 
+        from pay_trade_record ptr,TICKET_ORDER tico 
+        where ptr.paysource = 'activity'
+        and tico.INTFLAG=0
+        and tico.orderid=ptr.order_id  
+        and ptr.create_time>=%s
+        and ptr.create_time<=%s
+        GROUP BY left(ptr.create_time,10);
+    """
+
+    update_activity_cost_in_sql = """
+        update profit_hb_cost set activity_cost=%s
+        where s_day=%s
+    """
+
+    activity_cost_in_data = DBCli().sourcedb_cli.query_all(activity_cost_in_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_activity_cost_in_sql, activity_cost_in_data)
+
+    activity_cost_return_sql = """
+        SELECT -SUM(ptr.price) activity_cost_return , left(tor.INREFUND_TIME,10) sday
+        from pay_trade_record ptr,TICKET_ORDER tico,TICKET_ORDER_REFUND tor 
+        where ptr.paysource='activity' 
+        and tico.INTFLAG=0
+        and tico.orderid=ptr.order_id and tico.orderid=tor.orderid 
+        and tor.STATUS=7 
+        and tor.INREFUND_TIME>=%s
+        and tor.INREFUND_TIME<=%s 
+        GROUP BY sday;
+    """
+
+    update_activity_cost_return_sql = """
+        update profit_hb_cost set activity_cost=activity_cost+%s
+        where s_day=%s
+    """
+    activity_cost_return_data = DBCli().sourcedb_cli.query_all(activity_cost_return_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_activity_cost_return_sql, activity_cost_return_data)
+
     DBCli().targetdb_cli.batch_insert(insert_sql, result)
     DBCli().targetdb_cli.batch_insert(update_other_cost_sql, other_result)
     DBCli().targetdb_cli.batch_insert(update_dft_cost_sql, dft_result)
@@ -846,7 +863,7 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_inter_coupon_cost_daily(1)
+    update_hb_car_hotel_profit(1)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

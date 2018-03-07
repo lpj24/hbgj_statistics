@@ -728,15 +728,16 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
     insert_pay_cost_in_sql = """
         insert into profit_hb_inter_cost (s_day, paycost_in, paycost_return, coupon_in, coupon_return,
-        createtime, updatetime)
+        activity_cost, createtime, updatetime)
         values
-        (%s, %s, 0, 0, 0, now(), now())
+        (%s, %s, 0, 0, 0, 0, now(), now())
         on duplicate key update updatetime = now(),
         s_day = VALUES(s_day),
         paycost_in = VALUES(paycost_in),
         paycost_return = VALUES(paycost_return),
         coupon_in = VALUES(coupon_in),
-        coupon_return = VALUES(coupon_return)
+        coupon_return = VALUES(coupon_return),
+        activity_cost = VALUES(activity_cost)
     """
 
     update_coupon_inter_sql = """
@@ -760,13 +761,13 @@ def update_hb_inter_coupon_cost_daily(days=0):
     DBCli().targetdb_cli.batch_insert(update_coupon_inter_sql, coupon_inter)
 
     balance_give_amount_sql = """
-        SELECT 
+        SELECT
         sum(amount) balance_give_amount,
         left(rr.RECHARGE_TIME,10) sday
         from TICKET_ORDER tico,
         RECHARGE_RECORD rr
-        where tico.ORDERID = rr.orderid 
-        and tico.INTFLAG=1 
+        where tico.ORDERID = rr.orderid
+        and tico.INTFLAG=1
         and rr.RECHARGE_TIME>=%s
         and rr.RECHARGE_TIME<%s
         GROUP BY sday
@@ -781,17 +782,17 @@ def update_hb_inter_coupon_cost_daily(days=0):
     DBCli().targetdb_cli.batch_insert(update_balance_give_amount_sql, balance_give_amount_data)
 
     point_give_amount_sql = """
-        SELECT 
+        SELECT
         sum(upd.POINTS/1000) point_give_amount,
         left(upd.create_time,10) sday
         from TICKET_ORDER tico,
         USER_POINTS_DETAIL upd,
         USER_POINTS up
-        where tico.ORDERID = upd.ORDER_ID 
-        and tico.INTFLAG=1 
-        and upd.TYPE=1 
-        and upd.POINT_ID=up.ID 
-        and up.TYPE=1 
+        where tico.ORDERID = upd.ORDER_ID
+        and tico.INTFLAG=1
+        and upd.TYPE=1
+        and upd.POINT_ID=up.ID
+        and up.TYPE=1
         and upd.create_time>=%s
         and upd.create_time<%s
         GROUP BY sday
@@ -805,9 +806,47 @@ def update_hb_inter_coupon_cost_daily(days=0):
     point_give_amount_data = DBCli().sourcedb_cli.query_all(point_give_amount_sql, dto)
     DBCli().targetdb_cli.batch_insert(update_point_give_amount_sql, point_give_amount_data)
 
+    activity_cost_in_sql = """
+        SELECT SUM(ptr.price) activity_cost_in, left(ptr.create_time,10) sday 
+        from pay_trade_record ptr,TICKET_ORDER tico 
+        where ptr.paysource = 'activity'
+        and tico.INTFLAG=1 
+        and tico.orderid=ptr.order_id  
+        and ptr.create_time>=%s 
+        and ptr.create_time<%s
+        GROUP BY left(ptr.create_time,10);
+    """
+
+    update_activity_cost_in_sql = """
+        update profit_hb_inter_cost set activity_cost=%s
+        where s_day=%s
+    """
+
+    activity_cost_in_data = DBCli().sourcedb_cli.query_all(activity_cost_in_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_activity_cost_in_sql, activity_cost_in_data)
+
+    activity_cost_return_sql = """
+        SELECT -SUM(ptr.price) activity_cost_return , left(tor.INREFUND_TIME,10) sday
+        from pay_trade_record ptr,TICKET_ORDER tico,TICKET_ORDER_REFUND tor 
+        where ptr.paysource='activity' 
+        and tico.INTFLAG=1 
+        and tico.orderid=ptr.order_id and tico.orderid=tor.orderid 
+        and tor.STATUS=7 
+        and tor.INREFUND_TIME>=%s
+        and tor.INREFUND_TIME<%s
+        GROUP BY sday;
+    """
+
+    update_activity_cost_return_sql = """
+        update profit_hb_inter_cost set activity_cost=activity_cost+%s
+        where s_day=%s
+    """
+    activity_cost_return_data = DBCli().sourcedb_cli.query_all(activity_cost_return_sql, dto)
+    DBCli().targetdb_cli.batch_insert(update_activity_cost_return_sql, activity_cost_return_data)
+
 
 if __name__ == "__main__":
-    update_profit_hb_income(1)
+    update_hb_inter_coupon_cost_daily(1)
     # i = 1
     # while i <= 11:
     #     update_huoli_car_income_type(i)

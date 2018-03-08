@@ -10,11 +10,11 @@ def update_operation_hbgj_amount_monitor_cz(days=0):
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
     cz_inter_inland_sql = """
         SELECT DATE_FORMAT(OD.CREATETIME, '%%Y-%%m-%%d') s_day,
-        sum(case when O.PNRSOURCE ='csair' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        sum(case when O.PNRSOURCE in ('csair','csairnew') and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
         then OD.OUTPAYPRICE else 0 end) CZ_inland_amount,
         sum(case when O.PNRSOURCE ='czint' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
          then OD.OUTPAYPRICE else 0 end) CZ_inter_amount,
-        sum(case when O.PNRSOURCE ='csair' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)
+        sum(case when O.PNRSOURCE in ('csair','csairnew') and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)
         and IFNULL(OD.REFUNDID, 0) != 0
         then OD.OUTPAYPRICE else 0 end) CZ_inland_amount_return,
         sum(case when O.PNRSOURCE ='czint' and O.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31,52,71)

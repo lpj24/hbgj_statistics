@@ -61,13 +61,13 @@ def storage_gt_consumers_quarter():
             ) as A
     """
     start_date, end_date = DateUtil.get_last_quarter_date()
-    start_date = DateUtil.date2str(start_date)
-    end_date = DateUtil.date2str(end_date)
-    # start_date = '2017-07-01'
-    # end_date = '2017-08-11'
+    # start_date = DateUtil.date2str(start_date)
+    # end_date = DateUtil.date2str(end_date)
+    start_date = '2017-01-01'
+    end_date = '2018-01-01'
     dto = [start_date, end_date, start_date, end_date]
     query_data = DBCli().gt_cli.query_all(sql, dto)
-    g = BloomFilter(capacity=20000000)
+    g = BloomFilter(capacity=20000000, error_rate=0.001)
 
     bloom_year_file = start_date + "_bloom_file.dat"
 
@@ -89,8 +89,9 @@ def count_consumers():
         with open(b_f, 'rb') as bloom_file:
             b_f = BloomFilter.fromfile(bloom_file)
             bloom_obj.append(b_f)
-    # 6306532
-    return reduce(lambda x, y: x.union(y), bloom_obj)
+    # return reduce(lambda x, y: x.union(y), bloom_obj)
+    print len(bloom_obj[2].union(bloom_obj[1]))
+
 
 
 if __name__ == "__main__":
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     # p.pfadd("hyper_uid", 1, 2)
     # p.execute()
     # DBCli().redis_dt_cli.sadd("hyper_uid", 1, 2, 3)
-    print len(count_consumers())
+    storage_gt_consumers_quarter()
     # g = BloomFilter(capacity=20000000, error_rate=0.001)
     # with open("./bloom.txt", "rb") as bloom_f:
     #     gg = g.fromfile(bloom_f)

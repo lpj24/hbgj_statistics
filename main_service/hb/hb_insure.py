@@ -372,7 +372,7 @@ def update_hb_boat(days=0):
 
 
 def update_insure_type_detail_daily(days=0):
-    """航意险 退票险 延误险国际机票的保险各种指标, operation_hbgj_insure_type_detail_daily"""
+    """航意险 退票险 延误险国际机票的保险各种指标, operation_hbgj_insure_type_detail_inter_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     dto = [start_date, end_date]
@@ -396,7 +396,7 @@ def update_insure_type_detail_daily(days=0):
     """
 
     insert_boat_sql = """
-        insert into operation_hbgj_insure_type_detail_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
+        insert into operation_hbgj_insure_type_detail_inter_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
         insure_amount, insure_refund_num, insure_refund_amount,
         insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, %s,%s, %s, 0, 0, now(), now())
@@ -472,7 +472,7 @@ def update_insure_type_detail_daily(days=0):
     """
 
     insert_refund_sql = """
-        insert into operation_hbgj_insure_type_detail_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
+        insert into operation_hbgj_insure_type_detail_inter_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
         insure_amount,
         insure_refund_num, insure_refund_amount,
         insure_claim_num, insure_claim_amount, createtime, updatetime)
@@ -523,7 +523,7 @@ def update_insure_type_detail_daily(days=0):
     """
 
     insert_delay_sql = """
-        insert into operation_hbgj_insure_type_detail_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
+        insert into operation_hbgj_insure_type_detail_inter_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
         insure_amount, insure_refund_num, insure_refund_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
         values (%s, %s, %s, %s, %s, 0, %s, %s, %s, 0, now(), now())
         on duplicate key update updatetime = now(),
@@ -546,14 +546,14 @@ def update_insure_type_detail_daily(days=0):
         select INSUREID, rate from TICKET_INSURE_INCOME_RULE
     """
     profile_sql = """
-        select insure_code,insure_amount, insure_refund_amount from operation_hbgj_insure_type_detail_daily 
+        select insure_code,insure_amount, insure_refund_amount from operation_hbgj_insure_type_detail_inter_daily 
         where s_day=%s
     """
     rate_data = DBCli().sourcedb_cli.query_all(rate_sql)
     insure_profit = DBCli().targetdb_cli.query_all(profile_sql, [start_date, ])
     rate_dict = dict(rate_data)
     update_insure_profit_sql = """
-        update operation_hbgj_insure_type_detail_daily set insure_profit=%s, insurance_amount=%s 
+        update operation_hbgj_insure_type_detail_inter_daily set insure_profit=%s, insurance_amount=%s 
         where s_day=%s and insure_code=%s
     """
     insure_profit_data = []

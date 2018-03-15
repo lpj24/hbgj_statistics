@@ -161,7 +161,7 @@ def update_insure_type_daily(days=0):
         FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
         on substring_index(i.OUTORDERID, 'P', -1)=o.orderid 
         where i.createtime >=%s and i.createtime <%s
-        and i.insurecode in (select DISTINCT id from INSURE_DATA where bigtype)
+        and i.insurecode in (select DISTINCT id from INSURE_DATA)
         GROUP BY left(i.createtime,10), i.insurecode;
     """
 
@@ -369,9 +369,208 @@ def update_hb_boat(days=0):
     """
     detail_refund_data = DBCli().sourcedb_cli.query_all(detail_refund_sql, dto)
     DBCli().targetdb_cli.batch_insert(insert_sql, detail_refund_data)
-    pass
+
+
+def update_insure_type_detail_daily(days=0):
+    """航意险 退票险 延误险国际机票的保险各种指标, operation_hbgj_insure_type_detail_daily"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    dto = [start_date, end_date]
+    boat_sql = """
+        SELECT left(i.createtime,10), i.insurecode,
+        (SELECT DISTINCT bigtype from INSURE_DATA where id=i.insurecode) bigtype,
+        count(DISTINCT o.phoneid),
+        count(*),sum(i.price),
+        sum(case
+            when i.status in (2, 21) then 1 else 0
+        end) refund_num,
+        sum(case
+            when i.status in (2, 21) then i.price else 0
+        end) refund_num
+        FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
+        on substring_index(i.OUTORDERID, 'P', -1)=o.orderid
+        where i.createtime >=%s and i.createtime <%s
+        and o.INTFLAG=1
+        and i.insurecode in (select DISTINCT id from INSURE_DATA)
+        GROUP BY left(i.createtime,10), i.insurecode;
+    """
+
+    insert_boat_sql = """
+        insert into operation_hbgj_insure_type_detail_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
+        insure_amount, insure_refund_num, insure_refund_amount,
+        insure_claim_num, insure_claim_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s,%s, %s, 0, 0, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        insure_holder_num = values(insure_holder_num),
+        insure_order_num = values(insure_order_num),
+        insure_amount = values(insure_amount),
+        insure_refund_num = values(insure_refund_num),
+        insure_refund_amount = values(insure_refund_amount),
+        insure_claim_num = 0,
+        insure_claim_amount = 0
+    """
+    boat_data = DBCli().sourcedb_cli.query_all(boat_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_boat_sql, boat_data)
+
+    travel_sql = """
+        SELECT left(i.createtime,10), i.insurecode,
+        (SELECT DISTINCT bigtype from INSURE_DATA where id=i.insurecode) bigtype,
+        count(DISTINCT o.phoneid),
+        count(*),sum(i.price),
+        sum(case
+            when i.status in (2, 21) then 1 else 0
+        end) refund_num,
+        sum(case
+            when i.status in (2, 21) then i.price else 0
+        end) refund_amount
+        FROM `INSURE_ORDERDETAIL` i join `TICKET_ORDER` o
+        on i.outorderid=o.orderid
+        where i.createtime >=%s and i.createtime <%s
+        and o.INTFLAG=1
+        and i.insurecode in (select DISTINCT id from INSURE_DATA where bigtype in (5))
+        GROUP BY left(i.createtime,10), i.insurecode
+    """
+
+    travel_data = DBCli().sourcedb_cli.query_all(travel_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_boat_sql, travel_data)
+
+    refund_order_amount_sql = """
+
+            SELECT A.s_day,
+                ifnull(A.insurecode, 0),
+               (SELECT DISTINCT bigtype from INSURE_DATA where id=A.insurecode) bigtype,
+                A.phone_num,
+                                    ifnull(A.insure_order_num, 0),
+                ifnull(A.insure_amount, 0),
+                                    A.refund_num, A.refund_amount,
+                ifnull(A.claim_num, 0),
+                    ifnull(A.claim_amount, 0) from (
+            SELECT left(flydatetime,10) s_day, insurecode,
+            count(case when `claim_price` is not null then 1 end) claim_num,
+            sum(case when `claim_price` is not null then claim_price end) claim_amount,
+            count(*) insure_order_num,
+                    sum(case
+                        when i.status in (2, 21) then 1 else 0
+                    end) refund_num,
+                    sum(case
+                        when i.status in (2, 21) then i.price else 0
+                    end) refund_amount,
+                    count(DISTINCT o.phoneid) phone_num,
+            sum(i.price) insure_amount FROM
+            `INSURE_ORDERDETAIL` i
+        join `TICKET_ORDER` o
+        on substring_index(i.OUTORDERID, 'P', -1)=o.orderid
+            where i.createtime >=%s and i.createtime<%s
+            and i.insurecode in
+            (select DISTINCT id from INSURE_DATA where bigtype in (3))
+            and o.INTFLAG=1
+            and flydatetime>=%s and flydatetime<%s group BY left(flydatetime,10), insurecode
+            ) A;
+    """
+
+    insert_refund_sql = """
+        insert into operation_hbgj_insure_type_detail_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
+        insure_amount,
+        insure_refund_num, insure_refund_amount,
+        insure_claim_num, insure_claim_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        insure_holder_num = values(insure_holder_num),
+        insure_order_num = values(insure_order_num),
+        insure_amount = values(insure_amount),
+        insure_refund_num = values(insure_refund_num),
+        insure_refund_amount = values(insure_refund_amount),
+        insure_claim_num = values(insure_claim_num),
+        insure_claim_amount = values(insure_claim_amount)
+    """
+    import datetime
+    refund_start_date = datetime.date(2016, 8, 15)
+    refund_start_date = DateUtil.date2str(refund_start_date, '%Y-%m-%d')
+    dto = [refund_start_date, end_date, start_date, end_date]
+    refund_data = DBCli().sourcedb_cli.query_all(refund_order_amount_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_refund_sql, refund_data)
+
+    delay_sql = """
+        select A.s_day, A.insurecode,
+        (SELECT DISTINCT bigtype from INSURE_DATA where id=A.insurecode) bigtype,
+        A.phone_num,
+        ifnull(A.insure_num, 0), A.refund_num, A.refund_amount,
+        ifnull(A.insure_claim_num, 0) from (
+        SELECT left(flydatetime ,10) s_day, insurecode,
+        count(case when STATUS='7' then 1 end) insure_claim_num,
+        count(*) insure_num,
+        count(DISTINCT o.phoneid) phone_num,
+        sum(case
+            when i.status in (2, 21) then 1 else 0
+        end) refund_num,
+        sum(case
+            when i.status in (2, 21) then i.price else 0
+        end) refund_amount
+        FROM `INSURE_ORDERDETAIL` i
+        join `TICKET_ORDER` o
+        on substring_index(i.OUTORDERID, 'P', -1)=o.orderid
+        where i.flydatetime>=%s and i.flydatetime<%s
+        and i.insurecode
+        in (select DISTINCT id from INSURE_DATA where bigtype=1)
+        and o.INTFLAG=1
+        group BY left(i.flydatetime ,10), i.insurecode ) A
+    """
+
+    insert_delay_sql = """
+        insert into operation_hbgj_insure_type_detail_daily (s_day, insure_code, pid, insure_holder_num, insure_order_num,
+        insure_amount, insure_refund_num, insure_refund_amount, insure_claim_num, insure_claim_amount, createtime, updatetime)
+        values (%s, %s, %s, %s, %s, 0, %s, %s, %s, 0, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        insure_code = values(insure_code),
+        pid = values(pid),
+        insure_holder_num  = values(insure_holder_num),
+        insure_order_num = values(insure_order_num),
+        insure_amount = 0,
+        insure_refund_num = values(insure_refund_num),
+        insure_refund_amount = values(insure_refund_amount),
+        insure_claim_num = values(insure_claim_num),
+        insure_claim_amount = 0
+    """
+    dto = [start_date, end_date]
+    delay_data = DBCli().sourcedb_cli.query_all(delay_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_delay_sql, delay_data)
+
+    rate_sql = """
+        select INSUREID, rate from TICKET_INSURE_INCOME_RULE
+    """
+    profile_sql = """
+        select insure_code,insure_amount, insure_refund_amount from operation_hbgj_insure_type_detail_daily 
+        where s_day=%s
+    """
+    rate_data = DBCli().sourcedb_cli.query_all(rate_sql)
+    insure_profit = DBCli().targetdb_cli.query_all(profile_sql, [start_date, ])
+    rate_dict = dict(rate_data)
+    update_insure_profit_sql = """
+        update operation_hbgj_insure_type_detail_daily set insure_profit=%s, insurance_amount=%s 
+        where s_day=%s and insure_code=%s
+    """
+    insure_profit_data = []
+    for ip in insure_profit:
+        insure_code, insure_amount, refund_amount = ip
+        insure_rate = rate_dict.get(insure_code, None)
+        insurance_amount = insure_amount - refund_amount
+        if insure_rate:
+            insure_profit = float(str(insurance_amount)) * float(insure_rate)
+        else:
+            insure_profit = insure_amount
+        insure_profit_data.append([insure_profit, insurance_amount, start_date, insure_code])
+    DBCli().targetdb_cli.batch_insert(update_insure_profit_sql, insure_profit_data)
 
 
 if __name__ == "__main__":
-    update_hb_boat(1)
-    update_insure_type_daily(1)
+    i = 1
+    while i <= 15:
+        update_insure_type_detail_daily(i)
+        i += 1

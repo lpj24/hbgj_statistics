@@ -280,6 +280,91 @@ def update_operation_hbgj_special_return_daily(days=1):
     gx = DBCli().sourcedb_cli.query_all(gx_sql, dto)
     DBCli().targetdb_cli.batch_insert(insert_sql, gx)
 
+
+def update_hb_company_income_cost_daily(days=0):
+    """更新各个航空公司收入 成本 销售额 机票数量, hb_company_income_cost_daily"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1))
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days))
+    dto = [start_date, end_date]
+    income_sql = """
+        select DATE_FORMAT(od.CREATETIME,'%%Y-%%m-%%d') s_day, 
+        SUBSTR(od.FLYNO,1,2) air_com,
+        SUM(case when TYPE=0 AND INCOMETYPE= 0 then INCOME else 0 end) income1,
+        SUM(case when TYPE=0 AND INCOMETYPE= 1 then INCOME else 0 end) income2,
+        SUM(case when TYPE=0 AND INCOMETYPE= 2 then INCOME else 0 end) income3,
+        
+        count(case when TYPE=0 AND INCOMETYPE= 0 then o.ORDERID end) income1_ticket,
+        count(case when TYPE=0 AND INCOMETYPE= 1 then o.ORDERID end) income2_ticket,
+        count(case when TYPE=0 AND INCOMETYPE= 2 then o.ORDERID end) income3_ticket,
+        
+        sum(case when TYPE=0 AND INCOMETYPE= 0 then od.OUTPAYPRICE else 0 end) income1_amount,
+        sum(case when TYPE=0 AND INCOMETYPE= 1 then od.OUTPAYPRICE else 0 end) income2_amount,
+        sum(case when TYPE=0 AND INCOMETYPE= 2 then od.OUTPAYPRICE else 0 end) income3_amount
+        from TICKET_ORDER_INCOME T_INCOME
+        LEFT JOIN TICKET_ORDER_INCOME_TYPE T_TYPE
+        ON T_INCOME.PNRSOURCE = T_TYPE.PNRSOURCE
+        left join TICKET_ORDER o on T_INCOME.ORDERID=o.ORDERID
+        left join `TICKET_ORDERDETAIL` od on T_INCOME.TICKETNO=od.ODID
+        where od.CREATETIME>=%s
+        and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
+        and o.INTFLAG=0 AND IFNULL(od.`LINKTYPE`, 0) != 2 
+        and od.REFUNDID=0
+        and o.`MODE`=0 
+        GROUP BY s_day, air_com
+    """
+
+    income_data = DBCli().sourcedb_cli.query_all(income_sql, dto)
+
+    cost_sql = """
+        select DISTINCT 
+        SUM(case when INCOMETYPE= 0 then AMOUNT else 0 end) cost1,
+        SUM(case when INCOMETYPE= 1 then AMOUNT else 0 end) cost2,
+        SUM(case when INCOMETYPE= 2 then AMOUNT else 0 end) cost3,
+        DATE_FORMAT(od.CREATETIME,'%%Y-%%m-%%d') s_day, SUBSTR(od.FLYNO,1,2) air_com
+        FROM TICKET_ORDER_COST T_COST
+        left join TICKET_ORDER_INCOME_TYPE T_TYPE
+        ON T_COST.PNRSOURCE = T_TYPE.PNRSOURCE
+        left join skyhotel.`TICKET_ORDER` o
+        on T_COST.ORDERID=o.ORDERID
+        RIGHT join TICKET_ORDERDETAIL od on T_COST.ODID=od.ODID
+        where o.CREATETIME>=%s
+        and o.CREATETIME<%s 
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
+        and o.INTFLAG=0 AND IFNULL(od.`LINKTYPE`, 0) != 2 
+        and od.REFUNDID=0
+        and o.`MODE`=0 
+        group by s_day, air_com
+    """
+    cost_data = DBCli().sourcedb_cli.query_all(cost_sql, dto)
+
+    insert_sql = """
+        insert into hb_company_income_cost_daily (s_day, air_company, incometype0, incometype1, 
+        incometype2, tickettype0, tickettype1, tickettype2, amounttype0, amounttype1, amounttype2, 
+        costtype0, costtype1, costtype2, createtime, updatetime) values
+        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 0, 0, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        air_company = values(air_company),
+        incometype0 = values(incometype0),
+        incometype1 = values(incometype1),
+        incometype2 = values(incometype2),
+        tickettype0 = values(tickettype0),
+        tickettype1 = values(tickettype1),
+        tickettype2 = values(tickettype2),
+        amounttype0 = values(amounttype0),
+        amounttype1 = values(amounttype1),
+        amounttype2 = values(amounttype2)
+    """
+    DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
+
+    update_sql = """
+        update hb_company_income_cost_daily set costtype0=%s, costtype1=%s, costtype2=%s
+        where s_day=%s and air_company=%s
+    """
+    DBCli().targetdb_cli.batch_insert(update_sql, cost_data)
+
+
 if __name__ == "__main__":
     # update_operation_hbgj_amount_monitor_cz(1)
-    update_operation_hbgj_amount_monitor_cz(1)
+    update_hb_company_income_cost_daily(1)

@@ -367,7 +367,7 @@ def update_hb_company_income_cost_daily(days=0):
 
 def update_hb_company_income_cost_supplier_daily(days=0):
     """更新各个航空公司(供应商)收入 成本 销售额 机票数量, hb_company_income_cost_supplier_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 84))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
     dto = [start_date, end_date]
     income_sql = """

@@ -63,6 +63,7 @@ def add_execute_job():
 
     TimeService.add_hard_service(hb_profit_cost.update_hb_inter_coupon_cost_daily)
     TimeService.add_hard_service(hb_company_amount.update_hb_company_income_cost_daily)
+    TimeService.add_hard_service(hb_company_amount.update_hb_company_income_cost_supplier_daily)
     return TimeService
 
 

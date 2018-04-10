@@ -458,13 +458,13 @@ def update_hb_company_income_cost_nation_daily(days=0):
     income_sql = """
         SELECT DATE_FORMAT(od.CREATETIME,'%%Y-%%m-%%d') s_day, 
         SUBSTR(`flyno`,1,2) air_com,  
-        SUM(case when INCOMETYPE =0 then od.PRICE + od.AIRPORTFEE - od.OUTPAYPRICE else 0 end) profit_0,
+        SUM(case when INCOMETYPE =0 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_0,
         SUM(case when INCOMETYPE =0 then 1 else 0 end) ticket_count_0,
         SUM(case when INCOMETYPE =0 then od.PRICE else 0 end) amount_0,
-        SUM(case when INCOMETYPE =1 then od.PRICE + od.AIRPORTFEE - od.OUTPAYPRICE else 0 end) profit_1,
+        SUM(case when INCOMETYPE =1 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_1,
         SUM(case when INCOMETYPE =1 then 1 else 0 end) ticket_count_1,
         SUM(case when INCOMETYPE =1 then od.PRICE else 0 end) amount_1,
-        SUM(case when INCOMETYPE =2 then od.PRICE + od.AIRPORTFEE - od.OUTPAYPRICE else 0 end) profit_2,
+        SUM(case when INCOMETYPE =2 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_2,
         SUM(case when INCOMETYPE =2 then 1 else 0 end) ticket_count_2,
         SUM(case when INCOMETYPE =2 then od.PRICE else 0 end) amount_2
         from TICKET_ORDER o

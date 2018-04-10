@@ -382,7 +382,7 @@ def update_profit_hb_income(days=0):
     query_date = DateUtil.get_date_before_days(days*15)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
-        SELECT INCOMEDATE,
+        SELECT INCOMEDATE, 
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 0 THEN INCOME else 0 END) inland_ticket_incometype0,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 1 THEN INCOME else 0 END) inland_ticket_incometype1,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 2 THEN INCOME else 0 END) inland_ticket_incometype2,
@@ -441,17 +441,17 @@ def update_profit_hb_income(days=0):
     DBCli().targetdb_cli.batch_insert(update_inter_inland_sql, inter_inland_data)
 
     official_insure_income_sql = """
-        SELECT 
+        SELECT
         sum(pay_price+outpay_price*r.RATE-outpay_price) ,
         left(o.createtime,10)
-        FROM `TICKET_ORDER_ITEMDETAIL` o 
-        join TICKET_INSURE_INCOME_RULE r 
-        on r.insureid=SUBSTR(extinfo,10,8) 
-        WHERE item_id<>'7' 
-        and realitem_id='2' 
+        FROM `TICKET_ORDER_ITEMDETAIL` o
+        join TICKET_INSURE_INCOME_RULE r
+        on r.insureid=SUBSTR(extinfo,10,8)
+        WHERE item_id<>'7'
+        and realitem_id='2'
         and left(o.createtime,10) >= %s
         and left(o.createtime,10) < %s
-        and `status`=2  
+        and `status`=2
         and pay_price<>1 GROUP BY left(o.createtime,10)
     """
     update_office_sql = """
@@ -463,14 +463,14 @@ def update_profit_hb_income(days=0):
     DBCli().targetdb_cli.batch_insert(update_office_sql, office_data)
 
     no_website_sql = """
-        SELECT 
+        SELECT
         sum(pay_price+outpay_price*r.RATE-outpay_price) insure_package,
         left(o.createtime,10) s_day
-        FROM `TICKET_ORDER_ITEMDETAIL` o join TICKET_INSURE_INCOME_RULE r 
-        on r.insureid=SUBSTR(extinfo,10,8) 
-        WHERE item_id='7' 
-        and realitem_id='2' and `status`=2  
-        and left(o.createtime,10)>=%s 
+        FROM `TICKET_ORDER_ITEMDETAIL` o join TICKET_INSURE_INCOME_RULE r
+        on r.insureid=SUBSTR(extinfo,10,8)
+        WHERE item_id='7'
+        and realitem_id='2' and `status`=2
+        and left(o.createtime,10)>=%s
         and left(o.createtime,10)<%s
         and pay_price<>1 GROUP BY left(o.createtime,10);
     """
@@ -481,6 +481,48 @@ def update_profit_hb_income(days=0):
     """
     no_office_data = DBCli().sourcedb_cli.query_all(no_website_sql, [query_date, today])
     DBCli().targetdb_cli.batch_insert(update_no_office_sql, no_office_data)
+
+    update_recharge_sql = """
+        update profit_hb_income set supply_account_inland_income=%s, supply_account_inter_income=%s
+        where s_day=%s
+    """
+
+    recharge_data = get_hb_rechargetype(query_date, today)
+
+    for x in xrange(days*15):
+        query_date = DateUtil.add_days(query_date, 1)
+        supply_account_inland_income = recharge_data.get(str(query_date) + '_2_0', 0) - recharge_data.get(str(query_date) + '_1_0', 0)
+        supply_account_inter_income = recharge_data.get(str(query_date) + '_2_1', 0) - recharge_data.get(str(query_date) + '_1_1', 0)
+        DBCli().targetdb_cli.insert(update_recharge_sql, [supply_account_inland_income, supply_account_inter_income, query_date])
+
+
+def get_hb_rechargetype(start_date, end_date):
+    sql = """
+        SELECT left(audittime,10), amount, linkorder, rechargetype
+        FROM supplier.supplier_reconciliate
+        WHERE linkordertype=1 and state=2  
+        and rechargetype in (1, 2)
+        and left(audittime,10)>=%s
+        and left(audittime,10)<%s
+    """
+
+    order_link_sql = """
+        select ORDERID, INTFLAG from TICKET_ORDER where ORDERID IN %s
+    """
+
+    recharge_data = DBCli().targetdb_cli.query_all(sql, [start_date, end_date])
+    order_link_data = dict(DBCli().sourcedb_cli.query_all(order_link_sql, [[recharge[2].strip() for recharge in recharge_data]]))
+    from collections import defaultdict
+    insert_data = defaultdict(int)
+    for recharge in recharge_data:
+        s_day, amount, linkorder, rechargetype = recharge
+        try:
+            intflag = order_link_data[linkorder.strip()]
+        except KeyError as e:
+            continue
+        insert_data[s_day + '_' + str(rechargetype) + '_' + str(intflag)] += amount
+
+    return insert_data
 
 
 def update_profit_hotel_income(days=0):
@@ -875,12 +917,5 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 
 if __name__ == "__main__":
-    update_hb_inter_coupon_cost_daily(1)
-    # i = 1
-    # while i <= 11:
-    #     update_huoli_car_income_type(i)
-    #     i += 1
-    # i = 1
-    # while i <= 352:
-    #     update_operation_hbgj_channel_ticket_profit_daily(i)
-    #     i += 1
+    # update_hb_inter_coupon_cost_daily(1)
+    update_profit_hb_income(1)

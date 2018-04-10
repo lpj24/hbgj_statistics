@@ -561,6 +561,7 @@ def update_hb_company_income_cost_inter_daily(days=0):
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
 
+
 if __name__ == "__main__":
     # update_operation_hbgj_amount_monitor_cz(1)
-    update_hb_company_income_cost_supplier_daily(3)
+    update_hb_company_income_cost_inter_daily(1)

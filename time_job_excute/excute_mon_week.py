@@ -1,5 +1,5 @@
 from main_service.hb import hb_flight_details, \
-    hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform, hb_channel_ticket
+    hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform, hb_channel_ticket, hb_airline
 from main_service.huoli import car_consumers, hotel_consumers, huoli_buy_consumers
 from main_service.gt import gt_activeusers, gt_consumers
 from time_job_excute.timeServiceList import TimeService
@@ -27,7 +27,10 @@ def add_execute_job():
     TimeService.add_week_mon_service(hb_channel_ticket.update_unable_ticket)
     TimeService.add_week_mon_service(huoli_buy_consumers.update_huoli_buy_consumers_weekly)
 
+    TimeService.add_week_mon_service(hb_airline.update_hbgj_client_airline_inland_weekly)
+
     return TimeService
+
 
 if __name__ == "__main__":
     logging.warning("monday execute week data")

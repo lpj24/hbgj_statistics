@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
-from sql.hb_sqlHandlers import hb_activeusers_sql
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 
 
-def update_hbgj_client_airline_inland_weekly(start_date, end_date):
+def update_hbgj_client_airline_inland_weekly():
     """hbgj gtgj supply各航线数据, hbgj_client_airline_inland_weekly"""
-    # start_date, end_date = DateUtil.get_last_week_date()
-    # start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
-    # end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
-    # print start_date, end_date
+    start_date, end_date = DateUtil.get_last_week_date()
+    start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
+    end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     hbgj_sql = """
         SELECT %s, 'hbgj',
         DEPCODE,ARRCODE,

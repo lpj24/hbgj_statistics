@@ -382,7 +382,7 @@ def update_profit_hb_income(days=0):
     query_date = DateUtil.get_date_before_days(days*15)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
-        SELECT INCOMEDATE, 
+        SELECT INCOMEDATE,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 0 THEN INCOME else 0 END) inland_ticket_incometype0,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 1 THEN INCOME else 0 END) inland_ticket_incometype1,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 2 THEN INCOME else 0 END) inland_ticket_incometype2,
@@ -507,7 +507,8 @@ def get_hb_rechargetype(start_date, end_date):
     """
 
     order_link_sql = """
-        select ORDERID, INTFLAG from TICKET_ORDER where ORDERID IN %s
+        select ref_order_id, 0 from fcode.activity_order 
+        where pay_product_id = '60' and status = '1' and ref_order_id in %s
     """
 
     recharge_data = DBCli().targetdb_cli.query_all(sql, [start_date, end_date])
@@ -517,7 +518,7 @@ def get_hb_rechargetype(start_date, end_date):
     for recharge in recharge_data:
         s_day, amount, linkorder, rechargetype = recharge
         try:
-            intflag = order_link_data[linkorder.strip()]
+            intflag = order_link_data.get(linkorder.strip(), 1)
         except KeyError as e:
             continue
         insert_data[s_day + '_' + str(rechargetype) + '_' + str(intflag)] += amount

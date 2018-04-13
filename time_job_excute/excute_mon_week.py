@@ -28,6 +28,7 @@ def add_execute_job():
     TimeService.add_week_mon_service(huoli_buy_consumers.update_huoli_buy_consumers_weekly)
 
     TimeService.add_week_mon_service(hb_airline.update_hbgj_client_airline_inland_weekly)
+    TimeService.add_week_mon_service(hb_airline.update_hbgj_client_airline_inter_weekly)
 
     return TimeService
 

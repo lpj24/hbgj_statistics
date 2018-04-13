@@ -123,11 +123,11 @@ def update_hbgj_client_airline_inland_weekly():
     DBCli().targetdb_cli.batch_insert(insert_sql, supply_data)
 
 
-def update_hbgj_client_airline_inter_weekly():
+def update_hbgj_client_airline_inter_weekly(start_date, end_date):
     """hbgj gtgj supply各航线数据(国际), hbgj_client_airline_inter_weekly"""
-    start_date, end_date = DateUtil.get_last_week_date()
-    start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
-    end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
+    # start_date, end_date = DateUtil.get_last_week_date()
+    # start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
+    # end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     hbgj_sql = """
         SELECT %s, 'hbgj',
         DEPCODE,ARRCODE,

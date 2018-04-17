@@ -38,7 +38,7 @@ def update_hb_car_hotel_profit(days=0):
     result = DBCli().pay_cost_cli.query_all(sql, dto)
     other_cost_sql = """
         select
-        sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 0 then AMOUNT else 0 end) inland_price_diff_type0,
+        sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 3 then AMOUNT else 0 end) inland_price_diff_type0,
         sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 1 then AMOUNT else 0 end) inland_price_diff_type1,
         sum(case when T_COST.INTFLAG=0 and o.mode=0 and INCOMETYPE= 2 then AMOUNT else 0 end) inland_price_diff_type2,
         sum(case when AMOUNTTYPE in (2, 3) then AMOUNT else 0 end) inland_refund_new,
@@ -383,7 +383,7 @@ def update_profit_hb_income(days=0):
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         SELECT INCOMEDATE,
-        SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 0 THEN INCOME else 0 END) inland_ticket_incometype0,
+        SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 3 THEN INCOME else 0 END) inland_ticket_incometype0,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 1 THEN INCOME else 0 END) inland_ticket_incometype1,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 2 THEN INCOME else 0 END) inland_ticket_incometype2,
         sum(case when TYPE=0 AND T_INCOME.INTFLAG=1 THEN INCOME else 0 END) inter_ticket_income,
@@ -919,4 +919,4 @@ def update_hb_inter_coupon_cost_daily(days=0):
 
 if __name__ == "__main__":
     # update_hb_inter_coupon_cost_daily(1)
-    update_profit_hb_income(1)
+    print get_hb_rechargetype('2018-04-03', '2018-04-04')

@@ -88,11 +88,11 @@ def get_income_cost(dto, client, intflag):
     return update_profit1
 
 
-def update_hbgj_client_airline_inland_weekly(start_date, end_date):
+def update_hbgj_client_airline_inland_weekly():
     """hbgj gtgj supply各航线数据, hbgj_client_airline_inland_weekly"""
-    # start_date, end_date = DateUtil.get_last_week_date()
-    # start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
-    # end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
+    start_date, end_date = DateUtil.get_last_week_date()
+    start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
+    end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     hbgj_sql = """
         SELECT %s, 'hbgj',
         DEPCODE,ARRCODE,
@@ -216,11 +216,11 @@ def update_hbgj_client_airline_inland_weekly(start_date, end_date):
     DBCli().targetdb_cli.batch_insert(update_sql, profit1_data)
 
 
-def update_hbgj_client_airline_inter_weekly(start_date, end_date):
+def update_hbgj_client_airline_inter_weekly():
     """hbgj gtgj supply各航线数据(国际), hbgj_client_airline_inter_weekly"""
-    # start_date, end_date = DateUtil.get_last_week_date()
-    # start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
-    # end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
+    start_date, end_date = DateUtil.get_last_week_date()
+    start_date = DateUtil.date2str(start_date, '%Y-%m-%d')
+    end_date = DateUtil.date2str(end_date, '%Y-%m-%d')
     hbgj_sql = """
         SELECT %s, 'hbgj',
         DEPCODE,ARRCODE,

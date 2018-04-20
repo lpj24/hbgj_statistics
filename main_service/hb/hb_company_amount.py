@@ -452,16 +452,15 @@ def update_hb_company_income_cost_supplier_daily(days=0):
 
 def update_hb_company_income_cost_nation_daily(days=0):
     """更新各个航空公司 利润 销售额 机票数量, hb_company_income_cost_nation_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))
-    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     dto = [start_date, end_date]
     income_sql = """
         SELECT DATE_FORMAT(od.CREATETIME,'%%Y-%%m-%%d') s_day, 
         SUBSTR(`flyno`,1,2) air_com,  
-        SUM(case when INCOMETYPE =0 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_0,
-        SUM(case when INCOMETYPE =0 then 1 else 0 end) ticket_count_0,
-        SUM(case when INCOMETYPE =0 then od.PRICE else 0 end) amount_0,
-        SUM(case when INCOMETYPE =1 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_1,
+        SUM(case when INCOMETYPE =3 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_0,
+        SUM(case when INCOMETYPE =3 then 1 else 0 end) ticket_count_0,
+        SUM(case when INCOMETYPE =3 then od.PRICE else 0 end) amount_0,
         SUM(case when INCOMETYPE =1 then 1 else 0 end) ticket_count_1,
         SUM(case when INCOMETYPE =1 then od.PRICE else 0 end) amount_1,
         SUM(case when INCOMETYPE =2 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_2,
@@ -486,8 +485,8 @@ def update_hb_company_income_cost_nation_daily(days=0):
 
     insert_sql = """
         insert into hb_company_income_cost_nation_daily (s_day, air_company, profittype0, tickettype0, amounttype0,
-       profittype1, tickettype1, amounttype1,profittype2, tickettype2, amounttype2, createtime, updatetime) 
-       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        tickettype1, amounttype1,profittype2, tickettype2, amounttype2, createtime, updatetime)
+       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         air_company = values(air_company),
@@ -495,7 +494,6 @@ def update_hb_company_income_cost_nation_daily(days=0):
         tickettype0 = values(tickettype0),
         amounttype0 = values(amounttype0),
 
-        profittype1 = values(profittype1),
         tickettype1 = values(tickettype1),
         amounttype1 = values(amounttype1),
 
@@ -505,19 +503,59 @@ def update_hb_company_income_cost_nation_daily(days=0):
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
 
+    income1_sql = """
+           SELECT SUBSTR(`flyno`,1,2),
+           sum(income) FROM TICKET_ORDER_INCOME i JOIN  TICKET_ORDER_INCOME_TYPE t on i.PNRSOURCE=t.PNRSOURCE 
+           join TICKET_ORDERDETAIL d on i.TICKETNO=d.ODID
+           JOIn TICKET_ORDER o on i.ORDERID=o.ORDERID
+           WHERE
+           t.INCOMETYPE=1 and i.type=0 and o.mode=0 and i.INTFLAG=0
+           and INCOMEDATE>=%s and INCOMEDATE<%s and d.REFUNDID=0 
+           and OLD_ORDERID is null AND IFNULL(d.`LINKTYPE`, 0) != 2  
+           GROUP BY SUBSTR(`flyno`,1,2)
+           ORDER BY SUBSTR(`flyno`,1,2);
+
+       """
+
+    cost1_sql = """
+           SELECT SUBSTR(`flyno`,1,2),
+           sum(AMOUNT) 
+           FROM TICKET_ORDER_COST c JOIN  TICKET_ORDER_INCOME_TYPE t on c.PNRSOURCE=t.PNRSOURCE 
+           join TICKET_ORDERDETAIL d on c.odid=d.ODID
+           JOIn TICKET_ORDER o on c.ORDERID=o.ORDERID
+           WHERE
+           t.INCOMETYPE=1 and c.type=0 and 
+           c.amounttype not in (2,3) and c.costtype=0 and o.mode=0 and c.INTFLAG=0
+           and COSTDATE>=%s and COSTDATE<%s and d.REFUNDID=0  
+           and OLD_ORDERID is null 
+           AND IFNULL(d.`LINKTYPE`, 0) != 2 GROUP BY SUBSTR(`flyno`,1,2)
+           ORDER BY SUBSTR(`flyno`,1,2);
+       """
+
+    update_profit1_sql = """
+           update hb_company_income_cost_nation_daily set profittype1=%s
+           where air_company=%s and s_day=%s
+       """
+    income1_data = dict(DBCli().sourcedb_cli.query_all(income1_sql, dto))
+    cost1_data = dict(DBCli().sourcedb_cli.query_all(cost1_sql, dto))
+    update_profit1 = []
+    for k, v in income1_data.items():
+        update_profit1.append([float(v) - float(cost1_data.get(k, 0)), k, start_date])
+
+    DBCli().targetdb_cli.batch_insert(update_profit1_sql, update_profit1)
+
 
 def update_hb_company_income_cost_inter_daily(days=0):
     """更新各个航空公司 利润 销售额 机票数量, hb_company_income_cost_inter_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1))
-    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days))
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     dto = [start_date, end_date]
     income_sql = """
         SELECT DATE_FORMAT(od.CREATETIME,'%%Y-%%m-%%d') s_day, 
         SUBSTR(`flyno`,1,2) air_com,  
-        SUM(case when INCOMETYPE =0 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_0,
-        SUM(case when INCOMETYPE =0 then 1 else 0 end) ticket_count_0,
-        SUM(case when INCOMETYPE =0 then od.PRICE else 0 end) amount_0,
-        SUM(case when INCOMETYPE =1 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_1,
+        SUM(case when INCOMETYPE =3 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_0,
+        SUM(case when INCOMETYPE =3 then 1 else 0 end) ticket_count_0,
+        SUM(case when INCOMETYPE =3 then od.PRICE else 0 end) amount_0,
         SUM(case when INCOMETYPE =1 then 1 else 0 end) ticket_count_1,
         SUM(case when INCOMETYPE =1 then od.PRICE else 0 end) amount_1,
         SUM(case when INCOMETYPE =2 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_2,
@@ -542,8 +580,8 @@ def update_hb_company_income_cost_inter_daily(days=0):
 
     insert_sql = """
         insert into hb_company_income_cost_inter_daily (s_day, air_company, profittype0, tickettype0, amounttype0,
-       profittype1, tickettype1, amounttype1,profittype2, tickettype2, amounttype2, createtime, updatetime) 
-       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        tickettype1, amounttype1,profittype2, tickettype2, amounttype2, createtime, updatetime) 
+       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         air_company = values(air_company),
@@ -551,7 +589,6 @@ def update_hb_company_income_cost_inter_daily(days=0):
         tickettype0 = values(tickettype0),
         amounttype0 = values(amounttype0),
 
-        profittype1 = values(profittype1),
         tickettype1 = values(tickettype1),
         amounttype1 = values(amounttype1),
 
@@ -561,7 +598,52 @@ def update_hb_company_income_cost_inter_daily(days=0):
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
 
+    income1_sql = """
+        SELECT SUBSTR(`flyno`,1,2),
+        sum(income) FROM TICKET_ORDER_INCOME i JOIN  TICKET_ORDER_INCOME_TYPE t on i.PNRSOURCE=t.PNRSOURCE 
+        join TICKET_ORDERDETAIL d on i.TICKETNO=d.ODID
+        JOIn TICKET_ORDER o on i.ORDERID=o.ORDERID
+        WHERE
+        t.INCOMETYPE=1 and i.type=0 and o.mode=0 and i.INTFLAG=1
+        and INCOMEDATE>=%s and INCOMEDATE<%s and d.REFUNDID=0 
+        and OLD_ORDERID is null AND IFNULL(d.`LINKTYPE`, 0) != 2  
+        GROUP BY SUBSTR(`flyno`,1,2)
+        ORDER BY SUBSTR(`flyno`,1,2);
+
+    """
+
+    cost1_sql = """
+        SELECT SUBSTR(`flyno`,1,2),
+        sum(AMOUNT) 
+        FROM TICKET_ORDER_COST c JOIN  TICKET_ORDER_INCOME_TYPE t on c.PNRSOURCE=t.PNRSOURCE 
+        join TICKET_ORDERDETAIL d on c.odid=d.ODID
+        JOIn TICKET_ORDER o on c.ORDERID=o.ORDERID
+        WHERE
+        t.INCOMETYPE=1 and c.type=0 and 
+        c.amounttype not in (2,3) and c.costtype=0 and o.mode=0 and c.INTFLAG=1
+        and COSTDATE>=%s and COSTDATE<%s and d.REFUNDID=0  
+        and OLD_ORDERID is null 
+        AND IFNULL(d.`LINKTYPE`, 0) != 2 GROUP BY SUBSTR(`flyno`,1,2)
+        ORDER BY SUBSTR(`flyno`,1,2);
+    """
+
+    update_profit1_sql = """
+        update hb_company_income_cost_inter_daily set profittype1=%s
+        where air_company=%s and s_day=%s
+    """
+    income1_data = dict(DBCli().sourcedb_cli.query_all(income1_sql, dto))
+    cost1_data = dict(DBCli().sourcedb_cli.query_all(cost1_sql, dto))
+    update_profit1 = []
+    for k, v in income1_data.items():
+        update_profit1.append([float(v) - float(cost1_data.get(k, 0)), k, start_date])
+
+    DBCli().targetdb_cli.batch_insert(update_profit1_sql, update_profit1)
+
 
 if __name__ == "__main__":
     # update_operation_hbgj_amount_monitor_cz(1)
-    update_hb_company_income_cost_inter_daily(1)
+    i = 1
+    while i <= 474:
+        update_hb_company_income_cost_inter_daily(i)
+        update_hb_company_income_cost_nation_daily(i)
+        i += 1

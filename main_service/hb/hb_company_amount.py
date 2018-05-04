@@ -465,7 +465,10 @@ def update_hb_company_income_cost_nation_daily(days=0):
         SUM(case when INCOMETYPE =1 then od.PRICE else 0 end) amount_1,
         SUM(case when INCOMETYPE =2 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_2,
         SUM(case when INCOMETYPE =2 then 1 else 0 end) ticket_count_2,
-        SUM(case when INCOMETYPE =2 then od.PRICE else 0 end) amount_2
+        SUM(case when INCOMETYPE =2 then od.PRICE else 0 end) amount_2,
+        SUM(case when INCOMETYPE =0 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_3,
+        SUM(case when INCOMETYPE =0 then 1 else 0 end) ticket_count_3,
+        SUM(case when INCOMETYPE =0 then od.PRICE else 0 end) amount_3
         from TICKET_ORDER o
         left join `TICKET_ORDERDETAIL` od on o.orderid=od.orderid
         left join TICKET_ORDER_INCOME_TYPE T_TYPE 
@@ -485,8 +488,8 @@ def update_hb_company_income_cost_nation_daily(days=0):
 
     insert_sql = """
         insert into hb_company_income_cost_nation_daily (s_day, air_company, profittype0, tickettype0, amounttype0,
-        tickettype1, amounttype1,profittype2, tickettype2, amounttype2, createtime, updatetime)
-       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        tickettype1, amounttype1, profittype2, tickettype2, amounttype2, profittype3, tickettype3, amounttype3, createtime, updatetime)
+       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         air_company = values(air_company),
@@ -499,7 +502,11 @@ def update_hb_company_income_cost_nation_daily(days=0):
 
         profittype2 = values(profittype2),
         tickettype2 = values(tickettype2),
-        amounttype2 = values(amounttype2)
+        amounttype2 = values(amounttype2),
+        
+        profittype3 = values(profittype3),
+        tickettype3 = values(tickettype3),
+        amounttype3 = values(amounttype3)
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
 
@@ -560,7 +567,11 @@ def update_hb_company_income_cost_inter_daily(days=0):
         SUM(case when INCOMETYPE =1 then od.PRICE else 0 end) amount_1,
         SUM(case when INCOMETYPE =2 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_2,
         SUM(case when INCOMETYPE =2 then 1 else 0 end) ticket_count_2,
-        SUM(case when INCOMETYPE =2 then od.PRICE else 0 end) amount_2
+        SUM(case when INCOMETYPE =2 then od.PRICE else 0 end) amount_2,
+        
+        SUM(case when incometype=-1 and o.intflag=1 then od.PRICE + od.AIRPORTFEE + od.ratefee - od.OUTPAYPRICE else 0 end) profit_3,
+        SUM(case when incometype=-1 and o.intflag=1 then 1 else 0 end) ticket_count_3,
+        SUM(case when incometype=-1 and o.intflag=1 then od.PRICE else 0 end) amount_3
         from TICKET_ORDER o
         left join `TICKET_ORDERDETAIL` od on o.orderid=od.orderid
         left join TICKET_ORDER_INCOME_TYPE T_TYPE 
@@ -580,8 +591,8 @@ def update_hb_company_income_cost_inter_daily(days=0):
 
     insert_sql = """
         insert into hb_company_income_cost_inter_daily (s_day, air_company, profittype0, tickettype0, amounttype0,
-        tickettype1, amounttype1,profittype2, tickettype2, amounttype2, createtime, updatetime) 
-       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+        tickettype1, amounttype1,profittype2, tickettype2, amounttype2,profittype3, tickettype3, amounttype3, createtime, updatetime) 
+       values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         air_company = values(air_company),
@@ -594,7 +605,11 @@ def update_hb_company_income_cost_inter_daily(days=0):
 
         profittype2 = values(profittype2),
         tickettype2 = values(tickettype2),
-        amounttype2 = values(amounttype2)
+        amounttype2 = values(amounttype2),
+        
+        profittype3 = values(profittype3),
+        tickettype3 = values(tickettype3),
+        amounttype3 = values(amounttype3)
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, income_data)
 
@@ -641,9 +656,10 @@ def update_hb_company_income_cost_inter_daily(days=0):
 
 
 if __name__ == "__main__":
-    # update_operation_hbgj_amount_monitor_cz(1)
+    # update_hb_company_income_cost_nation_daily(1)
+    # update_hb_company_income_cost_inter_daily(1)
     i = 1
-    while i <= 474:
+    while i <= 488:
         update_hb_company_income_cost_inter_daily(i)
         update_hb_company_income_cost_nation_daily(i)
         i += 1

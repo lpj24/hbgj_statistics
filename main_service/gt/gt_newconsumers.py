@@ -168,7 +168,7 @@ if __name__ == "__main__":
     # while s <= 23:
     #     gt_newconsumers_hourly(s)
     #     s += 1
-    gt_newconsumers_hourly()
+    gt_newconsumers_daily(1)
     # gt_newconsumers_hourly(0, 8)
     # days = 6
     # while days >= 1:

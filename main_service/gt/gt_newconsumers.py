@@ -103,6 +103,8 @@ def gt_newconsumers_hourly():
         s_hour = 23
     else:
         s_hour -= 1
+        if s_hour == 7:
+            redis_cli.save()
 
     query_start_date = s_day + " " + str(s_hour) + ":00:00"
     query_end_date = s_day + " " + str(s_hour) + ":59:59"
@@ -168,7 +170,7 @@ if __name__ == "__main__":
     # while s <= 23:
     #     gt_newconsumers_hourly(s)
     #     s += 1
-    gt_newconsumers_daily(1)
+    gt_newconsumers_hourly()
     # gt_newconsumers_hourly(0, 8)
     # days = 6
     # while days >= 1:

@@ -2,6 +2,7 @@ from main_service.huoli import eat_activeusers, car_orders, car_consumers, hotel
 from main_service.gt import gt_order, gt_amount, gt_consumers, gt_neworder, gt_income_cost
 from time_job_excute.timeServiceList import TimeService
 import logging
+from dbClient.utils import sendMail
 
 
 if __name__ == "__main__":
@@ -24,6 +25,7 @@ if __name__ == "__main__":
             fun()
         except Exception as e:
             logging.warning(e.message + "---" + str(e.args) + "--" + str(fun))
+            sendMail("762575190@qq.com", str(e.args) + "--" + str(fun), u"hourly数据查询异常")
             continue
 
 

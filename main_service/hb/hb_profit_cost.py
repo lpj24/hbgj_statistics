@@ -922,6 +922,6 @@ if __name__ == "__main__":
     # print get_hb_rechargetype('2018-04-03', '2018-04-04')
     # update_hb_car_hotel_profit(15)
     i = 44
-    while i >= 1:
+    while i >= 15:
         update_huoli_car_income_daily(i)
         i -= 1

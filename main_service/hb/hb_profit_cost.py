@@ -433,7 +433,6 @@ def update_profit_hb_income(days=0):
         update profit_hb_income set diff_nation = %s, diff_inter=%s, updatetime=now()
         where s_day=%s
     """
-
     hb_profit = DBCli().sourcedb_cli.query_all(sql, [query_date, today])
     if hb_profit is None:
         return

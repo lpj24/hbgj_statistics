@@ -1,269 +1,40 @@
 # -*- coding: utf-8 -*-
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
-import mmh3
-from pybloom import BloomFilter
-SEEDS = [43, 47]
-bit_size = 1400000
 
 
-def update_focus_newuser(days=0):
-    """航班关注新用户, hbdt_focus_newusers_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    query_file = start_date + "_hbdt_focus.dat"
-    query_id = list()
-    with open("C:\\Users\\Administrator\\Desktop\\" + query_file) as hbdt_focus_data:
-        for hbdt_data in hbdt_focus_data:
-            try:
-                (userid, phoneid, phone, token, flyid, focusdate
-                 , platform, ordertype) = hbdt_data.strip().split("\t")
-            except Exception:
-                continue
+if __name__ == '__main__':
+    company_sql = """
+        select name from company_user
+    """
 
-            phone_id = str(userid) + '_' + str(phoneid)
-            query_date = focusdate.split(" ")[0]
-            if query_date == "None":
-                continue
-            query_id.append(phone_id)
-    focus_pv = len(query_id)
-    focus_uv = len(set(query_id))
-    his_focus_id = DBCli().redis_dt_cli.smembers("hbdt_focus_his_uid")
-    focus_newuser = len(set(query_id).difference(his_focus_id))
-    print focus_uv, focus_pv, focus_newuser
-    # DBCli().targetdb_cli.insert(insert_sql, [start_date, focus_uv, focus_pv, focus_newuser])
-    # for focus_id in query_id:
-    #     DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", focus_id)
+    sql = """
+        SELECT o.PHONEID, pu.`NAME`, pu.PHONE, sum(od.OUTPAYPRICE), count(o.ORDERID) from TICKET_ORDER o 
+        LEFT JOIN phone_user pu on o.PHONEID=pu.phoneid
+        LEFT JOIN TICKET_ORDERDETAIL od on o.ORDERID=od.ORDERID
+        where od.CREATETIME>='2017-05-01' and od.CREATETIME<'2018-05-01'
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and o.PHONEID in %s
+        group by o.PHONEID, pu.`NAME`, pu.PHONE
+            
+    """
 
-
-def update_focus_newuser_bit(days=0):
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    query_file = start_date + "_hbdt_focus.dat"
-    query_id = list()
-    g = BloomFilter(capacity=1400000, error_rate=0.001)
-    focus_newuser = []
-    bloom_file = open("bloom.txt", 'rb')
-    b_f = BloomFilter.fromfile(bloom_file)
-    with open("C:\\Users\\Administrator\\Desktop\\" + query_file) as hbdt_focus_data:
-        for hbdt_data in hbdt_focus_data:
-            try:
-                (userid, phoneid, phone, token, flyid, focusdate
-                 , platform, ordertype) = hbdt_data.strip().split("\t")
-            except Exception:
-                continue
-
-            phone_id = str(userid) + '_' + str(phoneid)
-            query_date = focusdate.split(" ")[0]
-            if query_date == "None":
-                continue
-            query_id.append(phone_id)
-            if not (phone_id in b_f):
-                g.add(phone_id)
-                focus_newuser.append(phone_id)
-    focus_pv = len(query_id)
-    focus_uv = len(set(query_id))
-    print focus_uv, focus_pv, len(set(focus_newuser))
-    bloom_file.close()
-    with open("./last.txt", "wb") as bloom_f:
-        g.tofile(bloom_f)
-
-    g_f = g.fromfile(open("last.txt", 'rb'))
-    new_bloom = g_f.union(b_f)
-    with open("./bloom.txt", "wb") as bloom_f:
-        new_bloom.tofile(bloom_f)
-
-
-def update_focus_newuser_bit_2(days=0):
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    query_file = start_date + "_hbdt_focus.dat"
-    query_id = list()
-    last_bf = BloomFilter(capacity=1400000, error_rate=0.001)
-    focus_newuser = []
-    with open("bloom.txt", 'rb') as bloom_file:
-        b_f = BloomFilter.fromfile(bloom_file)
-
-    with open("bit_" + query_file, 'rb') as last_f:
-        last_bf = BloomFilter.fromfile(last_f)
-
-    with open("C:\\Users\\Administrator\\Desktop\\" + query_file) as hbdt_focus_data:
-        for hbdt_data in hbdt_focus_data:
-            try:
-                (userid, phoneid, phone, token, flyid, focusdate
-                 , platform, ordertype) = hbdt_data.strip().split("\t")
-            except Exception:
-                continue
-
-            phone_id = str(userid) + '_' + str(phoneid)
-            query_date = focusdate.split(" ")[0]
-            if query_date == "None":
-                continue
-            query_id.append(phone_id)
-            if not (phone_id in b_f):
-                focus_newuser.append(phone_id)
-    focus_pv = len(query_id)
-    focus_uv = len(set(query_id))
-    print focus_uv, focus_pv, len(set(focus_newuser))
-    new_bloom = last_bf.union(b_f)
-    with open("./bloom.txt", "wb") as bloom_f:
-        new_bloom.tofile(bloom_f)
-
-
-def covent_bit_file(days=1):
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    query_file = start_date + "_hbdt_focus.dat"
-    g_f = BloomFilter(capacity=1400000, error_rate=0.001)
-    with open("C:\\Users\\Administrator\\Desktop\\" + query_file) as hbdt_focus_data:
-        for hbdt_data in hbdt_focus_data:
-            try:
-                (userid, phoneid, phone, token, flyid, focusdate
-                 , platform, ordertype) = hbdt_data.strip().split("\t")
-            except Exception:
-                continue
-
-            phone_id = str(userid) + '_' + str(phoneid)
-            query_date = focusdate.split(" ")[0]
-            if query_date == "None":
-                continue
-            g_f.add(phone_id)
-    with open("bit_" + query_file, 'wb') as bit_file:
-        g_f.tofile(bit_file)
-
-
-def collect_his_phone_uid():
-
-    with open("C:\\Users\\Administrator\\Desktop\\hbdt_focus_platform.dat") as hbdt_focus_data:
-        for hbdt_data in hbdt_focus_data:
-            try:
-                (userid, phoneid, phone, token, flyid, focusdate, flydate
-                 , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
-            except Exception:
-                continue
-
-            phone_id = str(userid) + '_' + str(phoneid)
-            query_date = createtime.split(" ")[0] if createtime.split(" ")[0] != "None" else focusdate.split(" ")[0]
-            if query_date == "None":
-                continue
-            DBCli().redis_dt_cli.sadd("hbdt_focus_his_uid", phone_id)
-
-
-def collect_his_phone_uid_bit():
-    f = BloomFilter(capacity=1400000, error_rate=0.001)
-
-    with open("C:\\Users\\Administrator\\Desktop\\hbdt_focus_platform.dat") as hbdt_focus_data:
-        for hbdt_data in hbdt_focus_data:
-            try:
-                (userid, phoneid, phone, token, flyid, focusdate, flydate
-                 , createtime, platform, ordertype) = hbdt_data.strip().split("\t")
-            except Exception:
-                continue
-
-            phone_id = str(userid) + '_' + str(phoneid)
-            query_date = createtime.split(" ")[0] if createtime.split(" ")[0] != "None" else focusdate.split(" ")[0]
-            if query_date == "None":
-                continue
-            # insert_bit(phone_id)
-            f.add(phone_id)
-    with open("./bloom.txt", "wb") as bloom_f:
-        f.tofile(bloom_f)
-
-
-def hash_fun(val):
-    return mmh3.hash(val, 41) % bit_size
-
-
-def init_bit():
-    pass
-
-
-def insert_bit(val):
-    bit_location = hash_fun(val)
-    # pipe = DBCli().redis_dt_cli.pipeline()
-    # for loc in bit_location:
-    #     pipe.setbit("bit_focus_his_uid", loc, 1)
-    # pipe.execute()
-    bit_location = hash_fun(val)
-    DBCli().redis_dt_cli.setbit("bit_focus_his_uid", bit_location, 1)
-
-
-def is_contains(val):
-    bit_location = hash_fun(val)
-    # 把要比较的值通过k各hash函数hash到不同的bit位置上, 只有一个位置为0那么就不存在
-    # return all(True if DBCli().redis_dt_cli.getbit("bit_focus_his_uid", loc) else False for loc in bit_location)
-    return DBCli().redis_dt_cli.getbit("bit_focus_his_uid", bit_location)
-
-
-def test1():
-    f = open("C:\\Users\\Administrator\\Documents\\access.log_20160905", 'r')
-    for i in f:
-        pass
-    f.close()
-
-
-def test2():
-    f = open("C:\\Users\\Administrator\\Documents\\access.log_20160905", 'r')
-    for i in f.xreadlines():
-        pass
-    f.close()
-
-if __name__ == "__main__":
-    # import tornado.httpserver
-    # import tornado.ioloop
-    # import tornado.options
-    # import tornado.web
-    # import tornado.httpclient
-    # from tornado import gen
-    # from sql.huoli_sqlHandlers import car_consumers_sql
-    # from tornado.options import define, options
-    # from tornado.concurrent import run_on_executor
-    # from concurrent.futures import ThreadPoolExecutor
-    #
-    # define("port", default=8000, help="run on the given port", type=int)
-    #
-    #
-    # class SleepHandler(tornado.web.RequestHandler):
-    #     executor = ThreadPoolExecutor(1)
-    #
-    #     @run_on_executor
-    #     def testApp(self):
-    #         today = DateUtil.get_date_before_days(int(1))
-    #         dto = []
-    #         for i in xrange(3):
-    #             dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-    #             dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-    #             dto.append(DateUtil.date2str(today, '%Y-%m-%d'))
-    #         result = DBCli().car_cli.query_one(car_consumers_sql['car_newconsumers_daily'], dto)
-    #         return result
-    #
-    #     @tornado.gen.coroutine
-    #     def get(self):
-    #         a = yield self.testApp()
-    #         self.write('haha')
-    #
-    # class JustNowHandler(tornado.web.RequestHandler):
-    #     def get(self):
-    #         self.write("i hope just now see you")
-    #
-    #
-    # tornado.options.parse_command_line()
-    # app = tornado.web.Application(handlers=[
-    #     (r"/sleep", SleepHandler), (r"/justnow", JustNowHandler)])
-    # http_server = tornado.httpserver.HTTPServer(app)
-    # http_server.listen(options.port)
-    # print 'server is running'
-    # tornado.ioloop.IOLoop.instance().start()
-    import requests
-    # host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=gmhF0xeKTwAdhvwD5vznbDoa&client_secret=3uYhrknqlFCaDi2nprDTQzpvFKcwEG1a'
-    # headers = {'Content-Type': 'application/json; charset=UTF-8'}
-    # res = requests.post(host, headers=headers)
-    # print res.json()
-    import base64
-    ocr_url = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic'
-    ocr_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    img_file = open('C:\\Users\\Administrator\\Desktop\\a.jpg', 'rb')
-    img_content = img_file.read()
-    img_file.close()
-    data = dict()
-    data['image'] = base64.b64encode(img_content)
-
-    params = {'access_token': '24.3cb9489c39f0b3287cdecd4de76cdd06.2592000.1517969292.282335-10644381'}
-    ocr_res = requests.post(ocr_url, headers=ocr_headers, params=params, data=data)
-    print ocr_res.json()
+    import pandas as pd
+    book = pd.read_excel("C:\\Users\\Administrator\\Documents\\Tencent Files\\762575190\\FileRecv\\haidan.xlsx", sheetname='Sheet0')
+    search_phoneid = [i for i in book['phoneid']]
+    # search_uid = [i for i in book['id']]
+    print search_phoneid
+    company_users = DBCli().huoli_buy_cli.query_all(company_sql)
+    company_users = [c[0] for c in company_users]
+    consumers_list = DBCli().sourcedb_cli.query_all(sql, [[25298457, 45567269, 12097757, 45564364, 21820, 26174759, 25141084, 22585037, 25288114, 31494219, 44308012, 31516997, 26343403, 29668867, 29924411, 28547586, 29677404, 45222803, 42144295, 45510318, 26604542, 44075565, 26649497, 27013643, 44080429, 27743528, 27981655, 27337683, 6413429, 45505687, 31496367, 27261756, 8936315, 26713124, 42379599, 5175995, 45498576, 41906663, 24567080, 11450219, 30804847, 31109514, 25298457, 24326, 16401848, 38533293]
+])
+    print len(consumers_list)
+    from collections import defaultdict
+    result = defaultdict(int)
+    for c in consumers_list:
+        phoneid, name, phone, amount, nums = c
+        if name in company_users:
+            print str(phoneid) + '\t' + name + '\t' + str(nums) + '\t' + str(amount) + '\t' + '1'
+        else:
+            print str(phoneid) + '\t' + name + '\t' + str(nums) + '\t' + str(amount) + '\t' + '0'

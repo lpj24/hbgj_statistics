@@ -641,6 +641,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
 if __name__ == '__main__':
     # update_hbgj_channel_client_ticket_daily(1)
     i = 1
+
     while i <= 8:
         update_hbgj_channel_client_ticket_daily(i)
         i += 1

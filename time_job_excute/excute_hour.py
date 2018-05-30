@@ -1,3 +1,4 @@
+# -*-coding: utf-8 -*-
 from main_service.huoli import eat_activeusers, car_orders, car_consumers, hotel_order
 from main_service.gt import gt_order, gt_amount, gt_consumers, gt_neworder, gt_income_cost
 from time_job_excute.timeServiceList import TimeService

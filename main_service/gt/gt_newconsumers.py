@@ -170,7 +170,7 @@ if __name__ == "__main__":
     #     gt_newconsumers_hourly(s)
     #     s += 1
     # s_day = "2018-05-30"
-    i = 7
+    i = 8
     # while i <= 9:
     #     gt_newconsumers_hourly(s_day, i)
     #     i += 1

@@ -13,7 +13,6 @@ def update_hb_car_hotel_profit(days=0):
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
     query_date = DateUtil.get_date_before_days(days * 7)
     today = DateUtil.get_date_after_days(1 - days)
-    print query_date, today
     sql = """
         select distinct TRADE_TIME s_day,
         sum(case when (AMOUNT_TYPE=2 and PRODUCT='0' and TRADE_CHANNEL not like '%%coupon%%') then amount else 0 end) paycost_in,

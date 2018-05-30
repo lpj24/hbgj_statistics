@@ -20,7 +20,6 @@ if __name__ == "__main__":
     TimeService.add_hour_service(hotel_order.update_hotel_orders_daily)
     TimeService.add_hour_service(gt_income_cost.update_gt_income_cost)
     # TimeService.add_hour_service(gt_amount.update_gtgj_amount_daily)
-
     for fun in TimeService.get_hour_service():
         try:
             fun()

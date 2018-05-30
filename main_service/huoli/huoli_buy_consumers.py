@@ -210,7 +210,7 @@ def update_huoli_edj_newconsumers_daily(days=0):
 if __name__ == '__main__':
     import datetime
 
-    update_huoli_buy_newconsumers_daily(4)
+    update_huoli_buy_orders_daily(1)
     # start_date, end_date = DateUtil.get_last_week_date()
     # while start_date >= datetime.date(2017, 1, 16):
     #     print start_date

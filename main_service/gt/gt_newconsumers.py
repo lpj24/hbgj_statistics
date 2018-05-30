@@ -94,18 +94,17 @@ def gt_newconsumers_daily(days=0):
     redis_cli.delete("today_uid_android")
 
 
-def gt_newconsumers_hourly(s_day, s_hour):
+def gt_newconsumers_hourly():
     redis_cli = DBCli().redis_cli
-    # s_day = DateUtil.get_today("%Y-%m-%d")
-    # s_hour = int(datetime.datetime.now().strftime("%H"))
-    # if s_hour == 0:
-    #     s_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
-    #     s_hour = 23
-    # else:
-    #     s_hour -= 1
-    #     if s_hour == 7:
-    #         redis_cli.save()
-    print s_day, s_hour
+    s_day = DateUtil.get_today("%Y-%m-%d")
+    s_hour = int(datetime.datetime.now().strftime("%H"))
+    if s_hour == 0:
+        s_day = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
+        s_hour = 23
+    else:
+        s_hour -= 1
+        if s_hour == 7:
+            redis_cli.save()
     query_start_date = s_day + " " + str(s_hour) + ":00:00"
     query_end_date = s_day + " " + str(s_hour) + ":59:59"
     dto = [query_start_date, query_end_date]
@@ -170,11 +169,11 @@ if __name__ == "__main__":
     # while s <= 23:
     #     gt_newconsumers_hourly(s)
     #     s += 1
-    s_day = "2018-05-30"
+    # s_day = "2018-05-30"
     i = 7
-    while i <= 9:
-        gt_newconsumers_hourly(s_day, i)
-        i += 1
+    # while i <= 9:
+    #     gt_newconsumers_hourly(s_day, i)
+    #     i += 1
     # gt_newconsumers_hourly(0, 8)
     # days = 6
     # while days >= 1:

@@ -445,7 +445,7 @@ def update_profit_hb_income(days=0):
         left(o.createtime,10)
         FROM `TICKET_ORDER_ITEMDETAIL` o
         join TICKET_INSURE_INCOME_RULE r
-        on r.insureid=SUBSTR(extinfo,10,8)
+        on r.insureid=SUBSTR(extinfo,10,6)
         WHERE item_id<>'7'
         and realitem_id='2'
         and left(o.createtime,10) >= %s

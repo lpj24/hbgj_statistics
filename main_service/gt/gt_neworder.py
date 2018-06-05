@@ -15,9 +15,11 @@ def update_gt_order_daily(days=0):
         dto.append(DateUtil.date2str(start_date))
         dto.append(DateUtil.date2str(end_date))
     print dto
+
     query_data = DBCli().gt_cli.query_all(gt_new_order_sql["gt_neworder_daily"], dto)
     DBCli().targetdb_cli.batch_insert(gt_new_order_sql["update_gtgj_new_order_daily"], query_data)
 
 if __name__ == "__main__":
     update_gt_order_daily(1)
+
     # update_gt_order_hourly()

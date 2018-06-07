@@ -568,6 +568,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.INCOMEDATE >= %s and a.INCOMEDATE < %s
         and a.TYPE=0
+        and b.SALETYPE is not null
         GROUP BY a.PNRSOURCE, a.INCOMEDATE, TICKET_ORDER.agentid order by a.INCOMEDATE
     """
     dto = [DateUtil.date2str(query_start, "%Y-%m-%d"), DateUtil.date2str(query_end, "%Y-%m-%d")]
@@ -579,6 +580,7 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         left join TICKET_ORDER ON a.ORDERID=TICKET_ORDER.ORDERID
         where a.COSTDATE >= %s and a.COSTDATE < %s
         and AMOUNTTYPE!=2
+        and P_C.SALETYPE is not null
         GROUP BY a.PNRSOURCE, a.COSTDATE, TICKET_ORDER.agentid
     """
     cost_data = DBCli().sourcedb_cli.query_all(cost_sql, dto)
@@ -690,7 +692,6 @@ def update_operation_hbgj_channel_ticket_profit_daily(days=0):
         pid = values(pid)
 
     """
-
     DBCli().targetdb_cli.batch_insert(insert_sql, profit_data)
 
 
@@ -920,8 +921,4 @@ if __name__ == "__main__":
     # update_hb_inter_coupon_cost_daily(1)
     # print get_hb_rechargetype('2018-04-03', '2018-04-04')
     # update_hb_car_hotel_profit(15)
-    i = 44
-
-    while i >= 15:
-        update_huoli_car_income_daily(i)
-        i -= 1
+    update_operation_hbgj_channel_ticket_profit_daily(1)

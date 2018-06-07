@@ -70,6 +70,7 @@ def update_hb_channel_ticket_income_daily(days=0):
         left join TICKET_ORDER ON a.ORDERID = TICKET_ORDER.ORDERID
         where a.INCOMEDATE>=%s and a.INCOMEDATE<%s
         and a.TYPE=0
+        and b.SALETYPE is not null
         GROUP BY a.PNRSOURCE, a.INCOMEDATE, TICKET_ORDER.agentid
     """
 
@@ -137,7 +138,6 @@ def update_hb_channel_ticket_income_daily(days=0):
         # insert_channel_data.append(new_channel_data)
     for income_k, income_v in pn_resouce_amount_dict.items():
         insert_channel_data.append(income_v)
-
     DBCli().targetdb_cli.batch_insert(insert_sql, insert_channel_data)
     if sale_data == 0:
         DBCli().targetdb_cli.insert(do_sale_exception_sql, [start_date, u'航班管家', 'HBGJ'])
@@ -596,4 +596,4 @@ if __name__ == "__main__":
     # while i <= 352:
     #     update_hb_channel_ticket_income_daily(i)
     #     i += 1
-    update_hb_channel_ticket_income_daily(2)
+    update_hb_channel_ticket_income_daily(1)

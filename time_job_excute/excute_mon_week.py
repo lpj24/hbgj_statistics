@@ -1,4 +1,4 @@
-from main_service.hb import hb_flight_details, \
+from main_service.hb import hb_flight_details, hb_consumers, \
     hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform, hb_channel_ticket, hb_airline
 from main_service.huoli import car_consumers, hotel_consumers, huoli_buy_consumers
 from main_service.gt import gt_activeusers, gt_consumers
@@ -29,6 +29,7 @@ def add_execute_job():
 
     TimeService.add_week_mon_service(hb_airline.update_hbgj_client_airline_inland_weekly)
     TimeService.add_week_mon_service(hb_airline.update_hbgj_client_airline_inter_weekly)
+    TimeService.add_week_mon_service(hb_consumers.update_hbgj_consumers_inter_weekly)
 
     return TimeService
 

@@ -11,6 +11,10 @@ api_secret = localytics['api_secret']
 api_root = localytics['api_root']
 app_id_android = localytics['app_id_android']
 app_id_ios = localytics['app_id_ios']
+
+app_id_gt_android = localytics['app_id_gt_android']
+app_id_gt_ios = localytics['app_id_gt_ios']
+
 metrics_pv_uv = ['sessions_per_event', 'users']
 
 

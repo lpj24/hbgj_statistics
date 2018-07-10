@@ -126,7 +126,106 @@ def update_hbgj_consumers_inter_daily(days=0):
     """
     query_data = DBCli().sourcedb_cli.query_all(inter_sql, dto)
     DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
-    pass
+
+
+def update_hbgj_consumers_inter_weekly():
+    """国际机票消费用户(weekly), hbgj_consumers_inter_weekly"""
+    start_date, end_date = DateUtil.get_last_week_date()
+    dto = [start_date, end_date]
+    inter_sql = """
+        select A.s_day,
+        A.consumers, A.consumers_ios, (A.consumers - A.consumers_ios) from (
+        SELECT date_format(subdate(od.CREATETIME,date_format(od.CREATETIME,'%%w')-1),'%%Y-%%m-%%d') s_day,count(DISTINCT PHONEID) consumers,
+        count(distinct case when p LIKE '%%ios%%' then PHONEID else null end ) consumers_ios
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>= %s
+        and od.CREATETIME < %s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and INTFLAG=1
+        ) A
+    """
+    insert_sql = """
+        insert into hbgj_consumers_inter_weekly (s_day, consumers, consumers_ios, consumers_android,
+        createtime, updatetime)
+        values
+        (%s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        consumers = values(consumers),
+        consumers_ios = values(consumers_ios),
+        consumers_android = values(consumers_android)
+    """
+    query_data = DBCli().sourcedb_cli.query_all(inter_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
+
+
+def update_hbgj_consumers_inter_monthly():
+    """国际机票消费用户(monthly), hbgj_consumers_inter_monthly"""
+    start_date, end_date = DateUtil.get_last_month_date()
+    dto = [start_date, end_date]
+    inter_sql = """
+        select A.s_day,
+        A.consumers, A.consumers_ios, (A.consumers - A.consumers_ios) from (
+        SELECT DATE_FORMAT(str_to_date(CONCAT(YEAR(od.createtime),'-',MONTH(od.createtime),'-01'),'%%Y-%%m-%%d'),'%%Y-%%m-%%d')
+         s_day,count(DISTINCT PHONEID) consumers,
+        count(distinct case when p LIKE '%%ios%%' then PHONEID else null end ) consumers_ios
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>= %s
+        and od.CREATETIME < %s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and INTFLAG=1
+        ) A
+    """
+    insert_sql = """
+        insert into hbgj_consumers_inter_monthly (s_day, consumers, consumers_ios, consumers_android,
+        createtime, updatetime)
+        values
+        (%s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        consumers = values(consumers),
+        consumers_ios = values(consumers_ios),
+        consumers_android = values(consumers_android)
+    """
+    query_data = DBCli().sourcedb_cli.query_all(inter_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
+
+
+def update_hbgj_consumers_inter_quarterly():
+    """国际机票消费用户(quarterly), hbgj_consumers_inter_quarterly"""
+    start_date, end_date = DateUtil.get_last_quarter_date()
+    dto = [DateUtil.date2str(start_date, '%Y-%m-%d'), DateUtil.date2str(start_date, '%Y-%m-%d'), start_date, end_date]
+    inter_sql = """
+        select A.s_day,
+        A.consumers, A.consumers_ios, (A.consumers - A.consumers_ios) from (
+        SELECT CONCAT(YEAR(%s),',','Q',QUARTER(%s)) s_day,count(DISTINCT PHONEID) consumers,
+        count(distinct case when p LIKE '%%ios%%' then PHONEID else null end ) consumers_ios
+        FROM `TICKET_ORDERDETAIL` od
+        INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>= %s
+        and od.CREATETIME < %s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        and INTFLAG=1
+        ) A
+    """
+    insert_sql = """
+        insert into hbgj_consumers_inter_quarterly (s_day, consumers, consumers_ios, consumers_android,
+        createtime, updatetime)
+        values
+        (%s, %s, %s, %s, now(), now())
+        on duplicate key update updatetime = now(),
+        s_day = values(s_day),
+        consumers = values(consumers),
+        consumers_ios = values(consumers_ios),
+        consumers_android = values(consumers_android)
+    """
+    query_data = DBCli().sourcedb_cli.query_all(inter_sql, dto)
+    DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
 
 
 def update_hbgj_newconsumers_inter_daily_nation(days=0):
@@ -194,4 +293,26 @@ if __name__ == "__main__":
     # update_hb_consumers_weekly()
     # update_hb_consumers_monthly()
     # update_hb_consumers_quarterly()
-    update_hb_consumers_quarterly()
+
+
+    # import datetime
+    # import time
+    # start_date = datetime.date(2018, 7, 9)
+    # while 1:
+    #     start_date, end_date = DateUtil.get_last_week_date(start_date)
+    #     update_hbgj_consumers_inter_weekly(start_date, end_date)
+    # update_hbgj_consumers_inter_quarterly()
+
+    # import datetime
+    # import time
+    # start_date = datetime.date(2018, 7, 1)
+    # while 1:
+    #     start_date, end_date = DateUtil.get_last_month_date(start_date)
+    #     update_hbgj_consumers_inter_monthly(start_date, end_date)
+    pass
+    # import datetime
+    # import time
+    # start_date = datetime.date(2018, 7, 1)
+    # while 1:
+    #     start_date, end_date = DateUtil.get_last_quarter_date(start_date)
+    #     update_hbgj_consumers_inter_quarterly(start_date, end_date)

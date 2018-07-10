@@ -921,4 +921,4 @@ if __name__ == "__main__":
     # update_hb_inter_coupon_cost_daily(1)
     # print get_hb_rechargetype('2018-04-03', '2018-04-04')
     # update_hb_car_hotel_profit(15)
-    update_operation_hbgj_channel_ticket_profit_daily(1)
+    update_hb_car_hotel_profit(1)

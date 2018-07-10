@@ -400,7 +400,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         SELECT DATE_FORMAT(createtime, '%%Y-%%m-%%d') s_day, 
         sum(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%' then 1 else 0 end) H5注册用户
+        p like 'yidonghefeixin%%' or p like 'abc-app%%' then 1 else 0 end) H5注册用户
         FROM `phone_user` WHERE `CREATETIME`>%s and CREATETIME<%s
     """
 
@@ -408,7 +408,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
             SELECT DATE_FORMAT(o.createtime, '%%Y-%%m-%%d') s_day, left(p,3), 
             sum(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%' then 1 else 0 end) H5订单数
+            p like 'yidonghefeixin%%' or p like 'abc-app%%' then 1 else 0 end) H5订单数
             FROM TICKET_ORDER o 
             WHERE o.CREATETIME>=%s 
             and o.CREATETIME<%s
@@ -416,7 +416,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
             AND IFNULL(o.`LINKTYPE`, 0) != 2
             and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%')
+            p like 'yidonghefeixin%%' or p like 'abc-app%%')
             GROUP BY s_day,left(p,3);
         """
 
@@ -425,13 +425,13 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         left(p, 3),
         count(DISTINCT (case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%' then o.ORDERID end)) H5成功订单数
+        p like 'yidonghefeixin%%' or p like 'abc-app%%' then o.ORDERID end)) H5成功订单数
         FROM `TICKET_ORDERDETAIL` od 
         INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         where od.CREATETIME>=%s and od.CREATETIME<%s
         and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%')
+        p like 'yidonghefeixin%%' or p like 'abc-app%%')
         and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
         IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0 
         GROUP BY s_day, left(p, 3);
@@ -441,13 +441,13 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day, left(p, 3),
         sum(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%' then 1 else 0 end) H5订票数
+        p like 'yidonghefeixin%%' or p like 'abc-app%%' then 1 else 0 end) H5订票数
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         where od.CREATETIME>=%s and od.CREATETIME<%s
         and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
         and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%')
+        p like 'yidonghefeixin%%' or p like 'abc-app%%')
         AND IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0 
         GROUP BY s_day, left(p, 3);
         """
@@ -456,7 +456,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,left(p, 3),
         count(DISTINCT case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%' then i.insureid  end) 
+        p like 'yidonghefeixin%%' or p like 'abc-app%%' then i.insureid  end) 
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join INSURE_ORDERDETAIL i on o.ORDERID=i.outorderid
         where od.CREATETIME>=%s and od.CREATETIME<%s 
@@ -464,7 +464,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0
         and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%') 
+        p like 'yidonghefeixin%%' or p like 'abc-app%%') 
         and i.insurecode in (
         select DISTINCT id from INSURE_DATA where bigtype in (2))
         GROUP BY s_day, left(p, 3)
@@ -475,7 +475,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day,left(p, 3),
         count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%' then i.insureid  end)) H5
+        p like 'yidonghefeixin%%' or p like 'abc-app%%' then i.insureid  end)) H5
         FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
         join INSURE_ORDERDETAIL i on CONCAT('P',o.ORDERID)=i.OUTORDERID
         where od.CREATETIME>=%s and od.CREATETIME<%s
@@ -483,7 +483,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
         IFNULL(od.`LINKTYPE`, 0) != 2 and INTFLAG=0
         and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
         or p like 'cgb%%' or p like 'guizhoutong%%' or 
-        p like 'yidonghefeixin%%')
+        p like 'yidonghefeixin%%' or p like 'abc-app%%')
         and i.insurecode in (
         select DISTINCT id from INSURE_DATA where bigtype in (2)) 
         GROUP BY s_day, left(p, 3);
@@ -493,13 +493,13 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
             SELECT flydate, left(p, 3),
             count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%' then o.ORDERID  end)) h5 
+            p like 'yidonghefeixin%%' or p like 'abc-app%%' then o.ORDERID  end)) h5 
             FROM `TICKET_DELAY_CARE` d 
             join TICKET_ORDER o on d.ORDERID=o.ORDERID
             WHERE flydate>=%s and flydate<%s
             and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%')
+            p like 'yidonghefeixin%%' or p like 'abc-app%%')
             and state='1' and INTFLAG=0 GROUP BY flydate, left(p, 3);
         """
 
@@ -508,14 +508,14 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
             SELECT flydate,left(p, 3),
             count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%' then o.ORDERID  end)) h5
+            p like 'yidonghefeixin%%' or p like 'abc-app%%' then o.ORDERID  end)) h5
             FROM `TICKET_DELAY_CARE` d 
             join TICKET_ORDER o on d.ORDERID=o.ORDERID
             WHERE flydate>=%s and flydate<%s and state='1' 
             and INTFLAG=0 and chargetime<>0 and chargenum!=0 
             and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%')
+            p like 'yidonghefeixin%%' or p like 'abc-app%%')
             GROUP BY flydate, left(p, 3);
 
         """
@@ -524,7 +524,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
             SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day, left(p, 3),
             count(DISTINCT(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%' then PHONEID  end)) h5
+            p like 'yidonghefeixin%%' or p like 'abc-app%%' then PHONEID  end)) h5
             FROM `TICKET_ORDERDETAIL` od 
             INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
             join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
@@ -534,7 +534,7 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
             and INTFLAG=0 and FIRSTPAY=1
             and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
             or p like 'cgb%%' or p like 'guizhoutong%%' or 
-            p like 'yidonghefeixin%%')
+            p like 'yidonghefeixin%%' or p like 'abc-app%%')
             GROUP BY s_day, left(p, 3);
 
         """
@@ -639,12 +639,12 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
 
 
 if __name__ == '__main__':
-    # update_hbgj_channel_client_ticket_daily(1)
-    i = 1
-    while i <= 8:
-
-        update_hbgj_channel_client_ticket_daily(i)
-        i += 1
+    update_hbgj_channel_client_ticket_h5_daily(1)
+    # i = 1
+    # while i <= 8:
+    #
+    #     update_hbgj_channel_client_ticket_daily(i)
+    #     i += 1
     # i = 5
     # while i <= 12:
     #     update_hbgj_channel_client_ticket_h5_daily(i)

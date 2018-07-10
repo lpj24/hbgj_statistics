@@ -7,6 +7,7 @@ import logging
 
 if __name__ == "__main__":
     TimeService.add_quarter_first_service(hb_consumers.update_hb_consumers_quarterly)
+    TimeService.add_quarter_first_service(hb_consumers.update_hbgj_consumers_inter_quarterly)
     TimeService.add_quarter_first_service(hb_flight_focus.update_flight_focus_user_quarterly)
     TimeService.add_quarter_first_service(hb_flight_search.update_flight_search_user_quarterly)
     TimeService.add_quarter_first_service(hb_flight_details.update_flight_detail_user_quarterly)

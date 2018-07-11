@@ -6,7 +6,7 @@ from dbClient.dateutil import DateUtil
 def update_gt_income_cost(days=0):
     """高铁收入与成本, profit_gt_income profit_gt_cost"""
     if days > 0:
-        start_date = DateUtil.get_date_before_days(11 * int(days))
+        start_date = DateUtil.get_date_before_days(10 * int(days))
     else:
         start_date = DateUtil.get_date_before_days(1)
     end_date = DateUtil.get_date_before_days(0)
@@ -49,10 +49,7 @@ def update_gt_income_cost(days=0):
 
     income_cost_type = DBCli().gt_cli.query_all("select COLUMN_NAME from information_schema.COLUMNS "
                                                "where table_name = 'income_and_cost'")
-    income_cost_type = [i[0] for i in income_cost_type]
-    income_cost_type.pop(0)
-    income_cost_type.pop(-1)
-    income_cost_type.pop(-1)
+    income_cost_type = [i[0] for i in income_cost_type if i[0].startswith("in") or i[0].startswith("cost")]
 
     for result in result_income_cost:
         s_day = result["s_date"]

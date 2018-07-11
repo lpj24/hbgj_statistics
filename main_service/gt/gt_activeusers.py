@@ -85,7 +85,18 @@ def update_gtgj_newusers_daily(days=0):
     dto = [tomorrow, today]
     query_data = DBCli().gt_cli.query_all(gtgj_activeusers_sql["gtgj_newusers_daily"], dto)
     DBCli().targetdb_cli.batch_insert(gtgj_activeusers_sql["update_gtgj_newusers_daily"], query_data)
-    pass
+
+    wechat_gt_sql = """
+        select visit_uv_new, DATE_FORMAT(ref_date, '%%Y-%%m-%%d') s_day from applet_visit_trend where DATE_FORMAT(ref_date, '%%Y-%%m-%%d') < %s
+        and DATE_FORMAT(ref_date, '%%Y-%%m-%%d') >= %s and trend_type=1
+    """
+
+    wechat_uv = DBCli().gt_wechat_cli.query_all(wechat_gt_sql, dto)
+
+    update_wechat_sql = """
+        update gtgj_newusers_daily set new_users_weixin=%s where s_day=%s
+    """
+    DBCli().targetdb_cli.batch_insert(update_wechat_sql, wechat_uv)
 
 
 def update_gtgj_activeusers_quarterly():
@@ -129,7 +140,7 @@ def update_gtgj_activeusers_quarterly():
 
 if __name__ == "__main__":
     #下面2项只在凌晨前三天
-    import datetime
+    # import datetime
     # import time
     # start_date = datetime.date(2018, 6, 1)
     # while 1:
@@ -139,3 +150,4 @@ if __name__ == "__main__":
     # update_gtgj_newusers_daily(1)
     # update_gtgj_activeusers_weekly()
     # update_gtgj_activeusers_quarterly()
+    update_gtgj_newusers_daily(1)

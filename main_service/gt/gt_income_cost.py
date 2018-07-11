@@ -57,7 +57,7 @@ def update_gt_income_cost(days=0):
             v = result[i_c_type] if result.get(i_c_type, None) else 0
 
             dto = [s_day, i_c_type, v]
-            if i_c_type == 'in_act_insr':
+            if i_c_type == 'cost_act_insr':
                 continue
             if i_c_type.startswith("in"):
                 DBCli().targetdb_cli.insert(insert_income_sql, dto)

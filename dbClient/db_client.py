@@ -24,6 +24,7 @@ class DBCli(object):
         self._apibase = conf.hb_apibase
         self._flight_oracle = conf.flight_oracle
         self._huoli_buy = conf.huoli_buy
+        self._gt_wechat_db = conf.gt_wechat_db
         self.args = args if args else (list, )
 
     @property
@@ -34,6 +35,10 @@ class DBCli(object):
     @property
     def targetdb_cli(self):
         return DButils("mysql", self._target_db)
+
+    @property
+    def gt_wechat_cli(self):
+        return DButils("mysql", self._gt_wechat_db)
 
     @property
     def Apilog_cli(self):

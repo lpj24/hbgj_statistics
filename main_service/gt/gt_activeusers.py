@@ -15,7 +15,18 @@ def update_gtgj_activeusers_daily(days=0):
     dto = [tomorrow, today]
     query_data = DBCli().gt_cli.query_all(gtgj_activeusers_sql["gtgj_activeusers_daily"], dto)
     DBCli().targetdb_cli.batch_insert(gtgj_activeusers_sql["update_gtgj_activeusers_daily"], query_data)
-    pass
+
+    wechat_gt_sql = """
+        select visit_uv, DATE_FORMAT(ref_date, '%%Y-%%m-%%d') s_day from applet_visit_trend where DATE_FORMAT(ref_date, '%%Y-%%m-%%d') < %s
+        and DATE_FORMAT(ref_date, '%%Y-%%m-%%d') >= %s and trend_type=1
+    """
+
+    wechat_uv = DBCli().gt_wechat_cli.query_all(wechat_gt_sql, dto)
+
+    update_wechat_sql = """
+        update gtgj_activeusers_daily set weixin_users=%s where s_day=%s
+    """
+    DBCli().targetdb_cli.batch_insert(update_wechat_sql, wechat_uv)
 
 
 def update_gtgj_activeusers_weekly():
@@ -26,12 +37,41 @@ def update_gtgj_activeusers_weekly():
     query_data = DBCli().gt_cli.query_all(gtgj_activeusers_sql["gtgj_activeusers_weekly"], dto)
     DBCli().targetdb_cli.batch_insert(gtgj_activeusers_sql["update_gtgj_activeusers_weekly"], query_data)
 
+    wechat_gt_sql = """
+        select visit_uv, DATE_FORMAT(SUBSTR(ref_date, 1, 8), '%%Y-%%m-%%d') s_day from applet_visit_trend where trend_type=2 
+        and DATE_FORMAT(SUBSTR(ref_date, 1, 8), '%%Y-%%m-%%d') >= %s
+        and DATE_FORMAT(SUBSTR(ref_date, 1, 8), '%%Y-%%m-%%d') < %s
+    """
+
+    wechat_uv = DBCli().gt_wechat_cli.query_all(wechat_gt_sql, dto)
+
+    update_wechat_sql = """
+        update gtgj_activeusers_weekly set weixin_users=%s where s_day=%s
+    """
+    DBCli().targetdb_cli.batch_insert(update_wechat_sql, wechat_uv)
+
 
 def update_gtgj_activeusers_monthly():
     start_date, end_date = DateUtil.get_last_month_date()
     dto = [start_date, end_date]
     query_data = DBCli().gt_cli.query_one(gtgj_activeusers_sql["gtgj_activeusers_monthly"], dto)
     DBCli().targetdb_cli.insert(gtgj_activeusers_sql["update_gtgj_activeusers_monthly"], query_data)
+
+    query_month_day = DateUtil.date2str(start_date, '%Y-%m-%d')
+    year, month, _ = query_month_day.split("-")
+
+    query_month_dto = [start_date, year + month]
+    wechat_gt_sql = """
+        select visit_uv, %s s_day from applet_visit_trend where trend_type=3 
+        and SUBSTR(ref_date, 1, 6) = %s 
+    """
+
+    wechat_uv = DBCli().gt_wechat_cli.query_all(wechat_gt_sql, query_month_dto)
+
+    update_wechat_sql = """
+        update gtgj_activeusers_monthly set weixin_users=%s where s_day=%s
+    """
+    DBCli().targetdb_cli.batch_insert(update_wechat_sql, wechat_uv)
 
 
 def update_gtgj_newusers_daily(days=0):
@@ -89,7 +129,13 @@ def update_gtgj_activeusers_quarterly():
 
 if __name__ == "__main__":
     #下面2项只在凌晨前三天
-    update_gtgj_activeusers_daily(1)
+    import datetime
+    # import time
+    # start_date = datetime.date(2018, 6, 1)
+    # while 1:
+    #     update_gtgj_activeusers_monthly(start_date)
+    #     start_date, _ = DateUtil.get_last_month_date(start_date)
+    # update_gtgj_activeusers_monthly()
     # update_gtgj_newusers_daily(1)
     # update_gtgj_activeusers_weekly()
     # update_gtgj_activeusers_quarterly()

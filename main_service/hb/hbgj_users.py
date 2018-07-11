@@ -170,7 +170,7 @@ def hbgj_user(days=0):
     pass
 
 if __name__ == "__main__":
-    hbgj_user(1)
+    hbgj_user(3)
     # import os
     # print os.path.dirname(__file__)
     # print os.path.join(os.path.dirname(__file__), 'email')

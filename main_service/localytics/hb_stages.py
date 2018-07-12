@@ -138,4 +138,4 @@ def update_weex_activated_type_daily(days=0):
 if __name__ == "__main__":
     # update_hbgj_stages_daily(1)
     # update_hbgj_stages_daily(1)
-    update_weex_activated_type_daily(6)
+    update_hbgj_stages_daily(1)

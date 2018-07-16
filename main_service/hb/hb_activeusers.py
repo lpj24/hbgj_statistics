@@ -92,13 +92,14 @@ def update_hbgj_newuser_daily(days=1):
     """
 
     insert_sql = """
-        insert into hbgj_newusers_daily (s_day, new_users, new_users_ios, new_users_android,
-        createtime, updatetime) values (%s, %s, %s, %s, now(), now())
+        insert into hbgj_newusers_daily (s_day, new_users, new_users_ios, new_users_android, new_users_weixin,
+        createtime, updatetime) values (%s, %s, %s, %s, 0, now(), now())
         on duplicate key update updatetime = now(),
         s_day = values(s_day),
         new_users = values(new_users),
         new_users_ios = values(new_users_ios),
-        new_users_android = values(new_users_android)
+        new_users_android = values(new_users_android),
+        new_users_weixin = values(new_users_weixin)
     """
     query_data = DBCli().apibase_cli.query_all(new_user_sql, dto)
     DBCli().targetdb_cli.batch_insert(insert_sql, query_data)
@@ -122,7 +123,7 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hbgj_activeusers_daily(i)
     #     i -= 1
-    update_hbgj_newuser_daily(1)
+    update_hbgj_activeusers_weekly()
     # import datetime
     # import time
     # start_date = datetime.date(2018, 7, 11)

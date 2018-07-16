@@ -51,8 +51,8 @@ def add_execute_job():
     TimeService.add_hard_service(hb_profit_cost.update_profit_hb_income_official_website)
     TimeService.add_hard_service(gt_income_cost.update_gt_income_cost)
 
-    TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)
-    TimeService.add_hard_service(hb_activeusers.update_hbgj_newuser_daily)
+    # TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)
+    # TimeService.add_hard_service(hb_activeusers.update_hbgj_newuser_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_operation_hbgj_obsolete_order_daily)
     TimeService.add_hard_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_hard_service(hb_flight_details.update_hb_city_rate)

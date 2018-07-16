@@ -1,0 +1,15 @@
+<table border="1" cellspacing="0" cellpadding="0" style="text-align:   center; ">
+    <tr>
+    % for column in rows:
+      <th align='center'>${column}</th>
+    % endfor
+    </tr>
+
+    % for data in rows_data:
+        <tr>
+            % for el in data:
+                <td width='15%'>${el}</td>
+            % endfor
+        </tr>
+    % endfor
+</table>

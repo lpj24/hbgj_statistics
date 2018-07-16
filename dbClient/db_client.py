@@ -26,11 +26,17 @@ class DBCli(object):
         self._huoli_buy = conf.huoli_buy
         self._gt_wechat_db = conf.gt_wechat_db
         self._source_wechat_db = conf.source_weixin_db
+        self._delay_insure_db = conf.delay_insure
         self.args = args if args else (list, )
 
     @property
     def sourcedb_cli(self):
         return DButils("mysql", self._source_db, self.args[0])
+        # return DButils("mysql", self._source_db)
+
+    @property
+    def delay_insure_cli(self):
+        return DButils("mysql", self._delay_insure_db, self.args[0])
         # return DButils("mysql", self._source_db)
 
     @property

@@ -20,6 +20,7 @@ class DButils(object):
                                   port=conf["port"], db=conf["database"],  mincached=1, maxcached=20, charset="utf8", blocking=True
                                   , maxshared=10, cursorclass=_return_cursor)
         elif dbtype.lower() == "oracle":
+            print cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"])
             self._pool = PooledDB(cx_Oracle, user=conf["user"], password=conf["password"],
                                   dsn=cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"]),
                                   mincached=1, maxcached=50, maxshared=10, maxusage=0)
@@ -63,7 +64,7 @@ class DButils(object):
                 sql, num = rx.subn(params.pop(), sql)
             cursor.execute(sql, params)
 
-        logging.warning(cursor._executed)
+        # logging.warning(cursor._executed)
         data = cursor.fetchall()
         return data
 

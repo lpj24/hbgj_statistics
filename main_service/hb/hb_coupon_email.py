@@ -195,8 +195,8 @@ def send_hb_sign_email():
 if __name__ == '__main__':
     global sign_msg_text
     from dbClient.utils import sendMail
-    # sign_msg_text = send_hb_coupon_email(1)
-    # sign_msg_text += send_hb_delay_email(1)
-    # subject = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
-    # sendMail('762575190@qq.com', sign_msg_text, "")
-    print send_hb_delay_email(1)
+    sign_msg_text = send_hb_coupon_email(1)
+    sign_msg_text += send_hb_delay_email(1)
+    subject = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
+    sendMail('762575190@qq.com', sign_msg_text, "")
+    # print send_hb_delay_email(1)

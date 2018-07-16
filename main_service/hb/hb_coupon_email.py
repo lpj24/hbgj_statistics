@@ -34,6 +34,17 @@ def send_hb_delay_email(days=0):
         FROM `ticket_delay_pack` WHERE create_time>=%s and create_time<%s GROUP BY s_day;
 
     """
+
+    delay_num_amount_sql = """
+        SELECT LEFT(qbr.create_time, 10) as dayDate, COUNT(DISTINCT qbr.pack_id) AS countNum, SUM(qbr.bonus_amount) as sumAmount
+        FROM (
+        SELECT DISTINCT q.receive_number, q.pack_id, q.bonus_amount, q.receive_status, q.create_time
+        FROM quota_bonus_receive q where LEFT(q.create_time, 10)=%s
+        GROUP BY q.pack_id, q.receive_number
+        ) AS qbr
+        GROUP BY dayDate
+        ORDER BY dayDate DESC 
+    """
     delay_data = DBCli().delay_insure_cli.query_all(delay_insure_sql, dto)
     delay_email_list = [d for d in delay_data]
     render_data = {
@@ -41,6 +52,14 @@ def send_hb_delay_email(days=0):
         'rows_data': delay_email_list
     }
     delay_msg_text = "<strong>延误宝销售量</strong><br/><br/>"
+    delay_msg_text += mako_render(render_data, 'sign_template.txt')
+
+    delay_num_amount_data = DBCli().delay_insure_cli.query_one(delay_num_amount_sql, [start_date])
+    render_data = {
+        'rows': ['日期', '赔付个数', '总金额'],
+        'rows_data': [delay_num_amount_data]
+    }
+    delay_msg_text += "<br/><br/><strong>延误宝赔付个数和总金额</strong><br/><br/>"
     delay_msg_text += mako_render(render_data, 'sign_template.txt')
     return delay_msg_text
 
@@ -176,7 +195,8 @@ def send_hb_sign_email():
 if __name__ == '__main__':
     global sign_msg_text
     from dbClient.utils import sendMail
-    sign_msg_text = send_hb_coupon_email(1)
-    sign_msg_text += send_hb_delay_email(1)
-    subject = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
-    sendMail('762575190@qq.com', sign_msg_text, "")
+    # sign_msg_text = send_hb_coupon_email(1)
+    # sign_msg_text += send_hb_delay_email(1)
+    # subject = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
+    # sendMail('762575190@qq.com', sign_msg_text, "")
+    print send_hb_delay_email(1)

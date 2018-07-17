@@ -1,11 +1,10 @@
 # coding: utf-8
 from time_job_excute.timeServiceList import TimeService
-from main_service.hb import hb_flight_search, hb_flight_details, hb_flight_focus, hb_first_consumers
+from main_service.hb import hb_flight_details, hb_flight_focus, hb_first_consumers
 from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount, \
-    hb_channel_ticket, hb_profit_cost, hb_activeusers, hb_coupon_ticket, hb_focus_newuser
+    hb_channel_ticket, hb_profit_cost, hb_coupon_ticket, hb_focus_newuser, hb_coupon_email
 from main_service.huoli import hotel_activeusers
 from main_service.gt import gt_income_cost
-from main_service.tmp_task.hb_search_focus import hb_search_focus
 import sys
 
 
@@ -29,7 +28,6 @@ def add_execute_job():
     TimeService.add_hard_service(hb_ticket_issue_refund.update_hbgj_income_issue_refund_daily)
     TimeService.add_hard_service(hb_ticket_issue_refund.update_hbgj_cost_type_daily)
 
-    # TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_self_no_transfer_daily)
     TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_self_transfer_daily)
     TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_transfer_daily)
     TimeService.add_hard_service(hb_ticket_issue_refund.update_profit_hb_supply_no_transfer_daily)
@@ -51,8 +49,6 @@ def add_execute_job():
     TimeService.add_hard_service(hb_profit_cost.update_profit_hb_income_official_website)
     TimeService.add_hard_service(gt_income_cost.update_gt_income_cost)
 
-    # TimeService.add_hard_service(hb_activeusers.update_hbgj_activeusers_daily)
-    # TimeService.add_hard_service(hb_activeusers.update_hbgj_newuser_daily)
     TimeService.add_hard_service(hb_channel_ticket.update_operation_hbgj_obsolete_order_daily)
     TimeService.add_hard_service(hotel_activeusers.update_hotel_activeusers_daily)
     TimeService.add_hard_service(hb_flight_details.update_hb_city_rate)
@@ -67,6 +63,8 @@ def add_execute_job():
 
     TimeService.add_hard_service(hb_company_amount.update_hb_company_income_cost_nation_daily)
     TimeService.add_hard_service(hb_company_amount.update_hb_company_income_cost_inter_daily)
+
+    TimeService.add_hard_service(hb_coupon_email.send_hb_coupon_delay_eamil_daily)
     return TimeService
 
 

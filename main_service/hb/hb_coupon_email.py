@@ -5,6 +5,7 @@ import requests
 from mako.template import Template
 from mako.lookup import TemplateLookup
 import os
+from dbClient.utils import sendMail
 
 
 def mako_render(data, mako_file):
@@ -65,6 +66,7 @@ def send_hb_delay_email(days=0):
 
 
 def send_hb_coupon_email(days=0):
+    sign_msg_text = ""
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
 
@@ -95,7 +97,7 @@ def send_hb_coupon_email(days=0):
     coupon_add_email_list = []
     coupon_use_email_list = []
     for data in coupon_add_data:
-        coupon_add_email_list.append([data[0], data[1], data[2]])
+        coupon_add_email_list.append([data[0], data[1], data[2], data[3]])
 
     render_data = {
         'rows': ['日期', 'coupon_id', 'coupon_name', '数量'],
@@ -105,10 +107,10 @@ def send_hb_coupon_email(days=0):
     sign_msg_text += mako_render(render_data, 'sign_template.txt')
 
     for data in coupon_use_data:
-        coupon_use_email_list.append([data[0], data[1], data[2]])
+        coupon_use_email_list.append([data[0], data[1], data[2], data[3]])
 
     render_data = {
-        'rows': ['coupon_id', 'coupon_name', '数量'],
+        'rows': ['日期', 'coupon_id', 'coupon_name', '数量'],
         'rows_data': coupon_use_email_list
     }
     sign_msg_text += "<br/><br/><strong>优惠券使用量</strong><br/><br/>"
@@ -134,8 +136,10 @@ def send_hb_coupon_email(days=0):
 
     for k, v in total_provide_data.items():
         coupon_id, coupon_name = k.split(':')
-        coupon_use = total_use_data[k]
-        use_rate = float(coupon_use)/float(v)
+        coupon_use = total_use_data.get(k, 0)
+        if coupon_use == 0:
+            continue
+        use_rate = str(round(float(coupon_use)/float(v), 4)*100) + '%'
         use_coupon_rate_email_list.append([coupon_id, coupon_name, coupon_use, v, use_rate])
 
     render_data = {
@@ -148,6 +152,7 @@ def send_hb_coupon_email(days=0):
 
 
 def send_hb_sign_email():
+    sign_msg_text = ''
     sign_url = 'http://jt.rsscc.com/hbgjact/hbgjact/sign/signStatistics.action'
     sign_data = requests.get(sign_url)
     sign_detail_data = sign_data.json()['data']
@@ -192,11 +197,36 @@ def send_hb_sign_email():
     return sign_msg_text
 
 
-if __name__ == '__main__':
-    global sign_msg_text
-    from dbClient.utils import sendMail
-    sign_msg_text = send_hb_coupon_email(1)
-    sign_msg_text += send_hb_delay_email(1)
-    subject = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
-    sendMail('762575190@qq.com', sign_msg_text, "")
-    # print send_hb_delay_email(1)
+def send_hb_coupon_delay_eamil_daily(days=0):
+    """通过邮件发送航班优惠券和延误宝数据, send_hb_coupon_delay_eamil_daily"""
+    sign_msg_text = send_hb_coupon_email(days)
+    sign_msg_text += send_hb_delay_email(days)
+    subject = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
+    email_list = [
+        'hec@133.cn',
+        'zhangxm@133.cn',
+        'zengyk@133.cn',
+        'wangqq@133.cn',
+        'wangqin01@133.cn',
+        'zhangsb@133.cn',
+        '762575190@qq.com'
+    ]
+    for send in email_list:
+        sendMail(send, sign_msg_text, subject)
+
+
+def send_hb_sign_weekly():
+    """通过邮件发送航班签到数据(周), send_hb_sign_weekly"""
+    msg_text = send_hb_sign_email()
+    subject = DateUtil.date2str(DateUtil.get_last_week_date()[0], '%Y-%m-%d') + u' 航班管家签到数据统计'
+    email_list = [
+        'hec@133.cn',
+        'zhangxm@133.cn',
+        'zengyk@133.cn',
+        'wangqq@133.cn',
+        'wangqin01@133.cn',
+        'zhangsb@133.cn',
+        '762575190@qq.com'
+    ]
+    for send in email_list:
+        sendMail(send, msg_text, subject)

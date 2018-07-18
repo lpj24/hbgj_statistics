@@ -350,12 +350,13 @@ def update_hbgj_client_airline_inter_weekly():
 
 if __name__ == '__main__':
     # update_hbgj_client_airline_inland_weekly()
-    import datetime
-    last_week = datetime.date(2016, 12, 26)
-    start_week, end_week = DateUtil.get_last_week_date()
-    while start_week >= last_week:
-        print start_week, end_week
-        update_hbgj_client_airline_inter_weekly(start_week, end_week)
-        update_hbgj_client_airline_inland_weekly(start_week, end_week)
-        start_week, end_week = DateUtil.get_last_week_date(start_week)
+    update_hbgj_client_airline_inter_weekly()
+    # import datetime
+    # last_week = datetime.date(2016, 12, 26)
+    # start_week, end_week = DateUtil.get_last_week_date()
+    # while start_week >= last_week:
+    #     print start_week, end_week
+    #     update_hbgj_client_airline_inter_weekly(start_week, end_week)
+    #     update_hbgj_client_airline_inland_weekly(start_week, end_week)
+    #     start_week, end_week = DateUtil.get_last_week_date(start_week)
     # update_hbgj_client_airline_inland_weekly()

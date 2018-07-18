@@ -61,6 +61,7 @@ def hbgj_user(days=0):
     FROM TICKET_ORDER TR
     where TR.ORDERSTATUE not in (2,12,21,51,75)
     and TR.createtime>=%s AND TR.createtime<%s
+    and IFNULL(TR.`LINKTYPE`, 0) != 2
     ) trp
     GROUP BY trp.s_day, trp.source
     order by order_num desc
@@ -76,10 +77,10 @@ def hbgj_user(days=0):
             FROM TICKET_ORDER TR
             where TR.ORDERSTATUE not in (2,12,21,51,75)
             and TR.createtime>=%s AND TR.createtime<%s
+            and IFNULL(TR.`LINKTYPE`, 0) != 2
             ) trp
             GROUP BY trp.s_day
             order by order_num desc
-
     """
 
     while start_date < end_date:
@@ -169,8 +170,9 @@ def hbgj_user(days=0):
         start_date = DateUtil.add_days(start_date, 1)
     pass
 
+
 if __name__ == "__main__":
-    hbgj_user(3)
+    hbgj_user(1)
     # import os
     # print os.path.dirname(__file__)
     # print os.path.join(os.path.dirname(__file__), 'email')

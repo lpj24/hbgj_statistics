@@ -63,7 +63,7 @@ def storage_execute_job(fun):
         if fun_path and fun_path.endswith("pyc"):
             fun_path = fun_path[0: -1]
         is_execute = 1 if fun_path else 0
-        job_type = 5 if fun_name == "hbgj_user" else 1
+        job_type = 5 if (fun_name == "hbgj_user" or fun_name == "send_hb_coupon_delay_eamil_daily") else 1
         f_des, f_table = fun_doc.split(",")
         insert_sql = """
             insert into bi_execute_job (job_name, job_path, job_doc, job_table, job_type, is_execute, category_type_id, 

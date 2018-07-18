@@ -75,22 +75,22 @@ def send_hb_coupon_email(days=0):
         SELECT left(c.createtime,10),
         c.coupon_id,
         l.coupon_name,
-        count(1) 
+        count(1) num
         FROM account.coupon c JOIN account.coupon_list l on l.id=c.coupon_id
         WHERE l.costid=1 and c.createtime 
-        BETWEEN %s and %s GROUP BY c.coupon_id limit 100;
+        BETWEEN %s and %s GROUP BY c.coupon_id order by num desc;
     """
 
     coupon_use_sql = """
         SELECT left(c.updatetime ,10),
         c.coupon_id,
         l.coupon_name,
-        count(1) FROM account.coupon c JOIN account.coupon_list l on l.id=c.coupon_id
+        count(1) num FROM account.coupon c JOIN account.coupon_list l on l.id=c.coupon_id
         WHERE l.costid=1 and c.updatetime 
-        BETWEEN %s and %s and used=1 GROUP BY c.coupon_id limit 100;
+        BETWEEN %s and %s and used=1 GROUP BY c.coupon_id order by num desc;
 
     """
-
+    coupon_use_id_list = []
     coupon_add_data = DBCli().sourcedb_cli.query_all(coupon_add_sql, dto)
     coupon_use_data = DBCli().sourcedb_cli.query_all(coupon_use_sql, dto)
 
@@ -108,6 +108,7 @@ def send_hb_coupon_email(days=0):
 
     for data in coupon_use_data:
         coupon_use_email_list.append([data[0], data[1], data[2], data[3]])
+        coupon_use_id_list.append(data[1])
 
     render_data = {
         'rows': ['日期', 'coupon_id', 'coupon_name', '数量'],
@@ -120,19 +121,21 @@ def send_hb_coupon_email(days=0):
     # 使用量
     use_coupon_rate_email_list = []
     total_use_sql = """
-        SELECT CONCAT(c.coupon_id, ":", l.coupon_name) id_name,count(*) 
+        SELECT CONCAT(c.coupon_id, ":", l.coupon_name) id_name,count(*) num 
         FROM account.coupon c JOIN account.coupon_list l on l.id=c.coupon_id
-        WHERE l.costid=1  and used=1 GROUP BY id_name;
+        WHERE l.costid=1  and used=1 and c.coupon_id in %s
+        GROUP BY id_name order by num desc;
     """
 
     total_provide_sql = """
-        SELECT CONCAT(c.coupon_id, ":", l.coupon_name) id_name,count(*) 
+        SELECT CONCAT(c.coupon_id, ":", l.coupon_name) id_name,count(*) num
         FROM account.coupon c JOIN account.coupon_list l on l.id=c.coupon_id
-        WHERE l.costid=1  GROUP BY id_name;
+        WHERE l.costid=1 and c.coupon_id in %s
+        GROUP BY id_name order by num desc;
     """
 
-    total_use_data = dict(DBCli().sourcedb_cli.query_all(total_use_sql))
-    total_provide_data = dict(DBCli().sourcedb_cli.query_all(total_provide_sql))
+    total_use_data = dict(DBCli().sourcedb_cli.query_all(total_use_sql, [coupon_use_id_list]))
+    total_provide_data = dict(DBCli().sourcedb_cli.query_all(total_provide_sql, [coupon_use_id_list]))
 
     for k, v in total_provide_data.items():
         coupon_id, coupon_name = k.split(':')
@@ -230,3 +233,10 @@ def send_hb_sign_weekly():
     ]
     for send in email_list:
         sendMail(send, msg_text, subject)
+
+
+if __name__ == '__main__':
+    import datetime
+    start_time = datetime.datetime.now()
+    send_hb_coupon_delay_eamil_daily(1)
+    print datetime.datetime.now() - start_time

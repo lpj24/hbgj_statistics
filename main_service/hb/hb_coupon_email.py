@@ -24,7 +24,7 @@ def mako_render(data, mako_file):
 def send_hb_delay_email(days=0):
     # 延误宝
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(3), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
 
     dto = [start_date, end_date]
     delay_insure_sql = """

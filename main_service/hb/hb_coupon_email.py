@@ -29,21 +29,24 @@ def send_hb_delay_email(days=0):
     dto = [start_date, end_date]
     delay_insure_sql = """
         SELECT DATE_FORMAT(create_time, '%%Y-%%m-%%d') s_day,
-        count(CASE WHEN entry=1 then pack_id end ) 跟随订单购买,
-        count(CASE WHEN entry in (2,3,4) then pack_id end ) 单独购买,
-        count(CASE WHEN entry=5 then pack_id end ) 手动添加机票购买,
-        count(CASE WHEN entry=0 then pack_id end ) 未记录入口
+        count(CASE WHEN entry=1 then 1 end ) 跟随订单购买,
+        count(CASE WHEN entry in (2,3,4) then 1 end ) 单独购买,
+        count(CASE WHEN entry=5 then 1 end ) 手动添加机票购买,
+        count(CASE WHEN entry=0 then 1 end ) 未记录入口
         FROM `ticket_delay_pack` WHERE create_time>=%s and create_time<%s GROUP BY s_day
         union ALL
-        SELECT
+        SELECT 
         DATE_FORMAT(t.create_time, '%%Y-%%m-%%d') s_day,
-        sum(CASE WHEN entry=1 then pay_amount else 0 end ) 跟随订单购买,
-        sum(CASE WHEN entry in (2,3,4) then pay_amount else 0 end ) 单独购买,
-        sum(CASE WHEN entry=5 then pay_amount else 0 end ) 手动添加机票购买,
-        sum(CASE WHEN entry=0 then pay_amount else 0 end ) 未记录入口
+
+        cast(sum(CASE WHEN entry=1 then pay_amount else 0 end ) as SIGNED) 跟随订单购买,
+        CAST(sum(CASE WHEN entry in (2,3,4) then pay_amount else 0 end ) AS SIGNED) 单独购买,
+        CAST(sum(CASE WHEN entry=5 then pay_amount else 0 end ) AS SIGNED) 手动添加机票购买,
+        CAST(sum(CASE WHEN entry=0 then pay_amount else 0 end ) AS SIGNED) 未记录入口
 
          FROM `ticket_delay_pack` t join  flight_delay_pay f on t.pack_id=f.pack_id  
         WHERE t.create_time>=%s and t.create_time<%s and ywb_status=2 and pay_status = 1  GROUP BY s_day;
+
+
     """
 
     delay_num_amount_sql = """

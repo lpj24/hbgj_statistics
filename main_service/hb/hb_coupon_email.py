@@ -232,8 +232,8 @@ def send_hb_sign_email():
 
 def send_hb_coupon_delay_eamil_daily(days=0):
     """通过邮件发送航班优惠券和延误宝数据, send_hb_coupon_delay_eamil_daily"""
-    # sign_msg_text = send_hb_coupon_email(days)
-    sign_msg_text = send_hb_delay_email(days)
+    sign_msg_text = send_hb_coupon_email(days)
+    sign_msg_text += send_hb_delay_email(days)
     subject = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
     email_list = [
         'hec@133.cn',

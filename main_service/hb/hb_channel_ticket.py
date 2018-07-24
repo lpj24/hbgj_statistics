@@ -426,6 +426,7 @@ def update_product_ticket_daily(days=0):
         BETWEEN %s and %s and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
         IFNULL(od.`LINKTYPE`, 0) != 2
         and agentid is not NULL and LENGTH(agentid)>0 and intflag=0
+        and o.PNRSOURCE not in ('HBGJ')
         GROUP BY o.agentid, s_day order by s_day;
     """
     insert_sql = """

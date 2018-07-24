@@ -424,7 +424,9 @@ def update_product_ticket_daily(days=0):
         `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o
         on od.ORDERID=o.ORDERID where od.CREATETIME
         BETWEEN %s and %s and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
-         IFNULL(od.`LINKTYPE`, 0) != 2 and o.PNRSOURCE='supply' GROUP BY o.agentid, s_day order by s_day;
+        IFNULL(od.`LINKTYPE`, 0) != 2
+        and agentid is not NULL and LENGTH(agentid)>0 and intflag=0
+        GROUP BY o.agentid, s_day order by s_day;
     """
     insert_sql = """
         insert into operation_hbgj_supplier_ticket_daily (s_day, agentid, ticket_num, amount, createtime, updatetime)
@@ -433,7 +435,6 @@ def update_product_ticket_daily(days=0):
     dto = [start_week, end_week]
     supplier_data = DBCli().sourcedb_cli.query_all(product_sql, dto)
     DBCli().targetdb_cli.batch_insert(insert_sql, supplier_data)
-    pass
 
 
 def update_refund_ticket_channel_daily(days=0):
@@ -596,4 +597,4 @@ if __name__ == "__main__":
     # while i <= 352:
     #     update_hb_channel_ticket_income_daily(i)
     #     i += 1
-    update_hb_channel_ticket_income_daily(1)
+    update_product_ticket_daily(1)

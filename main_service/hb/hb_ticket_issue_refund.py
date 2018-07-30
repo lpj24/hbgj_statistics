@@ -6,7 +6,7 @@ from dbClient.dateutil import DateUtil
 
 def update_hbgj_income_issue_refund_daily(days=0):
     """机票收入按照客户端类型/出(退)票, profit_hb_income_type_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 5), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 29), '%Y-%m-%d')
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1-days), '%Y-%m-%d')
     hb_gt_sql = """
         SELECT DATE_FORMAT(i.INCOMEDATE, '%%Y-%%m-%%d') s_day,
@@ -27,6 +27,24 @@ def update_hbgj_income_issue_refund_daily(days=0):
         where i.type=0
         and i.INCOMEDATE>=%s
         and i.INCOMEDATE<%s
+        AND o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182011642851159',
+        '182041635160206'
+        )
         GROUP BY s_day
     """
     insert_sql = """
@@ -71,6 +89,24 @@ def update_hbgj_cost_type_daily(days=0):
         and COSTTYPE=%s
         and c.COSTDATE=%s
         and p like '%%{}%%'
+        AND o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182011642851159',
+        '182041635160206'
+        )
         GROUP BY c.COSTDATE, c.PNRSOURCE, PNRSOURCE_CONFIG.`NAME`;
     """
 
@@ -84,6 +120,24 @@ def update_hbgj_cost_type_daily(days=0):
         and COSTTYPE=%s
         and c.COSTDATE=%s
         and p not like '%%hbgj%%' and p not like '%%gtgj%%'
+        AND o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182011642851159',
+        '182041635160206'
+        )
         GROUP BY c.COSTDATE, c.PNRSOURCE, PNRSOURCE_CONFIG.`NAME`;
     """
     insert_sql = """
@@ -374,6 +428,7 @@ def update_profit_hb_supply_no_transfer_daily(days=0):
 
 if __name__ == "__main__":
     update_hbgj_income_issue_refund_daily(1)
+    # update_hbgj_cost_type_daily(1)
 
     # update_profit_hb_self_no_transfer_daily(1)
     # i = 75

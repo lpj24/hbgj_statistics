@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf8')
 def update_hb_car_hotel_profit(days=0):
     """航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 29)
+    query_date = DateUtil.get_date_before_days(days * 15)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -447,9 +447,8 @@ def update_huoli_car_income_type(days=0):
 
 def update_profit_hb_income(days=0):
     """航班收入, profit_hb_income"""
-    query_date = DateUtil.get_date_before_days(days*29)
+    query_date = DateUtil.get_date_before_days(days*15)
     today = DateUtil.get_date_after_days(1 - days)
-    print query_date, today
     sql = """
         SELECT INCOMEDATE,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 3 THEN INCOME else 0 END) inland_ticket_incometype0,
@@ -629,7 +628,7 @@ def update_profit_hb_income(days=0):
 
     recharge_data = get_hb_rechargetype(query_date, today)
 
-    for x in xrange(days*29):
+    for x in xrange(days*15):
         query_date = DateUtil.add_days(query_date, 1)
         supply_account_inland_income = recharge_data.get(str(query_date) + '_2_0', 0) - recharge_data.get(str(query_date) + '_1_0', 0)
         supply_account_inter_income = recharge_data.get(str(query_date) + '_2_1', 0) - recharge_data.get(str(query_date) + '_1_1', 0)

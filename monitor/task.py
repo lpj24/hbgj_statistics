@@ -55,11 +55,14 @@ def check_week_data(table_list):
     query_date = DateUtil.date2str(start_week, '%Y-%m-%d')
     msg = ""
     for table in table_list:
-        execute_sql = 'select count(1) from {} where s_day = %s'.format(table)
-        data = DBCli().targetdb_cli.query_one(execute_sql, [query_date])
-        if data[0] < 1:
-            # error
-            msg += table + "<br/>"
+        try:
+            execute_sql = 'select count(1) from {} where s_day = %s'.format(table)
+            data = DBCli().targetdb_cli.query_one(execute_sql, [query_date])
+            if data[0] < 1:
+                # error
+                msg += table + "<br/>"
+        except Exception as e:
+            continue
     if len(msg) > 0:
         utils.sendMail("762575190@qq.com", msg, u"周数据查询异常")
     else:

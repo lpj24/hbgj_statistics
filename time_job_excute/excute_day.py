@@ -2,7 +2,7 @@
 import sys
 from main_service.gt import gt_activeusers, gt_consumers, gt_order, gt_amount, gt_newconsumers, gt_fromHb, gt_register_user
 from main_service.hb import hb_focus_platform, hb_delay_insure, hb_order, hb_partner, \
-    hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users, hb_channel_client
+    hb_coupon_ticket, hb_focus_newuser, hb_insure, hbgj_users, hb_channel_client, hb_coupon_email
 from main_service.huoli import car_orders, car_consumers, hotel_activeusers, \
     hotel_newconsumers, hotel_order, hotel_consumers, hotel_newusers, huoli_buy_consumers
 from time_job_excute.timeServiceList import TimeService
@@ -71,6 +71,8 @@ def add_execute_job():
     TimeService.add_day_service(hb_channel_client.update_hbgj_channel_client_ticket_daily)
     TimeService.add_day_service(hb_channel_client.update_hbgj_channel_client_ticket_h5_daily)
     TimeService.add_day_service(hb_insure.update_insure_type_detail_daily)
+
+    TimeService.add_hard_service(hb_coupon_email.send_hb_coupon_delay_eamil_daily)
     return TimeService
 
 

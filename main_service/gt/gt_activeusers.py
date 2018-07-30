@@ -150,4 +150,4 @@ if __name__ == "__main__":
     # update_gtgj_newusers_daily(1)
     # update_gtgj_activeusers_weekly()
     # update_gtgj_activeusers_quarterly()
-    update_gtgj_activeusers_daily()
+    update_gtgj_activeusers_daily(1)

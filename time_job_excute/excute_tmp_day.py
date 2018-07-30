@@ -2,7 +2,7 @@
 from time_job_excute.timeServiceList import TimeService
 from main_service.hb import hb_flight_details, hb_flight_focus, hb_first_consumers
 from main_service.hb import hb_consumers, hb_ticket_issue_refund, hb_company_amount, \
-    hb_channel_ticket, hb_profit_cost, hb_coupon_ticket, hb_focus_newuser, hb_coupon_email
+    hb_channel_ticket, hb_profit_cost, hb_coupon_ticket, hb_focus_newuser
 from main_service.huoli import hotel_activeusers
 from main_service.gt import gt_income_cost
 import sys
@@ -63,8 +63,6 @@ def add_execute_job():
 
     TimeService.add_hard_service(hb_company_amount.update_hb_company_income_cost_nation_daily)
     TimeService.add_hard_service(hb_company_amount.update_hb_company_income_cost_inter_daily)
-
-    TimeService.add_hard_service(hb_coupon_email.send_hb_coupon_delay_eamil_daily)
     return TimeService
 
 

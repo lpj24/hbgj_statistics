@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf8')
 def update_hb_car_hotel_profit(days=0):
     """航班专车酒店成本(德付通9.1日以前系数是0.005以后是0.0018),
     profit_hb_cost profit_huoli_car_cost profit_huoli_hotel_cost"""
-    query_date = DateUtil.get_date_before_days(days * 7)
+    query_date = DateUtil.get_date_before_days(days * 29)
     today = DateUtil.get_date_after_days(1 - days)
     sql = """
         select distinct TRADE_TIME s_day,
@@ -50,6 +50,23 @@ def update_hb_car_hotel_profit(days=0):
         left join skyhotel.`TICKET_ORDER` o
         on T_COST.ORDERID=o.ORDERID
         where COSTDATE>=%s and COSTDATE<%s
+        AND o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182041635160206'
+        )
         GROUP BY COSTDATE
         ORDER BY COSTDATE
     """
@@ -76,6 +93,23 @@ def update_hb_car_hotel_profit(days=0):
         and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
         AND IFNULL(od.`LINKTYPE`, 0) != 2
         and o.PNRSOURCE='hlth'
+        AND o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182041635160206'
+        )
         and o.SUBORDERNO='BOP' and
         od.ETICKET is not null
         group by s_day
@@ -103,6 +137,23 @@ def update_hb_car_hotel_profit(days=0):
         and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
         AND IFNULL(od.`LINKTYPE`, 0) != 2
         and o.PNRSOURCE='hlth'
+        AND o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182041635160206'
+        )
         and o.SUBORDERNO='BOP' and
         od.ETICKET is not null and  IFNULL(od.REFUNDID, 0) != 0
         group by left(r.submit_time,10);
@@ -181,7 +232,24 @@ def update_hb_car_hotel_profit(days=0):
         and tico.orderid=ptr.order_id and tico.orderid=tor.orderid 
         and tor.STATUS=7 
         and tor.INREFUND_TIME>=%s
-        and tor.INREFUND_TIME<=%s 
+        and tor.INREFUND_TIME<=%s
+        AND tico.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182041635160206'
+        )
         GROUP BY sday;
     """
 
@@ -379,8 +447,9 @@ def update_huoli_car_income_type(days=0):
 
 def update_profit_hb_income(days=0):
     """航班收入, profit_hb_income"""
-    query_date = DateUtil.get_date_before_days(days*15)
+    query_date = DateUtil.get_date_before_days(days*29)
     today = DateUtil.get_date_after_days(1 - days)
+    print query_date, today
     sql = """
         SELECT INCOMEDATE,
         SUM(case when TYPE=0 AND o.mode= 0 AND T_INCOME.INTFLAG=0 AND INCOMETYPE= 3 THEN INCOME else 0 END) inland_ticket_incometype0,
@@ -395,6 +464,25 @@ def update_profit_hb_income(days=0):
         left join skyhotel.`TICKET_ORDER` o
         on T_INCOME.ORDERID=o.ORDERID
         WHERE INCOMEDATE>=%s and INCOMEDATE<%s
+                and T_INCOME.ORDERID NOT IN
+        (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182011642851159',
+        '182041635160206 '
+        )
         GROUP BY INCOMEDATE
         ORDER BY INCOMEDATE
     """
@@ -424,6 +512,24 @@ def update_profit_hb_income(days=0):
         and f.`status`=1
         and f.create_time >= %s
         and f.create_time < %s
+        and o.ORDERID NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182011642851159',
+        '182041635160206'
+        )
         group by s_day
         order by s_day
     """
@@ -451,6 +557,23 @@ def update_profit_hb_income(days=0):
         and left(o.createtime,10) >= %s
         and left(o.createtime,10) < %s
         and `status`=2
+        AND o.outorderid NOT IN (
+        '182011642851159',
+        '182011736892189',
+        '182011825718200',
+        '181851252794127',
+        '181851319602036',
+        '181851338769216',
+        '181992337462544',
+        '181961615494095',
+        '182002056925862',
+        '181841201332113',
+        '181740723625389',
+        '181832105385909',
+        '181831752539304',
+        '181871445964760',
+        '182041635160206'
+        )
         and pay_price<>1 GROUP BY left(o.createtime,10)
     """
     update_office_sql = """
@@ -471,6 +594,24 @@ def update_profit_hb_income(days=0):
         and realitem_id='2' and `status`=2
         and left(o.createtime,10)>=%s
         and left(o.createtime,10)<%s
+        AND o.outorderid NOT IN (
+'182011642851159',
+'182011736892189',
+'182011825718200',
+'181851252794127',
+'181851319602036',
+'181851338769216',
+'181992337462544',
+'181961615494095',
+'182002056925862',
+'181841201332113',
+'181740723625389',
+'181832105385909',
+'181831752539304',
+'181871445964760',
+'182011642851159',
+'182041635160206'
+)
         and pay_price<>1 GROUP BY left(o.createtime,10);
     """
 
@@ -488,7 +629,7 @@ def update_profit_hb_income(days=0):
 
     recharge_data = get_hb_rechargetype(query_date, today)
 
-    for x in xrange(days*15):
+    for x in xrange(days*29):
         query_date = DateUtil.add_days(query_date, 1)
         supply_account_inland_income = recharge_data.get(str(query_date) + '_2_0', 0) - recharge_data.get(str(query_date) + '_1_0', 0)
         supply_account_inter_income = recharge_data.get(str(query_date) + '_2_1', 0) - recharge_data.get(str(query_date) + '_1_1', 0)

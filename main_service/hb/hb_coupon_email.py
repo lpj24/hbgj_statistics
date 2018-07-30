@@ -77,23 +77,23 @@ def send_hb_delay_email(days=0):
     }
     delay_msg_text += "<br/><br/><strong>延误宝赔付个数和总金额</strong><br/><br/>"
     delay_msg_text += mako_render(render_data, 'sign_template.txt')
+    #
+    # delay_income_sql = """
+    #     SELECT LEFT(create_time, 10) as dayDate, SUM(pay_amount) as sumAmount
+    #     FROM flight_delay_pay
+    #     WHERE pay_status = 1
+    #     and LEFT(create_time, 10) =%s
+    #     GROUP BY dayDate
+    #     ORDER BY dayDate DESC
+    # """
+    # delay_num_income_data = DBCli().delay_insure_cli.query_one(delay_income_sql, [start_date])
 
-    delay_income_sql = """
-        SELECT LEFT(create_time, 10) as dayDate, SUM(pay_amount) as sumAmount
-        FROM flight_delay_pay
-        WHERE pay_status = 1
-        and LEFT(create_time, 10) =%s
-        GROUP BY dayDate
-        ORDER BY dayDate DESC
-    """
-    delay_num_income_data = DBCli().delay_insure_cli.query_one(delay_income_sql, [start_date])
-
-    render_data = {
-        'rows': ['日期', '收入'],
-        'rows_data': [delay_num_income_data]
-    }
-    delay_msg_text += "<br/><br/><strong>延误宝收入</strong><br/><br/>"
-    delay_msg_text += mako_render(render_data, 'sign_template.txt')
+    # render_data = {
+    #     'rows': ['日期', '收入'],
+    #     'rows_data': [delay_num_income_data]
+    # }
+    # delay_msg_text += "<br/><br/><strong>延误宝收入</strong><br/><br/>"
+    # delay_msg_text += mako_render(render_data, 'sign_template.txt')
 
     return delay_msg_text
 

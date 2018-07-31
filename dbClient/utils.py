@@ -7,13 +7,15 @@ from dbClient.dateutil import DateUtil
 import inspect
 import subprocess
 import os
+import random
 
 
 def get_mail_server():
+    random_email = random.randint(0, 1)
     web.config.smtp_server = conf.mail["mail_server"]
     web.config.smtp_port = conf.mail["port"]
-    web.config.smtp_username = conf.mail["username"]
-    web.config.smtp_password = conf.mail["password"]
+    web.config.smtp_username = conf.mail["username"][random_email]
+    web.config.smtp_password = conf.mail["password"][random_email]
     web.config.smtp_starttls = True
     mail_server = web
     return mail_server

@@ -7,6 +7,7 @@ from dbClient.dateutil import DateUtil
 def update_hbgj_activeusers_daily(days=0):
     """航班活跃用户(日), hbgj_activeusers_daily"""
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
+
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
     dto = [today, today, tomorrow]
     query_data = DBCli().apibase_cli.query_one(hb_activeusers_sql["hbgj_activeusers_daily"], dto)

@@ -245,7 +245,7 @@ def send_hb_coupon_delay_eamil_daily(days=0):
         'wangqq@133.cn',
         'wangqin01@133.cn',
         'zhangsb@133.cn',
-        '762575190@qq.com'
+        'hbgj_lipj@sina.com'
     ]
     for send in email_list:
         sendMail(send, sign_msg_text, subject)

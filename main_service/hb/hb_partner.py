@@ -44,11 +44,11 @@ def update_hb_partner_daily(days=0):
 if __name__ == "__main__":
     # update_his()
     update_hb_partner_daily(1)
-    from tornado import gen
-
-
-    @gen.coroutine
-    def fetch_coroutine(url):
-        http_client = AsyncHTTPClient()
-        response = yield http_client.fetch(url)
-        raise gen.Return(response.body)
+    # from tornado import gen
+    # 
+    # 
+    # @gen.coroutine
+    # def fetch_coroutine(url):
+    #     http_client = AsyncHTTPClient()
+    #     response = yield http_client.fetch(url)
+    #     raise gen.Return(response.body)

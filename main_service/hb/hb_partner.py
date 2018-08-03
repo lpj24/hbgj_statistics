@@ -44,6 +44,7 @@ def update_hb_partner_daily(days=0):
 if __name__ == "__main__":
     # update_his()
     update_hb_partner_daily(1)
+<<<<<<< HEAD
     # from tornado import gen
     # 
     # 
@@ -52,3 +53,13 @@ if __name__ == "__main__":
     #     http_client = AsyncHTTPClient()
     #     response = yield http_client.fetch(url)
     #     raise gen.Return(response.body)
+=======
+    from tornado import gen
+
+
+    @gen.coroutine
+    def fetch_coroutine(url):
+        http_client = AsyncHTTPClient()
+        response = yield http_client.fetch(url)
+        raise gen.Return(response.body)
+>>>>>>> 2fae1c0b4e91e918ac90c8106fb241877132668d

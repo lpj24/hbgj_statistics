@@ -239,21 +239,12 @@ def send_hb_coupon_delay_eamil_daily(days=0):
     sign_msg_text += send_hb_delay_email(days)
     subject = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
     email_list = [
-<<<<<<< HEAD
         # 'hec@133.cn',
         # 'zhangxm@133.cn',
         # 'zengyk@133.cn',
         # 'wangqq@133.cn',
         # 'wangqin01@133.cn',
         # 'zhangsb@133.cn',
-=======
-        'hec@133.cn',
-        'zhangxm@133.cn',
-        'zengyk@133.cn',
-        'wangqq@133.cn',
-        'wangqin01@133.cn',
-        'zhangsb@133.cn',
->>>>>>> 2fae1c0b4e91e918ac90c8106fb241877132668d
         'hbgj_lipj@sina.com'
     ]
     for send in email_list:

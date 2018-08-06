@@ -9,9 +9,9 @@ def update_hbgj_activeusers_daily(days=0):
     today = DateUtil.date2str(DateUtil.get_date_before_days(int(days) * 3), '%Y-%m-%d')
 
     tomorrow = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
-    dto = [today, today, tomorrow]
-    query_data = DBCli().apibase_cli.query_one(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
-    DBCli().targetdb_cli.insert(hb_activeusers_sql["update_hbgj_activeusers_daily"], query_data)
+    dto = [today, tomorrow]
+    query_data = DBCli().apibase_cli.query_all(hb_activeusers_sql["hbgj_activeusers_daily"], dto)
+    DBCli().targetdb_cli.batch_insert(hb_activeusers_sql["update_hbgj_activeusers_daily"], query_data)
 
     wechat_hb_sql = """
         select visit_uv, DATE_FORMAT(ref_date, '%%Y-%%m-%%d') s_day from AU_HBGJ_APPLET_VISIT where DATE_FORMAT(ref_date, '%%Y-%%m-%%d') < %s
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hbgj_activeusers_daily(i)
     #     i -= 1
-    update_hbgj_newuser_daily(1)
+    update_hbgj_activeusers_weekly()
     # import datetime
     # import time
     # start_date = datetime.date(2018, 7, 11)

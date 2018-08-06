@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pymysql as MySQLdb
 from DBUtils.PooledDB import PooledDB
 from logging.config import dictConfig
@@ -6,6 +7,9 @@ from conf import LOGGING
 import time
 import cx_Oracle
 import re
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 dictConfig(LOGGING)
@@ -17,7 +21,8 @@ class DButils(object):
         _return_cursor = MySQLdb.cursors.DictCursor if dict in args else MySQLdb.cursors.Cursor
         if dbtype.lower() == "mysql":
             self._pool = PooledDB(MySQLdb, host=conf["host"], user=conf["user"], passwd=conf["password"],
-                                  port=conf["port"], db=conf["database"],  mincached=1, maxcached=20, charset="utf8", blocking=True
+                                  port=conf["port"], db=conf["database"],
+                                  mincached=1, maxcached=20, charset="utf8", use_unicode=True, blocking=True
                                   , maxshared=10, cursorclass=_return_cursor)
         elif dbtype.lower() == "oracle":
             print cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"])

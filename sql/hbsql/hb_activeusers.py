@@ -8,7 +8,7 @@ hbgj_activeusers_daily = """
     where DATE_FORMAT(createtime,'%%Y-%%m-%%d')>=%s
     and DATE_FORMAT(createtime,'%%Y-%%m-%%d')<%s
     and p like '%%hbgj%%'
-    GROUP BY
+    GROUP BY s_day
 ) A;
 """
 

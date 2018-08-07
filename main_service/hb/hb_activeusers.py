@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # while i >= 1:
     #     update_hbgj_activeusers_daily(i)
     #     i -= 1
-    update_hbgj_activeusers_weekly()
+    update_hbgj_activeusers_daily(1)
     # import datetime
     # import time
     # start_date = datetime.date(2018, 7, 11)

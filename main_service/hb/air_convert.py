@@ -5,7 +5,7 @@ from dbClient.dateutil import DateUtil
 
 def airport_info_covert_hourly():
     today = DateUtil.get_date_after_days(0)
-    max_id = DBCli().airport_flight_cli.query_one("select max(id) from airport_statistics")[0]
+    max_id = DBCli().targetdb_cli.query_one("select max(id) from airport_statistics")[0]
     sql = """
         select id, airport_code, local_date, start, end,
         replace(json_extract(data, '$.airportState'), '"', '') as airportState,

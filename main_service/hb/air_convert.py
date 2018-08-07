@@ -46,7 +46,7 @@ def airport_info_covert_hourly():
         airportAlter=values(airportAlter),
         airportReturn=values(airportReturn)
     """
-    result = DBCli().airport_flight_cli.query_all(sql, [today, max_id])
+    result = DBCli().airport_flight_cli.query_all(sql)
     DBCli().targetdb_cli.batch_insert(insert_sql, result)
 
 

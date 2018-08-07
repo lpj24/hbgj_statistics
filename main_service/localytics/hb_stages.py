@@ -9,7 +9,7 @@ def update_hbgj_stages_daily(days=0):
     """分期付款localytics, weex_installment_pay_daily"""
 
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
-    event_list = ['weex.installment.pay.start', 'weex.installment.activated', 'weex.installment.pay.success']
+    event_list = ['weex.installment.pay.start']
     insert_data = []
 
     insert_sql = """
@@ -51,8 +51,8 @@ def update_hbgj_stages_daily(days=0):
     insert_result = defaultdict(list)
     for p in ['ios.', '']:
         for e in event_list:
-            pv_data = request_pv(query_date, query_date, p + e, 'day')
-            uv_data = request_uv(query_date, query_date, p + e, 'day')
+            pv_data = request_pv('hb', query_date, query_date, p + e, 'day')
+            uv_data = request_uv('hb', query_date, query_date, p + e, 'day')
             if len(pv_data) >= 1:
                 insert_result[query_date].append(pv_data[0]['sessions_per_event'])
             else:
@@ -106,8 +106,8 @@ def update_weex_activated_type_daily(days=0):
     insert_data = []
     for p in ['ios.', '']:
         for e in event_list:
-            pv_data = request_pv(query_date, query_date, p + e, 'day, a:type')
-            uv_data = request_uv(query_date, query_date, p + e, 'day, a:type')
+            pv_data = request_pv('hb', query_date, query_date, p + e, 'day, a:type')
+            uv_data = request_uv('hb', query_date, query_date, p + e, 'day, a:type')
 
             if len(pv_data) >= 1:
                 insert_result[query_date].append(pv_data[0]['sessions_per_event'])
@@ -138,4 +138,4 @@ def update_weex_activated_type_daily(days=0):
 if __name__ == "__main__":
     # update_hbgj_stages_daily(1)
     # update_hbgj_stages_daily(1)
-    update_hbgj_stages_daily(1)
+    update_weex_activated_type_daily(1)

@@ -21,7 +21,7 @@ def cal_uv_pv(app, event, result_dict, start_date, end_date):
 def hb_gt_travel_daily(days=1):
     """高铁行程localytics, hb_gt_travel_pv_uv_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days - 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     result_dict = defaultdict(list)
     train_detail_event = ['ios.train.detail.open', 'android.train.detail.open']
     for event in train_detail_event:
@@ -53,13 +53,14 @@ def hb_gt_travel_daily(days=1):
         insert_data.append(v)
 
     insert_sql = """
-        insert into hb_gt_travel_pv_uv_daily (s_day, `ios.train.detail.open.uv`, `ios.train.detail.open.pv`, `android.train.detail.open.uv`
-            ,`android.train.detail.open.pv`, `ios.train.info.open.uv`, `ios.train.info.open.pv`, `android.train.info.uv`, `android.train.info.pv`
-            ,`ios.weex.train.carriage.open.uv`, `ios.weex.train.carriage.open.pv`, `android.weex.train.carriage.open.uv`,`android.weex.train.carriage.open.pv`
-            ,`ios.train.map.open.uv`, `ios.train.map.open.pv`, `android.train.map.open.uv`, `android.train.map.open.pv`
-            ,`ios.train.message.open.uv`, `ios.train.message.open.pv`, `android.train.message.open.uv`, `android.train.message.open.pv`
+        insert into hb_gt_travel_pv_uv_daily (s_day, `ios_train_detail_open_uv`, `ios_train_detail_open_pv`, `android_train_detail_open_uv`
+            ,`android_train_detail_open_pv`, `ios_train_info_open_uv`, `ios_train_info_open_pv`, `android_train_info_uv`, `android_train_info_pv`
+            ,`ios_weex_train_carriage_open_uv`, `ios_weex_train_carriage_open_pv`, `android_weex_train_carriage_open_uv`,`android_weex_train_carriage_open_pv`
+            ,`ios_train_map_open_uv`, `ios_train_map_open_pv`, `android_train_map_open_uv`, `android_train_map_open_pv`
+            ,`ios_train_message_open_uv`, `ios_train_message_open_pv`, `android_train_message_open_uv`, `android_train_message_open_pv`
             ,create_time, update_time)
         values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
+
     """
     DBCli().targetdb_cli.batch_insert(insert_sql, insert_data)
 
@@ -67,7 +68,7 @@ def hb_gt_travel_daily(days=1):
 def station_pv_uv(days=1):
     """高铁大屏localytics, gt_station_pv_uv_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days - 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
     result_dict = defaultdict(list)
     train_detail_event = ['ios.weex.station.screen.main.open', 'android.weex.station.screen.main.open']
     for event in train_detail_event:
@@ -86,24 +87,24 @@ def station_pv_uv(days=1):
         cal_uv_pv('gt', event, result_dict, start_date, end_date)
 
     insert_sql = """
-        insert into gt_station_pv_uv_daily (
+                insert into gt_station_pv_uv_daily (
             s_day,
-            `ios.weex.station.screen.main.open.uv`,
-            `ios.weex.station.screen.main.open.pv`,
-            `android.weex.station.screen.main.open.uv`,
-            `android.weex.station.screen.main.open.pv`,
-            `ios.weex.station.screen.info.uv`,
-            `ios.weex.station.screen.info.pv`,
-            `android.weex.station.screen.info.uv`,
-            `android.weex.station.screen.info.pv`,
-            `ios.weex.station.food.list.open.uv`,
-            `ios.weex.station.food.list.open.pv`,
-            `android.weex.station.food.list.open.uv`,
-            `android.weex.station.food.list.open.pv`,
-            `ios.weex.station.food.detail.open.uv`,
-            `ios.weex.station.food.detail.open.pv`,
-            `android.weex.station.food.detail.open.uv`,
-            `android.weex.station.food.detail.open.pv`,
+            `ios_weex_station_screen_main_open_uv`,
+            `ios_weex_station_screen_main_open_pv`,
+            `android_weex_station_screen_main_open_uv`,
+            `android_weex_station_screen_main_open_pv`,
+            `ios_weex_station_screen_info_uv`,
+            `ios_weex_station_screen_info_pv`,
+            `android_weex_station_screen_info_uv`,
+            `android_weex_station_screen_info_pv`,
+            `ios_weex_station_food_list_open_uv`,
+            `ios_weex_station_food_list_open_pv`,
+            `android_weex_station_food_list_open_uv`,
+            `android_weex_station_food_list_open_pv`,
+            `ios_weex_station_food_detail_open_uv`,
+            `ios_weex_station_food_detail_open_pv`,
+            `android_weex_station_food_detail_open_uv`,
+            `android_weex_station_food_detail_open_pv`,
             `create_time`,
             `update_time`
         ) values (%s, %s, %s, %s,%s, %s, %s,%s, %s, %s,%s, %s, %s,%s, %s, %s,%s, now(), now())
@@ -118,4 +119,5 @@ def station_pv_uv(days=1):
 
 
 if __name__ == '__main__':
+    hb_gt_travel_daily(1)
     station_pv_uv(1)

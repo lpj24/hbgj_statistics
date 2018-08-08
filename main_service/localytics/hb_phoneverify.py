@@ -36,7 +36,7 @@ def update_weex_phoneverify(days=1):
             # localytics客户端有问题, android需要特殊处理
             if p.count('ios'):
                 e = p + e
-            uv_data = request_uv(query_date, query_date, e, 'day')
+            uv_data = request_uv('hb', query_date, query_date, e, 'day')
             if len(uv_data) > 0:
                 insert_data.append(uv_data[0]['users'])
             else:

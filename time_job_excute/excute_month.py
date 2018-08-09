@@ -2,6 +2,7 @@ from main_service.hb import hb_flight_details, hb_flight_search, \
     hb_consumers, hb_flight_focus, hb_activeusers, hb_focus_platform
 from main_service.huoli import car_consumers, hotel_activeusers, hotel_consumers, huoli_buy_consumers
 from main_service.gt import gt_consumers, gt_activeusers
+from main_service.localytics import gt_travel
 from time_job_excute.timeServiceList import TimeService
 import logging
 
@@ -25,7 +26,10 @@ def add_execute_job():
     TimeService.add_month_first_service(hb_focus_platform.update_focus_platform_monthly)
     TimeService.add_month_first_service(huoli_buy_consumers.update_huoli_buy_consumers_monthly)
     TimeService.add_month_first_service(hb_consumers.update_hbgj_consumers_inter_monthly)
+    TimeService.add_month_first_service(gt_travel.hb_gt_travel_monthly)
+    TimeService.add_month_first_service(gt_travel.station_pv_uv_monthly)
     return TimeService
+
 
 if __name__ == "__main__":
     print "excute month"

@@ -2,6 +2,7 @@ from main_service.hb import hb_flight_details, hb_consumers, \
     hb_flight_search, hb_flight_focus, hb_activeusers, hb_focus_platform, hb_channel_ticket, hb_airline, hb_coupon_email
 from main_service.huoli import car_consumers, hotel_consumers, huoli_buy_consumers
 from main_service.gt import gt_activeusers, gt_consumers
+from main_service.localytics import gt_travel
 from time_job_excute.timeServiceList import TimeService
 from monitor import task
 import message
@@ -31,6 +32,8 @@ def add_execute_job():
     TimeService.add_week_mon_service(hb_airline.update_hbgj_client_airline_inter_weekly)
     TimeService.add_week_mon_service(hb_consumers.update_hbgj_consumers_inter_weekly)
     TimeService.add_week_mon_service(hb_coupon_email.send_hb_sign_weekly)
+    TimeService.add_week_mon_service(gt_travel.hb_gt_travel_weekly)
+    TimeService.add_week_mon_service(gt_travel.station_pv_uv_weekly)
 
     return TimeService
 

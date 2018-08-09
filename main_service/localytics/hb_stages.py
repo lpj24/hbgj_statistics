@@ -9,7 +9,7 @@ def update_hbgj_stages_daily(days=0):
     """分期付款localytics, weex_installment_pay_daily"""
 
     query_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
-    event_list = ['weex.installment.pay.start']
+    event_list = ['weex.installment.pay.start', 'weex.installment.activated', 'weex.installment.pay.success']
     insert_data = []
 
     insert_sql = """
@@ -138,4 +138,4 @@ def update_weex_activated_type_daily(days=0):
 if __name__ == "__main__":
     # update_hbgj_stages_daily(1)
     # update_hbgj_stages_daily(1)
-    update_weex_activated_type_daily(1)
+    update_hbgj_stages_daily(1)

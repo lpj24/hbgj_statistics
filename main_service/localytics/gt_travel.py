@@ -8,20 +8,33 @@ import core
 
 def cal_uv_pv(app, event, result_dict, start_date, end_date):
 
-    gt_ios_pv = core.request_pv(app, start_date, end_date, event, 'day')
+    gt_ios_pv = core.request_pv(app, start_date, end_date, event, 'day', metrics='occurrences')
     gt_ios_uv = core.request_uv(app, start_date, end_date, event, 'day')
+    diff_days = DateUtil.minus_days(start_date, end_date) + 1
 
-    for gt in gt_ios_uv:
-        result_dict[gt['day']].append(gt['users'])
+    gt_ios_pv = {pv['day']: pv['occurrences'] for pv in gt_ios_pv}
+    gt_ios_uv = {uv['day']: uv['users'] for uv in gt_ios_uv}
 
-    for gt in gt_ios_pv:
-        result_dict[gt['day']].append(gt['sessions_per_event'])
+    for i in xrange(diff_days):
+        try:
+            start_day = DateUtil.date2str(DateUtil.add_days(DateUtil.str2date(start_date, '%Y-%m-%d'), i), '%Y-%m-%d')
+
+            result_dict[start_day].append(gt_ios_uv.get(start_day, 0))
+            result_dict[start_day].append(gt_ios_pv.get(start_day, 0))
+        except IndexError:
+            continue
+
+    # for gt in gt_ios_uv:
+    #     result_dict[gt['day']].append(gt['users'])
+
+    # for gt in gt_ios_pv:
+    #     result_dict[gt['day']].append(gt['sessions_per_event'])
 
 
 def hb_gt_travel_daily(days=1):
     """高铁行程localytics, hb_gt_travel_pv_uv_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 219), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1), '%Y-%m-%d')
     result_dict = defaultdict(list)
     train_detail_event = ['ios.train.detail.open', 'android.train.detail.open']
     for event in train_detail_event:
@@ -43,9 +56,9 @@ def hb_gt_travel_daily(days=1):
     for event in train_message_event:
         cal_uv_pv('gt', event, result_dict, start_date, end_date)
 
-    train_message_event = ['ios.flight.main.open', 'android.flight.main.open']
-    for event in train_message_event:
-        cal_uv_pv('hb', event, result_dict, start_date, end_date)
+    # train_message_event = ['ios.flight.main.open', 'android.flight.main.open']
+    # for event in train_message_event:
+    #     cal_uv_pv('hb', event, result_dict, start_date, end_date)
 
     insert_data = []
     for k, v in result_dict.items():
@@ -67,8 +80,8 @@ def hb_gt_travel_daily(days=1):
 
 def station_pv_uv(days=1):
     """高铁大屏localytics, gt_station_pv_uv_daily"""
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 219), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_before_days(days*1), '%Y-%m-%d')
     result_dict = defaultdict(list)
     train_detail_event = ['ios.weex.station.screen.main.open', 'android.weex.station.screen.main.open']
     for event in train_detail_event:
@@ -120,4 +133,4 @@ def station_pv_uv(days=1):
 
 if __name__ == '__main__':
     hb_gt_travel_daily(1)
-    station_pv_uv(1)
+    # station_pv_uv(1)

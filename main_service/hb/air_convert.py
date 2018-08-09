@@ -19,7 +19,7 @@ def airport_info_covert_hourly():
         ifnull(replace(json_extract(data, '$.airportCancelOut'), '"', ''), 0) as airportCancelOut,
         ifnull(replace(json_extract(data, '$.airportAlter'), '"', ''), 0) as airportAlter,
         ifnull(replace(json_extract(data, '$.airportReturn'), '"', ''), 0) as airportReturn
-        from airport_statistics
+        from airport_statistics where id >= %s and id <= %s
     """
 
     insert_sql = """
@@ -28,26 +28,19 @@ def airport_info_covert_hourly():
         airportStateDelayOut, airportCancelOut, airportAlter, airportReturn, create_time, update_time)
         values
         (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
-        on duplicate key update update_time = now(),
-        id= values(id),
-        airport_code= values(airport_code),
-        local_date=values(local_date),
-        start = values(start),
-        end=values(end),
-        airportState=values(airportState),
-        airportPlanIn=values(airportPlanIn),
-        airportDelayIn=values(airportDelayIn),
-        airportPlanOut=values(airportPlanOut),
-        airportTotalIn=values(airportTotalIn),
-        airportTotalOut=values(airportTotalOut),
-        airportDelayOut=values(airportDelayOut),
-        airportStateDelayOut=values(airportStateDelayOut),
-        airportCancelOut=values(airportCancelOut),
-        airportAlter=values(airportAlter),
-        airportReturn=values(airportReturn)
     """
-    result = DBCli().airport_flight_cli.query_all(sql)
-    DBCli().targetdb_cli.batch_insert(insert_sql, result)
+
+    start_id = 1
+    max_id = 27319949
+    end_id = 100000
+    import datetime
+    while start_id <= max_id:
+        start = datetime.datetime.now()
+        result = DBCli().airport_flight_cli.query_all(sql, [start_id, end_id])
+        start_id = end_id + 1
+        end_id += 100000
+        DBCli().targetdb_cli.batch_insert(insert_sql, result)
+        print datetime.datetime.now() - start
 
 
 if __name__ == '__main__':

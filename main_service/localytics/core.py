@@ -64,4 +64,5 @@ request_uv = partial(LocalyticsRequest.do_http, metrics='users')
 
 if __name__ == '__main__':
     # print request_pv('2017-08-28', '2017-08-29', 'ios.weex.installment.pay.start', 'day')
-    print request_uv('gt', '2018-08-05', '2018-08-06', 'android.train.detail.open', 'day')
+    ss = request_uv('gt', '2018-01-01', '2018-01-02', 'android.train.detail.open', 'day')
+    print ss

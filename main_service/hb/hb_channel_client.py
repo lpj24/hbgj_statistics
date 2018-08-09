@@ -638,14 +638,102 @@ def update_hbgj_channel_client_ticket_h5_daily(days=1):
     DBCli().targetdb_cli.insert(insert_reg_sql, insert_data)
 
 
+def hbgj_order_client_daily(days=1):
+    """更新各个渠道总订单和总票数, hbgj_order_client_daily"""
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days * 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
+    order_sql = """
+            SELECT DATE_FORMAT(o.createtime, '%%Y-%%m-%%d') s_day,
+            count(DISTINCT case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%' or p like 'abc-app%%' then o.ORDERID end) H5订单数
+            FROM TICKET_ORDER o 
+            left join `TICKET_ORDERDETAIL` od on od.ORDERID=o.ORDERID
+            WHERE o.CREATETIME>=%s
+            and o.CREATETIME<%s
+            and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31)
+            AND IFNULL(od.`LINKTYPE`, 0) != 2
+            and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+            or p like 'cgb%%' or p like 'guizhoutong%%' or 
+            p like 'yidonghefeixin%%' or p like 'abc-app%%')
+            GROUP BY s_day
+        """
+
+    ticket_sql = """
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day, 
+        count(case when p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' or p like 'abc-app%%' then o.ORDERID end) H5订票数
+        FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        where od.CREATETIME>=%s and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) 
+        and (p like 'zhaolian%%' or p like 'huawei%%' or p like 'kaisa%%' 
+        or p like 'cgb%%' or p like 'guizhoutong%%' or 
+        p like 'yidonghefeixin%%' or p like 'abc-app%%')
+        AND IFNULL(od.`LINKTYPE`, 0) != 2
+        GROUP BY s_day
+        """
+    insert_sql = """
+        insert into hbgj_order_client_daily (s_day, client, order_num, ticket_num, create_time, update_time)
+        values (%s, %s, %s, %s, now(), now())
+        on duplicate key update update_time = now(),
+        s_day = values(s_day),
+        client = values(client),
+        order_num = values(order_num),
+        ticket_num = values(ticket_num)
+    """
+
+    h5_order = DBCli().sourcedb_cli.query_all(order_sql, [start_date, end_date])
+    h5_ticket = DBCli().sourcedb_cli.query_all(ticket_sql, [start_date, end_date])
+    result = []
+    for order, ticket in zip(h5_order, h5_ticket):
+        result.append([order[0], 'H5', order[1], ticket[1]])
+
+    DBCli().targetdb_cli.batch_insert(insert_sql, result)
+
+    client_order_sql = """
+        SELECT DATE_FORMAT(o.createtime, '%%Y-%%m-%%d') s_day,
+        count(DISTINCT case when p like '%%hbgj%%' then o.ORDERID end) 航班管家机票订单数, 
+        count(DISTINCT case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then o.ORDERID end) 高铁管家机票订单数,
+        count(DISTINCT case when p like '%%weixinyee%%' then o.ORDERID end) 野鹅订单数,
+        count(DISTINCT case when p like '%%weixinhbgj%%' then o.ORDERID end) 航班管家小程序订单数
+        FROM TICKET_ORDER o join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
+        left join `TICKET_ORDERDETAIL` od on o.ORDERID=od.ORDERID
+        WHERE o.CREATETIME>=%s and o.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(od.`LINKTYPE`, 0) != 2 
+        GROUP BY s_day;
+
+    """
+
+    client_ticket_sql = """
+        SELECT DATE_FORMAT(od.createtime, '%%Y-%%m-%%d') s_day, 
+        count(case when p like '%%hbgj%%' then o.ORDERID end) 航班管家机票成功出票数, 
+        count(case when p like '%%gtgj%%' and p not like '%%wxapplet%%' then o.ORDERID end) 高铁管家机票成功出票数,
+        count(case when p like '%%weixinyee%%' then o.ORDERID end) 野鹅机票成功出票数,
+        count(case when p like '%%weixinhbgj%%' then o.ORDERID end) 航班管家小程序机票成功出票数
+        FROM `TICKET_ORDERDETAIL` od INNER JOIN `TICKET_ORDER` o on od.ORDERID=o.ORDERID
+        join PNRSOURCE_CONFIG c on o.PNRSOURCE=c.PNRSOURCE
+        where od.CREATETIME>=%s and od.CREATETIME<%s
+        and o.ORDERSTATUE NOT IN (0, 1, 11, 12, 2, 21, 3, 31) AND
+        IFNULL(od.`LINKTYPE`, 0) != 2 GROUP BY s_day
+
+    """
+    client_order = DBCli().sourcedb_cli.query_all(client_order_sql, [start_date, end_date])
+    client_ticket = DBCli().sourcedb_cli.query_all(client_ticket_sql, [start_date, end_date])
+    result = []
+    for order, ticket in zip(client_order, client_ticket):
+        result.append([order[0], '航班管家', order[1], ticket[1]])
+        result.append([order[0], '高铁管家', order[2], ticket[2]])
+        result.append([order[0], '野鹅机票', order[3], ticket[3]])
+        result.append([order[0], '航班管家小程序', order[4], ticket[4]])
+
+    DBCli().targetdb_cli.batch_insert(insert_sql, result)
+
+
 if __name__ == '__main__':
-    update_hbgj_channel_client_ticket_h5_daily(1)
-    # i = 1
-    # while i <= 8:
-    #
-    #     update_hbgj_channel_client_ticket_daily(i)
-    #     i += 1
-    # i = 5
-    # while i <= 12:
-    #     update_hbgj_channel_client_ticket_h5_daily(i)
-    #     i += 1
+    # update_hbgj_channel_client_ticket_h5_daily(1)
+    i = 1
+    while 1:
+        hbgj_order_client_daily(i)
+        i += 1

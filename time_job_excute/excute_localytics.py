@@ -20,7 +20,7 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(hb_nameauth.update_weex_phoneverify)
     TimeService.add_localytics_service(hb_phoneverify.update_weex_phoneverify)
     TimeService.add_localytics_service(gt_travel.hb_gt_travel_daily)
-    TimeService.add_localytics_service(gt_travel.station_pv_uv)
+    TimeService.add_localytics_service(gt_travel.station_pv_uv_daily)
 
     for fun in TimeService.get_localytics_service():
         try:

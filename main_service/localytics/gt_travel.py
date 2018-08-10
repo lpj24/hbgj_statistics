@@ -239,5 +239,5 @@ def station_pv_uv_monthly():
 
 
 if __name__ == '__main__':
-    station_pv_uv_monthly()
+    station_pv_uv_daily(1)
     # station_pv_uv(1)

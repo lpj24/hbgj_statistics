@@ -6,4 +6,4 @@ if __name__ == "__main__":
     try:
         air_convert.airport_info_covert_hourly()
     except Exception as e:
-        logging.warning("airport_statistics load error")
+        logging.warning("airport_statistics load error" + str(e.message))

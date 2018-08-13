@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from dbClient.db_client import DBCli
-from dbClient.dateutil import DateUtil
+import os
 
 
 def airport_info_covert_hourly():
@@ -18,7 +18,8 @@ def airport_info_covert_hourly():
         ifnull(JSON_UNQUOTE(json_extract(data, '$.airportCancelIn')), 0) as airportCancelIn,
         ifnull(JSON_UNQUOTE(json_extract(data, '$.airportCancelOut')), 0) as airportCancelOut,
         ifnull(JSON_UNQUOTE(json_extract(data, '$.airportAlter')), 0) as airportAlter,
-        ifnull(JSON_UNQUOTE(json_extract(data, '$.airportReturn')), 0) as airportReturn
+        ifnull(JSON_UNQUOTE(json_extract(data, '$.airportReturn')), 0) as airportReturn,
+        now(), now()
         from airport_statistics where id>%s
     """
 
@@ -35,12 +36,12 @@ def airport_info_covert_hourly():
     """
     target_db_max_id = DBCli().targetdb_cli.query_one(max_target_db_id_sql)
     new_airport_result = DBCli().airport_flight_cli.query_all(sql, target_db_max_id[0])
-
-    # with open('data.sql', 'wb') as f:
-    #     for n_a in new_airport_result:
-    #         f.write(','.join(map(unicode, n_a)) + '\n')
-
-    DBCli().targetdb_cli.batch_insert(insert_sql, new_airport_result)
+    #
+    with open('data.sql', 'wb') as f:
+        for n_a in new_airport_result:
+            f.write(','.join(map(unicode, n_a)) + '\n')
+    DBCli().targetdb_cli.insert("load data local infile './data.sql' into table airport_statistics character set utf8 fields terminated by ',';")
+    os.remove('./data.sql')
 
 
 if __name__ == '__main__':

@@ -271,5 +271,5 @@ def send_hb_sign_weekly():
 if __name__ == '__main__':
     import datetime
     start_time = datetime.datetime.now()
-    send_hb_coupon_delay_eamil_daily(1)
+    send_hb_coupon_delay_eamil_daily(3)
     print datetime.datetime.now() - start_time

@@ -23,7 +23,7 @@ class DButils(object):
             self._pool = PooledDB(MySQLdb, host=conf["host"], user=conf["user"], passwd=conf["password"],
                                   port=conf["port"], db=conf["database"],
                                   mincached=1, maxcached=20, charset="utf8", use_unicode=True, blocking=True
-                                  , maxshared=10, cursorclass=_return_cursor)
+                                  , maxshared=10, cursorclass=_return_cursor, local_infile=True)
         elif dbtype.lower() == "oracle":
             print cx_Oracle.makedsn(conf["ip"], conf["port"], conf["sid"])
             self._pool = PooledDB(cx_Oracle, user=conf["user"], password=conf["password"],
@@ -48,7 +48,7 @@ class DButils(object):
             warning_time = time.strftime('%Y-%m-%d %H:%M', time.localtime())
             logging.error(warning_time + ":" + str(sql)+"--"+str(e.args[1]))
 
-    def insert(self, sql, params):
+    def insert(self, sql, params=None):
         cursor = self._cursor
         try:
             logging.warning(self._log_str(sql, params))

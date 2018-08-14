@@ -84,21 +84,19 @@ def execute_later_job():
 
 
 def check_execute_job():
-    from time_job_excute import excute_day, excute_mon_week, excute_month
+    from time_job_excute import excute_day, excute_mon_week, excute_month, excute_localytics
+    from itertools import chain
     day_service = excute_day.add_execute_job()
     week_service = excute_mon_week.add_execute_job()
     month_service = excute_month.add_execute_job()
-    for job in day_service.get_day_service():
+    localytics_service = excute_localytics.add_execute_job()
+
+    for job in chain(day_service.get_day_service(), week_service.get_week_mon_service(),
+                     localytics_service.get_localytics_service()):
         if not job.__doc__:
             raise AttributeError(str(job.__name__) + ' 没有doc描述')
         else:
             logging.warning(job)
-
-    for week_job in week_service.get_week_mon_service():
-        if not week_job.__doc__:
-            raise AttributeError(str(week_job.__name__) + ' 没有doc描述')
-        else:
-            logging.warning(week_job)
 
     for month_job in month_service.get_month_first_service():
         logging.warning(month_job)

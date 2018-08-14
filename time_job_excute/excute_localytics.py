@@ -7,8 +7,7 @@ from main_service.localytics import hbdt_event
 from time_job_excute.timeServiceList import TimeService
 
 
-if __name__ == "__main__":
-    days = sys.argv[1]
+def add_execute_job():
     TimeService.add_localytics_service(hb_ticket_book.update_booke_ticket_event_hourly)
     TimeService.add_localytics_service(hb_ticket_book.hb_ticket_book)
     TimeService.add_localytics_service(hbdt_event.hbdt_event)
@@ -22,6 +21,11 @@ if __name__ == "__main__":
     TimeService.add_localytics_service(gt_travel.hb_gt_travel_daily)
     TimeService.add_localytics_service(gt_travel.station_pv_uv_daily)
 
+    return TimeService
+
+
+if __name__ == "__main__":
+    days = sys.argv[1]
     for fun in TimeService.get_localytics_service():
         try:
             fun_path = fun(int(days))

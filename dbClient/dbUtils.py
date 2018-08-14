@@ -81,6 +81,7 @@ class DButils(object):
             else:
                 cursor.execute(sql, params)
             # logging.warning("execute sql" + cursor._executed)
+
             data = cursor.fetchone()
         except MySQLdb.OperationalError:
             logging.error("error")

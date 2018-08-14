@@ -24,7 +24,10 @@ def airport_info_covert_hourly():
     """
 
     insert_sql = """
-        insert into airport_statistics (id, airport_code, local_date, start, end, airportState,
+        insert into airport_statist
+        
+        
+        ics (id, airport_code, local_date, start, end, airportState,
         airportPlanIn, airportDelayIn, airportPlanOut, airportTotalIn, airportTotalOut, airportDelayOut,
         airportStateDelayOut, airportCancelIn, airportCancelOut, airportAlter, airportReturn, create_time, update_time)
         values

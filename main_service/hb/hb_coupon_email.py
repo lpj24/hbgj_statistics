@@ -24,7 +24,7 @@ def mako_render(data, mako_file):
 def send_hb_delay_email(days=0):
     # 延误宝
     end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - int(days)), '%Y-%m-%d')
-    start_date = DateUtil.date2str(DateUtil.get_date_before_days(1), '%Y-%m-%d')
+    start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
 
     dto = [start_date, end_date]
     delay_insure_sql = """
@@ -234,7 +234,7 @@ def send_hb_sign_email():
 
 
 def send_hb_coupon_delay_eamil_daily(days=0):
-    """通过邮件发送航班优惠券和延误宝数据, send_hb_coupon_delay_eamil_daily"""
+    """通过邮件发送航班优惠券和延误宝数据(email), send_hb_coupon_delay_eamil_daily"""
     sign_msg_text = send_hb_coupon_email(days)
     sign_msg_text += send_hb_delay_email(days)
     subject = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d') + u' 航班管家优惠券与延误宝统计'
@@ -245,14 +245,15 @@ def send_hb_coupon_delay_eamil_daily(days=0):
         'wangqq@133.cn',
         'wangqin01@133.cn',
         'zhangsb@133.cn',
-        'hbgj_lipj@sina.com'
+        'hbgj_lipj@sina.com',
+        'zhouy@133.cn',
     ]
     for send in email_list:
         sendMail(send, sign_msg_text, subject)
 
 
 def send_hb_sign_weekly():
-    """通过邮件发送航班签到数据(周), send_hb_sign_weekly"""
+    """通过邮件发送航班签到数据(周email), send_hb_sign_weekly"""
     msg_text = send_hb_sign_email()
     subject = DateUtil.date2str(DateUtil.get_last_week_date()[0], '%Y-%m-%d') + u' 航班管家签到数据统计'
     email_list = [
@@ -262,7 +263,8 @@ def send_hb_sign_weekly():
         'wangqq@133.cn',
         'wangqin01@133.cn',
         'zhangsb@133.cn',
-        '762575190@qq.com'
+        '762575190@qq.com',
+        'zhouy@133.cn',
     ]
     for send in email_list:
         sendMail(send, msg_text, subject)

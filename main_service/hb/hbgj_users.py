@@ -23,7 +23,7 @@ def mako_render(data, mako_file):
 
 
 def hbgj_user(days=0):
-    """通过邮件发送航班数据, send_sms"""
+    """通过邮件发送航班数据(email), send_sms"""
     start_date = DateUtil.get_date_before_days(days)
     end_date = DateUtil.get_date_after_days(1 - int(days))
     # 活跃用户

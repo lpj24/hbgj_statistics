@@ -72,6 +72,7 @@ def add_execute_job():
     TimeService.add_day_service(hb_insure.update_insure_type_detail_daily)
     TimeService.add_day_service(hb_coupon_email.send_hb_coupon_delay_eamil_daily)
     TimeService.add_day_service(hb_channel_client.hbgj_order_client_daily)
+    TimeService.add_day_service(hotel_order.update_hotel_roomcount_channel_daily)
     return TimeService
 
 

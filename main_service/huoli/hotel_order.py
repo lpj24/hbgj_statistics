@@ -22,15 +22,15 @@ def update_hotel_orders_daily(days=0):
 def update_hotel_roomcount_channel_daily(days=0):
     """更新酒店渠道间夜数, hotel_roomcount_channel_daily"""
     start_date = DateUtil.date2str(DateUtil.get_date_before_days(days), '%Y-%m-%d')
-    end_date = DateUtil.date2str(DateUtil.get_date_after_days(days - 1), '%Y-%m-%d')
+    end_date = DateUtil.date2str(DateUtil.get_date_after_days(1 - days), '%Y-%m-%d')
     sql = """
         select %s,
         gdsid channel,
         count(*) order_count, 
         sum((to_days(leavedate) - to_days(arrivedate)) * roomcount) room_count
         from hotelorder 
-        where arrivedate >= %s
-        and leavedate < %s
+        where arrivedate <= %s
+        and leavedate >= %s
         and gdsdesc in ("已确认","已入住","已结账")
         group by channel
     """
@@ -50,6 +50,7 @@ def update_hotel_roomcount_channel_daily(days=0):
 
 
 if __name__ == "__main__":
+    # update_hotel_roomcount_channel_daily(7)
     i = 1
     while 1:
         update_hotel_roomcount_channel_daily(i)

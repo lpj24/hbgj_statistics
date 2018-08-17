@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 from dbClient.db_client import DBCli
 from dbClient.dateutil import DateUtil
 from dbClient import utils
